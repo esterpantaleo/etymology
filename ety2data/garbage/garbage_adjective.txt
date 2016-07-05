@@ -1,0 +1,136 @@
+after stripping parentheses, references, Images, Categories, Superseded sentences, and after adding a final dot: 
+{{borrowing|fro|adjectif|lang=en}}, from {{etyl|la|en}} {{m|la|adiectivus|adiectīvum}}, from {{m|la|ad||next to}} + {{m|la|iectus|-iect-}}, perfect passive participle of {{m|la|iaciō||throw}} + {{m|la|-īvus}}, adjective ending; hence, a word "thrown next to" a noun, modifying it.
+
+.
+m|eng|adjective etymologically_derives_from borrowing|fro|adjectif|lang=en
+borrowing|fro|adjectif|lang=en etymologically_derives_from m|la|adiectivus|adiectīvum
+m|la|adiectivus|adiectīvum etymologically_derives_from compound|lat|ad|iectus
+@prefix olia:  <http://purl.org/olia/olia.owl#> .
+@prefix lemon: <http://lemon-model.net/lemon#> .
+@prefix fro-eng: <http://kaiko.getalp.org/dbnary/fro/eng/> .
+@prefix dbnary: <http://kaiko.getalp.org/dbnary#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lexvo: <http://lexvo.org/id/iso639-3/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#> .
+@prefix eng:   <http://kaiko.getalp.org/dbnary/eng/> .
+@prefix lat-eng: <http://kaiko.getalp.org/dbnary/lat/eng/> .
+
+eng:__ws_3_adjective__Adjective__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "3"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Applying to methods of enforcement and rules of procedure."@en ] .
+
+lat-eng:iectus  a  dbnary:EtymologyEntry .
+
+eng:__ws_4_adjective__Adjective__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "4"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Needing the use of a mordant to be made fast to that which is being dyed."@en ] .
+
+eng:adjective  a         dbnary:Vocable ;
+        dbnary:refersTo  eng:adjective__Verb__1 , eng:adjective__Noun__1 , eng:adjective__Adjective__1 .
+
+lat-eng:ad  a   dbnary:EtymologyEntry .
+
+eng:adjective__Verb__1
+        a                     lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Verb" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "adjective"@en ;
+                                lexinfo:pronunciation  "/ˈædʒɪktɪv/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_7_adjective__Verb__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:verb .
+
+eng:adjective_clause  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:adjective__Etymology_1 .
+
+eng:adjective_patterns
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:adjective__Etymology_1 .
+
+eng:__ws_5_adjective__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "5"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A word that modifies a noun or describes a noun’s referent."@en ] .
+
+eng:substantive  a  dbnary:Vocable .
+
+eng:adjective__Noun__1
+        a                     lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Noun" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "adjective"@en ;
+                                lexinfo:pronunciation  "/ˈædʒɪktɪv/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_6_adjective__Noun__1 , eng:__ws_5_adjective__Noun__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:noun .
+
+eng:__ws_7_adjective__Verb__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "7"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "To make an adjective of; to form or convert into an adjective."@en ] .
+
+eng:adjective_phrase  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:adjective__Etymology_1 .
+
+eng:derivative  a  dbnary:Vocable .
+
+fro-eng:adjectif  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                lat-eng:adiectivus .
+
+lat-eng:adiectivus  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                lat-eng:iectus , lat-eng:ad .
+
+eng:common_adjective  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:adjective__Etymology_1 .
+
+eng:__ws_6_adjective__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "6"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A dependent; an accessory."@en ] .
+
+eng:proper_adjective  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:adjective__Etymology_1 .
+
+eng:procedural  a  dbnary:Vocable .
+
+eng:adjective__Etymology_1
+        a                dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                fro-eng:adjectif ;
+        dbnary:refersTo  eng:adjective__Noun__1 , eng:adjective__Adjective__1 .
+
+eng:adjectival  a           dbnary:EtymologyEntry , dbnary:Vocable ;
+        dbnary:derivesFrom  eng:adjective__Etymology_1 .
+
+eng:adjective__Adjective__1
+        a                     lemon:LexicalEntry ;
+        dbnary:antonym        eng:substantive ;
+        dbnary:partOfSpeech   "Adjective" ;
+        dbnary:synonym        eng:procedural , eng:adjectival , eng:derivative , eng:dependent ;
+        lemon:canonicalForm   [ lemon:writtenRep       "adjective"@en ;
+                                lexinfo:pronunciation  "/ˈædʒɪktɪv/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_4_adjective__Adjective__1 , eng:__ws_3_adjective__Adjective__1 , eng:__ws_2_adjective__Adjective__1 , eng:__ws_1_adjective__Adjective__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:adjective .
+
+eng:__ws_1_adjective__Adjective__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Incapable of independent function."@en ] .
+
+eng:__ws_2_adjective__Adjective__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "2"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Adjectival; pertaining to or functioning as an adjective."@en ] .
+
+eng:dependent  a  dbnary:Vocable .

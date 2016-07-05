@@ -1,0 +1,107 @@
+% PLEASE USE THIS FILE AS A TEMPLATE
+% Check file iosart2c.tex for more examples
+%
+% Journal:
+%   Journal of Ambient Intelligence and Smart Environments (jaise)
+%   Web Intelligence and Agent Systems: An International Journal (wias)
+%   Semantic Web: Interoperability, Usability, Applicability (SW)
+% IOS Press
+% Latex 2e
+
+% options: jaise|wias|sw
+% add. options: [seceqn,secfloat,secthm,crcready,onecolumn]
+
+
+\documentclass{iosart2c}
+
+%\documentclass[sw]{iosart2c}
+%\documentclass[wias]{iosart2c}
+%\documentclass[jaise]{iosart2c}
+
+\usepackage[T1]{fontenc}
+\usepackage{times}%
+\usepackage{natbib}% for bibliography sorting/compressing
+%\usepackage{amsmath}
+%\usepackage{endnotes}
+%\usepackage{graphics}
+
+%%%%%%%%%%% Put your definitions here
+
+
+%%%%%%%%%%% End of definitions
+
+\pubyear{0000}
+\volume{0}
+\firstpage{1}
+\lastpage{1}
+
+\begin{document}
+
+\begin{frontmatter}
+
+%\pretitle{}
+\title{}
+\runningtitle{}
+%\subtitle{}
+
+%\review{}{}{}
+
+
+% For one author:
+\author{\fnms{} \snm{}\thanks{}}
+\address{}
+\runningauthor{}
+
+% Two or more authors:
+%\author[A]{\fnms{} \snm{}\thanks{}},
+%\author[B]{\fnms{} \snm{}}
+%\runningauthor{}
+%\address[A]{}
+%\address[B]{}
+
+\begin{abstract}
+\end{abstract}
+
+\begin{keyword}
+ \sep
+\end{keyword}
+
+\end{frontmatter}
+
+%%%%%%%%%%% The article body starts:
+
+%\section{}\label{s1}
+
+%\subsection{}\label{s1.1}
+
+
+
+
+
+
+%\begin{figure}[t]
+%\includegraphics{}
+%\caption{Figure caption.}\label{f1}
+%\end{figure}
+
+%\begin{table*}
+%\caption{} \label{t1}
+%\begin{tabular}{lll}
+%\hline
+%&&\\
+%&&\\
+%\hline
+%\end{tabular}
+%\end{table*}
+
+
+%%%%%%%%%%% The bibliography starts:
+\begin{thebibliography}{9}
+
+\bibitem{r1}
+
+\bibitem{r2}
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,37 @@
+done ||| difference: ontology version  ||| Files trunk/extractor/pom.xml and ../ety2data/trunk/extractor/pom.xml differ
+done ||| difference debutOrfinDecomPatternString, biblRefPatternString, removeBiblRef ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/AbstractWiktionaryExtractor.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/AbstractWiktionaryExtractor.java differ
+done ||| no differences ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/DbnaryModel.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/DbnaryModel.java differ
+done ||| no differences now, I copied the file to ety2data ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/DbnaryWikiModel.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/DbnaryWikiModel.java differ
+done ||| new etymology functions ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/IWiktionaryDataHandler.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/IWiktionaryDataHandler.java differ
+done ||| no differences ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/IWiktionaryExtractor.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/IWiktionaryExtractor.java differ
+done ||| edited function threeLettersCode, normalize ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/LangTools.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/LangTools.java differ
+done || protected pronunciation, getPrefix... ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/LemonBasedRDFDataHandler.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/LemonBasedRDFDataHandler.java differ
+done ||| no diff ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/cli/CompareTradsAndIWLinks.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/cli/CompareTradsAndIWLinks.java differ
+done ||| no differences ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/cli/ExtractWiktionary.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/cli/ExtractWiktionary.java differ
+done ||| no differences ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/cli/GetExtractedSemnet.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/cli/GetExtractedSemnet.java differ
+done ||| dbnary contains new lines ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/cli/TestInterwikiLinks.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/cli/TestInterwikiLinks.java differ
+done || dbnary has some changes ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/cli/UpdateAndExtractDumps.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/cli/UpdateAndExtractDumps.java differ
+done || copied the ety2data file into the dbnary file ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/eng/EnglishLangToCode.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng/EnglishLangToCode.java differ
+done || copied the dbnary file into the ety2data file ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/eng/ForeignLanguagesWiktionaryDataHandler.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng/ForeignLanguagesWiktionaryDataHandler.java differ
+done ||| !!! ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/eng/ForeignLanguagesWiktionaryExtractor.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng/ForeignLanguagesWiktionaryExtractor.java differ
+done ||| updated ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/eng/WiktionaryDataHandler.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng/WiktionaryDataHandler.java differ
+done || morphology updated ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/eng/WiktionaryExtractor.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng/WiktionaryExtractor.java differ
+done ||| little edit ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/stats/TranslationsStatistics.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/stats/TranslationsStatistics.java differ
+done ||| updated ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/tools/CounterSet.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/tools/CounterSet.java differ
+done ||| updated ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/tools/miseEnFormlang.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/tools/miseEnFormlang.java differ
+done ||| updated ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/wiki/ExpandAllWikiModel.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/wiki/ExpandAllWikiModel.java differ
+done ||| updated ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/wiki/WikiPatterns.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/wiki/WikiPatterns.java differ
+done ||| new function to parse anrgs ||| Files trunk/extractor/src/main/java/org/getalp/dbnary/wiki/WikiTool.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/wiki/WikiTool.java differ
+
+
+done ||| updated ||| Files trunk/extractor/src/main/java/org/getalp/iso639/ISO639_1.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/iso639/ISO639_1.java differ
+done ||| updated ||| Files trunk/extractor/src/main/java/org/getalp/iso639/ISO639_3.java and ../ety2data/trunk/extractor/src/main/java/org/getalp/iso639/ISO639_3.java differ
+done ||| updated ||| Files trunk/extractor/src/main/resources/org/getalp/iso639/ISO639-eponym.tab and ../ety2data/trunk/extractor/src/main/resources/org/getalp/iso639/ISO639-eponym.tab differ
+done ||| updated ||| Files trunk/extractor/src/main/resources/org/getalp/iso639/iso-639-3-macrolanguages.tab and ../ety2data/trunk/extractor/src/main/resources/org/getalp/iso639/iso-639-3-macrolanguages.tab differ
+done ||| updated ||| Files trunk/extractor/src/main/resources/org/getalp/iso639/iso-639-3.tab and ../ety2data/trunk/extractor/src/main/resources/org/getalp/iso639/iso-639-3.tab differ
+done ||| updated ||| Files trunk/extractor/src/main/resources/org/getalp/iso639/iso-639-3_Name_Index.tab and ../ety2data/trunk/extractor/src/main/resources/org/getalp/iso639/iso-639-3_Name_Index.tab differ
+done || updated ||| Files trunk/extractor/src/main/resources/org/getalp/iso639/iso-639-3_Retirements.tab and ../ety2data/trunk/extractor/src/main/resources/org/getalp/iso639/iso-639-3_Retirements.tab differ
+done ||| ||| Files trunk/extractor/src/test/java/org/getalp/dbnary/AbstractWiktionaryExtractorUtilitiesTest.java and ../ety2data/trunk/extractor/src/test/java/org/getalp/dbnary/AbstractWiktionaryExtractorUtilitiesTest.java differ
+done ||| |||Files trunk/extractor/src/test/java/org/getalp/dbnary/wiki/WikiToolTest.java and ../ety2data/trunk/extractor/src/test/java/org/getalp/dbnary/wiki/WikiToolTest.java differ
+done ||| diff version ontology ||| Files trunk/ontology/pom.xml and ../ety2data/trunk/ontology/pom.xml differ
+done ||| diff version ontology ||| Files trunk/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl and ../ety2data/trunk/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl differ

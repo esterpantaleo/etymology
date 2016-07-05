@@ -1,0 +1,11 @@
+K 10
+svn:ignore
+V 12
+.idea
+*.iml
+
+K 13
+svn:mergeinfo
+V 49
+/branches/malick_morelanguages/ontology:1643-1666
+END

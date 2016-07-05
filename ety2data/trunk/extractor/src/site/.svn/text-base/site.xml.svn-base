@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
+  name="Wiktionary Support">
+
+  <bannerLeft>
+    <name>DBnary</name>
+    <src>images/dbnary-12.png</src>
+    <href>http://dbnary.forge.imag.fr/</href>
+  </bannerLeft>
+  <bannerRight>
+    <src>images/dbnary-right-10.png</src>
+  </bannerRight>
+
+
+
+  <publishDate format="yyyy-MM-dd" position="right" />
+  <version position="right" />
+
+  <body>
+    <head>
+      <meta name="google-site-verification" content="Yi7Dt0k0octl5HqX5nt7UwtltSytABOZy3NJjKXmj0M" />
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-7769718-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+    </head>
+    <!-- Breadcrumbs that every project will inherit -->
+    <breadcrumbs>
+      <item name="GETALP" href="http://www.getalp.org/" />
+    </breadcrumbs>
+    
+    <menu name="Overview">
+      <item name="Introduction" href="index.html" />
+      <item name="Command Lines" href="cli.html" />
+      <item name="FAQ" href="faq.html" />
+    </menu>
+    <menu ref="reports" inherit="bottom" />
+    
+    <!--menu name="Examples"> <item name="Delete Additional Files" href="examples/delete_additional_files.html"/> 
+      <item name="Skipping Clean" href="examples/skipping-clean.html"/> <item name="Ignoring 
+      Errors" href="examples/ignoring-errors.html"/> </menu -->
+  </body>
+</project>

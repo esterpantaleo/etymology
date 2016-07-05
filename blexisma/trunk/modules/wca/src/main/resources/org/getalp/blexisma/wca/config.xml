@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+<param name="task" value="OMNIA"/>
+<param name="in" value=""/>
+<param name="out" value=""/>
+<param name="dico" value="dict-WOLF-WN20-adaptedLesk.xml"/>
+<!-- param name="dico" value="dicoUNLAdaptedLesk.xml"/-->
+<param name="cycles" value="100"/>
+<param name="sugarInit" value="20"/>
+<param name="pheroInit" value="0"/>
+<param name="pheroEvap" value="0.2"/>
+<param name="pheroDepot" value="1"/>
+<param name="antLife" value="20"/>
+<param name="maxSugar" value="5"/>
+<param name="getSugar" value="1"/>
+<param name="tailleVector" value="50"/>
+<param name="depotVector" value="0.1"/>
+<!--<param name="converge" value="1"/>
+<param name="startConverge" value="200"/>-->
+</configuration>

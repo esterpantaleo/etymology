@@ -1,0 +1,11 @@
+<tomcat-users>
+  <!-- 
+    Private list of username/passwords.  The role
+    must be "secure", to match the "web.xml".
+
+    In practice this would be a private file; here
+    we provide an example.  There are many other ways 
+    to define this information (JDBC, encrypted, etc).
+    -->
+  <user name="test" password="test" roles="secure"/>
+</tomcat-users>

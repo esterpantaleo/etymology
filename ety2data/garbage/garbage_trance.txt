@@ -1,0 +1,120 @@
+after stripping parentheses, references, Images, Categories, Superseded sentences, and after adding a final dot: 
+From {{etyl|enm|en}} {{m|enm|traunce}}, from {{etyl|fro|en}} {{m|fro|transe||fear of coming evil", "passage from life to death}}, from {{m|fro|transir||to be numb with fear", "die", "pass on}}, from {{etyl|la|en}} {{m|la|trānseō||to cross over}}
+
+.
+m|eng|trance etymologically_derives_from m|enm|traunce
+m|enm|traunce etymologically_derives_from m|fro|transe||fear of coming evil", "passage from life to death
+m|fro|transe||fear of coming evil", "passage from life to death etymologically_derives_from m|fro|transir||to be numb with fear", "die", "pass on
+m|fro|transir||to be numb with fear", "die", "pass on etymologically_derives_from m|la|trānseō||to cross over
+after stripping parentheses, references, Images, Categories, Superseded sentences, and after adding a final dot: 
+
+.
+@prefix olia:  <http://purl.org/olia/olia.owl#> .
+@prefix fro-eng: <http://kaiko.getalp.org/dbnary/fro/eng/> .
+@prefix lemon: <http://lemon-model.net/lemon#> .
+@prefix dbnary: <http://kaiko.getalp.org/dbnary#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix enm-eng: <http://kaiko.getalp.org/dbnary/enm/eng/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lexvo: <http://lexvo.org/id/iso639-3/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#> .
+@prefix lat-eng: <http://kaiko.getalp.org/dbnary/lat/eng/> .
+@prefix eng:   <http://kaiko.getalp.org/dbnary/eng/> .
+
+eng:__ws_5_trance__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "5"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Trance music, a genre of electronic dance music."@en ] .
+
+eng:__ws_3_trance__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "3"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A state of low response to stimulus and diminished, narrow attention."@en ] .
+
+eng:trance  a            dbnary:Vocable ;
+        dbnary:refersTo  eng:trance__Verb__1 , eng:trance__Noun__1 .
+
+eng:__ws_1_trance__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A dazed or unconscious condition."@en ] .
+
+eng:__ws_8_trance__Verb__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "8"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "To pass over or across; to traverse."@en ] .
+
+eng:trance__Etymology_1
+        a                dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                enm-eng:traunce ;
+        dbnary:refersTo  eng:trance__Noun__1 .
+
+enm-eng:traunce  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                fro-eng:transe .
+
+fro-eng:transir  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                lat-eng:trānseō .
+
+eng:__ws_6_trance__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "6"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A tedious journey."@en ] .
+
+lat-eng:trānseō  a  dbnary:EtymologyEntry .
+
+eng:__ws_4_trance__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "4"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "The previous state induced by hypnosis."@en ] .
+
+eng:trance__Verb__1  a        lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Verb" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "trance"@en ;
+                                lexinfo:pronunciation  "/træns/"@en-fonipa , "/trɑːns/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_9_trance__Verb__1 , eng:__ws_8_trance__Verb__1 , eng:__ws_7_trance__Verb__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:verb .
+
+eng:trance_music  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:trance__Etymology_1 .
+
+eng:__ws_2_trance__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "2"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A state of concentration, awareness and/or focus that filters information and experience; e.g. meditation, possession, etc."@en ] .
+
+eng:__ws_9_trance__Verb__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "9"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "To pass; to travel."@en ] .
+
+fro-eng:transe  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                fro-eng:transir .
+
+eng:trancester  a           dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:trance__Etymology_1 .
+
+eng:trance-like  a          dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:trance__Etymology_1 .
+
+eng:trance__Noun__1  a        lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Noun" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "trance"@en ;
+                                lexinfo:pronunciation  "/træns/"@en-fonipa , "/trɑːns/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_4_trance__Noun__1 , eng:__ws_1_trance__Noun__1 , eng:__ws_6_trance__Noun__1 , eng:__ws_2_trance__Noun__1 , eng:__ws_5_trance__Noun__1 , eng:__ws_3_trance__Noun__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:noun .
+
+eng:__ws_7_trance__Verb__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "7"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "To entrance."@en ] .

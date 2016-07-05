@@ -1,0 +1,7 @@
+K 13
+svn:mergeinfo
+V 279
+/branches/1.1-gwtwiki-engine/src/main/java/org/getalp/dbnary/FrenchWiktionaryExtractor.java:1134-1141
+/branches/mbarry/src/main/java/org/getalp/dbnary/FrenchWiktionaryExtractor.java:1147-1157
+/trunk/extractor/src/main/java/org/getalp/dbnary/fra/WiktionaryExtractor.java:1610-1660
+END

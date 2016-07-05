@@ -1,0 +1,91 @@
+  --------
+  Wiktionary Support's Command Line Interface
+  --------
+  Gilles Sérasset
+  ---------
+  ---------
+  
+Dbnary Extractor's Command Line Interface
+
+%{toc|section=0|fromDepth=1|toDepth=2}
+
+  If you correctly compiled the dbnary project using maven, then you should have a jar with dbnary and all its dependencies. This jar is named
+  dbnary-1.1-SNAPSHOT-jar-with-dependencies.jar and is available either in the target folder or in you local maven repository.
+
+  Here, we will assume that this jar is in your CLASSPATH.
+
+* Extracting the page source
+
+  For English, you will use:
+
++-------------------------------------------------------+
+java -Xmx1G org.getalp.dbnary.cli.GetRawEntry \
+/path/to/dumps/enwiktionary.utf16.xml \
+"dictionary"
++-------------------------------------------------------+
+
+  Change "dictionary" with the wiktionary page name of your choice. 
+
+  [Warning:] on its first run, blexisma will index the whole dump data; this can take up to several minutes depending on your configuration. 
+
+* Extracting the page semantic network
+
++-------------------------------------------------------+
+java -Xmx1G org.getalp.dbnary.cli.GetExtractedSemnet en \
+/path/to/dumps/enwiktionary.utf16.xml \
+"dictionary"
++-------------------------------------------------------+
+
+  Change "dictionary" with the wiktionary page name of your choice. 
+
+  [Warning:] on its first run, blexisma will index the whole dump data; this can take up to several minutes depending on your configuration. 
+
+* Searching entries containing a certain pattern 
+
++-------------------------------------------------------+
+java -Xmx1G org.getalp.dbnary.cli.GrepInWiktionary pattern \
+/path/to/dumps/enwiktionary.utf16.xml \
++-------------------------------------------------------+
+
+   [Warning:] TODO
+
+* Extracting the semantic network of the whole wiktionary dump
+
+** Example
+
++-------------------------------------------------------+
+java -Xmx1G org.getalp.dbnary.cli.ExtractWiktionary \
+-l fr -f turtle -o fr_ -s \
+/path/to/dumps/enwiktionary.utf16.xml 
++-------------------------------------------------------+
+
+** Usage
+
++-------------------------------------------------------+
+usage: java -cp /path/to/wiktionary.jar
+            org.getalp.dbnary.cli.ExtractWiktionary [OPTIONS] dumpFile
+With OPTIONS in:
+ -f <arg>   Output format  (graphml, raw, rdf, turtle, ntriple, n3, ttl or
+            rdfabbrev). raw by default.
+ -h         Prints usage and exits.
+ -l <arg>   Language (fra, eng, por). fra by default.
+ -o <arg>   Output file. fr_extract by default
+ -s         Add a unique suffix to output file.
+dumpFile must be a Wiktionary dump file in UTF-16 encoding. dumpFile
+directory must be writable to store the index.
++-------------------------------------------------------+
+
+* Converting dump file to UTF-16
+
+   [Warning:] TODO
+   
+* Diffing two extracted networks
+
+   [Warning:] TODO
+
+* Getting stats on the extracted data
+
+   [Warning:] TODO
+
+
+  

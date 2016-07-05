@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<runtime>
+  
+  <!-- select the nameserver -->
+  <vm_parameter name="-Dorg.cougaar.name.server" value="NameServer@localhost:8888"/>
+  
+  
+  <!-- Set infrastructure to multi-host, see doc/OnlineManual/Templates.html -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.template"
+    value="lan"/>
+  
+  <!-- Set infrastructure to single-JVM, see doc/OnlineManual/Templates.html 
+  <vm_parameter
+     name="-Dorg.cougaar.society.xsl.param.template"
+     value="single_node"/> -->
+	
+  <!-- Optional tuning to reduce naming service startup time -->
+  <vm_parameter name="-Dorg.cougaar.core.wp.server.successTTD" value="30000"/>
+  <vm_parameter name="-Dorg.cougaar.core.wp.server.failTTD" value="1000"/>
+  <vm_parameter name="-Dorg.cougaar.core.wp.resolver.rmi.minLookup" value="500"/>
+  <vm_parameter name="-Dorg.cougaar.core.wp.resolver.rmi.maxLookup" value="2000"/>
+  <vm_parameter name="-Dorg.cougaar.core.mts.destq.retry.initialTimeout" value="250"/>
+  <vm_parameter name="-Dorg.cougaar.core.mts.destq.retry.maxTimeout" value="500"/>
+  
+  <!-- Optional log4j config file -->
+  <vm_parameter
+    name="-Dorg.cougaar.core.logging.config.filename"
+    value="$COUGAAR_RUNTIME_PATH/blexisma_logging.props"></vm_parameter>
+
+  <vm_parameter>-Xmx8G</vm_parameter>
+
+</runtime>

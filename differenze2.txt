@@ -1,0 +1,2709 @@
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/AbstractWiktionaryExtractor.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/AbstractWiktionaryExtractor.java
+import java.util.regex.*
+37,41c38,44
+< 		debutOrfinDecomPatternString= "(?:" +
+< 				"(<!--)" +
+< 				")|(?:" +
+< 				"(-->)" +
+< 				")";
+---
+> 		debutOrfinDecomPatternString=new StringBuilder()
+> 		.append("(?:")
+> 		.append("(<!--)")
+> 		.append(")|(?:")
+> 		.append("(-->)")
+> 		.append(")")
+> 		.toString();
+114c117,125
+<     
+---
+>     //Remove bibliographic references
+>     protected final static String biblRefPatternString = new StringBuilder() 
+> 	    .append("&lt;ref&gt;([^.]*?)&lt;ref&gt;").toString(); 
+> 
+>     public static String removeBiblRef(String s) { 
+> 	if (null == s) return null;
+>         s.replaceAll(biblRefPatternString, "");
+>         return(s);
+>     }
+136c147
+<         
+---
+>         this.pageContent = removeBiblRef(pageContent);
+396,398c408,411
+< 		int debut =0;
+< 		int fin =0 ;    // la fin de partie qui nous inter
+< 		int i= 0;
+---
+> 		int debut = 0;
+> 		int fin = 0 ;    // la fin de partie qui nous inter
+> 		int i = 0;
+>                 int numberOfParentheses = 0;
+403a417
+> 				    numberOfParentheses ++;
+413a428
+>                           
+414a430,431
+>                                     numberOfParentheses = numberOfParentheses - 1;
+>                                     if (numberOfParentheses==0){
+420a438,440
+> 				    }
+> 				} else if (s.charAt(i)=='('){
+>                                     numberOfParentheses ++;
+447c467
+< 	}
+---
+>     }
+Only in ety2data/trunk/extractor/src/main/java/org/getalp/dbnary: DbnaryWikiModel.java
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/IWiktionaryDataHandler.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/IWiktionaryDataHandler.java
+4,5c4
+< import java.util.Map;
+< import java.util.HashSet;
+---
+> import java.util.*;
+27c26,31
+<     void addPartOfSpeech(String pos);
+---
+>     void extractEtymology(String pageContent, int start, int end);
+>     void cleanEtymology();
+>     String getEtymology();
+> 
+>     String getMainLanguageIsoCode(); 
+>     String getCurrentEntryLanguageCode(); 
+28a33,34
+>     void addPartOfSpeech(String pos);
+>     
+104,105c110,112
+< 	void registerNymRelationOnCurrentSense(String target, String synRelation);
+< 	void registerPropertyOnLexicalEntry(Property p, RDFNode r);
+---
+> 	 void registerNymRelationOnCurrentSense(String target, String synRelation);
+> 	
+>          boolean registerEtymology(Map<String, String> args1, Map<String, String> args2, int type);
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/LangTools.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/LangTools.java
+4a5,6
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+7,8c9,15
+< 	public static String threeLettersCode(java.util.HashMap<String,String> h, String s) {
+< 		if(s == null || s.equals("")) {
+---
+>     static Logger log = LoggerFactory.getLogger(LangTools.class);
+> 
+>     //h is a map mapping language name to language code that complements ISO639_3
+>     //defined in eng/EnglishLangToCode.java
+>     //same for other languages different than English
+>     public static String threeLettersCode(java.util.HashMap<String,String> h, String s) {
+> 	if (s == null || s.equals("")) {
+12,19c19,20
+< 		s= s.trim();
+< 		s=s.toLowerCase();
+< 		String res = getCode(s);
+< 
+< 		if (res == null && h != null && h.containsKey(s)) {
+< 			s = h.get(s);
+< 			res = getCode(s);
+< 		}
+---
+> 		s = s.trim();//.toLowerCase();//why to lower case?? e.g.: LL.
+> 		String res = ISO639_3.sharedInstance.getIdCode(s);
+21,22c22,28
+< 		return res;
+< 	}
+---
+> 		if (res == null && h != null && h.containsKey(s)){
+> 		    s = h.get(s);
+> 		    res = ISO639_3.sharedInstance.getIdCode(s);
+>                     if (res == null) return s;
+> 		}
+>     		return res;
+>     }
+42,48c48,53
+<         Lang l = ISO639_3.sharedInstance.getLang(lang);
+< 
+<         if (l == null) {
+<             return null;
+<         }
+< 		String p1 = l.getPart1();
+< 		return (null != p1 && ! "".equals(p1.trim())) ? l.getPart1() : l.getId();
+---
+>             Lang l = ISO639_3.sharedInstance.getLang(lang);
+>             if (l == null) {
+>                 return null;
+>             }
+>             String p1 = l.getPart1();
+> 	    return (null != p1 && ! "".equals(p1.trim())) ? l.getPart1() : l.getId();
+52c57,58
+< 		return normalize(lang, lang);
+---
+> 	    String normLang = ISO639_3.sharedInstance.getIdCode(lang);
+>             return normLang == null? lang : normLang;
+55,63c61,65
+< 	private static String normalize(String lang, String fallback) {
+< 		String normLangCode = getCode(lang);
+< 
+< 		if (normLangCode == null) {
+< 			return fallback;
+< 		}
+< 
+< 		return normLangCode;
+< 	}
+---
+>     //private static String normalize(String languageCode, String fallback) {
+>     //		String normLanguageCode = getCode(languageCode);
+>     //
+>     //          return normLanguageCode == null? fallback : normLanguageCode;
+>     //}
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/LemonBasedRDFDataHandler.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/LemonBasedRDFDataHandler.java
+28a29,30
+>         public ArrayList<Resource> etymologyPos;
+>         public String etymologyString;
+34d35
+< 	
+44c45,47
+< 	
+---
+>         private String currentEntryLanguageCode = null;
+>         private String currentPrefix = null;
+> 
+47a51
+>         protected int currentEtymologyNumber;
+50a55
+>         protected String mainLanguageIsoCode; 
+51a57,58
+>         protected Resource currentEtymologyEntry;
+>         public HashMap<String,String> prefixes = new HashMap<String,String>();
+56c63
+< 	private String NS;
+---
+> 	protected String NS;
+119a127,173
+>     public String getPrefixe(String lang){
+>         return getPrefixe(lang, false);
+>     }
+> 
+>     public String getPrefixe(String languageIsoCode, Boolean dontcheck){ 
+>         if (dontcheck)
+>             return this.prefixes.get(languageIsoCode);
+> 	if(this.prefixes.containsKey(languageIsoCode)){
+>             return this.prefixes.get(languageIsoCode);
+> 	}
+>         String prefix = DBNARY_NS_PREFIX + "/" + languageIsoCode + "/" + mainLanguageIsoCode + "/";
+>         prefixes.put(languageIsoCode, prefix); 
+>         aBox.setNsPrefix(languageIsoCode + "-" + mainLanguageIsoCode, prefix); 
+>         return prefix;  
+>     }
+> 
+>     @Override
+>     public String getMainLanguageIsoCode(){ 
+> 	return mainLanguageIsoCode;
+>     }
+> 
+>     @Override
+>     public String getCurrentEntryLanguageCode(){
+>         return currentEntryLanguageCode;
+>     }
+>    
+>     public void setCurrentLanguage(String lang) {
+>         setCurrentLanguage(lang, false);
+>     }
+> 
+>     public void setCurrentLanguage(String languageCode, Boolean dontcheck) {
+>         if (languageCode.equals(mainLanguageIsoCode)){
+>             currentEntryLanguageCode = null;
+>             currentPrefix = null;
+>             return;
+> 	}
+> 	currentEntryLanguageCode = languageCode;
+> 	currentPrefix = getPrefixe(languageCode, dontcheck);
+>     }
+> 
+>     public String getPrefix() {
+>         if (currentPrefix != null){
+>             return currentPrefix; 
+> 	} 
+>         return NS;
+>     }
+> 
+125c179
+< 		
+---
+> 		etymologyPos = new ArrayList<Resource>();
+127c181
+< 
+---
+>                 mainLanguageIsoCode = lang;
+>         
+>         @Override 
+>         public void extractEtymology(String pageContent, int start, int end){
+>             etymologyString = pageContent.substring(start, end);
+
+>         @Override 
+> 	public void cleanEtymology(){
+>             etymologyString = null;
+>             etymologyPos.clear();
+>             currentEtymologyEntry = null;
+525,526c683,684
+<             String otherFormNodeName = computeOtherFormResourceName(lexEntry,properties);
+< 			Resource otherForm = morphoBox.createResource(getPrefix() + otherFormNodeName, LemonOnt.Form);
+---
+> 		    String otherFormNodeName = computeOtherFormResourceName(lexEntry,properties);
+> 			Resource otherForm = morphoBox.createResource();
+795,800c950,951
+< 	public String getPrefix() {
+< 		return NS;
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanDBnaryWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanDBnaryWikiModel.java
+3,4d2
+< import info.bliki.wiki.filter.ParsedPageName;
+< import info.bliki.wiki.model.WikiModelContentException;
+27,28c25,26
+<     public String getRawWikiContent(ParsedPageName parsedPagename, Map<String, String> map) throws WikiModelContentException {
+<         String result = super.getRawWikiContent(parsedPagename, map);
+---
+>     public String getRawWikiContent(String namespace, String articleName, Map<String, String> map) {
+>         String result = super.getRawWikiContent(namespace, articleName, map);
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanInflectionData.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanInflectionData.java
+19,28c19,28
+<     public enum Genre {MASCULIN,FEMININ,NEUTRUM,NOTHING};
+<     public enum Cas {NOMINATIF,GENITIF,DATIF,ACCUSATIF, NOTHING};
+<     public enum Mode {INFINITIV,ZU_INFINITIV,PARTIZIPIEN,GERUNDIVUM,IMPERATIV,INDICATIV, KONJUNKTIV2, KONJUNKTIV1, NOTHING};
+<     public enum Voice {AKTIV, VORGANGSPASSIV, ZUSTANDSPASSIV, PASSIV, ZUSTANDSREFLEXIVEPASSIV, REFLEXIV, NOTHING};
+<     public enum Tense {PRÄSENS, PRÄTERITUM, PERFEKT, FUTURE1, FUTURE2, PLUSQUAMPERFEKT, NOTHING};
+<     public enum Degree {POSITIVE,COMPARATIVE,SUPERLATIVE,NOTHING};
+<     public enum GNumber {SINGULAR,PLURAL,NOTHING};
+<     public enum Person {FIRST, SECOND, THIRD, HÖFLICHKEITSFORM, NOTHING};
+<     public enum InflectionType {STRONG, WEAK, MIXED, NOTHING};
+<     public enum Valency {TRANSITIVE, INTRANSITIVE, NOTHING};
+---
+>     public static enum Genre {MASCULIN,FEMININ,NEUTRUM,NOTHING};
+>     public static enum Cas {NOMINATIF,GENITIF,DATIF,ACCUSATIF, NOTHING};
+>     public static enum Mode {INFINITIV,ZU_INFINITIV,PARTIZIPIEN,GERUNDIVUM,IMPERATIV,INDICATIV, KONJUNKTIV2, KONJUNKTIV1, NOTHING};
+>     public static enum Voice {AKTIV, VORGANGSPASSIV, ZUSTANDSPASSIV, PASSIV, ZUSTANDSREFLEXIVEPASSIV, REFLEXIV, NOTHING};
+>     public static enum Tense {PRÄSENS, PRÄTERITUM, PERFEKT, FUTURE1, FUTURE2, PLUSQUAMPERFEKT, NOTHING};
+>     public static enum Degree {POSITIVE,COMPARATIVE,SUPERLATIVE,NOTHING};
+>     public static enum GNumber {SINGULAR,PLURAL,NOTHING};
+>     public static enum Person {FIRST, SECOND, THIRD, HÖFLICHKEITSFORM, NOTHING};
+>     public static enum InflectionType {STRONG, WEAK, MIXED, NOTHING};
+>     public static enum Valency {TRANSITIVE, INTRANSITIVE, NOTHING};
+copied || Only in dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu: GermanMorphologyExtractor.java
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanMorphologyExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanMorphologyExtractorWikiModel.java
+68,73c68,69
+<         try {
+<             render(new PlainTextConverter(), page).trim();
+<         } catch (IOException e) {
+<             e.printStackTrace();
+<         }
+<     }
+---
+> 		render(new PlainTextConverter(), page).trim();
+> 	}
+92,93d87
+<                 if (parameterMap.containsKey("Genus"))
+<                     log.debug("Morphology Extraction: Nachname with Genus --in-- {}", this.getPageName());
+118,119c112
+<                 // Should I expand every other templates ?
+<                 // super.substituteTemplateCall(templateName, parameterMap, writer);
+---
+>                 super.substituteTemplateCall(templateName, parameterMap, writer);
+copied || Only in dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu: GermanSubstantiveDeklinationExtractorWikiModel.java
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanTableExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanTableExtractorWikiModel.java
+3d2
+< import org.getalp.dbnary.DBnaryOnt;
+15d13
+< import java.io.IOException;
+30,44c28
+<     @Override
+<     public void substituteTemplateCall(String templateName,
+<                                        Map<String, String> parameterMap, Appendable writer)
+<             throws IOException {
+<        if ("Flexlink".equals(templateName)) {
+<            // Just display the link name and drop the link...
+<            writer.append(parameterMap.get("1"));
+<         } else {
+<             log.debug("Caught template call: {} --in-- {}", templateName, this.getPageName());
+<             super.substituteTemplateCall(templateName, parameterMap, writer);
+<         }
+<     }
+< 
+< 
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu/WiktionaryExtractor.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/deu/WiktionaryExtractor.java
+37d36
+<     protected GermanMorphologyExtractor morphologyExtractor;
+43d41
+<         morphologyExtractor = new GermanMorphologyExtractor(wdh, wi);
+360d357
+< 		log.trace("Leaving block {} while parsing entry {}", currentBlock.name(), this.wiktionaryPageName);
+486,487c483
+< 
+< 		// morphologyExtractorWikiModel.setPageName(wiktionaryPageName);
+---
+> 		morphologyExtractorWikiModel.setPageName(wiktionaryPageName);
+489,490c485,486
+<         morphologyExtractor.extractMorphologicalData(region, wiktionaryPageName);
+< 		// morphologyExtractorWikiModel.parseOtherForm(region, wdh.currentWiktionaryPos());
+---
+> 
+> 		morphologyExtractorWikiModel.parseOtherForm(region, wdh.currentWiktionaryPos());
+714a711,719
+> 	public void extractOtherForms( int start, int end){
+> //		Matcher otherFormMatcher = otherFormPattern.matcher(pageContent);
+> //		otherFormMatcher.region(start, end);
+> //		GermanDeklinationExtractorWikiModel deklinationExtractor = new
+> //		while(otherFormMatcher.find()){
+> //		}
+> 	}
+> 	
+> 
+copied || Only in dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/eng: EnglishInflectionData.java
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/eng/ForeignLanguagesWiktionaryDataHandler.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng/ForeignLanguagesWiktionaryDataHandler.java
+6d5
+< import org.getalp.dbnary.PronunciationPair;
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/eng/WiktionaryDataHandler.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng/WiktionaryDataHandler.java
+6c6
+< import org.getalp.dbnary.*;
+---
+> import org.getalp.dbnary.*
+37c37
+<         posAndTypeValueMap.put("Number", new PosAndType(LexinfoOnt.numeral, LexinfoOnt.Number));
+---
+>         posAndTypeValueMap.put("Number", new PosAndType(LexinfoOnt.numeral, LexinfoOnt.Numeral));
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/eng/WiktionaryExtractor.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng/WiktionaryExtractor.java
+
+---
+>            if (g1.equals("t+") || g1.equals("t-") || g1.equals("tø") || g1.equals("t")) {
+>                // DONE: Sometimes translation links have a remaining info after the word, keep it.
+>                String g2 = macroMatcher.group(2);
+>                int i1, i2;
+>                String lang, word;
+>                if (g2 != null && (i1 = g2.indexOf('|')) != -1) {
+> 		   //lang = LangTools.normalize(g2.substring(0, i1));
+742,743c1185,1188
+<                     lang=EnglishLangToCode.threeLettersCode(lang);
+<                     if(lang!=null){
+---
+>                     lang = EnglishLangToCode.threeLettersCode(g2.substring(0, i1));
+>                     if (lang == null){
+>                         log.debug("macromatcher {} with unknown language; skipping translations", macroMatcher.group());
+> 		    } else {
+773c1218
+<     protected void extractPron(int startOffset, int endOffset) {
+---
+>     private void extractPron(int startOffset, int endOffset) {
+Only in ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng: WiktionaryLang.java
+Only in ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/eng: WiktionaryLang.java~
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/fin/FinnishTranslationExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/fin/FinnishTranslationExtractorWikiModel.java
+9d8
+< import java.util.Set;
+74c73
+< 		} else if ("käännökset/korjattava".equalsIgnoreCase(templateName) || "kään/korj".equals(templateName) || "korjattava/käännökset".equals(templateName)) {
+---
+> 		} else if ("käännökset/korjattava".equals(templateName) || "kään/korj".equals(templateName) || "korjattava/käännökset".equals(templateName)) { 
+76,88c75
+< 		} else if (knownTranslationTemplates.contains(templateName)) {
+<             // Language name, resubstitute it with its own value
+<             writer.append("{-")
+<                     .append(templateName)
+<                     .append("|")
+<                     .append(WikiTool.toParameterString(parameterMap))
+<                     .append("-}");
+<         } else if (isALanguageName(templateName)) {
+< 			// Language name, resubstitute it with its own value
+< 			writer.append(templateName);
+< 		} else if ("yhteys".equals(templateName) || "kuva".equals(templateName)) {
+<             super.substituteTemplateCall(templateName, parameterMap, writer);
+<         } else {
+---
+> 		} else {
+95,98d81
+< 	private boolean isALanguageName(String templateName) {
+<         return null != SuomiLangToCode.getCanonicalCode(templateName);
+<     }
+< 
+143,160c126,138
+<         // TODO: We should suppress multiline xml comments even if macros or line are to be on a single line.
+<         macroOrLinkOrcarPatternString = new StringBuilder()
+<                 .append("(?:")
+<                 // Macro-modified for translation extractions
+<                 .append("\\{\\-")
+<                 .append("([^\\}\\|\n\r]*)(?:\\|([^\\}\n\r]*))?")
+<                 .append("\\-\\}")
+<                 .append(")|(?:")
+<                 .append(WikiPatterns.macroPatternString)
+<                 .append(")|(?:")
+<                 .append(WikiPatterns.linkPatternString)
+<                 .append(")|(?:")
+<                 .append("(:*\\*)")
+<                 .append(")|(?:")
+<                 .append("(\\*:)")
+<                 .append(")|(?:")
+<                 .append(carPatternString)
+<                 .append(")").toString();
+---
+> 		// TODO: We should suppress multiline xml comments even if macros or line are to be on a single line.
+> 		macroOrLinkOrcarPatternString = new StringBuilder()
+> 		.append("(?:")
+> 		.append(WikiPatterns.macroPatternString)
+> 		.append(")|(?:")
+> 		.append(WikiPatterns.linkPatternString)
+> 		.append(")|(?:")
+> 		.append("(:*\\*)")
+> 		.append(")|(?:")
+> 		.append("(\\*:)")
+> 		.append(")|(?:")
+> 		.append(carPatternString)
+> 		.append(")").toString();
+178,207c156
+< 
+<     public static Set<String> knownTranslationTemplates = new HashSet<String>();
+<     static {
+<         knownTranslationTemplates.add("ylä");
+<         knownTranslationTemplates.add("ala");
+<         knownTranslationTemplates.add("keski");
+<         knownTranslationTemplates.add("käännös");
+<         knownTranslationTemplates.add("l");
+<         knownTranslationTemplates.add("n");
+<         knownTranslationTemplates.add("m");
+<         knownTranslationTemplates.add("f");
+<         knownTranslationTemplates.add("mf");
+<         knownTranslationTemplates.add("ijekavica");
+<         knownTranslationTemplates.add("ekavica");
+<         knownTranslationTemplates.add("monikollinen");
+<         knownTranslationTemplates.add("arkikieltä");
+<         knownTranslationTemplates.add("ru-ia");
+<         knownTranslationTemplates.add("BrE");
+<         knownTranslationTemplates.add("AmE");
+<         knownTranslationTemplates.add("Am");
+<         knownTranslationTemplates.add("ru-pa");
+<         knownTranslationTemplates.add("ru-tr");
+<         knownTranslationTemplates.add("el-tr");
+<         knownTranslationTemplates.add("sv-3");
+<         knownTranslationTemplates.add("sv-4");
+<         knownTranslationTemplates.add("sv-5");
+<         knownTranslationTemplates.add("cs-ia");
+<         knownTranslationTemplates.add("de-a");
+< 
+<     }
+---
+> 	
+227,231c176,179
+<             if (null == macro) macro = macroOrLinkOrcarMatcher.group(3);
+< 			String link = macroOrLinkOrcarMatcher.group(5);
+< 			String star = macroOrLinkOrcarMatcher.group(7);
+< 			String starcont = macroOrLinkOrcarMatcher.group(8);
+< 			String character = macroOrLinkOrcarMatcher.group(9);
+---
+> 			String link = macroOrLinkOrcarMatcher.group(3);
+> 			String star = macroOrLinkOrcarMatcher.group(5);
+> 			String starcont = macroOrLinkOrcarMatcher.group(6);
+> 			String character = macroOrLinkOrcarMatcher.group(7);
+240,243c188,189
+< 						} else if (macroOrLinkOrcarMatcher.group(4) != null) {
+<                             currentGlose = macroOrLinkOrcarMatcher.group(4);
+<                         } else {
+<                             currentGlose = null;
+---
+> 						} else {
+> 							currentGlose = null;
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/fin/SuomiLangToCode.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/fin/SuomiLangToCode.java
+9,11c9,10
+< 	static HashMap<String,String> nc = new HashMap<String,String>();
+< 	static HashMap<String,String> cn = new HashMap<String,String>();
+< 
+---
+> static HashMap<String,String> h = new HashMap<String,String>();
+> 	
+13,859c12,318
+<         nc.put("kantoninkiina","zh-yue");
+<         nc.put("mandariinikiina","zh");
+<         nc.put("afar","aa");
+< 		nc.put("abhaasi","ab");
+< 		nc.put("adyge","ady");
+< 		nc.put("avesta","ae");
+< 		nc.put("afrikaans","af");
+< 		nc.put("jokin afro-aasialainen kieli","afa");
+< 		nc.put("afrihili","afh");
+< 		nc.put("arguni","agf");
+< 		nc.put("ainu","ain");
+< 		nc.put("aari","aiw");
+< 		nc.put("akan","ak");
+< 		nc.put("akkadi","akk");
+< 		nc.put("aleutti","ale");
+< 		nc.put("algonkin-kielet","alg");
+< 		nc.put("elsassi","als");
+< 		nc.put("altai","alt");
+< 		nc.put("amhara","am");
+< 		nc.put("aragonia","an");
+< 		nc.put("muinaisenglanti","ang");
+< 		nc.put("angika","anp");
+< 		nc.put("sa'a","apb");
+< 		nc.put("arabia","ar");
+< 		nc.put("aramea","arc");
+< 		nc.put("araukaani","arn");
+< 		nc.put("arapho","arp");
+< 		nc.put("assami","as");
+< 		nc.put("asturia","ast");
+< 		nc.put("avaari","av");
+< 		nc.put("aimara","ay");
+< 		nc.put("azeri","az");
+< 		nc.put("baškiiri","ba");
+< 		nc.put("bali","ban");
+< 		nc.put("basa","bas");
+< 		nc.put("balttilaiset kielet","bat");
+< 		nc.put("valkovenäjä","be");
+< 		nc.put("bedža","bej");
+< 		nc.put("bemba","bem");
+< 		nc.put("berberikielet","ber");
+< 		nc.put("bulgaria","bg");
+< 		nc.put("bihari","bh");
+< 		nc.put("bima","bhp");
+< 		nc.put("bislama","bi");
+< 		nc.put("mustajalka","bla");
+< 		nc.put("bambara","bm");
+< 		nc.put("bengali","bn");
+< 		nc.put("bantukielet","bnt");
+< 		nc.put("bintulu","bny");
+< 		nc.put("tiibet","bo");
+< 		nc.put("bretoni","br");
+< 		nc.put("bosnia","bs");
+< 		nc.put("blin","byn");
+< 		nc.put("babuza","bzg");
+< 		nc.put("buli","bzq");
+< 		nc.put("katalaani","ca");
+< 		nc.put("caddo","cad");
+< 		nc.put("keskiamerikkalaiset intiaanikielet","cai");
+< 		nc.put("karoliini","cal");
+< 		nc.put("karibi","car");
+< 		nc.put("tšetšeeni","ce");
+< 		nc.put("cebuano","ceb");
+< 		nc.put("tšamorro","ch");
+< 		nc.put("tšagatai","chg");
+< 		nc.put("chuuk","chk");
+< 		nc.put("mari","chm");
+< 		nc.put("choctaw","cho");
+< 		nc.put("cherokee","chr");
+< 		nc.put("cheyenne","chy");
+< 		nc.put("kavalan","ckv");
+< 		nc.put("shilluk","cl");
+< 		nc.put("tsam-kielet","cmc");
+< 		nc.put("mandariinikiina","cmn");
+< 		nc.put("korsika","co");
+< 		nc.put("kopti","cop");
+< 		nc.put("englantilaiset kreolikielet","cpe");
+< 		nc.put("ranskalaiset kreolikielet","cpf");
+< 		nc.put("portugalilaiset kreolikielet","cpp");
+< 		nc.put("cree","cr");
+< 		nc.put("krimintataari","crh");
+< 		nc.put("tšekki","cs");
+< 		nc.put("kašubi","csb");
+< 		nc.put("kirkkoslaavi","cu");
+< 		nc.put("tšuvassi","cv");
+< 		nc.put("kymri","cy");
+< 		nc.put("tanska","da");
+< 		nc.put("saksa","de");
+< 		nc.put("dogri","doi");
+< 		nc.put("dravidakielet","dra");
+< 		nc.put("alasorbi","dsb");
+< 		nc.put("keskihollanti","dum");
+< 		nc.put("divehi","dv");
+< 		nc.put("djula","dyu");
+< 		nc.put("dzongkha","dz");
+< 		nc.put("ewe","ee");
+< 		nc.put("efik","efi");
+< 		nc.put("kreikka","el");
+< 		nc.put("englanti","en");
+< 		nc.put("keskienglanti","enm");
+< 		nc.put("esperanto","eo");
+< 		nc.put("espanja","es");
+< 		nc.put("viro","et");
+< 		nc.put("baski","eu");
+< 		nc.put("persia","fa");
+< 		nc.put("fulani","ff");
+< 		nc.put("suomi","fi");
+< 		nc.put("filipino","fil");
+< 		nc.put("jokin suomalais-ugrilainen kieli","fiu");
+< 		nc.put("karjala","fiu-kar");
+< 		nc.put("võro","fiu-vro");
+< 		nc.put("fidži","fj");
+< 		nc.put("fääri","fo");
+< 		nc.put("siraya","fos");
+< 		nc.put("ranska","fr");
+< 		nc.put("keskiranska","frm");
+< 		nc.put("muinaisranska","fro");
+< 		nc.put("arpitaani","frp");
+< 		nc.put("friuli","fur");
+< 		nc.put("friisi","fy");
+< 		nc.put("iiri","ga");
+< 		nc.put("gayo","gay");
+< 		nc.put("gbaja","gba");
+< 		nc.put("gaeli","gd");
+< 		nc.put("gedaged","gdd");
+< 		nc.put("germaaniset kielet","gem");
+< 		nc.put("kiribati","gil");
+< 		nc.put("galego","gl");
+< 		nc.put("keskiyläsaksa","gmh");
+< 		nc.put("guarani","gn");
+< 		nc.put("muinaisyläsaksa","goh");
+< 		nc.put("gondi","gon");
+< 		nc.put("gorontalo","gor");
+< 		nc.put("gootti","got");
+< 		nc.put("muinaiskreikka","grc");
+< 		nc.put("gari","gri");
+< 		nc.put("gudžarati","gu");
+< 		nc.put("manksi","gv");
+< 		nc.put("gwich'in","gwi");
+< 		nc.put("hausa","ha");
+< 		nc.put("havaiji","haw");
+< 		nc.put("heprea","he");
+< 		nc.put("hindi","hi");
+< 		nc.put("hiri motu","ho");
+< 		nc.put("kroatia","hr");
+< 		nc.put("yläsorbi","hsb");
+< 		nc.put("haitinkreoli","ht");
+< 		nc.put("unkari","hu");
+< 		nc.put("hupa","hup");
+< 		nc.put("armenia","hy");
+< 		nc.put("herero","hz");
+< 		nc.put("interlingua","ia");
+< 		nc.put("iban","iba");
+< 		nc.put("igbo","ibo");
+< 		nc.put("indonesia","id");
+< 		nc.put("interlingue","ie");
+< 		nc.put("igbo","ig");
+< 		nc.put("nuosu","ii");
+< 		nc.put("inupiatun","ik");
+< 		nc.put("iloko","ilo");
+< 		nc.put("inguuši","inh");
+< 		nc.put("inkeroinen","ink");
+< 		nc.put("ido","io");
+< 		nc.put("iranilaiset kielet","ira");
+< 		nc.put("islanti","is");
+< 		nc.put("italia","it");
+< 		nc.put("inuktitut","iu");
+< 		nc.put("japani","ja");
+< 		nc.put("lojban","jbo");
+< 		nc.put("juutalaispersia","jpr");
+< 		nc.put("juutalaisarabia","jrb");
+< 		nc.put("jaava","jv");
+< 		nc.put("georgia","ka");
+< 		nc.put("karakalpakki","kaa");
+< 		nc.put("kabardi","kbd");
+< 		nc.put("kongo","kg");
+< 		nc.put("saka","kho");
+< 		nc.put("kikuju","ki");
+< 		nc.put("kilivila","kij");
+< 		nc.put("kwanjama","kj");
+< 		nc.put("kazakki","kk");
+< 		nc.put("grönlanti","kl");
+< 		nc.put("khmer","km");
+< 		nc.put("kannada","kn");
+< 		nc.put("korea","ko");
+< 		nc.put("kosrae","kos");
+< 		nc.put("koyukon","koy");
+< 		nc.put("kapingamarangi","kpg");
+< 		nc.put("kanuri","kr");
+< 		nc.put("karatšai-balkaari","krc");
+< 		nc.put("karjala","krl");
+< 		nc.put("kašmiri","ks");
+< 		nc.put("kurdi","ku");
+< 		nc.put("'auhelawa","kud");
+< 		nc.put("komi","kv");
+< 		nc.put("kove","kvc");
+< 		nc.put("korni","kw");
+< 		nc.put("kwaio","kwd");
+< 		nc.put("kwara'ae","kwf");
+< 		nc.put("kairiru","kxa");
+< 		nc.put("kirgiisi","ky");
+< 		nc.put("kayupulau","kzu");
+< 		nc.put("latina","la");
+< 		nc.put("ladino","lad");
+< 		nc.put("lamba","lam");
+< 		nc.put("luxemburg","lb");
+< 		nc.put("wampar","lbq");
+< 		nc.put("ganda","lg");
+< 		nc.put("lahanan","lhn");
+< 		nc.put("limburgi","li");
+< 		nc.put("likum","lib");
+< 		nc.put("liivi","liv");
+< 		nc.put("lampung","ljp");
+< 		nc.put("lau","llu");
+< 		nc.put("hano","lml");
+< 		nc.put("lingala","ln");
+< 		nc.put("lao","lo");
+< 		nc.put("lou","loj");
+< 		nc.put("lozi","loz");
+< 		nc.put("liettua","lt");
+< 		nc.put("latgalli","ltg");
+< 		nc.put("luba","lu");
+< 		nc.put("luba (Lulua)","lua");
+< 		nc.put("latvia","lv");
+< 		nc.put("madura","mad");
+< 		nc.put("magahi","mag");
+< 		nc.put("mokša","mdf");
+< 		nc.put("motu","meu");
+< 		nc.put("mbembe","mfn");
+< 		nc.put("malagassi","mg");
+< 		nc.put("mailu","mgu");
+< 		nc.put("marshall","mh");
+< 		nc.put("buru","mhs");
+< 		nc.put("maori","mi");
+< 		nc.put("makedonia","mk");
+< 		nc.put("mon-khmer-kielet","mkh");
+< 		nc.put("malajalam","ml");
+< 		nc.put("mongoli","mn");
+< 		nc.put("mantšu","mnc");
+< 		nc.put("manipuri","mni");
+< 		nc.put("manobo-kielet","mno");
+< 		nc.put("moldavia","mo");
+< 		nc.put("manggarai","mqy");
+< 		nc.put("marathi","mr");
+< 		nc.put("marquesas","mrq");
+< 		nc.put("mangareva","mrv");
+< 		nc.put("malaiji","ms");
+< 		nc.put("malta","mt");
+< 		nc.put("mota","mtt");
+< 		nc.put("creek","mus");
+< 		nc.put("manam","mva");
+< 		nc.put("burma","my");
+< 		nc.put("ersä","myv");
+< 		nc.put("nauru","na");
+< 		nc.put("nahuatl","nah");
+< 		nc.put("napoli","nap");
+< 		nc.put("norja (bokmål)","nb");
+< 		nc.put("nauna","ncn");
+< 		nc.put("pohjois-ndebele","nd");
+< 		nc.put("alasaksa","nds");
+< 		nc.put("hollannin alasaksa","nds-nl");
+< 		nc.put("nepali","ne");
+< 		nc.put("nengone","nen");
+< 		nc.put("ndonga","ng");
+< 		nc.put("nigeriläis-kongolaiset kielet","nic");
+< 		nc.put("niue","niu");
+< 		nc.put("nukuoro","nkr");
+< 		nc.put("hollanti","nl");
+< 		nc.put("norja (nynorsk)","nn");
+< 		nc.put("norja (bokmål)","no");
+< 		nc.put("novial","nov");
+< 		nc.put("n'ko","nqo");
+< 		nc.put("etelä-ndebele","nr");
+< 		nc.put("pohjoissotho","nso");
+< 		nc.put("navajo","nv");
+< 		nc.put("ngadha","nxg");
+< 		nc.put("njandža","ny");
+< 		nc.put("nzima","nzi");
+< 		nc.put("oksitaani","oc");
+< 		nc.put("ojibwe","oj");
+< 		nc.put("oromo","om");
+< 		nc.put("orija","or");
+< 		nc.put("osseetti","os");
+< 		nc.put("osmani","ota");
+< 		nc.put("punjabi","pa");
+< 		nc.put("kapampangan","pam");
+< 		nc.put("palau","pau");
+< 		nc.put("aklanon","phi");
+< 		nc.put("foinikia","phn");
+< 		nc.put("paali","pi");
+< 		nc.put("pitjantjatjara","pjt");
+< 		nc.put("pukapuka","pkp");
+< 		nc.put("puola","pl");
+< 		nc.put("pamona","pmf");
+< 		nc.put("tuamotu","pmt");
+< 		nc.put("ponape","pon");
+< 		nc.put("prakit-kielet","pra");
+< 		nc.put("muinaisoksitaani","pro");
+< 		nc.put("paštu","ps");
+< 		nc.put("portugali","pt");
+< 		nc.put("paiwan","pwn");
+< 		nc.put("pyuma","pyu");
+< 		nc.put("ketšua","qu");
+< 		nc.put("rapanui","rap");
+< 		nc.put("rarotonga","rar");
+< 		nc.put("retoromaani","rm");
+< 		nc.put("suomen romani","rmf");
+< 		nc.put("vlaxinromani","rmy");
+< 		nc.put("kirundi","rn");
+< 		nc.put("romania","ro");
+< 		nc.put("romani","rom");
+< 		nc.put("ririo","rri");
+< 		nc.put("rotuma","rtm");
+< 		nc.put("venäjä","ru");
+< 		nc.put("aromania","rup");
+< 		nc.put("kinjaruanda","rw");
+< 		nc.put("sanskrit","sa");
+< 		nc.put("jakuutti","sah");
+< 		nc.put("sasak","sas");
+< 		nc.put("santali","sat");
+< 		nc.put("sardi","sc");
+< 		nc.put("sisilia","scn");
+< 		nc.put("skotti","sco");
+< 		nc.put("sindhi","sd");
+< 		nc.put("pohjoissaame","se");
+< 		nc.put("selkuppi","sel");
+< 		nc.put("seemiläiset kielet","sem");
+< 		nc.put("sango","sg");
+< 		nc.put("muinaisiiri","sga");
+< 		nc.put("viittomakielet","sgn");
+< 		nc.put("serbokroaatti","sh");
+< 		nc.put("sinhali","si");
+< 		nc.put("slovakki","sk");
+< 		nc.put("sikaiana","sky");
+< 		nc.put("sloveeni","sl");
+< 		nc.put("samoa","sm");
+< 		nc.put("eteläsaame","sma");
+< 		nc.put("luulajansaame","smj");
+< 		nc.put("inarinsaame","smn");
+< 		nc.put("koltansaame","sms");
+< 		nc.put("shona","sn");
+< 		nc.put("soninke","snk");
+< 		nc.put("somali","so");
+< 		nc.put("sogdi","sog");
+< 		nc.put("songhai","son");
+< 		nc.put("albania","sq");
+< 		nc.put("serbia","sr");
+< 		nc.put("swazi","ss");
+< 		nc.put("thao","ssf");
+< 		nc.put("seimat","ssg");
+< 		nc.put("sengseng","ssz");
+< 		nc.put("sotho","st");
+< 		nc.put("sunda","su");
+< 		nc.put("susu","sus");
+< 		nc.put("sumeri","sux");
+< 		nc.put("ruotsi","sv");
+< 		nc.put("swahili","sw");
+< 		nc.put("saaroa","sxr");
+< 		nc.put("tamili","ta");
+< 		nc.put("atayal","tay");
+< 		nc.put("telugu","te");
+< 		nc.put("temne","tem");
+< 		nc.put("terêna","ter");
+< 		nc.put("tetum","tet");
+< 		nc.put("tadžikki","tg");
+< 		nc.put("tigak","tgc");
+< 		nc.put("thai","th");
+< 		nc.put("tigrinja","ti");
+< 		nc.put("turkmeeni","tk");
+< 		nc.put("tokelau","tkl");
+< 		nc.put("teanu","tkw");
+< 		nc.put("tagalog","tl");
+< 		nc.put("klingon","tlh");
+< 		nc.put("levei","tlx");
+< 		nc.put("tswana","tn");
+< 		nc.put("tonga","to");
+< 		nc.put("toki pona","tokipona");
+< 		nc.put("tok pisin","tpi");
+< 		nc.put("turkki","tr");
+< 		nc.put("taroko","trv");
+< 		nc.put("tsonga","ts");
+< 		nc.put("tsimsi","tsi");
+< 		nc.put("tataari","tt");
+< 		nc.put("tumbuka","tum");
+< 		nc.put("tupi-kielet","tup");
+< 		nc.put("altailaiset kielet","tut");
+< 		nc.put("tuvalu","tvl");
+< 		nc.put("twi","tw");
+< 		nc.put("tahiti","ty");
+< 		nc.put("tuva","tyv");
+< 		nc.put("udmurtti","udm");
+< 		nc.put("uiguuri","ug");
+< 		nc.put("ukraina","uk");
+< 		nc.put("urdu","ur");
+< 		nc.put("uzbekki","uz");
+< 		nc.put("venda","ve");
+< 		nc.put("vepsä","vep");
+< 		nc.put("vietnam","vi");
+< 		nc.put("volapük","vo");
+< 		nc.put("vatja","vot");
+< 		nc.put("võro","vro");
+< 		nc.put("valloni","wa");
+< 		nc.put("watubela","wah");
+< 		nc.put("waray","war");
+< 		nc.put("sorbi","wen");
+< 		nc.put("wanukaka","wnk");
+< 		nc.put("wolof","wo");
+< 		nc.put("shanghainkiina","wuu");
+< 		nc.put("wuvulu","wuv");
+< 		nc.put("kalmukki","xal");
+< 		nc.put("kambera","xbr");
+< 		nc.put("xhosa","xh");
+< 		nc.put("kanakanabu","xnb");
+< 		nc.put("saisiat","xsy");
+< 		nc.put("yap","yap");
+< 		nc.put("jiddiš","yi");
+< 		nc.put("joruba","yo");
+< 		nc.put("jupikkikielet","ypk");
+< 		nc.put("kantoninkiina","yue");
+< 		nc.put("zhuang","za");
+< 		nc.put("zenaga","zen");
+< 		nc.put("min-kiina","zh-min-nan");
+< 		nc.put("zulu","zu");
+< 
+< 
+<         cn.put("zh-yue","kantoninkiina");
+<         cn.put("zh","mandariinikiina");
+<         cn.put("aa","afar");
+< 		cn.put("ab","abhaasi");
+< 		cn.put("ady","adyge");
+< 		cn.put("ae","avesta");
+< 		cn.put("af","afrikaans");
+< 		cn.put("afa","jokin afro-aasialainen kieli");
+< 		cn.put("afh","afrihili");
+< 		cn.put("agf","arguni");
+< 		cn.put("ain","ainu");
+< 		cn.put("aiw","aari");
+< 		cn.put("ak","akan");
+< 		cn.put("akk","akkadi");
+< 		cn.put("ale","aleutti");
+< 		cn.put("alg","algonkin-kielet");
+< 		cn.put("als","elsassi");
+< 		cn.put("alt","altai");
+< 		cn.put("am","amhara");
+< 		cn.put("an","aragonia");
+< 		cn.put("ang","muinaisenglanti");
+< 		cn.put("anp","angika");
+< 		cn.put("apb","sa'a");
+< 		cn.put("ar","arabia");
+< 		cn.put("arc","aramea");
+< 		cn.put("arn","araukaani");
+< 		cn.put("arp","arapho");
+< 		cn.put("as","assami");
+< 		cn.put("ast","asturia");
+< 		cn.put("av","avaari");
+< 		cn.put("ay","aimara");
+< 		cn.put("az","azeri");
+< 		cn.put("ba","baškiiri");
+< 		cn.put("ban","bali");
+< 		cn.put("bas","basa");
+< 		cn.put("bat","balttilaiset kielet");
+< 		cn.put("be","valkovenäjä");
+< 		cn.put("bej","bedža");
+< 		cn.put("bem","bemba");
+< 		cn.put("ber","berberikielet");
+< 		cn.put("bg","bulgaria");
+< 		cn.put("bh","bihari");
+< 		cn.put("bhp","bima");
+< 		cn.put("bi","bislama");
+< 		cn.put("bla","mustajalka");
+< 		cn.put("bm","bambara");
+< 		cn.put("bn","bengali");
+< 		cn.put("bnt","bantukielet");
+< 		cn.put("bny","bintulu");
+< 		cn.put("bo","tiibet");
+< 		cn.put("br","bretoni");
+< 		cn.put("bs","bosnia");
+< 		cn.put("byn","blin");
+< 		cn.put("bzg","babuza");
+< 		cn.put("bzq","buli");
+< 		cn.put("ca","katalaani");
+< 		cn.put("cad","caddo");
+< 		cn.put("cai","keskiamerikkalaiset intiaanikielet");
+< 		cn.put("cal","karoliini");
+< 		cn.put("car","karibi");
+< 		cn.put("ce","tšetšeeni");
+< 		cn.put("ceb","cebuano");
+< 		cn.put("ch","tšamorro");
+< 		cn.put("chg","tšagatai");
+< 		cn.put("chk","chuuk");
+< 		cn.put("chm","mari");
+< 		cn.put("cho","choctaw");
+< 		cn.put("chr","cherokee");
+< 		cn.put("chy","cheyenne");
+< 		cn.put("ckv","kavalan");
+< 		cn.put("cl","shilluk");
+< 		cn.put("cmc","tsam-kielet");
+< 		cn.put("cmn","mandariinikiina");
+< 		cn.put("co","korsika");
+< 		cn.put("cop","kopti");
+< 		cn.put("cpe","englantilaiset kreolikielet");
+< 		cn.put("cpf","ranskalaiset kreolikielet");
+< 		cn.put("cpp","portugalilaiset kreolikielet");
+< 		cn.put("cr","cree");
+< 		cn.put("crh","krimintataari");
+< 		cn.put("cs","tšekki");
+< 		cn.put("csb","kašubi");
+< 		cn.put("cu","kirkkoslaavi");
+< 		cn.put("cv","tšuvassi");
+< 		cn.put("cy","kymri");
+< 		cn.put("da","tanska");
+< 		cn.put("de","saksa");
+< 		cn.put("doi","dogri");
+< 		cn.put("dra","dravidakielet");
+< 		cn.put("dsb","alasorbi");
+< 		cn.put("dum","keskihollanti");
+< 		cn.put("dv","divehi");
+< 		cn.put("dyu","djula");
+< 		cn.put("dz","dzongkha");
+< 		cn.put("ee","ewe");
+< 		cn.put("efi","efik");
+< 		cn.put("el","kreikka");
+< 		cn.put("en","englanti");
+< 		cn.put("enm","keskienglanti");
+< 		cn.put("eo","esperanto");
+< 		cn.put("es","espanja");
+< 		cn.put("et","viro");
+< 		cn.put("eu","baski");
+< 		cn.put("fa","persia");
+< 		cn.put("ff","fulani");
+< 		cn.put("fi","suomi");
+< 		cn.put("fil","filipino");
+< 		cn.put("fiu","jokin suomalais-ugrilainen kieli");
+< 		cn.put("fiu-kar","karjala");
+< 		cn.put("fiu-vro","võro");
+< 		cn.put("fj","fidži");
+< 		cn.put("fo","fääri");
+< 		cn.put("fos","siraya");
+< 		cn.put("fr","ranska");
+< 		cn.put("frm","keskiranska");
+< 		cn.put("fro","muinaisranska");
+< 		cn.put("frp","arpitaani");
+< 		cn.put("fur","friuli");
+< 		cn.put("fy","friisi");
+< 		cn.put("ga","iiri");
+< 		cn.put("gay","gayo");
+< 		cn.put("gba","gbaja");
+< 		cn.put("gd","gaeli");
+< 		cn.put("gdd","gedaged");
+< 		cn.put("gem","germaaniset kielet");
+< 		cn.put("gil","kiribati");
+< 		cn.put("gl","galego");
+< 		cn.put("gmh","keskiyläsaksa");
+< 		cn.put("gn","guarani");
+< 		cn.put("goh","muinaisyläsaksa");
+< 		cn.put("gon","gondi");
+< 		cn.put("gor","gorontalo");
+< 		cn.put("got","gootti");
+< 		cn.put("grc","muinaiskreikka");
+< 		cn.put("gri","gari");
+< 		cn.put("gu","gudžarati");
+< 		cn.put("gv","manksi");
+< 		cn.put("gwi","gwich'in");
+< 		cn.put("ha","hausa");
+< 		cn.put("haw","havaiji");
+< 		cn.put("he","heprea");
+< 		cn.put("hi","hindi");
+< 		cn.put("ho","hiri motu");
+< 		cn.put("hr","kroatia");
+< 		cn.put("hsb","yläsorbi");
+< 		cn.put("ht","haitinkreoli");
+< 		cn.put("hu","unkari");
+< 		cn.put("hup","hupa");
+< 		cn.put("hy","armenia");
+< 		cn.put("hz","herero");
+< 		cn.put("ia","interlingua");
+< 		cn.put("iba","iban");
+< 		cn.put("ibo","igbo");
+< 		cn.put("id","indonesia");
+< 		cn.put("ie","interlingue");
+< 		cn.put("ig","igbo");
+< 		cn.put("ii","nuosu");
+< 		cn.put("ik","inupiatun");
+< 		cn.put("ilo","iloko");
+< 		cn.put("inh","inguuši");
+< 		cn.put("ink","inkeroinen");
+< 		cn.put("io","ido");
+< 		cn.put("ira","iranilaiset kielet");
+< 		cn.put("is","islanti");
+< 		cn.put("it","italia");
+< 		cn.put("iu","inuktitut");
+< 		cn.put("ja","japani");
+< 		cn.put("jbo","lojban");
+< 		cn.put("jpr","juutalaispersia");
+< 		cn.put("jrb","juutalaisarabia");
+< 		cn.put("jv","jaava");
+< 		cn.put("ka","georgia");
+< 		cn.put("kaa","karakalpakki");
+< 		cn.put("kbd","kabardi");
+< 		cn.put("kg","kongo");
+< 		cn.put("kho","saka");
+< 		cn.put("ki","kikuju");
+< 		cn.put("kij","kilivila");
+< 		cn.put("kj","kwanjama");
+< 		cn.put("kk","kazakki");
+< 		cn.put("kl","grönlanti");
+< 		cn.put("km","khmer");
+< 		cn.put("kn","kannada");
+< 		cn.put("ko","korea");
+< 		cn.put("kos","kosrae");
+< 		cn.put("koy","koyukon");
+< 		cn.put("kpg","kapingamarangi");
+< 		cn.put("kr","kanuri");
+< 		cn.put("krc","karatšai-balkaari");
+< 		cn.put("krl","karjala");
+< 		cn.put("ks","kašmiri");
+< 		cn.put("ku","kurdi");
+< 		cn.put("kud","'auhelawa");
+< 		cn.put("kv","komi");
+< 		cn.put("kvc","kove");
+< 		cn.put("kw","korni");
+< 		cn.put("kwd","kwaio");
+< 		cn.put("kwf","kwara'ae");
+< 		cn.put("kxa","kairiru");
+< 		cn.put("ky","kirgiisi");
+< 		cn.put("kzu","kayupulau");
+< 		cn.put("la","latina");
+< 		cn.put("lad","ladino");
+< 		cn.put("lam","lamba");
+< 		cn.put("lb","luxemburg");
+< 		cn.put("lbq","wampar");
+< 		cn.put("lg","ganda");
+< 		cn.put("lhn","lahanan");
+< 		cn.put("li","limburgi");
+< 		cn.put("lib","likum");
+< 		cn.put("liv","liivi");
+< 		cn.put("ljp","lampung");
+< 		cn.put("llu","lau");
+< 		cn.put("lml","hano");
+< 		cn.put("ln","lingala");
+< 		cn.put("lo","lao");
+< 		cn.put("loj","lou");
+< 		cn.put("loz","lozi");
+< 		cn.put("lt","liettua");
+< 		cn.put("ltg","latgalli");
+< 		cn.put("lu","luba");
+< 		cn.put("lua","luba (Lulua)");
+< 		cn.put("lv","latvia");
+< 		cn.put("mad","madura");
+< 		cn.put("mag","magahi");
+< 		cn.put("mdf","mokša");
+< 		cn.put("meu","motu");
+< 		cn.put("mfn","mbembe");
+< 		cn.put("mg","malagassi");
+< 		cn.put("mgu","mailu");
+< 		cn.put("mh","marshall");
+< 		cn.put("mhs","buru");
+< 		cn.put("mi","maori");
+< 		cn.put("mk","makedonia");
+< 		cn.put("mkh","mon-khmer-kielet");
+< 		cn.put("ml","malajalam");
+< 		cn.put("mn","mongoli");
+< 		cn.put("mnc","mantšu");
+< 		cn.put("mni","manipuri");
+< 		cn.put("mno","manobo-kielet");
+< 		cn.put("mo","moldavia");
+< 		cn.put("mqy","manggarai");
+< 		cn.put("mr","marathi");
+< 		cn.put("mrq","marquesas");
+< 		cn.put("mrv","mangareva");
+< 		cn.put("ms","malaiji");
+< 		cn.put("mt","malta");
+< 		cn.put("mtt","mota");
+< 		cn.put("mus","creek");
+< 		cn.put("mva","manam");
+< 		cn.put("my","burma");
+< 		cn.put("myv","ersä");
+< 		cn.put("na","nauru");
+< 		cn.put("nah","nahuatl");
+< 		cn.put("nap","napoli");
+< 		cn.put("nb","norja (bokmål)");
+< 		cn.put("ncn","nauna");
+< 		cn.put("nd","pohjois-ndebele");
+< 		cn.put("nds","alasaksa");
+< 		cn.put("nds-nl","hollannin alasaksa");
+< 		cn.put("ne","nepali");
+< 		cn.put("nen","nengone");
+< 		cn.put("ng","ndonga");
+< 		cn.put("nic","nigeriläis-kongolaiset kielet");
+< 		cn.put("niu","niue");
+< 		cn.put("nkr","nukuoro");
+< 		cn.put("nl","hollanti");
+< 		cn.put("nn","norja (nynorsk)");
+< 		cn.put("no","norja (bokmål)");
+< 		cn.put("nov","novial");
+< 		cn.put("nqo","n'ko");
+< 		cn.put("nr","etelä-ndebele");
+< 		cn.put("nso","pohjoissotho");
+< 		cn.put("nv","navajo");
+< 		cn.put("nxg","ngadha");
+< 		cn.put("ny","njandža");
+< 		cn.put("nzi","nzima");
+< 		cn.put("oc","oksitaani");
+< 		cn.put("oj","ojibwe");
+< 		cn.put("om","oromo");
+< 		cn.put("or","orija");
+< 		cn.put("os","osseetti");
+< 		cn.put("ota","osmani");
+< 		cn.put("pa","punjabi");
+< 		cn.put("pam","kapampangan");
+< 		cn.put("pau","palau");
+< 		cn.put("phi","aklanon");
+< 		cn.put("phn","foinikia");
+< 		cn.put("pi","paali");
+< 		cn.put("pjt","pitjantjatjara");
+< 		cn.put("pkp","pukapuka");
+< 		cn.put("pl","puola");
+< 		cn.put("pmf","pamona");
+< 		cn.put("pmt","tuamotu");
+< 		cn.put("pon","ponape");
+< 		cn.put("pra","prakit-kielet");
+< 		cn.put("pro","muinaisoksitaani");
+< 		cn.put("ps","paštu");
+< 		cn.put("pt","portugali");
+< 		cn.put("pwn","paiwan");
+< 		cn.put("pyu","pyuma");
+< 		cn.put("qu","ketšua");
+< 		cn.put("rap","rapanui");
+< 		cn.put("rar","rarotonga");
+< 		cn.put("rm","retoromaani");
+< 		cn.put("rmf","suomen romani");
+< 		cn.put("rmy","vlaxinromani");
+< 		cn.put("rn","kirundi");
+< 		cn.put("ro","romania");
+< 		cn.put("rom","romani");
+< 		cn.put("rri","ririo");
+< 		cn.put("rtm","rotuma");
+< 		cn.put("ru","venäjä");
+< 		cn.put("rup","aromania");
+< 		cn.put("rw","kinjaruanda");
+< 		cn.put("sa","sanskrit");
+< 		cn.put("sah","jakuutti");
+< 		cn.put("sas","sasak");
+< 		cn.put("sat","santali");
+< 		cn.put("sc","sardi");
+< 		cn.put("scn","sisilia");
+< 		cn.put("sco","skotti");
+< 		cn.put("sd","sindhi");
+< 		cn.put("se","pohjoissaame");
+< 		cn.put("sel","selkuppi");
+< 		cn.put("sem","seemiläiset kielet");
+< 		cn.put("sg","sango");
+< 		cn.put("sga","muinaisiiri");
+< 		cn.put("sgn","viittomakielet");
+< 		cn.put("sh","serbokroaatti");
+< 		cn.put("si","sinhali");
+< 		cn.put("sk","slovakki");
+< 		cn.put("sky","sikaiana");
+< 		cn.put("sl","sloveeni");
+< 		cn.put("sm","samoa");
+< 		cn.put("sma","eteläsaame");
+< 		cn.put("smj","luulajansaame");
+< 		cn.put("smn","inarinsaame");
+< 		cn.put("sms","koltansaame");
+< 		cn.put("sn","shona");
+< 		cn.put("snk","soninke");
+< 		cn.put("so","somali");
+< 		cn.put("sog","sogdi");
+< 		cn.put("son","songhai");
+< 		cn.put("sq","albania");
+< 		cn.put("sr","serbia");
+< 		cn.put("ss","swazi");
+< 		cn.put("ssf","thao");
+< 		cn.put("ssg","seimat");
+< 		cn.put("ssz","sengseng");
+< 		cn.put("st","sotho");
+< 		cn.put("su","sunda");
+< 		cn.put("sus","susu");
+< 		cn.put("sux","sumeri");
+< 		cn.put("sv","ruotsi");
+< 		cn.put("sw","swahili");
+< 		cn.put("sxr","saaroa");
+< 		cn.put("ta","tamili");
+< 		cn.put("tay","atayal");
+< 		cn.put("te","telugu");
+< 		cn.put("tem","temne");
+< 		cn.put("ter","terêna");
+< 		cn.put("tet","tetum");
+< 		cn.put("tg","tadžikki");
+< 		cn.put("tgc","tigak");
+< 		cn.put("th","thai");
+< 		cn.put("ti","tigrinja");
+< 		cn.put("tk","turkmeeni");
+< 		cn.put("tkl","tokelau");
+< 		cn.put("tkw","teanu");
+< 		cn.put("tl","tagalog");
+< 		cn.put("tlh","klingon");
+< 		cn.put("tlx","levei");
+< 		cn.put("tn","tswana");
+< 		cn.put("to","tonga");
+< 		cn.put("tokipona","toki pona");
+< 		cn.put("tpi","tok pisin");
+< 		cn.put("tr","turkki");
+< 		cn.put("trv","taroko");
+< 		cn.put("ts","tsonga");
+< 		cn.put("tsi","tsimsi");
+< 		cn.put("tt","tataari");
+< 		cn.put("tum","tumbuka");
+< 		cn.put("tup","tupi-kielet");
+< 		cn.put("tut","altailaiset kielet");
+< 		cn.put("tvl","tuvalu");
+< 		cn.put("tw","twi");
+< 		cn.put("ty","tahiti");
+< 		cn.put("tyv","tuva");
+< 		cn.put("udm","udmurtti");
+< 		cn.put("ug","uiguuri");
+< 		cn.put("uk","ukraina");
+< 		cn.put("ur","urdu");
+< 		cn.put("uz","uzbekki");
+< 		cn.put("ve","venda");
+< 		cn.put("vep","vepsä");
+< 		cn.put("vi","vietnam");
+< 		cn.put("vo","volapük");
+< 		cn.put("vot","vatja");
+< 		cn.put("vro","võro");
+< 		cn.put("wa","valloni");
+< 		cn.put("wah","watubela");
+< 		cn.put("war","waray");
+< 		cn.put("wen","sorbi");
+< 		cn.put("wnk","wanukaka");
+< 		cn.put("wo","wolof");
+< 		cn.put("wuu","shanghainkiina");
+< 		cn.put("wuv","wuvulu");
+< 		cn.put("xal","kalmukki");
+< 		cn.put("xbr","kambera");
+< 		cn.put("xh","xhosa");
+< 		cn.put("xnb","kanakanabu");
+< 		cn.put("xsy","saisiat");
+< 		cn.put("yap","yap");
+< 		cn.put("yi","jiddiš");
+< 		cn.put("yo","joruba");
+< 		cn.put("ypk","jupikkikielet");
+< 		cn.put("yue","kantoninkiina");
+< 		cn.put("za","zhuang");
+< 		cn.put("zen","zenaga");
+< 		cn.put("zh-min-nan","min-kiina");
+< 		cn.put("zu","zulu");
+< 
+---
+> 		h.put("abhaasi","ab");
+> 		h.put("adyge","ady");
+> 		h.put("afar","aa");
+> 		h.put("afrihili","afh");
+> 		h.put("afrikaans","af");
+> 		h.put("aimara","ay");
+> 		h.put("ainu","ain");
+> 		h.put("akan","ak");
+> 		h.put("akkadi","akk");
+> 		h.put("alasaksa","nds");
+> 		h.put("alasorbi","dsb");
+> 		h.put("albania","sq");
+> 		h.put("aleutti","ale");
+> 		h.put("altai","alt");
+> 		h.put("amhara","am");
+> 		h.put("angika","anp");
+> 		h.put("arabia","ar");
+> 		h.put("aragonia","an");
+> 		h.put("aramea","arc");
+> 		h.put("arapho","arp");
+> 		h.put("araukaani","arn");
+> 		h.put("armenia","hy");
+> 		h.put("aromania","rup");
+> 		h.put("assami","as");
+> 		h.put("asturia","ast");
+> 		h.put("avaari","av");
+> 		h.put("avesta","ae");
+> 		h.put("azeri","az");
+> 		h.put("bali","ban");
+> 		h.put("bambara","bm");
+> 		h.put("basa","bas");
+> 		h.put("baski","eu");
+> 		h.put("baškiiri","ba");
+> 		h.put("bedža","bej");
+> 		h.put("bemba","bem");
+> 		h.put("bengali","bn");
+> 		h.put("bislama","bi");
+> 		h.put("blin","byn");
+> 		h.put("bosnia","bs");
+> 		h.put("bretoni","br");
+> 		h.put("bulgaria","bg");
+> 		h.put("burma","my");
+> 		h.put("caddo","cad");
+> 		h.put("cebuano","ceb");
+> 		h.put("cherokee","chr");
+> 		h.put("cheyenne","chy");
+> 		h.put("choctaw","cho");
+> 		h.put("chuuk","chk");
+> 		h.put("cree","cr");
+> 		h.put("creek","mus");
+> 		h.put("divehi","dv");
+> 		h.put("djula","dyu");
+> 		h.put("dogri","doi");
+> 		h.put("dzongkha","dz");
+> 		h.put("efik","efi");
+> 		h.put("englanti","en");
+> 		h.put("ersä","myv");
+> 		h.put("espanja","es");
+> 		h.put("esperanto","eo");
+> 		h.put("etelä-ndebele","nr");
+> 		h.put("eteläsaame","sma");
+> 		h.put("ewe","ee");
+> 		h.put("fääri","fo");
+> 		h.put("fidži","fj");
+> 		h.put("filipino","fil");
+> 		h.put("foinikia","phn");
+> 		h.put("friisi","fy");
+> 		h.put("friuli","fur");
+> 		h.put("fulani","ff");
+> 		h.put("gaeli","gd");
+> 		h.put("galego","gl");
+> 		h.put("ganda","lg");
+> 		h.put("gayo","gay");
+> 		h.put("gbaja","gba");
+> 		h.put("georgia","ka");
+> 		h.put("gondi","gon");
+> 		h.put("gootti","got");
+> 		h.put("gorontalo","gor");
+> 		h.put("grönlanti","kl");
+> 		h.put("guarani","gn");
+> 		h.put("gudžarati","gu");
+> 		h.put("gwich'in","gwi");
+> 		h.put("haitinkreoli","ht");
+> 		h.put("hausa","ha");
+> 		h.put("havaiji","haw");
+> 		h.put("heprea","he");
+> 		h.put("herero","hz");
+> 		h.put("hindi","hi");
+> 		h.put("hiri motu","ho");
+> 		h.put("hollanti","nl");
+> 		h.put("hupa","hup");
+> 		h.put("iban","iba");
+> 		h.put("ido","io");
+> 		h.put("igbo","ig");
+> 		h.put("iiri","ga");
+> 		h.put("iloko","ilo");
+> 		h.put("inarinsaame","smn");
+> 		h.put("indonesia","id");
+> 		h.put("inguuši","inh");
+> 		h.put("interlingua","ia");
+> 		h.put("interlingue","ie");
+> 		h.put("inuktitut","iu");
+> 		h.put("inupiatun","ik");
+> 		h.put("islanti","is");
+> 		h.put("italia","it");
+> 		h.put("jaava","jv");
+> 		h.put("jakuutti","sah");
+> 		h.put("japani","ja");
+> 		h.put("jiddiš","yi");
+> 		h.put("joruba","yo");
+> 		h.put("juutalaisarabia","jrb");
+> 		h.put("juutalaispersia","jpr");
+> 		h.put("kabardi","kbd");
+> 		h.put("kalmukki","xal");
+> 		h.put("kannada","kn");
+> 		h.put("kanuri","kr");
+> 		h.put("kapampangan","pam");
+> 		h.put("karakalpakki","kaa");
+> 		h.put("karatšai-balkaari","krc");
+> 		h.put("karibi","car");
+> 		h.put("karjala","krl");
+> 		h.put("kašmiri","ks");
+> 		h.put("kašubi","csb");
+> 		h.put("katalaani","ca");
+> 		h.put("kazakki","kk");
+> 		h.put("keskienglanti","enm");
+> 		h.put("keskihollanti","dum");
+> 		h.put("keskiranska","frm");
+> 		h.put("keskiyläsaksa","gmh");
+> 		h.put("ketšua","qu");
+> 		h.put("khmer","km");
+> 		h.put("kikuju","ki");
+> 		h.put("kinjaruanda","rw");
+> 		h.put("kirgiisi","ky");
+> 		h.put("kiribati","gil");
+> 		h.put("kirkkoslaavi","cu");
+> 		h.put("kirundi","rn");
+> 		h.put("klingon","tlh");
+> 		h.put("koltansaame","sms");
+> 		h.put("komi","kv");
+> 		h.put("kongo","kg");
+> 		h.put("kopti","cop");
+> 		h.put("korea","ko");
+> 		h.put("korni","kw");
+> 		h.put("korsika","co");
+> 		h.put("kosrae","kos");
+> 		h.put("kreikka","el");
+> 		h.put("krimintataari","crh");
+> 		h.put("kroatia","hr");
+> 		h.put("kurdi","ku");
+> 		h.put("kwanjama","kj");
+> 		h.put("kymri","cy");
+> 		h.put("ladino","lad");
+> 		h.put("lamba","lam");
+> 		h.put("lao","lo");
+> 		h.put("latina","la");
+> 		h.put("latvia","lv");
+> 		h.put("liettua","lt");
+> 		h.put("limburgi","li");
+> 		h.put("lingala","ln");
+> 		h.put("lojban","jbo");
+> 		h.put("lozi","loz");
+> 		h.put("luba","lu");
+> 		h.put("luba (Lulua)","lua");
+> 		h.put("luulajansaame","smj");
+> 		h.put("luxemburg","lb");
+> 		h.put("madura","mad");
+> 		h.put("magahi","mag");
+> 		h.put("makedonia","mk");
+> 		h.put("malagassi","mg");
+> 		h.put("malaiji","ms");
+> 		h.put("malajalam","ml");
+> 		h.put("malta","mt");
+> 		h.put("mandariinikiina","zh");
+> 		h.put("manipuri","mni");
+> 		h.put("manksi","gv");
+> 		h.put("mantšu","mnc");
+> 		h.put("maori","mi");
+> 		h.put("marathi","mr");
+> 		h.put("mari","chm");
+> 		h.put("marshall","mh");
+> 		h.put("mokša","mdf");
+> 		h.put("moldavia","mo");
+> 		h.put("mongoli","mn");
+> 		h.put("muinaisenglanti","ang");
+> 		h.put("muinaisiiri","sga");
+> 		h.put("muinaiskreikka","grc");
+> 		h.put("muinaisoksitaani","pro");
+> 		h.put("muinaisranska","fro");
+> 		h.put("muinaisyläsaksa","goh");
+> 		h.put("mustajalka","bla");
+> 		h.put("napoli","nap");
+> 		h.put("nauru","na");
+> 		h.put("navaho","nv");
+> 		h.put("ndonga","ng");
+> 		h.put("nepali","ne");
+> 		h.put("niue","niu");
+> 		h.put("njandža","ny");
+> 		h.put("n'ko","nqo");
+> 		h.put("norja (bokmål)","no");
+> 		h.put("norja (bokmål)","nb");
+> 		h.put("norja (nynorsk)","nn");
+> 		h.put("nuosu","ii");
+> 		h.put("nzima","nzi");
+> 		h.put("ojibwe","oj");
+> 		h.put("oksitaani","oc");
+> 		h.put("orija","or");
+> 		h.put("oromo","om");
+> 		h.put("osmani","ota");
+> 		h.put("osseetti","os");
+> 		h.put("paali","pi");
+> 		h.put("palau","pau");
+> 		h.put("paštu","ps");
+> 		h.put("persia","fa");
+> 		h.put("pohjois-ndebele","nd");
+> 		h.put("pohjoissaame","se");
+> 		h.put("pohjoissotho","nso");
+> 		h.put("ponape","pon");
+> 		h.put("portugali","pt");
+> 		h.put("punjabi","pa");
+> 		h.put("puola","pl");
+> 		h.put("ranska","fr");
+> 		h.put("rapanui","rap");
+> 		h.put("rarotonga","rar");
+> 		h.put("retoromaani","rm");
+> 		h.put("romani","rom");
+> 		h.put("romania","ro");
+> 		h.put("ruotsi","sv");
+> 		h.put("saka","kho");
+> 		h.put("saksa","de");
+> 		h.put("samoa","sm");
+> 		h.put("sango","sg");
+> 		h.put("sanskrit","sa");
+> 		h.put("santali","sat");
+> 		h.put("sardi","sc");
+> 		h.put("sasak","sas");
+> 		h.put("selkuppi","sel");
+> 		h.put("serbia","sr");
+> 		h.put("serbokroaatti","sh");
+> 		h.put("shona","sn");
+> 		h.put("sindhi","sd");
+> 		h.put("sinhali","si");
+> 		h.put("sisilia","scn");
+> 		h.put("skotti","sco");
+> 		h.put("slovakki","sk");
+> 		h.put("sloveeni","sl");
+> 		h.put("sogdi","sog");
+> 		h.put("somali","so");
+> 		h.put("soninke","snk");
+> 		h.put("sotho","st");
+> 		h.put("sumeri","sux");
+> 		h.put("sunda","su");
+> 		h.put("suomi","fi");
+> 		h.put("susu","sus");
+> 		h.put("swahili","sw");
+> 		h.put("swazi","ss");
+> 		h.put("tadžikki","tg");
+> 		h.put("tagalog","tl");
+> 		h.put("tahiti","ty");
+> 		h.put("tamili","ta");
+> 		h.put("tanska","da");
+> 		h.put("tataari","tt");
+> 		h.put("telugu","te");
+> 		h.put("temne","tem");
+> 		h.put("terêna","ter");
+> 		h.put("tetum","tet");
+> 		h.put("thai","th");
+> 		h.put("tigrinja","ti");
+> 		h.put("tiibet","bo");
+> 		h.put("tok pisin","tpi");
+> 		h.put("tokelau","tkl");
+> 		h.put("tonga","to");
+> 		h.put("tšagatai","chg");
+> 		h.put("tšamorro","ch");
+> 		h.put("tšekki","cs");
+> 		h.put("tšetšeeni","ce");
+> 		h.put("tsimsi","tsi");
+> 		h.put("tsonga","ts");
+> 		h.put("tšuvassi","cv");
+> 		h.put("tswana","tn");
+> 		h.put("tumbuka","tum");
+> 		h.put("turkki","tr");
+> 		h.put("turkmeeni","tk");
+> 		h.put("tuva","tyv");
+> 		h.put("tuvalu","tvl");
+> 		h.put("udmurtti","udm");
+> 		h.put("uiguuri","ug");
+> 		h.put("ukraina","uk");
+> 		h.put("unkari","hu");
+> 		h.put("urdu","ur");
+> 		h.put("uzbekki","uz");
+> 		h.put("valkovenäjä","be");
+> 		h.put("valloni","wa");
+> 		h.put("vatja","vot");
+> 		h.put("venäjä","ru");
+> 		h.put("venda","ve");
+> 		h.put("vietnam","vi");
+> 		h.put("viro","et");
+> 		h.put("volapük","vo");
+> 		h.put("waray","war");
+> 		h.put("wolof","wo");
+> 		h.put("xhosa","xh");
+> 		h.put("yap","yap");
+> 		h.put("yläsorbi","hsb");
+> 		h.put("zenaga","zen");
+> 		h.put("zhuang","za");
+> 		h.put("zulu","zu");
+863c322
+< 		return threeLettersCode(nc, s);
+---
+> 		return threeLettersCode(h, s);
+865,880d323
+< 
+<     public static String getCanonicalCode(String c) {
+<         String fiLangname = cn.get(c);
+<         return nc.get(fiLangname);
+<     }
+< 
+<     public static void main(String[] args) {
+<         for (String c : cn.keySet()) {
+<             String fiLangname = cn.get(c);
+<             String canonicalCode = nc.get(fiLangname);
+<             String isoCode = LangTools.getCode(canonicalCode);
+<             String enLangName = LangTools.inEnglish(canonicalCode);
+< 
+<             System.out.format("%s\t%s\t%s\t%s\t%s\n", c, canonicalCode, fiLangname, enLangName, isoCode);
+<         }
+<     }
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/fra/ExampleExpanderWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/fra/ExampleExpanderWikiModel.java
+52d51
+< 		log.trace("extracting examples in {}", this.getPageName());
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/fra/FrenchDefinitionExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/fra/FrenchDefinitionExtractorWikiModel.java
+4d3
+< import org.getalp.iso639.ISO639_3;
+14a14,15
+> import org.getalp.dbnary.AbstractWiktionaryExtractor;
+> 
+17c18
+<     private Logger log = LoggerFactory.getLogger(FrenchDefinitionExtractorWikiModel.class);
+---
+>     private Logger log = LoggerFactory.getLogger(WiktionaryExtractor.class);
+39,45c40
+<         log.trace("extracting definitions in {}", this.getPageName());
+< 		String def = null;
+< 		try {
+< 			def = render(new PlainTextConverter(), definition).trim();
+< 		} catch (IOException e) {
+< 			e.printStackTrace();
+< 		}
+---
+>         String def = render(new PlainTextConverter(), definition).trim();
+55,66c50
+< 		if (templateName.equals("nom langue") || templateName.endsWith(":nom langue")) {
+<             // intercept this template as it leads to a very inefficient Lua Script.
+<             String langCode = parameterMap.get("1").trim();
+<             String lang = ISO639_3.sharedInstance.getLanguageNameInFrench(langCode);
+<             if (null != lang) writer.append(lang);
+<         } else if (templateName.contains("langues")) {
+<             log.debug("Got template {}\tin\t{}", templateName, this.getPageName());
+<         } else if ("pron".equals(templateName)) {
+<             // Ignore it as pronunciation is extracted independantly.
+<         } else {
+<             super.substituteTemplateCall(templateName, parameterMap, writer);
+<         }
+---
+> 		super.substituteTemplateCall(templateName, parameterMap, writer);
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/fra/FrenchExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/fra/FrenchExtractorWikiModel.java
+3d2
+< import java.io.IOException;
+6d4
+< import java.util.Map;
+16d13
+< import org.getalp.iso639.ISO639_3;
+300c297,299
+< 		return modeTH != null && modeTH.getTextContent().replace('\u00A0', ' ').trim().equals("Mode");
+---
+> 		if (modeTH != null && modeTH.getTextContent().replace('\u00A0', ' ').trim().equals("Mode")) {
+> 			return true;
+> 		}
+301a301
+> 		return false;
+396,420c396,415
+<         try {
+<             // Render the conjugation to html, while ignoring the example template
+<             if (conjugationTemplateCall.indexOf("}|") != -1 && notMatchingBrackets(conjugationTemplateCall)) {
+<                 log.warn("Suspicious '}|' in conjugation template call for '" + delegate.currentLexEntry() + "'. Surely a wikicode error. Trying to fix it. Call: '" + conjugationTemplateCall + "'");
+<                 conjugationTemplateCall = conjugationTemplateCall.replace("}|", "|");
+<             }
+< 
+<             if (conjugationTemplateCall.indexOf("|}") != -1 && notMatchingBrackets(conjugationTemplateCall)) {
+<                 log.warn("Suspicious '|}' in conjugation template call for '" + delegate.currentLexEntry() + "'. Surely a wikicode error. Trying to fix it. Call: '" + conjugationTemplateCall + "'");
+<                 conjugationTemplateCall = conjugationTemplateCall.replace("|}", "|");
+<             }
+< 
+<             if (!conjugationTemplateCall.startsWith("{{fr-conj-0")) {
+<                 Document doc = wikicodeToHtmlDOM(conjugationTemplateCall);
+< 
+<                 if (doc == null) {
+<                     return; // failing silently: error message already given.
+<                 }
+< 
+<                 handleConjugationDocument(doc.getDocumentElement());
+<             }
+<         } catch (Exception e) {
+<             log.error("{} while parsing conjugation of {}", e.getLocalizedMessage(), this.getPageName());
+<             e.printStackTrace();
+<         }
+---
+> 		// Render the conjugation to html, while ignoring the example template
+> 		if (conjugationTemplateCall.indexOf("}|") != -1 && notMatchingBrackets(conjugationTemplateCall)) {
+> 			log.warn("Suspicious '}|' in conjugation template call for '" + delegate.currentLexEntry() + "'. Surely a wikicode error. Trying to fix it. Call: '" + conjugationTemplateCall + "'");
+> 			conjugationTemplateCall = conjugationTemplateCall.replace("}|", "|");
+> 		}
+> 
+> 		if (conjugationTemplateCall.indexOf("|}") != -1 && notMatchingBrackets(conjugationTemplateCall)) {
+> 			log.warn("Suspicious '|}' in conjugation template call for '" + delegate.currentLexEntry() + "'. Surely a wikicode error. Trying to fix it. Call: '" + conjugationTemplateCall + "'");
+> 			conjugationTemplateCall = conjugationTemplateCall.replace("|}", "|");
+> 		}
+> 
+> 		if (!conjugationTemplateCall.startsWith("{{fr-conj-0")) {
+> 			Document doc = wikicodeToHtmlDOM(conjugationTemplateCall);
+> 
+> 			if (doc == null) {
+> 				return; // failing silently: error message already given.
+> 			}
+> 
+> 			handleConjugationDocument(doc.getDocumentElement());
+> 		}
+518,519c513
+<         log.trace("extracting other forms in {}", this.getPageName());
+<         Document doc = wikicodeToHtmlDOM(templateCall);
+---
+> 		Document doc = wikicodeToHtmlDOM(templateCall);
+558,576d551
+< 
+<     @Override
+<     public void substituteTemplateCall(String templateName,
+<                                        Map<String, String> parameterMap, Appendable writer)
+<             throws IOException {
+<         // Currently just expand the definition to get the full text.
+<         if (templateName.equals("nom langue") || templateName.endsWith(":nom langue")) {
+<             // intercept this template as it leeds to a very inefficient Lua Script.
+<             String langCode = parameterMap.get("1").trim();
+<             String lang = ISO639_3.sharedInstance.getLanguageNameInFrench(langCode);
+<             if (null != lang) writer.append(lang);
+<         } else if (templateName.equals("pron")) {
+< 			// catch this template call as it resolves in a non useful very heavy Lua processing.
+< 			writer.append("\\").append(parameterMap.get("1")).append("\\");
+< 		} else {
+<             super.substituteTemplateCall(templateName, parameterMap, writer);
+<         }
+<     }
+< 
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/fra/WiktionaryExtractor.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/fra/WiktionaryExtractor.java
+474d473
+<     protected FrenchExtractorWikiModel conjugationExtractor;
+481,482d479
+<         conjugationExtractor = new FrenchExtractorWikiModel(this.wdh, this.wi, new Locale("fr"), "/${image}", "/${title}");
+< 
+693,694d689
+<         log.trace("Extracting page \t{}", this.wiktionaryPageName);
+< 
+797d791
+<         log.trace("Leaving block {} while parsing entry {}", currentBlock.name(), this.wiktionaryPageName);
+831d824
+< 
+833,834d825
+<         log.trace("Extracting conjugation page in {}", this.wiktionaryPageName);
+<         conjugationExtractor.setPageName(this.wiktionaryPageName);
+842c833
+< 
+---
+>                 FrenchExtractorWikiModel dbnmodel = null;
+848a840,842
+>                         if (dbnmodel == null) {
+>                             dbnmodel = new FrenchExtractorWikiModel(wdh, wi, new Locale("fr"), "/${image}", "/${title}");
+>                         }
+851c845
+<                             conjugationExtractor.parseImpersonnalTableConjugation(templateCall);
+---
+>                             dbnmodel.parseImpersonnalTableConjugation(templateCall);
+853c847
+<                             conjugationExtractor.parseConjugation(templateCall);
+---
+>                             dbnmodel.parseConjugation(templateCall);
+1028c1022
+<         log.trace("extracting inflections in {}", this.wiktionaryPageName);
+---
+> 
+1335,1336c1329,1330
+<             conjugationExtractor.setPageName(this.wiktionaryPageName);
+<             conjugationExtractor.parseOtherForm(otherFormMatcher.group());
+---
+>             FrenchExtractorWikiModel dbnmodel = new FrenchExtractorWikiModel(wdh, wi, frLocale, "/${image}", "/${title}");
+>             dbnmodel.parseOtherForm(otherFormMatcher.group());
+1343d1336
+<         definitionExpander.setPageName(this.wiktionaryPageName);
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/ita/ItalianDefinitionExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/ita/ItalianDefinitionExtractorWikiModel.java
+35,40c35
+< 		String def = null;
+< 		try {
+< 			def = render(new PlainTextConverter(), definition).trim();
+< 		} catch (IOException e) {
+< 			e.printStackTrace();
+< 		}
+---
+> 		String def = render(new PlainTextConverter(), definition).trim();
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/ita/ItalianExampleExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/ita/ItalianExampleExtractorWikiModel.java
+30,35c30
+< 		String ex = null;
+< 		try {
+< 			ex = render(new PlainTextConverter(), example).trim();
+< 		} catch (IOException e) {
+< 			e.printStackTrace();
+< 		}
+---
+> 		String ex = render(new PlainTextConverter(), example).trim();
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/JapaneseDefinitionExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/JapaneseDefinitionExtractorWikiModel.java
+7,10d6
+< import info.bliki.wiki.filter.ParsedPageName;
+< import info.bliki.wiki.model.WikiModelContentException;
+< import info.bliki.wiki.namespaces.INamespace;
+< import info.bliki.wiki.namespaces.Namespace;
+16d11
+< import org.getalp.dbnary.wiki.WikiTool;
+18a14,31
+> 	
+> 	// static Set<String> ignoredTemplates = new TreeSet<String>();
+> 	// static {
+> 	// 	ignoredTemplates.add("Wikipedia");
+> 	// 	ignoredTemplates.add("Incorrect");
+> 	// }
+> 	
+> 	private IWiktionaryDataHandler delegate;
+> 	
+> 	
+> 	public JapaneseDefinitionExtractorWikiModel(IWiktionaryDataHandler we, Locale locale, String imageBaseURL, String linkBaseURL) {
+> 		this(we, (WiktionaryIndex) null, locale, imageBaseURL, linkBaseURL);
+> 	}
+> 	
+> 	public JapaneseDefinitionExtractorWikiModel(IWiktionaryDataHandler we, WiktionaryIndex wi, Locale locale, String imageBaseURL, String linkBaseURL) {
+> 		super(wi, locale, imageBaseURL, linkBaseURL);
+> 		this.delegate = we;
+> 	}
+20,60c33,40
+<     // static Set<String> ignoredTemplates = new TreeSet<String>();
+<     // static {
+<     // 	ignoredTemplates.add("Wikipedia");
+<     // 	ignoredTemplates.add("Incorrect");
+<     // }
+< 
+<     private IWiktionaryDataHandler delegate;
+< 
+< 
+<     public JapaneseDefinitionExtractorWikiModel(IWiktionaryDataHandler we, Locale locale, String imageBaseURL, String linkBaseURL) {
+<         this(we, (WiktionaryIndex) null, locale, imageBaseURL, linkBaseURL);
+<     }
+< 
+<     public JapaneseDefinitionExtractorWikiModel(IWiktionaryDataHandler we, WiktionaryIndex wi, Locale locale, String imageBaseURL, String linkBaseURL) {
+<         super(wi, locale, imageBaseURL, linkBaseURL);
+<         this.delegate = we;
+<     }
+< 
+<     public void parseDefinition(String definition, int defLevel) {
+<         // Render the definition to plain text, while ignoring the example template
+<         String def = WikiTool.removeReferencesIn(definition);
+<         try {
+<             def = render(new PlainTextConverter(), def).trim();
+<         } catch (IOException e) {
+<             e.printStackTrace();
+<         }
+<         if (null != def && !def.equals(""))
+<             delegate.registerNewDefinition(def, defLevel);
+<     }
+< 
+<     @Override
+<     public String getRawWikiContent(ParsedPageName parsedPagename, Map<String, String> map)
+<             throws WikiModelContentException {
+<         // BUGFIX for incorrect gwtwiki invocation of module User:Codecat/isValidPagename
+<         if (parsedPagename.namespace.toString().equals("User") && parsedPagename.pagename.equals("CodeCat/isValidPageName")) {
+<             return getRawWikiContent(new ParsedPageName(this.getNamespace().getModule(), "User:" + parsedPagename.pagename, true), map);
+<         }
+<         return super.getRawWikiContent(parsedPagename, map);
+<     }
+< 
+<     @Override
+---
+> 	public void parseDefinition(String definition, int defLevel) {
+> 		// Render the definition to plain text, while ignoring the example template
+> 		String def = render(new PlainTextConverter(), definition).trim();
+> 		if (null != def && ! def.equals(""))
+> 			delegate.registerNewDefinition(def, defLevel);
+> 	}
+> 	
+> 	@Override
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/JapaneseLangtoCode.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/JapaneseLangtoCode.java
+365,381d364
+< 	    h.put("低ザクセン語", "nds");
+< 	    h.put("アストゥリアス語", "ast");
+< 	    h.put("閩南語", "nan");
+< 	    h.put("韓国語", "kor");
+< 	    h.put("琉球語", "ryu");
+< 	    h.put("広東語", "yue");
+< 	    h.put("ソルブ語", "wen");
+< 	    h.put("スロバキア語", "slk");
+< 	    h.put("スコットランドゲール語", "gla");
+< 	    h.put("ギリシャ語", "ell");
+< 	    h.put("カタロニア語", "cat");
+< 	    h.put("インターリンガ", "ina");
+< 	    h.put("アラバマ語", "akz");
+< 	    h.put("アゼリー語", "aze");
+<         h.put("tupinamba", "tpn");
+<         h.put("sr-Cyrl", "sr");
+<         h.put("sr-Latn", "sr");
+386,388c369
+< 		String c = threeLettersCode(h, s);
+< 		if (null == c) c = threeLettersCode(h, s + "語");
+< 		return c;
+---
+> 		return threeLettersCode(h, s);
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/JapaneseTranslationsExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/JapaneseTranslationsExtractorWikiModel.java
+193c193
+< 					langname = extractLanguage(link);
+---
+> 					langname = LangTools.normalize(extractLanguage(link));
+205d204
+< 						if (null == lang) log.debug("Unknown language {} : {}", langname, this.delegate.currentLexEntry());
+370d368
+<         String c;
+372c370
+< 			c = LangTools.normalize(m.group(1));
+---
+> 			return m.group(1);
+374,375c372
+< 			c = JapaneseLangtoCode.threeLettersCode(link);
+<         return (null == c) ? "" : c;
+---
+> 			return "";
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/WiktionaryExtractor.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/WiktionaryExtractor.java
+14d13
+< import org.getalp.dbnary.WiktionaryIndex;
+80,86d78
+< 	JapaneseDefinitionExtractorWikiModel definitionExtractor;
+< 	@Override
+< 	public void setWiktionaryIndex(WiktionaryIndex wi) {
+< 		super.setWiktionaryIndex(wi);
+< 		definitionExtractor = new JapaneseDefinitionExtractorWikiModel(wdh, wi, new Locale("ja"), "--DO NOT USE IMAGE BASE URL FOR DEBUG--", "");
+< 	}
+< 
+579,580c571,572
+< 		definitionExtractor.setPageName(this.wiktionaryPageName);
+< 		definitionExtractor.parseDefinition(definition, defLevel);
+---
+> 		JapaneseDefinitionExtractorWikiModel dbnmodel = new JapaneseDefinitionExtractorWikiModel(this.wdh, this.wi, new Locale("ja"), "/${image}", "/${title}");
+> 		dbnmodel.parseDefinition(definition, defLevel);
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/pol/DefinitionExpanderWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/pol/DefinitionExpanderWikiModel.java
+9d8
+< import info.bliki.wiki.filter.PlainTextConverter;
+12d10
+< import org.getalp.dbnary.wiki.WikiTool;
+33,38d30
+< 	public String expandAll(String definition, Set<String> templates) {
+< 		String def = WikiTool.removeReferencesIn(definition);
+< 		return super.expandAll(def, templates);
+< 	}
+< 
+< 	@Override
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/pol/WiktionaryDataHandler.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/pol/WiktionaryDataHandler.java
+88c88
+< 		String orig = group;
+---
+> 		String orig = new String(group);
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/por/PortugueseDefinitionExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/por/PortugueseDefinitionExtractorWikiModel.java
+35,41c35
+< 		logger.debug("Parsing definition for {}", this.getPageName());
+< 		String def = null;
+< 		try {
+< 			def = render(new PlainTextConverter(), definition).trim();
+< 		} catch (IOException e) {
+< 			e.printStackTrace();
+< 		}
+---
+> 		String def = render(new PlainTextConverter(), definition).trim();
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/por/WiktionaryExtractor.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/por/WiktionaryExtractor.java
+14d13
+< import org.getalp.dbnary.WiktionaryIndex;
+42d40
+< 
+99,106c97
+< 
+<     protected PortugueseDefinitionExtractorWikiModel definitionExtractor;
+< 
+<     @Override
+<     public void setWiktionaryIndex(WiktionaryIndex wi) {
+<         super.setWiktionaryIndex(wi);
+<         definitionExtractor = new PortugueseDefinitionExtractorWikiModel(this.wdh, this.wi, Locale.forLanguageTag("pt"), "/${image}", "/${title}");
+<     }
+---
+>    
+412c403
+< 
+---
+>     
+416,417c407,408
+<         definitionExtractor.setPageName(this.wiktionaryPageName);
+<         definitionExtractor.parseDefinition(definition, defLevel);
+---
+>         PortugueseDefinitionExtractorWikiModel dbnmodel = new PortugueseDefinitionExtractorWikiModel(this.wdh, this.wi, new Locale("pt"), "/${image}", "/${title}");
+>         dbnmodel.parseDefinition(definition, defLevel);
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/rus/RussianDefinitionExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/rus/RussianDefinitionExtractorWikiModel.java
+61,67c61,62
+<         String def = null;
+<         try {
+<             def = render(new PlainTextConverter(), definition).trim();
+<         } catch (IOException e) {
+<             e.printStackTrace();
+<         }
+<         if (null != def && ! def.equals("")) {
+---
+> 		String def = render(new PlainTextConverter(), definition).trim();
+> 		if (null != def && ! def.equals("")) {
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/spa/SpanishDefinitionExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/spa/SpanishDefinitionExtractorWikiModel.java
+3d2
+< import info.bliki.wiki.filter.ParsedPageName;
+5d3
+< import info.bliki.wiki.model.WikiModelContentException;
+9d6
+< import org.getalp.dbnary.wiki.WikiTool;
+16,17d12
+< import java.util.regex.Matcher;
+< import java.util.regex.Pattern;
+44,50c39,40
+< 		String def = WikiTool.removeReferencesIn(definition);
+<         try {
+<             def = render(new PlainTextConverter(), def).trim();
+<         } catch (IOException e) {
+<             e.printStackTrace();
+<         }
+<         if (null != def && ! def.equals(""))
+---
+>         String def = render(new PlainTextConverter(), definition).trim();
+> 		if (null != def && ! def.equals(""))
+65,66c54,55
+< 	public String getRawWikiContent(ParsedPageName parsedPagename, Map<String, String> map) throws WikiModelContentException {
+< 		String result = super.getRawWikiContent(parsedPagename, map);
+---
+> 	public String getRawWikiContent(String namespace, String articleName, Map<String, String> map) {
+> 		String result = super.getRawWikiContent(namespace, articleName, map);
+copied || Only in dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/wiki: ClassBasedFilter.java
+copied || Only in dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/wiki: WikiEventFilter.java
+copied|| Only in dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/wiki: WikiEventIterator.java
+copied || Only in dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/wiki: WikiEventsSequence.java
+copied || Only in dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/wiki: WikiText.java
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/wiki/WikiTool.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/wiki/WikiTool.java
+3,6c3,12
+< import java.util.HashMap;
+< import java.util.Map;
+< import java.util.regex.Matcher;
+< import java.util.regex.Pattern;
+---
+> import java.util.*;
+> import org.getalp.dbnary.*;
+> 
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory; 
+> 
+> /** 
+> * @author someoneelse, pantaleo  
+> * 
+> */
+10c16,76
+< 	// Parse a string of args, like: xxx=yyy|zzz=ttt
+---
+>     static Logger log = LoggerFactory.getLogger(WikiTool.class);
+>     //example:                                                                                             
+>     //locateEnclosedString(s,"{{","}}", false) with:                                                                           
+>     //* s="string {{t}}" returns (9,10)                                                                              
+>     //* s= ="string {{with some {{text}} enclosed in curly {{brackets}}}}" returns (9,56)                      
+>     //locateEnclosedString(s,"{{","}}", true) with:                                                                              
+>     //* s="string {{t}}" returns (7,18)                                                                              
+>     //* s= ="string {{with some {{text}} enclosed in curly {{brackets}}}}" returns (7,58)                                 
+>     public static ArrayList<Pair> locateEnclosedString(String s, String enclosingStringStart, String enclosingStringEnd){
+>         int eSS = enclosingStringStart.length();
+>         int eSE = enclosingStringEnd.length();
+>         int numberOfEnclosings = 0, start=-1, end=-1;
+>         ArrayList<Pair> toreturn = new ArrayList<Pair>();
+>         //boolean inside = false;
+>         for (int i=0; i+eSE<=s.length(); i++){
+>             if (i+eSS+eSE<=s.length()){
+>                 if (s.substring(i,i+eSS).equals(enclosingStringStart)){
+>                     if (start == -1){
+>                         start = i;
+>                     }
+>                     //System.out.format("found start at %s\n", i);
+>                     numberOfEnclosings ++;
+>                     i+=eSS-1;
+> 		}
+> 	    }
+> 	    if (s.substring(i,i+eSE).equals(enclosingStringEnd)){
+> 		//                System.out.format("found %s\n", enclosingStringEnd);
+> 	        numberOfEnclosings --;
+> 	        if (numberOfEnclosings==0 && start!=-1){
+> 		    end = i+eSE;
+>                     //System.out.format("found end at %s\n", end);
+> 		    toreturn.add(new Pair(start,end));
+> 		    start = -1;//initialize start               
+> 	        }
+> 	    }
+>         }
+>         return toreturn;
+>     }
+> 
+>     public static String removeTextWithin(String s, ArrayList<Pair> l){
+>         int lsize = l.size();
+>         for (int i=0; i<lsize; i++){
+> 	    int j = lsize-i-1;
+> 	    log.debug("Removing text {}", s.substring(l.get(j).start, l.get(j).end));
+> 	    s = s.substring(0, l.get(j).start) + s.substring(l.get(j).end, s.length());
+>         }
+>         return s;
+>     }
+> 
+>     // Parse a string of args, like: xxx=yyy|zzz=ttt
+>     // This function can parse args like xxx=yyy|zzz={{aaa=bbb|ccc=ddd}}|kkk=hhh (this template argument is encountered in etymology sections
+>     // e.g. xxx="compound", zzz="word1"
+>     // or like xxx=yyy|zzz=[[aaa|bbb|ccc]]|kkk=hhh (this template argument is encountered in etymology sections  
+>     public static Map<String,String> parseArgs(String argsString) {
+>         HashMap<String,String> argsMap = new HashMap<String,String>();
+> 	if (null == argsString || "" == argsString) return argsMap;
+> 		
+> 	//locate wiki templates in argsString
+>         ArrayList<Pair> templatesLocation = locateEnclosedString(argsString,"{{","}}");
+> 	//locate wiki links in argsString  
+>         ArrayList<Pair> linksLocation = locateEnclosedString(argsString,"[[","]]");
+12,29c78,120
+< 	/**
+< 	 * @deprecated
+< 	 * Parse the args of a Template.
+< 	 * @param args the String containing all the args (the part of a templae contained after the first pipe).
+< 	 * @return a Map associating each argument name with its value.
+<      */
+< 	public static Map<String,String> parseArgs(String args) {
+< 		HashMap<String,String> res = new HashMap<String,String>();
+< 		if (null == args) return res;
+< 		int n = 1; // number for positional args.
+< 		String[] pairs = args.split("\\|");
+< 		for (int i = 0; i < pairs.length; i++) {
+< 			if (null == pairs[i]) continue;
+< 			String[] s = pairs[i].trim().split("\\=");
+< 			if (s.length < 2) {
+< 				// There is no argument name.
+< 				res.put(""+n, s[0]);
+< 				n++;
+---
+>         //split argsString by character "|" (unless character "|" is contained in a wiki template)
+> 	//into argsArray
+>         ArrayList<String> argsArray = new ArrayList<String>();
+>         int i = 0, j = 0;//iterate over characters in string argsString
+>         while (j < argsString.length()-1){
+>                 if (argsString.charAt(j)=='|'){
+> 		    if (j==argsString.length()-1){
+>                         argsArray.add(argsString.substring(i,j).trim());
+> 		    } else {
+>                         Pair p = new Pair(j,j+1);
+> 		        //System.out.format("%s\n", templatesLocation);
+>                         if (templatesLocation.size()==0 || (!(p.containedIn(templatesLocation)) && !(p.containedIn(linksLocation)))){
+>                             argsArray.add(argsString.substring(i,j).trim());
+>                             i = j+1;
+> 		        }
+> 		    } 
+> 	        }
+> 	        j++;
+> 	    
+> 	}   
+> 	if (j==argsString.length()-1){
+> 	    if (argsString.charAt(j)=='|'){
+> 		argsArray.add(argsString.substring(i,j).trim());
+> 	    } else { //includes case: argsString is a single character                                                                                                                                  
+> 		argsArray.add(argsString.substring(i,j+1).trim());
+> 	    }
+> 	}         
+> 
+> 	//then consider each argument argString
+>         //split each element of argsArray (i.e. each argument arg) by "=" (unless "=" is contained in a wiki template)
+>         //into argsMap, the returned map
+>         int n = 1; // number for positional args.
+> 	String argString; 
+> 	for (int h = 0; h < argsArray.size(); h++) {//iterate over all arguments in argsArray
+>             argString = argsArray.get(h); //an argument in argsArray
+> 	    templatesLocation = locateEnclosedString(argString, "{{","}}");  
+>             j = 0;
+>             while (j < argString.length()){//iterate over characters in string argString            
+>                 if (argString.charAt(j)=='='){
+>                     Pair p = new Pair(j, j+1);
+> 		    if (templatesLocation.size()==0 || !(p.containedIn(templatesLocation))){
+>                         if (j==argString.length()-1){
+> 			    argsMap.put(argString.substring(0, j).trim(), "");
+31c122
+< 				res.put(s[0], s[1]);
+---
+> 		            argsMap.put(argString.substring(0, j).trim(), argString.substring(j+1, argString.length()).trim());
+33,57c124,132
+< 		}
+< 		return res;
+< 	}
+< 
+< 	static Pattern htmlRefElement = Pattern.compile("(<ref(?:\\s[^>]*|\\s*)>)|(</ref>)");
+< 	// WARN: not synchronized !
+< 	public static String removeReferencesIn(String definition) {
+< 		StringBuffer def = new StringBuffer();
+< 		Matcher m = htmlRefElement.matcher(definition);
+<         boolean mute = false;
+<         int previousPos = 0;
+< 		while (m.find()) {
+< 			if (null != m.group(1) && m.group().endsWith("/>")) {
+< 				// A opening/closing element
+< 				if (! mute) def.append(definition.substring(previousPos, m.start()));
+< 			} else if (null != m.group(1)) {
+<                 // An opening element
+< 				if (! mute) def.append(definition.substring(previousPos, m.start()));
+< 				mute = true;
+< 			} else if (null != m.group(2)) {
+<                 // a closing element
+<                 if (! mute) def.append(definition.substring(previousPos, m.start()));
+<                 mute = false;
+<             }
+<             previousPos = m.end();
+---
+>                         break;
+> 		    } 
+> 	        }
+> 		j++;
+> 	     }
+>              if (j == argString.length()){//"=" not found in argument argString
+>                 argsMap.put(""+n, argString);
+>                 n++;
+> 	     }
+59,61c134,136
+<         if (! mute) def.append(definition.substring(previousPos, definition.length()));
+< 		return def.toString();
+< 	}
+---
+>         //System.out.format("argsMap=%s\n", argsMap);
+>         return argsMap;
+>     }
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseDefinitionExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseDefinitionExtractorWikiModel.java
+11a12
+> import org.getalp.blexisma.api.ISO639_3;
+38,43c39
+< 		String def = null;
+< 		try {
+< 			def = render(new PlainTextConverter(), definition).trim();
+< 		} catch (IOException e) {
+< 			e.printStackTrace();
+< 		}
+---
+> 		String def = render(new PlainTextConverter(), definition).trim();
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseLangtoCode.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseLangtoCode.java
+5c5
+< import org.getalp.iso639.ISO639_3;
+---
+> import org.getalp.blexisma.api.ISO639_3;
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseRelatedWordsExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseRelatedWordsExtractorWikiModel.java
+10c10
+< import org.getalp.iso639.ISO639_3;
+---
+> import org.getalp.blexisma.api.ISO639_3;
+154c154
+< 
+---
+> ;
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseTranslationExtractorWikiModel.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseTranslationExtractorWikiModel.java
+13c13
+< import org.getalp.iso639.ISO639_3;
+---
+> import org.getalp.blexisma.api.ISO639_3;
+diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/zho/WiktionaryExtractor.java ety2data/trunk/extractor/src/main/java/org/getalp/dbnary/zho/WiktionaryExtractor.java
+8a9
+> import org.getalp.blexisma.api.ISO639_3;
+11a13,16
+> import org.getalp.dbnary.zho.ChineseDefinitionExtractorWikiModel;
+> import org.getalp.dbnary.zho.ChineseRelatedWordsExtractorWikiModel;
+> import org.getalp.dbnary.zho.ChineseTranslationExtractorWikiModel;
+> import org.getalp.dbnary.zho.WiktionaryExtractor;
+Only in dbnary/trunk/extractor/src/main/java/org/getalp/dilaf: DilafBambaraExtractor.java
+Only in dbnary/trunk/extractor/src/main/java/org/getalp/dilaf: DilafExtractor.java
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dilaf/DilafLemonDataHandler.java ety2data/trunk/extractor/src/main/java/org/getalp/dilaf/DilafLemonDataHandler.java
+6c6,7
+< import org.getalp.dbnary.*;
+---
+> import org.getalp.dbnary.DbnaryModel;
+> import org.getalp.dbnary.LangTools;
+8a10,14
+> import org.getalp.dbnary.DBnaryOnt;
+> import org.getalp.dbnary.LemonOnt;
+> import org.getalp.dbnary.LexinfoOnt;
+> 
+> import com.hp.hpl.jena.rdf.model.AnonId;
+19c25
+< 	private static final String DILAF_NS = "http://kaiko.getalp.org/dilaf";
+---
+> 	private String DILAF_NS = "http://kaiko.getalp.org/dilaf";
+39c45
+< 		// aBox.setNsPrefix("dlf_" + lang, NS);
+---
+> 		aBox.setNsPrefix("dlf_" + lang, NS);
+44d49
+<         aBox.setNsPrefix("olia", OliaOnt.getURI());
+50,94c55,56
+< 
+<     public Resource registerLexicalEntry(String id, String pos) {
+<         pos = normalizePartOfSpeech(pos);
+<         String encodedLexEntryURI = uriEncode(id, pos);
+<         Resource lexEntry = aBox.createResource(NS + encodedLexEntryURI, LemonOnt.LexicalEntry);
+<         aBox.add(aBox.createStatement(lexEntry, DBnaryOnt.partOfSpeech, pos));
+<         attacheLexInfoPOS(lexEntry, pos);
+<         return lexEntry;
+<     }
+< 
+< 
+<     private void attacheLexInfoPOS(Resource lexEntry, String pos) {
+<         switch (pos) {
+<             case "n":
+<                 aBox.add(aBox.createStatement(lexEntry, LexinfoOnt.partOfSpeech, OliaOnt.Noun));
+<                 break;
+<             case "adj":
+<             case "adjépith":
+<                 aBox.add(aBox.createStatement(lexEntry, LexinfoOnt.partOfSpeech, OliaOnt.Adjective));
+<                 break;
+<             case "adjpréd":
+<                 aBox.add(aBox.createStatement(lexEntry, LexinfoOnt.partOfSpeech, OliaOnt.PredicativeAdjective));
+<                 break;
+<             case "v":
+<             case "vt":
+<             case "vi":
+<             case "vréf":
+<             case "vi_réf":
+<                 aBox.add(aBox.createStatement(lexEntry, LexinfoOnt.partOfSpeech, OliaOnt.Verb));
+<                 break;
+<             case "interj":
+<                 aBox.add(aBox.createStatement(lexEntry, LexinfoOnt.partOfSpeech, OliaOnt.Interjection));
+<                 break;
+<             case "n_adj":
+<                 aBox.add(aBox.createStatement(lexEntry, LexinfoOnt.partOfSpeech, OliaOnt.Noun));
+<                 break;
+<             case "adv":
+<                 aBox.add(aBox.createStatement(lexEntry, LexinfoOnt.partOfSpeech, OliaOnt.Noun));
+<                 break;
+<             default:
+<                 System.err.format("Unknown POS: %s\n", pos);
+<         }
+<     }
+< 
+170,201c132,136
+<     public void setCanonicalForm(Resource lexicalEntry, String lemma) {
+<         Resource canonicalForm = aBox.createResource(lexicalEntry.getURI() + "__cf", LemonOnt.Form);
+<         aBox.add(aBox.createStatement(canonicalForm, LemonOnt.writtenRep, lemma, twoLetterLanguageCode));
+<         aBox.add(aBox.createStatement(lexicalEntry, LemonOnt.canonicalForm, canonicalForm));
+<     }
+< 
+<     public Resource registerLexicalSense(Resource lexicalEntry, String senseId, String terme, String usage, String nonUsage, String status, String emploi) {
+<         Resource lexicalSense = aBox.createResource(NS + senseId, LemonOnt.LexicalSense);
+<         aBox.add(aBox.createStatement(lexicalSense, RDF.type, LemonOnt.LexicalSense));
+<         aBox.add(aBox.createStatement(lexicalEntry, LemonOnt.sense, lexicalSense));
+<         // TODO: handle other attributes
+<         return lexicalSense;
+<     }
+< 
+<     public void registerDefinition(Resource sense, String text, String lang) {
+<         aBox.add(aBox.createStatement(sense, LemonOnt.definition, text, lang));
+<     }
+< 
+<     public Resource registerExample(Resource sense, String ba, String baTons, String fr, String usage) {
+<         // Create new word sense + a definition element
+<         Resource example = aBox.createResource();
+<         if (null != ba)
+<             aBox.add(aBox.createStatement(example, LemonOnt.value, ba, "bm"));
+<         if (null != fr)
+<             aBox.add(aBox.createStatement(example, LemonOnt.value, fr, "fr"));
+<         // TODO: how to represent bambara with tones ?
+<         if (null != usage)
+<             aBox.add(aBox.createStatement(example, DBnaryOnt.usage, usage, "bm"));
+< 
+<         aBox.add(aBox.createStatement(sense, LemonOnt.example, example));
+<         return example;
+<     }
+---
+> 	public void registerDefinition(Resource lexicalSense, String def) {
+> 		// TODO Auto-generated method stub
+> 		
+> 	}
+> 
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/main/java/org/getalp/dilaf/DilafZarmaExtractor.java ety2data/trunk/extractor/src/main/java/org/getalp/dilaf/DilafZarmaExtractor.java
+13c13
+< public class DilafZarmaExtractor extends DilafExtractor {
+---
+> public class DilafZarmaExtractor {
+15,16c15,26
+< 	public DilafZarmaExtractor(DilafLemonDataHandler wdh) {
+< 		super(wdh);
+---
+> 	private XMLInputFactory2 xmlif;
+> 	
+> 	public DilafZarmaExtractor() {
+> 	     try {
+> 	            xmlif = (XMLInputFactory2) XMLInputFactory2.newInstance();
+> 	            xmlif.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+> 	            xmlif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+> 	            xmlif.setProperty(XMLInputFactory2.P_PRESERVE_LOCATION, Boolean.TRUE);
+> 	        } catch (Exception ex) {
+> 	            System.err.println("Cannot intialize XMLInputFactory while creating DilafZarmaExtractor.");
+> 	            throw new RuntimeException("Cannot initialize XMLInputFactory", ex);
+> 	        }
+17a28,29
+> 	
+> 	public void importDilafZarmaXmlFile(File dilafFile, DilafLemonDataHandler wdh) throws DilafExtractorException {
+19c31,75
+< 	protected void importArticle(XMLStreamReader2 xmlr) throws XMLStreamException {
+---
+> 	        // create new XMLStreamReader
+> 
+> 	        long starttime = System.currentTimeMillis();
+> 	        int nbArticles = 0;
+> 
+> 	        XMLStreamReader2 xmlr = null;
+> 	        try {
+> 	            // pass the file name. all relative entity references will be
+> 	            // resolved against this as base URI.
+> 	            xmlr = xmlif.createXMLStreamReader(dilafFile);
+> 
+> 	            // check if there are more events in the input stream
+> 	            while (xmlr.hasNext()) {
+> 	                xmlr.next();
+> 	                if (xmlr.isStartElement() && xmlr.getLocalName().equals("dilaf")) {
+> 	                    // create lemon lexicon instance and link all entries to it.
+> 	                	// Get source, target, creation date and version number ?
+> 	                    
+> 	                } else if (xmlr.isStartElement() && xmlr.getLocalName().equals("article")) {
+> 	                    importArticle(xmlr, wdh);
+> 	                    nbArticles++;
+> 	                }
+> 	            }
+> 	        } catch (XMLStreamException ex) {
+> 	            System.out.println(ex.getMessage());
+> 
+> 	            if (ex.getNestedException() != null) {
+> 	                ex.getNestedException().printStackTrace();
+> 	            }
+> 	        } catch (Exception ex) {
+> 	            ex.printStackTrace();
+> 	        } finally {
+> 	            try {
+> 	                if (xmlr != null)
+> 	                    xmlr.close();
+> 	            } catch (XMLStreamException ex) {
+> 	                ex.printStackTrace();
+> 	            }
+> 	        }
+> 
+> 	        long endtime = System.currentTimeMillis();
+> 	        System.out.println(" Parsing Time = " + (endtime - starttime) + "; " + nbArticles + " pages parsed.");
+> 	    }
+> 
+> 	private void importArticle(XMLStreamReader2 xmlr, DilafLemonDataHandler wdh) throws XMLStreamException {
+38c94
+<             	wdh.registerDefinition(lexicalSense, def, "dje");
+---
+>             	wdh.registerDefinition(lexicalSense, def);
+46,54c102,107
+< 
+< 	@Override
+< 	protected String rootElement() {
+< 		return "dilaf";
+< 	}
+< 
+< 	@Override
+< 	protected String articleElement() {
+< 		return "article";
+---
+> 	
+> 	public static void main(String args[]) throws DilafExtractorException {
+> 		DilafZarmaExtractor e = new DilafZarmaExtractor();
+> 		DilafLemonDataHandler wdh = new DilafLemonDataHandler("dje");
+> 		e.importDilafZarmaXmlFile(new File(args[0]), wdh);
+> 		wdh.dump(System.out, "TURTLE");
+56,57d108
+< 
+< 
+copied || Only in dbnary/trunk/extractor/src/main/resources/org/getalp/dbnary/eng: data3.txt
+Only in ety2data/trunk/extractor/src/main/resources/org/getalp/dbnary/eng: eng_wiktionary_list_of_languages.tab
+Only in ety2data/trunk/extractor/src/main/resources/org/getalp/dbnary/eng: eng_wiktionary_list_of_languages.tab~
+copied || diff -r --exclude .svn dbnary/trunk/extractor/src/test/java/org/getalp/blexisma/wiktionary/TestDbnaryWikiModel.java ety2data/trunk/extractor/src/test/java/org/getalp/blexisma/wiktionary/TestDbnaryWikiModel.java
+5d4
+< import java.io.IOException;
+22c21
+< 	public void test() throws IOException {
+---
+> 	public void test() {
+copied || Only in dbnary/trunk/extractor/src/test/java/org/getalp/dbnary/wiki: WikiTextTest.java
+diff -r --exclude .svn dbnary/trunk/extractor/src/test/java/org/getalp/dbnary/wiki/WikiToolTest.java ety2data/trunk/extractor/src/test/java/org/getalp/dbnary/wiki/WikiToolTest.java
+3c3
+< import org.junit.Test;
+---
+> //import org.getalp.dbnary.Pair;
+4a5,8
+> import org.getalp.dbnary.*;
+> import org.getalp.dbnary.eng.*;  
+> import org.junit.Test;
+> import java.util.ArrayList;
+10c14
+<  * Created by serasset on 02/03/16.
+---
+>  * Created by serasset on 02/03/16, changed by pantaleo
+15,23c19,57
+<         Map<String, String> args = WikiTool.parseArgs("grc|sc=polytonic|βοῦς||ox, cow");
+< 
+<         assertEquals("grc", args.get("1"));
+<         assertEquals("polytonic", args.get("sc"));
+<         assertEquals("βοῦς", args.get("2"));
+<         assertEquals("ox, cow", args.get("4"));
+<         assertEquals("", args.get("3"));
+<         assertEquals(5, args.size());
+< 
+---
+>         //test locateEnclosedString
+> 	String sentence = "erty (s(ghj)) d";
+>         assertEquals(5, WikiTool.locateEnclosedString(sentence,"(",")").get(0).start);
+> 	assertEquals(13, WikiTool.locateEnclosedString(sentence,"(",")").get(0).end);
+>         sentence = "erty {{ghj}} d";
+>         assertEquals(5, WikiTool.locateEnclosedString(sentence,"{{","}}").get(0).start);
+> 	assertEquals(12, WikiTool.locateEnclosedString(sentence,"{{","}}").get(0).end);
+> 	sentence = "erty ([[something]]) e";
+> 
+>         //test: containedIn andremove text contained in () unless () are located inside wiki link [[]] or inside wiki template {{}}, e.g. [[  (  )  ]] 
+> 	ArrayList<Pair> linksLocation = WikiTool.locateEnclosedString(sentence, "[[", "]]");
+>         ArrayList<Pair> parenthesesLocation = WikiTool.locateEnclosedString(sentence, "(", ")");
+>         int parenthesesLocationlength = parenthesesLocation.size();
+> 	for (int i=0; i<parenthesesLocationlength; i++){
+>             int j = parenthesesLocationlength-i-1;
+>             //check if parentheses are inside links [[  ()  ]]     
+>             if (parenthesesLocation.get(j).containedIn(linksLocation)){
+>                 parenthesesLocation.remove(j);
+>             }
+>         }      
+>         sentence = WikiTool.removeTextWithin(sentence, parenthesesLocation);
+>         assertEquals("erty  e", sentence);
+> 
+> 	//test parseArgs function
+> 	Map<String, String> args = WikiTool.parseArgs("suffix|-onis|e||error=|gloss1=-er|gloss2={{l|en|feminine|fem.}}|lang=lv|");
+>         assertEquals("suffix", args.get("1"));
+>         assertEquals("-onis", args.get("2"));
+>         assertEquals("", args.get("4"));
+> 	assertEquals("", args.get("error"));
+>         assertEquals("-er", args.get("gloss1"));
+>         assertEquals("{{l|en|feminine|fem.}}", args.get("gloss2"));
+>         assertEquals("lv",args.get("lang"));
+>         assertEquals(8, args.size());
+> 
+>         //test toArrayListPOE
+>         String etymologyString = "From {{m|it|pasta}}, from  [[it:pasta]]." ;
+> 	ArrayListPOE etymology = WiktionaryExtractor.toArrayListPOE(etymologyString);
+>         assertEquals(6, etymology.size());
+>         assertEquals("m|it|pasta",  etymology.get(1).string);
+copied || Only in dbnary/trunk/extractor/src/test/java/org/getalp/iso639: ISO639Test.java
+Only in ety2data/trunk/extractor: target
+copied || diff -r --exclude .svn dbnary/trunk/kaiko/bootstrap-virtuoso-db.sh ety2data/trunk/kaiko/bootstrap-virtuoso-db.sh
+55,59d54
+< iso3Lang[id]=ind
+< iso3Lang[la]=lat
+< iso3Lang[mg]=mlg
+< iso3Lang[no]=nor
+< iso3Lang[bm]=bam
+102,104c97,98
+< ## TODO: detect the graph (dbnary or dilaf ?)
+< langRegex2='(..)_([^_]*)_(.*)'
+< langRegex3='(...)_([^_]*)_(.*)'
+---
+> langRegex2='(..)_(.*)'
+> langRegex3='(...)_(.*)'
+copied || diff -r --exclude .svn dbnary/trunk/kaiko/bootstrap.sql ety2data/trunk/kaiko/bootstrap.sql
+58c58
+< 'http_rule_4', 1,
+---
+> 'http_rule_5', 1,
+70,113d69
+< 
+< -- create redirections for dilaf
+< 
+< DB.DBA.VHOST_REMOVE ( lhost=>'*ini*', vhost=>'*ini*', lpath=>'/dilaf' );
+< 
+< DB.DBA.VHOST_DEFINE ( lhost=>'*ini*', vhost=>'*ini*', lpath=>'/dilaf', ppath=>'/DAV/', is_dav=>1,
+< def_page=>'', vsp_user=>'dba', ses_vars=>0, opts=>vector ('browse_sheet', '', 'url_rewrite', 'http_rule_list_2'),
+< is_default_host=>0
+< );
+< 
+< DB.DBA.URLREWRITE_CREATE_RULELIST (
+< 'http_rule_list_2', 1,
+< vector ('http_rule_5', 'http_rule_6'));
+< 
+< DB.DBA.URLREWRITE_CREATE_REGEX_RULE (
+< 'http_rule_5', 1,
+< '^/(.*)\$',
+< vector ('par_1'),
+< 1,
+< '/sparql?query=DESCRIBE%%20%%3Chttp%%3A%%2F%%2Fkaiko.getalp.org%%2F%U%%3E&format=%U',
+< vector ('par_1', '*accept*'),
+< NULL,
+< '(text/rdf.n3)|(application/rdf.xml)',
+< 2,
+< 303,
+< ''
+< );
+< 
+< 
+< DB.DBA.URLREWRITE_CREATE_REGEX_RULE (
+< 'http_rule_6', 1,
+< '^/(.*)\$',
+< vector ('par_1'),
+< 1,
+< '/describe/?url=http%%3A%%2F%%2Fkaiko.getalp.org%%2F%s',
+< vector ('par_1'),
+< NULL,
+< '(text/html)|(\\*/\\*)',
+< 0,
+< 303,
+< ''
+< );
+< 
+< 
+119c75
+< DB.DBA.XML_SET_NS_DECL ('lemon', 'http://lemon-model.net/lemon#', 2);
+---
+> DB.DBA.XML_SET_NS_DECL ('lemon', 'http://www.lemon-model.net/lemon#', 2);
+140d95
+< DB.DBA.XML_SET_NS_DECL ('dilaf-bam', 'http://kaiko.getalp.org/dilaf/bam/', 2);
+Only in ety2data/trunk/ontology: .DS_Store
+diff -r --exclude .svn dbnary/trunk/ontology/pom.xml ety2data/trunk/ontology/pom.xml
+234c234
+< </project>
+\ No newline at end of file
+---
+> </project>
+diff -r --exclude .svn dbnary/trunk/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl ety2data/trunk/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl
+330a400
+>  
+Only in ety2data/trunk/ontology: target

@@ -1,0 +1,116 @@
+**********************************************************
+Satistiques générales
+**********************************************************
+vb_0 :
+Nonmbre d'entrées : 509588
+Code lenght : 32768
+Nombre de dimensions : 1904
+vb_1 :
+Nonmbre d'entrées : 516371
+Code lenght : 32768
+Nombre de dimensions : 1904
+**********************************************************
+Ecart moyen absolu sur 1000 éléments
+**********************************************************
+Base vb_0 définitions
+**********************************************************
+Tirage 1 : Absolute distance mean: 0.9166475332050112
+number of distance >1: 389
+Tirage 2 : Absolute distance mean: 0.8991152996638329
+number of distance >1: 375
+Tirage 3 : Absolute distance mean: 0.9026372757372002
+number of distance >1: 359
+Tirage 4 : Absolute distance mean: 0.9135957055511775
+number of distance >1: 387
+Tirage 5 : Absolute distance mean: 0.904574963992964
+number of distance >1: 376
+Tirage 6 : Absolute distance mean: 0.9101094711109338
+number of distance >1: 390
+Tirage 7 : Absolute distance mean: 0.8845438410946939
+number of distance >1: 347
+Tirage 8 : Absolute distance mean: 0.9042145845199122
+number of distance >1: 367
+Tirage 9 : Absolute distance mean: 0.8977600485010245
+number of distance >1: 360
+Tirage 10 : Absolute distance mean: 0.9065811589913715
+number of distance >1: 385
+**********************************************************
+Base vb_1 définitions
+**********************************************************
+Tirage 1 : Absolute distance mean: 0.23763214680141956
+number of distance >1: 16
+Tirage 2 : Absolute distance mean: 0.24180975762640824
+number of distance >1: 17
+Tirage 3 : Absolute distance mean: 0.2326604157858949
+number of distance >1: 10
+Tirage 4 : Absolute distance mean: 0.23802064270069284
+number of distance >1: 12
+Tirage 5 : Absolute distance mean: 0.2502517709365524
+number of distance >1: 19
+Tirage 6 : Absolute distance mean: 0.23035880597986821
+number of distance >1: 12
+Tirage 7 : Absolute distance mean: 0.23716827149246866
+number of distance >1: 12
+Tirage 8 : Absolute distance mean: 0.25238798452674194
+number of distance >1: 22
+Tirage 9 : Absolute distance mean: 0.22717650923540247
+number of distance >1: 10
+Tirage 10 : Absolute distance mean: 0.23318081597928414
+number of distance >1: 12
+**********************************************************
+Ecart moyen entre paires sur 1000 paires
+**********************************************************
+**********************************************************
+Base vb_0 définitions
+**********************************************************
+Tirage 1 : 1.2084218588798277
+Tirage 2 : 1.2030554899348294
+Tirage 3 : 1.2172307436469454
+Tirage 4 : 1.1973108469408131
+Tirage 5 : 1.2103779933584091
+Tirage 6 : 1.2032714455302906
+Tirage 7 : 1.2023829760832412
+Tirage 8 : 1.2103562519221578
+Tirage 9 : 1.2113794797170734
+Tirage 10 : 1.1817147652249997
+**********************************************************
+Base vb_1 définitions
+**********************************************************
+Tirage 1 : 0.3646227445342037
+Tirage 2 : 0.38379237565342605
+Tirage 3 : 0.3675428958285914
+Tirage 4 : 0.369396876000277
+Tirage 5 : 0.37009843211762716
+Tirage 6 : 0.37540279950091116
+Tirage 7 : 0.3878403586676571
+Tirage 8 : 0.35667267343789044
+Tirage 9 : 0.35867433773610047
+Tirage 10 : 0.3846136868203779
+**********************************************************
+Prox pour le lemme chat :  base vb_0
+**********************************************************
+
+#fra|chat 1.073757614E9
+#def|#{cri|Cri}# du #{chat|chat}#. 1.023235706E9
+#def|La #{portée|portée}# d’une #{chat|chatte}#. 1.01629126E9
+#fra|chattée 1.01629126E9
+#def|#{peur|Peur}# des #{chat|chats}#. 1.013830003E9
+#fra|ailourophobie 1.013830003E9
+#def|#{chien|Chien}# ou #{chat|chat}# qui #{chasser|chasse}# les #{rat|rats}#. 1.006821818E9
+#def|#{appareil|Appareil}# qui permet aux #{chat|chats}# de #{limer|limer}# leurs #{griffe|griffes}#. 9.9802907E8
+#fra|griffoir 9.9802907E8
+#def|Longs #{poil|poils}# que les #{chat|chats}#, les #{lion|lions}# et d’autres animaux ont #{autour|autour}# de la #{gueule|gueule}# . 9.97729967E8
+**********************************************************
+Prox pour le lemme war :  base vb_1
+**********************************************************
+
+#fra|chat 1.073759707E9
+#def|#{chien|Chien}# ou #{chat|chat}# qui #{chasser|chasse}# les #{rat|rats}#. 1.072222434E9
+#def|Partie #{située|située}# #{sous|sous}# les #{patte|pattes}# #{directement|directement}# en #{contact|contact}# avec le #{sol|sol}# chez certains #{animal|animaux}#, comme les #{chat|chats}#, les #{chien|chiens}#, les #{loup|loups}#, les #{renard|renards}#, #{etc.|etc.}# 1.071998115E9
+#def|La #{portée|portée}# d’une #{chat|chatte}#. 1.071901991E9
+#fra|chattée 1.071901991E9
+#fra|chatée 1.071901991E9
+#def|#{portée|Portée}# d'une #{chatte|chatte}#. 1.071901991E9
+#def|#{appareil|Appareil}# qui permet aux #{chat|chats}# de #{limer|limer}# leurs #{griffe|griffes}#. 1.071854822E9
+#fra|griffoir 1.071854822E9
+#def|Espèce de #{chaperon|chaperon}# ou de #{capuce|capuce}# que les #{président|présidents}# à #{mortier|mortier}# et le #{greffier|greffier}# en #{chef|chef}# du #{parlement|parlement}# portaient sur la #{tête|tête}# ou sur l’#{épaule|épaule}# dans les grandes #{cérémonie|cérémonies}#. 1.071792867E9

@@ -1,0 +1,70 @@
+ -----
+ Modules
+ -----
+ The Blexisma Team
+ -----
+ -----
+
+{Blexisma Modules}
+
+  Blexisma modules bring specific functionalities to the blexisma system. These functionalities are independent to the SMA system
+  used in the project. Some of these module may even provide standalone programs to be used outside blexisma.
+
+*----------+-----------------------------------------------------------------+----------------+
+  <<Module>> || <<Description>>                                                     || <<current version>>|
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/blexisma-modules-parent/blexisma-api}blexisma-api}} | API of common blexisma data types                       | 1.0-SNAPSHOT   |
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/blexisma-modules-parent/blexisma-core}blexisma-core}} | Core of the blexisma system                            | 1.0-SNAPSHOT   |
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/blexisma-modules-parent/wiktionary-support}wiktionary-support}} | Semantic network extractor from wiktionary dump files  | 1.0-SNAPSHOT      |
+*----------+-----------------------------------------------------------------+----------------+
+
+{Cougaar Plugins}
+
+  These are plugins (in the sense of the cougaar multi agent system) that encapsulate the different
+  blexisma functionality for use in cougaar environment. 
+  
+*----------+-----------------------------------------------------------------+----------------+
+  <<plugin>> | <<Description>>                                                     | <<current version>>|
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/blexisma-cougaar-plugins//blexisma-broker}blexisma-broker}} | A simple broker plugin used to help agents requiring specific service to find them.  | 1.0-SNAPSHOT   |
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/blexisma-cougaar-plugins//blexisma-sample-ping}blexisma-sample-ping}} | A plugin sample using the "ping" application of cougaar to test/demonstrate the plugin architecture.  | 1.0-SNAPSHOT   |
+*----------+-----------------------------------------------------------------+----------------+
+
+{Cougaar Societies}
+
+  Societies are standalone jar + descriptors of a set of agents to be run under the cougaar multi agent system. 
+  Such societies are used to run a specific experiment using the cougaar plugins, that may be dispatched on
+  several machines.
+  
+*----------+-----------------------------------------------------------------+----------------+
+  <<plugin>> | <<Description>>                                                     | <<current version>>|
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/blexisma-societies//blexisma-sample-society}blexisma-sample-society}} | A sample society on which other should be built.  | 1.0-SNAPSHOT   |
+*----------+-----------------------------------------------------------------+----------------+
+
+{Experiments}
+
+  Several experiments are made with or for Blexisma. This list gives elements regarding these experiments.
+  
+*----------+-----------------------------------------------------------------+----------------+
+  <<Experiment>> || <<Description>>                                                     || <<current version>>|
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/experiments/kernel_fr}kernel_fr}} | Building a kernel for conceptual vector training for French    | 1.1-SNAPSHOT   |
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/experiments/training-experiments}training-experiments}} | Experiments describing the different training methods used and their performance    | 1.1-SNAPSHOT   |
+*----------+-----------------------------------------------------------------+----------------+
+
+{Internal Tools}
+
+  Blexisma also develops internal tools that are to be used for the plateform development. These should only be useful to blexisma developers.
+  
+*----------+-----------------------------------------------------------------+----------------+
+  <<plugin>> | <<Description>>                                                     | <<current version>>|
+*----------+-----------------------------------------------------------------+----------------+
+  {{{/blexisma-tools//blexisma-assembly-descriptors}blexisma-assembly-descriptors}} | An assembly descriptor used by maven to build blexisma societies.  | 1.0-SNAPSHOT   |
+*----------+-----------------------------------------------------------------+----------------+
+
+

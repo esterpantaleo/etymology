@@ -1,0 +1,9 @@
+K 13
+svn:mergeinfo
+V 508
+/branches/1.1-gwtwiki-engine/src/main/java/org/getalp/dbnary/GermanWiktionaryExtractor.java:1134-1141
+/branches/extractor-swebble/src/main/java/org/getalp/dbnary/deu/WiktionaryExtractor.java:1610-1734
+/branches/malick_morelanguages/extractor/src/main/java/org/getalp/dbnary/deu/WiktionaryExtractor.java:1643-1667
+/branches/mbarry/src/main/java/org/getalp/dbnary/GermanWiktionaryExtractor.java:1147-1157
+/branches/roques_sandbox/extractor/src/main/java/org/getalp/dbnary/deu/WiktionaryExtractor.java:1646-1672
+END

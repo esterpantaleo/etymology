@@ -1,0 +1,60 @@
+after stripping parentheses, references, Images, Categories, Superseded sentences, and after adding a final dot: 
+From {{term|mobile}} + {{term|telephone}}.
+
+.
+@prefix olia:  <http://purl.org/olia/olia.owl#> .
+@prefix lemon: <http://lemon-model.net/lemon#> .
+@prefix dbnary: <http://kaiko.getalp.org/dbnary#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lexvo: <http://lexvo.org/id/iso639-3/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#> .
+@prefix eng:   <http://kaiko.getalp.org/dbnary/eng/> .
+
+eng:wireless_phone  a  dbnary:Vocable .
+
+eng:phone  a    dbnary:Vocable .
+
+eng:cell  a     dbnary:Vocable .
+
+eng:__ws_1_mobile_phone__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:hypernym     eng:phone ;
+        dbnary:hyponym      eng:feature_phone , eng:smartphone ;
+        dbnary:senseNumber  "1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        dbnary:synonym      eng:cellular_telephone , eng:cellular_phone , eng:cellular_mobile , eng:cellular , eng:handphone , eng:cellphone , eng:cell_phone , eng:mobile , eng:wireless_phone , eng:cell ;
+        lemon:definition    [ lemon:value  "A portable telephone that connects with the telephone network over radio wave transmission."@en ] .
+
+eng:cellular_mobile  a  dbnary:Vocable .
+
+eng:cellular_phone  a  dbnary:Vocable .
+
+eng:cellphone  a  dbnary:Vocable .
+
+eng:feature_phone  a  dbnary:Vocable .
+
+eng:cell_phone  a  dbnary:Vocable .
+
+eng:mobile_phone__Noun__1
+        a                     lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Noun" ;
+        lemon:canonicalForm   [ lemon:writtenRep  "mobile phone"@en ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_1_mobile_phone__Noun__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:noun .
+
+eng:handphone  a  dbnary:Vocable .
+
+eng:mobile_phone  a      dbnary:Vocable ;
+        dbnary:refersTo  eng:mobile_phone__Noun__1 .
+
+eng:cellular_telephone
+        a       dbnary:Vocable .
+
+eng:cellular  a  dbnary:Vocable .
+
+eng:smartphone  a  dbnary:Vocable .
+
+eng:mobile  a   dbnary:Vocable .

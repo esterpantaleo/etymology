@@ -1,0 +1,316 @@
+\newcommand{\andname}{et}
+\newcommand{\Inname}{Dans les actes de}
+\newcommand{\editorname}{}
+\newcommand{\pagesname}{pp}
+\newcommand{\volumename}{volume}
+\newcommand{\ofname}{de}
+\begin{thebibliography}{\relax{Gamallo Otero} \& Bordag, 2011}
+
+\bibitem[Bangalore, 1997]{Bangalore1997}
+Srinivas \bgroup\sc Bangalore\egroup{}.
+\newblock « {\em Complexity of lexical descriptions and its relevance to
+  partial parsing.} ».
+\newblock PhD thesis, University of Pennsylvannia., 1997.
+
+\bibitem[Besancon, 2001]{Besancon2001}
+Romaric \bgroup\sc Besancon\egroup{}.
+\newblock « {\em Int{\'e}gration de connaissances syntaxiques et
+  s{\'e}mantiques dans les repr{\'e}sentations vectorielles de texte} ».
+\newblock Thèse de doctorat, {\'E}cole Polytechnique F{\'e}d{\'e}rale de
+  Lausanne, Laboratoire d'Intelligence Artificielle, 2001.
+
+\bibitem[Bestgen, 2004]{Bestgen2004}
+Yves \bgroup\sc Bestgen\egroup{}.
+\newblock « Analyse s{\'e}mantique latente et segmentation automatique des
+  textes ».
+\newblock \Inname{} {\em 7{\`e}mes Journ{\'e}es internationales d'Analyse
+  statistique des Donn{\'e}es Textuelles}, \pagesname{} 171--181,
+  Louvain-la-Neuve, Mars 2004.
+
+\bibitem[Boitet, 2000]{Boitet2000}
+Christian \bgroup\sc Boitet\egroup{}.
+\newblock « Handling Texts and Corpuses in Ariane-G5, a complete environment
+  for multilingual MT ».
+\newblock \Inname{} {\em ACIDCA'2000, Corpora and Natural Language Processing},
+  \pagesname{} 7--11, 2000.
+
+\bibitem[Chauch{\'e}, 1984]{Chauche1984}
+Jacques \bgroup\sc Chauch{\'e}\egroup{}.
+\newblock « Un outil multidimensionnel de l'analyse du discours. ».
+\newblock \Inname{} {\em COLING'1984 : 10th International Conference on
+  Computational Linguistics}, \pagesname{} 11--15, Stanford University,
+  California, 1984.
+
+\bibitem[Chauch{\'e}, 1990]{Chauche1990}
+Jacques \bgroup\sc Chauch{\'e}\egroup{}.
+\newblock « D{\'e}termination s{\'e}mantique en analyse structurelle : une
+  exp{\'e}rience bas{\'e}e sur une d{\'e}finition de distance ».
+\newblock {\em TAL Information}, \pagesname{} 17--24, 1990.
+
+\bibitem[Chauch{\'e} \textit{et al.}, 2003]{Chauche2003}
+Jacques \bgroup\sc Chauch{\'e}\egroup{}, Violaine \bgroup\sc Prince\egroup{},
+  Simon \bgroup\sc Jaillet\egroup{}, \andname{} Maguelonne \bgroup\sc
+  Teisseire\egroup{}.
+\newblock « Classification automatique de textes {\`A} partir de leur analyse
+  syntaxico-s{\'e}mantique ».
+\newblock \Inname{} {\em TALN 2003}, \volumename{}~1, \pagesname{} 55--64,
+  Batz-Sur-Mer, France, Juin 2003.
+
+\bibitem[Church, 1988]{Church1988}
+Kenneth~Ward \bgroup\sc Church\egroup{}.
+\newblock « A stochastic parts program and noun phrase parser for unrestricted
+  text ».
+\newblock \Inname{} {\em 2nd Conference on Applied Natural Language
+  Processing}, \pagesname{} 136--143, 1988.
+
+\bibitem[Collins, 1997]{Collins1997}
+Michael \bgroup\sc Collins\egroup{}.
+\newblock « Three generative, lexicalised models for statistical parsing ».
+\newblock \Inname{} {\em the Annual Meeting of the Association of Computational
+  Linguistics}, Madrid, 1997.
+
+\bibitem[Deerwester \textit{et al.}, 1990]{DeeAll1990}
+Scott~C. \bgroup\sc Deerwester\egroup{}, Susan~T. \bgroup\sc Dumais\egroup{},
+  Thomas~K. \bgroup\sc Landauer\egroup{}, George~W. \bgroup\sc Furnas\egroup{},
+  \andname{} Richard~A. \bgroup\sc Harshman\egroup{}.
+\newblock « Indexing by Latent Semantic Analysis ».
+\newblock {\em Journal of the American Society of Information Science},
+  \pagesname{} 391--407, 1990.
+
+\bibitem[Genest, 2000]{Genest2000}
+David \bgroup\sc Genest\egroup{}.
+\newblock « {\em Extension du mod{\`e}le des graphes conceptuels pour la
+  recherche d'informations} ».
+\newblock Thèse de doctorat, Universit{\'e} Montpellier II, 2000.
+
+\bibitem[Grefenstette, 1994]{Grefenstette1994}
+Gregory \bgroup\sc Grefenstette\egroup{}.
+\newblock « Corpus-derived first, second and third-order word affinities ».
+\newblock \Inname{} {\em 6th EURALEX}, Amsterdam, 1994.
+
+\bibitem[Harabagiu \textit{et al.}, 1999]{Harabagiu1999}
+Sanda~M. \bgroup\sc Harabagiu\egroup{}, George~Armitage \bgroup\sc
+  Miller\egroup{}, \andname{} Dan~I. \bgroup\sc Moldovan\egroup{}.
+\newblock « WordNet 2 - A Morphologically and Semantically Enhanced Resource
+  ».
+\newblock \Inname{} {\em Workshop SIGLEX'99 : Standardizing Lexical Resources},
+  \pagesname{} 1--8, 1999.
+
+\bibitem[Harris \textit{et al.}, 1989]{Harris1989}
+Zellig~S. \bgroup\sc Harris\egroup{}, Michael \bgroup\sc Gottfried\egroup{},
+  Thomas \bgroup\sc Ryckman\egroup{}, Paul \bgroup\sc Mattick\relax{
+  }Jr.\egroup{}, Anne \bgroup\sc Daladier\egroup{}, T.N. \bgroup\sc
+  Harris\egroup{}, \andname{} S.~\bgroup\sc Harris\egroup{}.
+\newblock {\em The form of Information in Science, Analysis of Immunology
+  Sublanguage}, \volumename{} 104 \ofname{} {\em Boston Studies in the
+  Philosophy of Science}.
+\newblock Kluwer Academic Publisher, Dordrecht, 1989.
+
+\bibitem[Hjelmlev, 1968]{Hjelmslev1968}
+Louis \bgroup\sc Hjelmlev\egroup{}.
+\newblock {\em Prol{\'e}gol{\`e}me {\`a} une th{\'e}orie du langage}.
+\newblock {\'E}ditions de minuit, 1968.
+
+\bibitem[Kintsch, 2000]{Kintsch2000}
+Walter \bgroup\sc Kintsch\egroup{}.
+\newblock « Metaphor comprehension: A computational theory ».
+\newblock {\em Psychonomic Bulletin and Review}, 2000.
+
+\bibitem[Kirkpatrick, 1987]{Roget1987}
+Betty \bgroup\sc Kirkpatrick\egroup{}, \editorname{}.
+\newblock {\em Roget's Thesaurus of English Words and Phrases}.
+\newblock Penguin books, London, 1987.
+
+\bibitem[Kleiber, 1990]{Kleiber1990}
+Georges \bgroup\sc Kleiber\egroup{}.
+\newblock {\em La s{\'e}mantique du prototype}.
+\newblock Presses Universitaires de France, 1990.
+
+\bibitem[Lafourcade, 2006]{Lafourcade-emergence2006}
+Mathieu \bgroup\sc Lafourcade\egroup{}.
+\newblock « Conceptual Vector Learning - Comparing Bootstrapping from a
+  Thesaurus or Induction by Emergence ».
+\newblock \Inname{} {\em LREC'2006}, Genoa, Italia, Mai 2006.
+
+\bibitem[Larousse, 1992]{Thesaurus1992}
+\bgroup\sc Larousse\egroup{}, \editorname{}.
+\newblock {\em Th{\'E}saurus Larousse - des id{\'E}es aux mots, des mots aux
+  id{\'e}es}.
+\newblock Larousse, 1992.
+
+\bibitem[Larousse, 2001]{Larousse2001}
+\bgroup\sc Larousse\egroup{}, \editorname{}.
+\newblock {\em Le Petit Larousse Illustr{\'e} 2001}.
+\newblock Larousse, 2001.
+
+\bibitem[Larousse, 2004]{Larousse2004}
+\bgroup\sc Larousse\egroup{}, \editorname{}.
+\newblock {\em Le Petit Larousse Illustr{\'e} 2004}.
+\newblock Larousse, 2004.
+
+\bibitem[Lehmann \& Martin-Berthet, 1998]{Lehmann1998}
+Alise \bgroup\sc Lehmann\egroup{} \andname{} Francoise \bgroup\sc
+  Martin-Berthet\egroup{}.
+\newblock {\em Introduction {\`A} la lexicologie. S{\'e}mantique et
+  morphologie.}
+\newblock Dunod, Paris, 1998.
+
+\bibitem[Lemaire \& Dessus, 2003]{Lemaire2003}
+Beno{\^\i}t \bgroup\sc Lemaire\egroup{} \andname{} Philippe \bgroup\sc
+  Dessus\egroup{}.
+\newblock « Mod{\`e}les cognitifs issus de l'analyse s{\'e}mantique latente
+  ».
+\newblock {\em Cahiers Romans de sciences cognitives}, \pagesname{} 55--74,
+  2003.
+
+\bibitem[Mel'\v{c}uk \textit{et al.}, 1995]{IntroLEC1995}
+Igor \bgroup\sc Mel'\v{c}uk\egroup{}, Andr{\'e} \bgroup\sc Clas\egroup{},
+  \andname{} Alain \bgroup\sc Polgu{\`e}re\egroup{}.
+\newblock {\em Introduction {\`a} la lexicologie explicative et combinatoire}.
+\newblock Duculot, 1995.
+
+\bibitem[Mu{\~n}oz \textit{et al.}, 2000]{Munoz2000}
+Marcia \bgroup\sc Mu{\~n}oz\egroup{}, Vasin \bgroup\sc Punyakanok\egroup{}, Dan
+  \bgroup\sc Roth\egroup{}, \andname{} Dav \bgroup\sc Zimak\egroup{}.
+\newblock « A learning approach to shallow parsing ».
+\newblock \Inname{} {\em EMNLP-WVL-99}, \pagesname{} 168--178, 2000.
+
+\bibitem[Nogier, 1991]{Nogier1991}
+Jean-Francois \bgroup\sc Nogier\egroup{}.
+\newblock {\em G{\'e}n{\'e}ration automatique de langage et graphes
+  conceptuels}.
+\newblock Herm{\`e}s, 1991.
+
+\bibitem[Nyckees, 1998]{Nyckees1998}
+Vincent \bgroup\sc Nyckees\egroup{}.
+\newblock {\em La s{\'e}mantique}.
+\newblock Belin, 1998.
+
+\bibitem[Polgu{\`e}re, 2003]{Polguere2003}
+Alain \bgroup\sc Polgu{\`e}re\egroup{}.
+\newblock {\em Lexicologie et s{\'e}mantique lexicale}.
+\newblock Les Presses de l'Universit{\'e} de Montr{\'e}al, 2003.
+
+\bibitem[Pottier, 1964]{Pottier1964}
+Bernard \bgroup\sc Pottier\egroup{}.
+\newblock « Vers une s{\'e}mantique moderne ».
+\newblock {\em Travaux de s{\'e}mantique et de litt{\'e}rature}, \pagesname{}
+  107--137, 1964.
+
+\bibitem[Quillian, 1968]{Quillian1968}
+Ross \bgroup\sc Quillian\egroup{}.
+\newblock « {\em Semantic Informatic processing} », \chaptername{} Semantic
+  memory, \pagesname{} 227--270.
+\newblock MIT Press, 1968.
+
+\bibitem[Rastier, 2004]{Rastier2004}
+Francois \bgroup\sc Rastier\egroup{}.
+\newblock « Ontologie(s) ».
+\newblock {\em Revue des sciences et technologies de l'information},
+  \pagesname{} 15--40, 2004.
+
+\bibitem[\relax{Gamallo Otero} \& Bordag, 2011]{GamalloOtero2010}
+Pablo \bgroup\sc \relax{Gamallo Otero}\egroup{} \andname{} Stefan \bgroup\sc
+  Bordag\egroup{}.
+\newblock « Is singular value decomposition useful for word similarity
+  extraction? ».
+\newblock {\em Language Resources and Evaluation}, \pagesname{} 95--119, 2011,
+  Springer Netherlands.
+\newblock http://gramatica.usc.es/~gamallo/artigos-web/LRE2010Web.pdf.
+
+\bibitem[Robert, 2000]{Robert2000}
+Le~\bgroup\sc Robert\egroup{}, \editorname{}.
+\newblock {\em Le Nouveau Petit Robert, dictionnaire alphab{\'e}tique et
+  analogique de la langue francaise}.
+\newblock {\'E}ditions Le Robert, 2000.
+
+\bibitem[Roget, 1852]{Roget1852}
+Peter~Mark \bgroup\sc Roget\egroup{}.
+\newblock {\em Roget's Thesaurus of English Words and Phrases}.
+\newblock Longman, London, 1852.
+
+\bibitem[Sabah, 1996]{Sabah1996}
+G{\'e}rard \bgroup\sc Sabah\egroup{}.
+\newblock « le sens dans les traitements automatiques des langues - le point
+  apr{\`e}s 50 ans de recherches ».
+\newblock \Inname{} {\em journ{\'e}e ATALA (un demi-si{\`e}cle de traitement
+  automatique des langues : {\'e}tat de l'art)}, 1996.
+
+\bibitem[Salton \& McGill, 1983]{SalMac1983}
+Gerard \bgroup\sc Salton\egroup{} \andname{} Michael \bgroup\sc
+  McGill\egroup{}.
+\newblock {\em Introduction to Modern Information Retrieval}.
+\newblock McGrawHill, New York, 1983.
+
+\bibitem[{Salton}, 1971]{Smart1971}
+Gerard \bgroup\sc {Salton}\egroup{}.
+\newblock « The SMART Retrieval System -- Experiments in Automatic Document
+  Processing ».
+\newblock 1971.
+
+\bibitem[Salton, 1991]{Smart1991}
+Gerard \bgroup\sc Salton\egroup{}.
+\newblock « The Smart Document Retrieval Project ».
+\newblock \Inname{} {\em Proc.\ of the Fourteenth Annual International
+  ACM/SIGIR Conference on Research and Development in Information Retrieval},
+  \pagesname{} 357--358, Chicago, IL, 1991.
+
+\bibitem[Schank, 1972]{schank1972}
+Roger~C. \bgroup\sc Schank\egroup{}.
+\newblock « Conceptual Dependency: {A} Theory of Natural Language
+  Understanding ».
+\newblock {\em Cognitive Psychology}, \pagesname{} pages 532--631, 1972.
+
+\bibitem[Schwab, 2005]{schwab2005th}
+Didier \bgroup\sc Schwab\egroup{}.
+\newblock « {\em Approche hybride - lexicale et th{\'e}matique - pour la
+  mod{\'e}lisation, la d{\'e}tection et l'exploitation des fonctions lexicales
+  en vue de l'analyse s{\'e}mantique de texte.} ».
+\newblock Thèse de doctorat, Universit{\'e} Montpellier 2, 2005.
+
+\bibitem[Sowa, 1984]{Sowa1984}
+John \bgroup\sc Sowa\egroup{}.
+\newblock {\em Conceptual Structures: Information Processing in Mind and
+  Machine}.
+\newblock Addison-Wesley, Reading, 1984.
+
+\bibitem[Sowa, 2000]{Sowa2000}
+John \bgroup\sc Sowa\egroup{}.
+\newblock {\em Knowledge Representation: Logical, Philosophical, and
+  Computational Foundations}.
+\newblock Brooks Cole Publishing Co., Pacific Grove, CA, 2000.
+
+\bibitem[Universalis, 1968]{encyUnivers1968}
+Encyclop{\ae}dia \bgroup\sc Universalis\egroup{}, \editorname{}.
+\newblock {\em Encyclop{\ae}dia Universalis}, \volumename{}~17.
+\newblock Encyclop{\ae}dia Universalis France, 1968.
+
+\bibitem[Vergne \& Giguet, 1998]{Vergne1998}
+Jacques \bgroup\sc Vergne\egroup{} \andname{} Emmanuel \bgroup\sc
+  Giguet\egroup{}.
+\newblock « Regards th{\'e}oriques sur le "Tagging" ».
+\newblock \Inname{} {\em TALN'1998}, Paris, France, Juin 1998.
+
+\bibitem[Wehrli, 1992]{Wehrli1992}
+{\'E}ric \bgroup\sc Wehrli\egroup{}.
+\newblock « The IPS system ».
+\newblock \Inname{} {\em COLING'92 : 14th International Conference on
+  Computational Linguistics}, \pagesname{} 870--875, 1992.
+
+\bibitem[Wierzbicka, 1993]{Wierzbicka1993}
+Anna \bgroup\sc Wierzbicka\egroup{}.
+\newblock « La qu{\^e}te des primitifs s{\'e}mantiques : 1965-1992 ».
+\newblock {\em Langue francaise}, Mai 1993.
+
+\bibitem[Wilks, 1977]{Wilks1977}
+Yorick \bgroup\sc Wilks\egroup{}.
+\newblock « Good and Bad Arguments About Semantic Primitives. ».
+\newblock {\em Communication and Cognition}, \pagesname{} 181--221, 1977.
+
+\bibitem[Winograd, 1978]{Winograd1978}
+Terry \bgroup\sc Winograd\egroup{}.
+\newblock « On primitives, prototypes, and other semantic anomalies ».
+\newblock \Inname{} {\em conference on Theoretical Issues in Natural Language
+  Processing}, \pagesname{} 25--32, University of Illinois, 1978.
+
+\end{thebibliography}

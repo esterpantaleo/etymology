@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bin/launch -d -s BlexismaServletSocietyStanfordExtWNNoSem.xml -n BlexismaServlet 

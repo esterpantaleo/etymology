@@ -1,0 +1,14 @@
+K 10
+svn:ignore
+V 43
+target
+.classpath
+.project
+.settings
+*.iml
+
+K 13
+svn:mergeinfo
+V 58
+/branches/1.1-gwtwiki-engine/experiments/ldd2014:1134-1141
+END

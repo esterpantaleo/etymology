@@ -1,0 +1,10 @@
+K 13
+svn:mergeinfo
+V 480
+/branches/1.1-gwtwiki-engine/src/main/java/org/getalp/dbnary/zho:1134-1141
+/branches/extractor-swebble/src/main/java/org/getalp/dbnary/zho:1610-1619,1661-1734
+/branches/malick_morelanguages/extractor/src/main/java/org/getalp/dbnary/zho:1643-1667
+/branches/malick_swe/extractor/src/main/java/org/getalp/dbnary/zho:1671-1680
+/branches/roques_lit/extractor/src/main/java/org/getalp/dbnary/zho:1676-1691
+/branches/roques_sandbox/extractor/src/main/java/org/getalp/dbnary/zho:1646-1672
+END

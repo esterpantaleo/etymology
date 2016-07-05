@@ -1,0 +1,12 @@
+K 13
+svn:mergeinfo
+V 382
+/branches/1.1-gwtwiki-engine/src/main/java/org/getalp/dbnary/GermanLangToCode.java:1134-1141
+/branches/extractor-swebble/src/main/java/org/getalp/dbnary/hbs/SerboCroatianLangToCode.java:1679-1734
+/branches/mbarry/src/main/java/org/getalp/dbnary/GermanLangToCode.java:1147-1157
+/branches/roques_lit/extractor/src/main/java/org/getalp/dbnary/hbs/SerboCroatianLangToCode.java:1676-1682
+K 13
+svn:mime-type
+V 10
+text/plain
+END

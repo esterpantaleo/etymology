@@ -1,0 +1,25 @@
+This directory is strutured as follows:
+
+cougaar_plugins:
+  Contains "plugins" (as defined by cougaar) that are to be used in distributed agents.
+  These plugins may have a strong dependancy with cougaar libs.
+
+modules:
+  Contains the different modules defined by the Blexisma project. They provide business 
+  level functionality necessary to build or use conceptual vectors.
+
+tools:
+  Contains tools necessary to build (and maybe run) the Blexisma modules and plugins.
+  This is were we should (will ?) put licencing information to be used/distributed in all
+  modules. This is also were we can put syntax checking resources ou code generation features.
+
+societies:
+  Contains the different society files to be used in experiments/deployments of the blexisma 
+  multi-agent system. Each experiment mainly contains several xml files that describe a multi-agent society
+  and runtime parameters. It also contains necessary launch scripts if any.
+
+doc:
+  Contains instructions for building the whole system.
+  
+pom:
+  Contains the general parent pom used by all blexisma projects modules/plugins.

@@ -1,0 +1,61 @@
+after stripping parentheses, references, Images, Categories, Superseded sentences, and after adding a final dot: 
+From {{etyl|grc|en}} {{m|grc|ψυχή||soul}}
+
+.
+m|eng|psycho- etymologically_derives_from m|grc|ψυχή||soul
+@prefix olia:  <http://purl.org/olia/olia.owl#> .
+@prefix lemon: <http://lemon-model.net/lemon#> .
+@prefix dbnary: <http://kaiko.getalp.org/dbnary#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lexvo: <http://lexvo.org/id/iso639-3/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix grc-eng: <http://kaiko.getalp.org/dbnary/grc/eng/> .
+@prefix lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#> .
+@prefix eng:   <http://kaiko.getalp.org/dbnary/eng/> .
+
+eng:psychoverbal  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:psycho-__Etymology_1 .
+
+eng:__ws_1_psycho-__Prefix__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Forms terms relating to the soul, the mind, or to psychology."@en ] .
+
+eng:psychochemical  a       dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:psycho-__Etymology_1 .
+
+eng:psychovisual  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:psycho-__Etymology_1 .
+
+eng:psychotechnics  a       dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:psycho-__Etymology_1 .
+
+eng:psychonarration  a      dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:psycho-__Etymology_1 .
+
+eng:psychoclinical  a       dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:psycho-__Etymology_1 .
+
+eng:psycho-  a           dbnary:Vocable ;
+        dbnary:refersTo  eng:psycho-__Prefix__1 .
+
+eng:psycho-__Etymology_1
+        a                dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                grc-eng:ψυχή ;
+        dbnary:refersTo  eng:psycho-__Prefix__1 .
+
+eng:psychonarrative  a      dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:psycho-__Etymology_1 .
+
+eng:psycho-__Prefix__1
+        a                     lemon:LexicalEntry , lexinfo:Prefix ;
+        dbnary:partOfSpeech   "Prefix" ;
+        lemon:canonicalForm   [ lemon:writtenRep  "psycho-"@en ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_1_psycho-__Prefix__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:prefix .
+
+grc-eng:ψυχή  a  dbnary:EtymologyEntry .

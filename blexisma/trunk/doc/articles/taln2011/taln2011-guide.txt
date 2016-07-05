@@ -1,0 +1,53 @@
+Comment utiliser le style Latex pour TALN2010
+
+Vous aurez besoin des fichiers suivants:
+
+    taln2011.sty
+    taln2002.bst	le style utilisé par BibTex
+    fancyhdr.sty	un style utilisé par taln2011.sty
+
+Nous vous fournissons un exemple comprenant les fichiers suivants:
+
+    taln-exemple.tex	contenu de l'article
+    biblio.bib		un exemple de bibliographie
+    taln-exemple.pdf	le document résultant
+
+Le style fancyhdr.sty peut aussi être téléchargé à partir du site suivant:
+    http://www.ctan.org/tex-archive/macros/latex/contrib/fancyhdr/
+
+Comment utiliser BibTex:
+    http://www.tug.org/pracjourn/2006-4/fenn/fenn.pdf
+
+Procédure:
+    pdflatex taln-exemple
+    bibtex taln-exemple
+    pdflatex taln-exemple
+    pdflatex taln-exemple
+
+----------------------------------------------------------------------
+
+How to use the Latex style for TALN2010 
+
+You will need the following files:
+    taln2011.sty
+    taln2002.bst	the style used by BibTex
+    fancyhdr.sty	a style used by taln2011.sty
+
+An example is provided:
+    taln-exemple.tex	an example paper
+    biblio.bib		an example bibliography
+    taln-exemple.pdf	result
+
+fancyhdr.sty can be found at:
+    http://www.ctan.org/tex-archive/macros/latex/contrib/fancyhdr/
+
+How to use BibTex:
+    http://www.tug.org/pracjourn/2006-4/fenn/fenn.pdf
+
+Procedure:
+    pdflatex taln-exemple
+    bibtex taln-exemple
+    pdflatex taln-exemple
+    pdflatex taln-exemple
+
+PM

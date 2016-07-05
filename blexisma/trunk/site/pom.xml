@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>blexisma</artifactId>
+    <groupId>org.getalp.blexisma</groupId>
+    <version>1.1-SNAPSHOT</version>
+    <relativePath>../pom/</relativePath>
+  </parent>
+  
+  <groupId>org.getalp.blexisma</groupId>
+  <artifactId>blexisma-site</artifactId>
+  <version>1.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
+  <name>Blexisma project web site</name>
+  <url>http://blexisma.ligforge.imag.fr/</url>
+  <inceptionYear>2009</inceptionYear>
+
+
+  <mailingLists>
+    <mailingList>
+      <name>Blexisma Commits List</name>
+      <subscribe>https://lists.ligforge.imag.fr/cgi-bin/mailman/listinfo/blexisma-commits</subscribe>
+      <unsubscribe>https://lists.ligforge.imag.fr/cgi-bin/mailman/listinfo/blexisma-commits</unsubscribe>
+      <archive>https://lists.ligforge.imag.fr/pipermail/blexisma-commits/</archive>
+    </mailingList>
+  </mailingLists>
+
+  <!-- distribution management is repeated here so that it goes the root of the htdocs rather than to blexisma-site folder -->
+  <distributionManagement> 
+    <site>
+      <id>blexisma.website</id>
+      <url>scp://ligforge.imag.fr/var/lib/gforge/chroot/home/groups/blexisma/htdocs/</url>
+    </site>
+  </distributionManagement>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <locales>en</locales>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

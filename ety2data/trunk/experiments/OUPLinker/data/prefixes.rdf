@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+        <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+        <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+        <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+        <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+        <!ENTITY lemon "http://www.lemon-model.net/lemon#" >
+        <!ENTITY dbnary "http://kaiko.getalp.org/dbnary#" >
+        <!ENTITY axis "http://kaiko.getalp.org/axis#" >
+        <!ENTITY semio "http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#" >
+        <!ENTITY lexinfo "http://lexinfo.net/ontology/2.0/lexinfo.owl#" >
+        <!ENTITY skos "http://www.w3.org/2004/02/skos/core#" >
+        <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
+
+        ]>
+
+
+<rdf:RDF xmlns="http://www.lemon-model.net/lemon#"
+         xml:base="http://www.lemon-model.net/lemon"
+         xmlns:lemon="http://www.lemon-model.net/lemon#"
+         xmlns:dbnary="http://kaiko.getalp.org/dbnary#"
+         xmlns:axis="http://kaiko.getalp.org/axis#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:lexinfo="http://www.lexinfo.net/ontology/2.0/lexinfo#"
+         xmlns:semio="http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+        />

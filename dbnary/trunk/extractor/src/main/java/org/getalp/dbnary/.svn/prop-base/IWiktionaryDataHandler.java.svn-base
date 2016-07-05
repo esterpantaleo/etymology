@@ -1,0 +1,12 @@
+K 13
+svn:mergeinfo
+V 382
+/branches/1.1-gwtwiki-engine/src/main/java/org/getalp/dbnary/WiktionaryDataHandler.java:1134-1141
+/branches/extractor-swebble/src/main/java/org/getalp/dbnary/IWiktionaryDataHandler.java:1610-1734
+/branches/malick_swe/extractor/src/main/java/org/getalp/dbnary/IWiktionaryDataHandler.java:1671-1680
+/branches/mbarry/src/main/java/org/getalp/dbnary/WiktionaryDataHandler.java:1147-1157
+K 13
+svn:mime-type
+V 10
+text/plain
+END

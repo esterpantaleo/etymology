@@ -1,0 +1,107 @@
+<?xml version='1.0'?>
+
+<!--
+A large-scale two-node test where agent "A" sends pings to 11 agents "B..L".
+-->
+<society>
+
+  <node name="Node1">
+    <!-- An optional society monitor servlet, which is based on framesets -->
+    <component class='org.cougaar.core.qos.frame.topology.TopologyFrameUpdaterPlugin'>
+      <argument name="frame-set-files"
+        value="org/cougaar/core/qos/frame/topology/cougaar-topology-protos.xml" />
+      <argument name="frame-set" value="societyTopology" />
+    </component>
+    <component class='org.cougaar.core.qos.frame.topology.MonitorServletPlugin'/>
+    <component class='org.cougaar.core.qos.frame.FrameSetServicePlugin'/>
+    <component class='org.cougaar.core.qos.frame.FrameViewerServlet'>
+      <argument> /frames </argument>
+    </component>
+
+    <agent name="NameServer">
+      <!-- Act as a naming service agent for the society -->
+      <component class='org.cougaar.core.wp.server.Server'/>
+    </agent>
+
+    <!-- Agent "A" sends pings to agents "B..L" -->
+    <agent name="A">
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="B"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="C"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="D"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="E"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="F"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="G"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="H"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="I"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="J"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="K"/>
+      </component>
+      <component class="org.getalp.blexisma.ping.PingSender">
+        <argument name="target" value="L"/>
+      </component>
+
+      <component class="org.getalp.blexisma.ping.PingServlet">
+        <argument name="path" value="/ping"/>
+      </component>
+    </agent>
+
+    <!-- Agents "I..L" are co-located with "A" -->
+    <agent name="I">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="J">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="K">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="L">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+  </node>
+
+  <!-- Agents "B..H" are on remote node "Node2" -->
+  <node name="Node2">
+    <agent name="B">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="C">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="D">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="E">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="F">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="G">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+    <agent name="H">
+      <component class="org.getalp.blexisma.ping.PingReceiver"/>
+    </agent>
+  </node>
+
+</society>

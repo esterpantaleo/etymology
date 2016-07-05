@@ -1,0 +1,16 @@
+id	name	type	language	translation_english	definition_english	parent
+a1	*delh	verb	Proto-Indo-European	"to hew, to split"			
+b1	*dolhos		Old Latin			a1
+f1	dolor	noun	Latin	"pain, grief"		b1
+f2	dolore	noun	Italian	"ache, pain","sorrow,grief"		f1
+b2	door	noun	Old Portuguese	"pain"		f1
+a2	dor	noun	Galician	"pain"		b2
+a3	dor	noun	Portuguese	"pain"		b2
+b3	dolor	noun	Asturian			b2
+f3	dolor	noun	Old Provençal	"pain"		f1
+f5	dolor	noun	Catalan	"pain"		f3
+f4	dolor,doulour	noun	Occitan	"pain"		f3
+f6	dolor	noun	Spanish	pain		f1
+a5	dolor, dulor, dulur	noun	Old French	"pain, suffering"		f1
+a4	dolor, dolour	noun	English		"(literary) sorrow, grief, misery or anguish. a unit of pain used to theoretically weigh people's outcomes."	a5
+b4	douleur	noun	French			a5

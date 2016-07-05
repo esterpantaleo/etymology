@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bin/launch -d -s WiktionaryBasedTreeTaggerTrainingSocietyMono.xml -n BlexismaMain 

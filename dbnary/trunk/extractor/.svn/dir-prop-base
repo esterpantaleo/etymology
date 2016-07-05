@@ -1,0 +1,20 @@
+K 10
+svn:ignore
+V 49
+target
+.classpath
+.project
+.settings
+*.iml
+.idea
+
+K 13
+svn:mergeinfo
+V 264
+/branches/1.1-gwtwiki-engine/extractor:1134-1141
+/branches/extractor-swebble:1610-1738
+/branches/malick_morelanguages/extractor:1643-1667
+/branches/malick_swe/extractor:1671-1680
+/branches/roques_lit/extractor:1676-1691
+/branches/roques_sandbox/extractor:1646-1672
+END

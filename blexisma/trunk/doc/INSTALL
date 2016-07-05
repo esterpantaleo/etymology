@@ -1,0 +1,25 @@
+BUILDING BLEXISMA-PROJECT
+=========================
+
+SETTING UP THE BUILD ENVIRONMENT
+--------------------------------
+
+Install maven (http://maven.apache.org)
+    Developers did use Apache Maven 2.2.1...
+Download and expand cougaar multi-agent plateform (http://www.cougaar.org/)
+    expand cougaar.zip and cougaar-support.zip in your "$cougaar_install" folder.
+
+
+DEFINING BUILDTIME AND RUNTIME PROPERTIES
+------------------------------------------
+
+??? configure maven personnal settings so that it defines each necessary properties.
+
+BUILDING
+--------
+
+TESTING
+-------
+
+DEPLOYING
+---------

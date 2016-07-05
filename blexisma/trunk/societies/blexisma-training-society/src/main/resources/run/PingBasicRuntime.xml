@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+
+<!--
+Single-node "ping" runtime System Properties.
+-->
+<runtime>
+
+  <!-- Set infrastructure to single-JVM, see doc/OnlineManual/Templates.html -->
+  <vm_parameter
+     name="-Dorg.cougaar.society.xsl.param.template"
+     value="single_node"/>
+
+  <!-- Optional log4j config file -->
+  <vm_parameter
+    name="-Dorg.cougaar.core.logging.config.filename"
+    value="logging.props"/>
+
+</runtime>

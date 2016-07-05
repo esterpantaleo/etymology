@@ -1,0 +1,38 @@
+#!/bin/bash
+# extrait le nombre des définitions par terme 
+# format d'entrée : Gilles
+# sorties : file.nbsens -> nombre de sens par terme dans wiktionnary   
+
+if (( $# != "2" )) ; then
+echo "usage : extract-nbsens [-f | -e | -d] [file]" 
+echo "-f : french  -e : english  -d : deutsch" 
+exit
+fi
+
+if [[ $1 == "-f" ]] ; then  
+L="#fra"
+elif [[ $1 == "-e" ]] ; then
+L="#eng"
+elif [[ $1 == "-d" ]] ; then
+L="#deu"
+fi
+
+# extraction des termes définis (origine) et des définitions destinations 
+# comptage du nb de def par terme
+
+egrep '(^[ ,	]*-O- '+$L+'\||^[ ,	]*-D- #def)' $2 | awk '{ if ($1 == "-O-") { print c  ; c = 0 ; print $0 ; } else { c++ ; } ; }' > $2.tmp 
+
+# combine chaque paire de ligne en une seule : terme nb_occ 
+# trie le fichier par ordre décroissant sur le nb de définitions 
+paste -s -d '\n\t' $2.tmp | awk '{ gsub(/[ ,	]*-O- /, "") ; gsub(/#.*\|/, "") ; print $NF , " " , $0 ; }' | sort -nr > $2.poly_hist
+rm $2.tmp
+
+
+
+
+
+
+
+
+
+

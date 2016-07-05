@@ -1,0 +1,12 @@
+K 10
+svn:ignore
+V 76
+.settings
+.project
+target
+.classpath
+pom.xml.mine
+pom.xml.r743
+pom.xml.r866
+
+END

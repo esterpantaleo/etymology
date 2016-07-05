@@ -1,0 +1,174 @@
+l|en|at death's door derives_from m|eng|door
+l|en|darken someone's door derives_from m|eng|door
+l|en|door brake derives_from m|eng|door
+l|en|doorgame derives_from m|eng|door
+l|en|door prize derives_from m|eng|door
+l|en|doorstep derives_from m|eng|door
+l|en|front door derives_from m|eng|door
+l|en|get one's foot in the door derives_from m|eng|door
+l|en|make a better door than a window derives_from m|eng|door
+l|en|show somebody the door derives_from m|eng|door
+l|en|shut the door on derives_from m|eng|door
+l|en|sliding door derives_from m|eng|door
+l|en|stage-door Johnny derives_from m|eng|door
+l|en|up and over door derives_from m|eng|door
+l|en|when one door closes, another opens derives_from m|eng|door
+after stripping parentheses, references, Images, Categories, Superseded sentences, and after adding a final dot: 
+{{PIE root|en|dʰwer}}
+From {{inherited|en|enm|dore}}, {{m|enm|dor}}, from {{inherited|en|ang|duru|gloss=door}}, {{m|ang|dor|gloss=gate}}, from {{inherited|en|gem-pro|*durz}}, from {{inherited|en|ine-pro|*dʰwer-|gloss=doorway, door, gate}}. Cognates include {{etyl|stq|-}} {{m|stq|Doore||door}}, West Frisian {{m|fy|doar||door}}, Dutch {{m|nl|deur||door}}, Low German {{m|nds-de|Door}}, {{m|nds-de|Döör||door}}, German {{m|de|Tür||door}}, {{m|de|Tor||gate}}, Danish {{m|da|dør||door}}, Icelandic {{m|is|dyr||door}}, Latin {{m|la|foris}}, Greek {{m|grc|θύρα}}, Albanian {{m|sq|derë}} pl. {{m|sq|dyer}}, Kurdish {{m|ckb|derge|tr=der}}, {{m|ku|derî}}, Persian {{m|fa|sc=fa-Arab|در|tr=dar}}, Russian {{m|ru|дверь}}, Hindustani {{m|hi|sc=Deva|द्वार|tr=dvār}} / {{m|ur|sc=ur-Arab|دوار|tr=dvār}}, Armenian {{m|hy|դուռ}}, Irish {{m|ga|doras}}, Lithuanian {{m|lt|durys}}.
+
+[[Image:Doorway La Ronce National Trust for Jersey.jpg|thumb|right|A door.]]
+
+.
+m|eng|door etymologically_derives_from inherited|en|enm|dore
+inherited|en|enm|dore etymologically_equivalent_to m|enm|dor
+inherited|en|enm|dore etymologically_derives_from inherited|en|ang|duru|gloss=door
+inherited|en|ang|duru|gloss=door etymologically_equivalent_to m|ang|dor|gloss=gate
+inherited|en|ang|duru|gloss=door etymologically_derives_from inherited|en|gem-pro|*durz
+inherited|en|gem-pro|*durz etymologically_derives_from inherited|en|ine-pro|*dʰwer-|gloss=doorway, door, gate
+@prefix olia:  <http://purl.org/olia/olia.owl#> .
+@prefix dbnary: <http://kaiko.getalp.org/dbnary#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix gem-pro-eng: <http://kaiko.getalp.org/dbnary/gem-pro/eng/> .
+@prefix lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#> .
+@prefix lemon: <http://lemon-model.net/lemon#> .
+@prefix ine-pro-eng: <http://kaiko.getalp.org/dbnary/ine-pro/eng/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix enm-eng: <http://kaiko.getalp.org/dbnary/enm/eng/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lexvo: <http://lexvo.org/id/iso639-3/> .
+@prefix ang-eng: <http://kaiko.getalp.org/dbnary/ang/eng/> .
+@prefix eng:   <http://kaiko.getalp.org/dbnary/eng/> .
+
+eng:__ws_3_door__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "3"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "An entry point."@en ] .
+
+eng:doorgame  a             dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:door__Noun__1  a          lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Noun" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "door"@en ;
+                                lexinfo:pronunciation  "/do(ː)ɹ/"@en-fonipa , "/doə/"@en-fonipa , "/dɔɹ/"@en-fonipa , "/dɔː/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_1_door__Noun__1 , eng:__ws_3_door__Noun__1 , eng:__ws_5_door__Noun__1 , eng:__ws_2_door__Noun__1 , eng:__ws_4_door__Noun__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:noun .
+
+eng:door__Verb__1  a          lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Verb" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "door"@en ;
+                                lexinfo:pronunciation  "/do(ː)ɹ/"@en-fonipa , "/doə/"@en-fonipa , "/dɔɹ/"@en-fonipa , "/dɔː/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_6_door__Verb__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:verb .
+
+eng:__ws_2_door__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "2"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Any flap, etc. that opens like a door."@en ] .
+
+gem-pro-eng:_durz  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                ine-pro-eng:_dhwer- .
+
+eng:make_a_better_door_than_a_window
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:stage-door_Johnny
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+enm-eng:dor  a  dbnary:EtymologyEntry .
+
+eng:__ws_1_door__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A of entry into a building, room or vehicle, consisting of a rigid plane movable on a . Doors are frequently made of or . May have a to help open and close, a to hold the door closed and a that ensures the door cannot be opened without the key."@en ] .
+
+ine-pro-eng:_dhwer-  a  dbnary:EtymologyEntry .
+
+eng:__ws_5_door__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "5"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A mechanism by which a user can interact with a running remotely on a . See ."@en ] .
+
+ang-eng:dor  a  dbnary:EtymologyEntry .
+
+eng:door__Etymology_1
+        a                dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                enm-eng:dore ;
+        dbnary:refersTo  eng:door__Noun__1 .
+
+eng:door  a              dbnary:Vocable ;
+        dbnary:refersTo  eng:door__Verb__1 , eng:door__Noun__1 .
+
+<http://kaiko.getalp.org/dbnary/eng/at_death's_door>
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:__ws_6_door__Verb__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "6"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "To cause a by opening the door of a vehicle in front of an or ."@en ] .
+
+eng:door_brake  a           dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:__ws_4_door__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "4"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A non-physical into the next world, a particular feeling, a company, etc."@en ] .
+
+eng:door_prize  a           dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:sliding_door  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:shut_the_door_on  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+ang-eng:duru  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                gem-pro-eng:_durz ;
+        dbnary:etymologicallyEquivalentTo
+                ang-eng:dor .
+
+<http://kaiko.getalp.org/dbnary/eng/when_one_door_closes,_another_opens>
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:show_somebody_the_door
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+enm-eng:dore  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                ang-eng:duru ;
+        dbnary:etymologicallyEquivalentTo
+                enm-eng:dor .
+
+eng:front_door  a           dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+<http://kaiko.getalp.org/dbnary/eng/get_one's_foot_in_the_door>
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:up_and_over_door  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+<http://kaiko.getalp.org/dbnary/eng/darken_someone's_door>
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .
+
+eng:doorstep  a             dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:door__Etymology_1 .

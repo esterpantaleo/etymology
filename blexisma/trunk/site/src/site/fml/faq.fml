@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<faqs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/FML/1.0"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+  id="General FAQ">
+  <part id="General">
+    <faq id="where">
+      <question>What is Blexisma?</question>
+      <answer>
+        <p>
+          Blexisma is a computer system used to create a semantic lexical database which 
+          associates a conceptual vector to many lexical items.
+        </p>
+      </answer>
+    </faq>
+    <faq id="why">
+      <question>Why is it useful?</question>
+      <answer>
+        <p>
+          Conceptual vectors provide a practical way to compute a semantic proximity between words. This is useful for 
+          disambiguation of texts, classification, ...
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

@@ -1,0 +1,33 @@
+<?xml version='1.0'?>
+
+<!--
+Two-node "ping" runtime System Properties.
+-->
+<runtime>
+
+  <!--
+  Make agent "NameServer" on Node1 be our shared naming service server.
+
+  If running multi-host, change "localhost" to the host that will run "Node1".
+  -->
+  <vm_parameter name="-Dorg.cougaar.name.server" value="NameServer@localhost:8888"/>
+
+  <!-- Set infrastructure to multi-host, see doc/OnlineManual/Templates.html -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.template"
+    value="lan"/>
+
+  <!-- Optional tuning to reduce naming service startup time -->
+  <vm_parameter name="-Dorg.cougaar.core.wp.server.successTTD" value="30000"/>
+  <vm_parameter name="-Dorg.cougaar.core.wp.server.failTTD" value="1000"/>
+  <vm_parameter name="-Dorg.cougaar.core.wp.resolver.rmi.minLookup" value="500"/>
+  <vm_parameter name="-Dorg.cougaar.core.wp.resolver.rmi.maxLookup" value="2000"/>
+  <vm_parameter name="-Dorg.cougaar.core.mts.destq.retry.initialTimeout" value="250"/>
+  <vm_parameter name="-Dorg.cougaar.core.mts.destq.retry.maxTimeout" value="500"/>
+
+  <!-- Optional log4j config file -->
+  <vm_parameter
+    name="-Dorg.cougaar.core.logging.config.filename"
+    value="logging.props"/>
+
+</runtime>

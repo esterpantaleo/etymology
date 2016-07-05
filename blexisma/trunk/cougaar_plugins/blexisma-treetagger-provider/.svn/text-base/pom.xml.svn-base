@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>blexisma-cougaar-plugins</artifactId>
+    <groupId>org.getalp.blexisma.cougaar_plugins</groupId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+  <groupId>org.getalp.blexisma.cougaar_plugins</groupId>
+  <artifactId>blexisma-treetagger-provider</artifactId>
+  <version>1.1-SNAPSHOT</version>
+  <name>Tree Tagger Cougaar Plugin</name>
+  <description>Cougaar plugin providing a simple syntactic analysis based on tree tagger.</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.getalp.blexisma</groupId>
+  		<artifactId>tree-tagger-support</artifactId>
+  		<version>1.1-SNAPSHOT</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.getalp.blexisma.cougaar_plugins</groupId>
+  		<artifactId>blexisma-cougaar-commons</artifactId>
+  		<version>1.1-SNAPSHOT</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.getalp.blexisma</groupId>
+  		<artifactId>blexisma-core</artifactId>
+  		<version>1.1-SNAPSHOT</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
+  </dependencies>
+</project>

@@ -1,0 +1,43 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citename{Castor and Pollux}1992]{CastorPollux-92}
+A.~Castor and L.~E. Pollux.
+\newblock 1992.
+\newblock The use of user modelling to guide inference and learning.
+\newblock {\em Applied Intelligence}, 2(1):37--53.
+
+\bibitem[\protect\citename{Chercheur}1994]{Chercheur-94}
+J.L. Chercheur.
+\newblock 1994.
+\newblock {\em Case-Based Reasoning}.
+\newblock Morgan Kaufman Publishers, San Mateo, CA, 2nd edition.
+
+\bibitem[\protect\citename{Grandchercheur}1983]{Grandchercheur-83}
+L.~B. Grandchercheur, 1983.
+\newblock {\em Vers une modélisation cognitive de l'être et du néant}, pages
+  6--38.
+\newblock Lawrence Erlbaum Associates, Hillsdale, N.J.
+
+\bibitem[\protect\citename{Martin}1990]{Martin-90}
+L.E. Martin.
+\newblock 1990.
+\newblock Knowledge extraction.
+\newblock In {\em Proceedings of the Twelfth Annual Conference of the Cognitive
+  Science Society}, pages 252--262, Hillsdale, NJ. Lawrence Erlbaum Associates.
+
+\bibitem[\protect\citename{Superman \bgroup et al.\egroup
+  }2000]{Superman-Batman-Catwoman-Spiderman-00}
+S.~Superman, B.~Batman, C.~Catwoman, and S.~Spiderman.
+\newblock 2000.
+\newblock {\em Superheroes experiences with books}.
+\newblock The Phantom Editors Associates, Gotham City, 20th edition.
+
+\bibitem[\protect\citename{Zavatta}1992]{Zavatta-92}
+A.~Zavatta.
+\newblock 1992.
+\newblock {\em Un Générateur d'Insultes s'intégrant dans un Système de Dialogue
+  Humain-Machine.}
+\newblock Thèse de doctorat en informatique, Université Paris-sud, Centre
+  d'Orsay.
+
+\end{thebibliography}

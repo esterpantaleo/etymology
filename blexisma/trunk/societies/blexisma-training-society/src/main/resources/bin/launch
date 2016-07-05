@@ -1,0 +1,57 @@
+#!/bin/bash
+EXEC="exec"
+FILEOUTPUT=0
+SOCIETYFILE=SimpleBlexismaSociety.xml
+RUNTIMEFILE=SimpleBlexismaRuntime.xml
+NODES=""
+
+while getopts ds:n:r: o
+do	case "$o" in
+	d)  EXEC="bin/mynohup"; FILEOUTPUT=1;;
+	s)  SOCIETYFILE="$OPTARG";;
+	n)  NODES="$NODES $OPTARG";;
+	r)  RUNTIMEFILE="$OPTARG";;
+	[?])	echo >&2 "Usage: $0 [-n]"
+			echo >&2 "Options -d: deploy mode: use nohup and redirect output to files (one file per node)"
+			echo >&2 "        -s soc.xml: use soc.xml as the society file (soc.xml will be searched in COUGAAR_SOCIETY_PATH/configs dir)"
+			echo >&2 "        -r run.xml: use run.xml as the runtime file (run.xml will be searched in COUGAAR_RUNTIME_PATH)"
+			echo >&2 "        -n node: launch node (one -n option per node)"
+		exit 1;;
+	esac
+done
+shift `expr $OPTIND - 1`
+
+if [ ${COUGAAR_INSTALL_PATH}x == x ]
+then
+  echo You need to define the environment variable COUGAAR_INSTALL_PATH to point to you cougaar installation directory
+  exit -1
+fi
+
+if [ ${COUGAAR_RUNTIME_PATH}x == x ]
+then
+  echo COUGAAR_RUNTIME_PATH is undefined, assuming \"./run\" directory
+  export COUGAAR_RUNTIME_PATH=$PWD/run
+fi
+
+if [ ${COUGAAR_SOCIETY_PATH}x == x ]
+then
+  echo COUGAAR_SOCIETY_PATH is undefined, assuming current directory
+  export COUGAAR_SOCIETY_PATH=$PWD
+fi
+
+if [ -z "${NODES}" ]
+then
+	cougaarcmd="${COUGAAR_INSTALL_PATH}/bin/cougaar $OPTS $COUGAAR_SOCIETY_PATH/configs/${SOCIETYFILE} $COUGAAR_RUNTIME_PATH/${RUNTIMEFILE}"
+	${EXEC} ./nohup.out $cougaarcmd  
+else
+	for node in $NODES
+	do
+		cougaarcmd="${COUGAAR_INSTALL_PATH}/bin/cougaar $OPTS $COUGAAR_SOCIETY_PATH/configs/${SOCIETYFILE} -Dorg.cougaar.node.name=$node $COUGAAR_RUNTIME_PATH/${RUNTIMEFILE}"
+		REDIR=""
+		if [ $FILEOUTPUT == 1 ]
+		then
+			REDIR="./$node.out"
+		fi
+		${EXEC} ${REDIR} $cougaarcmd  
+	done
+fi

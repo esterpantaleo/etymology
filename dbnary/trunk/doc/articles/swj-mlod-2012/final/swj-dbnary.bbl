@@ -1,0 +1,123 @@
+\begin{thebibliography}{12}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bond and Foster(2013)]{DBLP:conf/acl/BondF13}
+F.~Bond and R.~Foster.
+\newblock {Linking and Extending an Open Multilingual Wordnet}.
+\newblock In P.~Fung and M.~Poesio, editors, \emph{Proceedings of the 51st
+  Annual Meeting of the Association for Computational Linguistics (Volume 1:
+  Long Papers)}, pages 1352--1362, Sofia, Bulgaria, August 2013. Association
+  for Computational Linguistics.
+\newblock URL \url{http://www.aclweb.org/anthology/P13-1133}.
+
+\bibitem[Fellbaum(1998)]{wordnet-fellbaum}
+C.~Fellbaum.
+\newblock \emph{WordNet: An Electronic Lexical Database}.
+\newblock MIT Press., Cambridge, MA, 1998.
+
+\bibitem[Francopoulo et~al.(2006{\natexlab{a}})Francopoulo, Bel, George,
+  Calzolari, Monachini, Pet, and Soria]{francopoulo-EtAl:2006:MLRI}
+G.~Francopoulo, N.~Bel, M.~George, N.~Calzolari, M.~Monachini, M.~Pet, and
+  C.~Soria.
+\newblock {Lexical Markup Framework (LMF) for NLP Multilingual {R}esources}.
+\newblock In A.~Witt, G.~S\'erasset, S.~Armstrong, J.~Breen, U.~Heid, and
+  F.~Sasaki, editors, \emph{Proceedings of the Workshop on Multilingual
+  Language Resources and Interoperability}, pages 1--8, Sydney, Australia, July
+  2006{\natexlab{a}}. Association for Computational Linguistics.
+\newblock URL \url{http://www.aclweb.org/anthology/W/W06/W06-1001}.
+
+\bibitem[Francopoulo et~al.(2006{\natexlab{b}})Francopoulo, George, Calzolari,
+  Monachini, Bel, Pet, and Soria]{FRANCOPOULO:2006:INRIA-00121468:1}
+G.~Francopoulo, M.~George, N.~Calzolari, M.~Monachini, N.~Bel, M.~Pet, and
+  C.~Soria.
+\newblock {Lexical Markup Framework (LMF)}.
+\newblock In \emph{{International Conference on Language Resources and
+  Evaluation - LREC 2006}}, pages 233--236, Genova, Italia, 2006{\natexlab{b}}.
+  ELRA.
+\newblock URL \url{http://hal.inria.fr/inria-00121468/en/}.
+
+\bibitem[Gurevych et~al.(2012)Gurevych, Eckle-Kohler, Hartmann, Matuschek,
+  Meyer, and Wirth]{UBY:TUD-CS-2012-0023}
+I.~Gurevych, J.~Eckle-Kohler, S.~Hartmann, M.~Matuschek, C.~M. Meyer, and
+  C.~Wirth.
+\newblock {Uby - A Large-Scale Unified Lexical-Semantic Resource Based on LMF}.
+\newblock In W.~Daelemans, editor, \emph{Proceedings of the 13th Conference of
+  the European Chapter of the Association for Computational Linguistics (EACL
+  2012)}, pages 580--590, Avignon, France, April 2012. Association for
+  Computational Linguistics.
+\newblock URL \url{http://www.aclweb.org/anthology/E12-1059}.
+
+\bibitem[Hellmann et~al.(2012)Hellmann, Brekle, and
+  Auer]{DBLP:conf/aswc/HellmannBA12}
+S.~Hellmann, J.~Brekle, and S.~Auer.
+\newblock {Leveraging the Crowdsourcing of Lexical Resources for Bootstrapping
+  a Linguistic Data Cloud}.
+\newblock In H.~Takeda, Y.~Qu, R.~Mizoguchi, and Y.~Kitamura, editors,
+  \emph{Semantic Technology, Second Joint International Conference, JIST 2012,
+  Nara, Japan, December 2-4, 2012.}, volume 7774 of \emph{Lecture Notes in
+  Computer Science}, pages 191--206. Springer, 2012.
+
+\bibitem[ISO639-3(2007)]{ISO639-3:2007}
+ISO639-3.
+\newblock {Codes for the Representation of Names of Languages --- Part 3:
+  Alpha-3 Code for Comprehensive Coverage of Languages}.
+\newblock ISO 639-3:2007, 2007.
+
+\bibitem[McCrae et~al.(2012)McCrae, Aguado-de Cea, Buitelaar, Cimiano,
+  Declerck, Gómez-Pérez, Gracia, Hollink, Montiel-Ponsoda, Spohr, and
+  Wunner]{McRae-lemon:2012}
+J.~McCrae, G.~Aguado-de Cea, P.~Buitelaar, P.~Cimiano, T.~Declerck,
+  A.~Gómez-Pérez, J.~Gracia, L.~Hollink, E.~Montiel-Ponsoda, D.~Spohr, and
+  T.~Wunner.
+\newblock {Interchanging Lexical Resources on the Semantic Web}.
+\newblock \emph{Language Resources and Evaluation}, 46\penalty0 (4):\penalty0
+  701--719, 2012.
+\newblock ISSN 1574-020X.
+\newblock URL \url{http://dx.doi.org/10.1007/s10579-012-9182-3}.
+
+\bibitem[Schwab et~al.(2012)Schwab, Goulian, Tchechmedjiev, and
+  Blanchon]{schwab2012coling}
+D.~Schwab, J.~Goulian, A.~Tchechmedjiev, and H.~Blanchon.
+\newblock {Ant Colony Algorithm for the Unsupervised Word Sense Disambiguation
+  of Texts: Comparison and Evaluation}.
+\newblock In M.~Kay and C.~Boitet, editors, \emph{25th International Conference
+  on Computational Linguistics, COLING 2012}, pages 2389--2404, IIT Mumbai
+  (India), December 2012. The COLING 2012 Organizing Committee.
+\newblock URL \url{http://www.aclweb.org/anthology/C12-1146}.
+
+\bibitem[S{\'e}rasset(2012)]{serasset:lrec2012}
+G.~S{\'e}rasset.
+\newblock {Dbnary: Wiktionary as a LMF Based Multilingual RDF Network}.
+\newblock In N.~C.~C. Chair), K.~Choukri, T.~Declerck, M.~U. Doğan,
+  B.~Maegaard, J.~Mariani, A.~Moreno, J.~Odijk, and S.~Piperidis, editors,
+  \emph{Proceedings of the Eight International Conference on Language Resources
+  and Evaluation (LREC'12)}, pages 2466--2472, Istanbul, Turkey, may 2012.
+  European Language Resources Association (ELRA).
+\newblock ISBN 978-2-9517408-7-7.
+\newblock URL
+  \url{http://www.lrec-conf.org/proceedings/lrec2012/pdf/387_Paper.pdf}.
+
+\bibitem[Windhouwer and Wright(2012)]{DBLP:books/daglib/p/WindhouwerW12}
+M.~Windhouwer and S.~E. Wright.
+\newblock {Linking to Linguistic Data Categories in ISOcat}.
+\newblock In C.~Chiarcos, S.~Nordhoff, and S.~Hellmann, editors, \emph{Linked
+  Data in Linguistics}, pages 99--107. Springer, 2012.
+\newblock ISBN 978-3-642-28248-5.
+
+\bibitem[Zesch et~al.(2008)Zesch, M\"{u}ller, and Gurevych]{Zesch08Wikipedia}
+T.~Zesch, C.~M\"{u}ller, and I.~Gurevych.
+\newblock {Extracting Lexical Semantic Knowledge from Wikipedia and
+  Wiktionary}.
+\newblock In N.~Calzolari, K.~Choukri, B.~Maegaard, J.~Mariani, J.~Odijk,
+  S.~Piperidis, and D.~Tapias, editors, \emph{Proceedings of the Sixth
+  International Conference on Language Resources and Evaluation (LREC'08)},
+  pages 1646--1652, Marrakech, Morocco, may 2008. European Language Resources
+  Association (ELRA).
+\newblock ISBN 2-9517408-4-0.
+\newblock http://www.lrec-conf.org/proceedings/lrec2008/.
+
+\end{thebibliography}

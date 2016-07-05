@@ -1,0 +1,176 @@
+\documentclass[10pt,a4paper,twoside]{article}
+
+\usepackage{times}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+
+% faire les \usepackage dont vous avez besoin avant le \usepackage{taln2010} 
+
+\usepackage{taln2011}
+\usepackage[frenchb]{babel}
+
+\title{Extraire un réseau lexical des wiktionnaires multilingues}
+
+\author{Gilles Sérasset \quad Jérôme Goulian \quad Didier Schwab\\
+  UJF-Grenoble 1, UPMF-Grenoble 2, CNRS - UMR 5217\\ 
+  Équipe GETALP, BP 53, 38051 Grenoble cedex 9 \\ 
+  {prenom.nom}@imag.fr \\ 
+}
+
+\fancyhead[CO]{Extraire un réseau lexical des wiktionnaires multilingues} 
+\fancyhead[CE]{Gilles Sérasset, Jérôme Goulian et Didier Schwab} 
+
+\begin{document}
+
+\maketitle
+
+\resume{
+Les ressources lexicales contributives sont de plus en plus utilisées par les chercheurs en traitement automatique des langues comme source de données lexicales facilement accessibles. Parmi celles-ci figure le "wiktionary", pendant lexical de l'encyclopédie wikipédia, géré par la fondation \emph{wikimedia}. 
+}
+
+\abstract{
+Here an abstract in English (max. 150 words).
+}
+
+\motsClefs{wiktionary, Ressources lexicales, dictionnaire}
+{wiktionary, Lexical Resources, Dictionary}
+
+%% Aller à la page suivante si nécessaire
+%\newpage
+%%================================================================
+\section{Introduction}
+
+Les ressources lexicales contributives sont de plus en plus utilisées par les chercheurs en traitement automatique des langues comme source de données lexicales facilement accessibles. Parmi celles-ci figure le "wiktionary", pendant lexical de l'encyclopédie wikipédia, géré par la fondation \emph{wikimedia}. 
+
+Les points forts du witkionnaire\footnote{\texttt{http://www.wiktionary.org}} (et des initiatives de la fondation \emph{wikimedia} en général) sont son caractère \emph{contributif} (de nombreuses personnes contribuent à hauteur de leur compétence à la construction de l'ensemble) et son caractère \emph{évolutif} (les données, en constante évolution, suivent l'usage de la langue). Ses points faibles sont son caractère \emph{contributif} (les contributeurs ne partagent pas de connaissance ni de méthodologie commune) et son caractère \emph{évolutif} (les choix de structures et de codages évoluent avec le temps, rendant obsolète des données autrefois abouties). Ce deux point faibles aboutissent à une assez forte incohérence interne des données disponible. 
+
+Cet article propose une méthodologie d'extraction visant à construire un réseau lexical à partir des dumps de wiktionnaires de différentes langues. Cette méthodologie intègre une fonction d'évaluation de l'extraction \emph{relativement aux extractions précédentes} afin de valider les stratégies et heuristiques mises en place pour palier au manque de cohérence des données disponibles. 
+
+Après avoir présenté brièvement la structure des données du wiktionnaire et celle des données qu'on en extrait, nous présenterons les outils utilisés pour rapidement mettre au point une méthodologie d'extraction intégrant une évaluation du processus d'extraction.
+
+\section{Le Wiktionnaire}
+
+\subsection{Macro et micro structure}
+
+réseau de divers serveurs. données multilingues sur chaque serveur. lien entre les serveurs, liens vers l'extérieur.
+
+structure "simple" de dictionnaire papier.
+
+\subsection{Format et taille des données}
+
+
+\subsection{Une incohérence inhérente à la ressource}
+
+Les incohérences proviennent de 2 phénomènes:
+
+* La structure des articles est une structure visuelle, En ce sens, le wiktionnaire est un "machine readable dictionary" (cf nombreux travaux dans ce domaine...),
+
+* Certaines entrées sont tout simplement mal codées (syntaxiquement incorrecte), mais la principale validation faite par les auteurs est "visuelle" et le langage wiki-wiki est très "tolérant aux fautes". 
+
+* Certaines entrées ont été réalisées sans erreurs en utilisant des conventions qui ont pu évoluer depuis,
+
+* Certaines informations n'ont pas été correctement structurées soit parce que la structure ne permettait pas de représenter correctement le phénomène, soit parce que le contributeur a fait une erreur,
+
+
+\section{Le réseau lexical extrait}
+
+\subsection{Types de noeuds et relations}
+
+\subsection{Exemple}
+
+\section{Méthodologie d'extraction}
+
+\subsection{Vue générale}
+
+\subsection{Validation par non régression}
+
+\subsection{MulLing, un outil général de manipulation de graphes}
+
+\section{Expérimentations}
+
+\subsection{Un exemple d'heuristique et sa validation}
+
+\subsection{État actuel de l'extracteur}
+
+\section{Conclusion}
+
+\section*{Remerciements}
+
+\section{Suite des instructions aux auteurs}
+
+
+\begin{itemize}
+\item Une liste à puce 
+\end{itemize}
+\begin{enumerate}
+\item Une liste numérotée
+\end{enumerate}
+
+\begin{table}[!h]
+\centering
+	\begin{tabular}{|c|p{4cm}|}
+	\hline
+	Un tableau&\\
+	\hline
+	&Les cellules ainsi que le tableau sont centrés\\
+	\hline
+	\end{tabular}
+\caption{Un tableau}
+\end{table}
+
+\begin{figure}[htbp] 
+\begin{center} 
+\includegraphics{atala.png}
+\end{center} 
+\caption{Une image comme figure} \label{image} \
+\end{figure}
+
+
+Une note de bas de page\footnote{Que voici !}.\\
+Le renvoi à la bibliographie : \cite{Bernhard07}
+
+\begin{figure}[htbp] 
+\begin{center} 
+~\\
+~\\
+\framebox[5cm]{étape 1}\\
+ ~~~~~~~~ | \\
+ ~~~~~~~~ | \\
+\framebox[5cm]{étape 2}\\
+~~~~~~~~ | \\
+~~~~~~~~ | \\
+\framebox[5cm]{étape 3}\\
+~~~~~~~~ | \\
+~~~~~~~~ | \\
+\framebox[5cm]{étape 4}\\
+
+\end{center} 
+\caption{Un schéma comme figure} \label{schema} \
+\end{figure}
+
+%%================================================================
+\subsection{Titre de la deuxième sous-partie}
+
+etc.
+
+\section{Titre de la deuxième partie}
+
+etc.
+
+%%================================================================
+\section*{Remerciements (pas de numéro)} 
+
+Paragraphe facultatif
+
+%%================================================================
+%% Note : si l'on préfère éviter de factoriser les crossrefs :
+%% bibtex -min-crossrefs 99 taln-exemple
+%%================================================================
+\bibliographystyle{taln2002}
+\bibliography{biblio}
+\nocite{TALN2007,LaigneletRioult09,LanglaisPatry07,SeretanWehrli07
+}
+
+%%================================================================
+\end{document}

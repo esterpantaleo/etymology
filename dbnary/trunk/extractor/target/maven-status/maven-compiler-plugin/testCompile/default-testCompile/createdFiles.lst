@@ -1,0 +1,6 @@
+org/getalp/blexisma/wiktionary/WiktionaryExtractorTest.class
+org/getalp/dbnary/wiki/WikiTextTest.class
+org/getalp/dbnary/AbstractWiktionaryExtractorUtilitiesTest.class
+org/getalp/dbnary/wiki/WikiToolTest.class
+org/getalp/blexisma/wiktionary/TestDbnaryWikiModel.class
+org/getalp/iso639/ISO639Test.class

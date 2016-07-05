@@ -1,0 +1,11 @@
+K 10
+svn:ignore
+V 45
+*.aux
+*.log
+*.synctex.gz
+*.dvi
+
+lre_nets.pdf
+
+END

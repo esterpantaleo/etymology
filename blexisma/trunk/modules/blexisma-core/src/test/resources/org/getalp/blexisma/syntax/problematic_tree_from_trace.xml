@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node isLeaf="false" lemme="ROOT">
+<Node isLeaf="false" Groupe="ULFRA">
+<Node isLeaf="true" categorie="PONCT" forme="," lemme="," />
+<Node isLeaf="false" Groupe="adjectivalPhrase" categorie="ADJOINT" genre="MAS" nombre="PLU" type_adjoint="qualifierAdjective">
+<Node isLeaf="false" Groupe="adjectivalPhrase" categorie="ADJOINT" genre="MAS" nombre="SIN" type_adjoint="qualifierAdjective">
+<Node isLeaf="true" categorie="ADJOINT" forme="rationnel" fonction="GOV" genre="MAS" lemme="rationnel" nombre="SIN" type_adjoint="qualifierAdjective" />
+</Node>
+<Node isLeaf="true" categorie="PONCT" forme="," lemme="," />
+<Node isLeaf="false" Groupe="adjectivalPhrase" categorie="ADJOINT" genre="MAS" nombre="SIN" type_adjoint="qualifierAdjective" type_verbe="PAPA">
+<Node isLeaf="true" categorie="ADJOINT" forme="raisonné" fonction="GOV" genre="MAS" lemme="raisonné" nombre="SIN" type_adjoint="qualifierAdjective" type_verbe="PAPA" />
+</Node>
+</Node>
+<Node isLeaf="true" />
+<Node isLeaf="false" Groupe="ULOCC">
+<Node isLeaf="true" categorie="CONJCT" forme="et" lemme="et" type_conjonction="coordinatingConjunction" />
+</Node>
+</Node></Node>
+

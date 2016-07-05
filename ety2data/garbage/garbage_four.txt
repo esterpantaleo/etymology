@@ -1,0 +1,250 @@
+Warning: more than one word found in bulletlist
+Warning: more than one word found in bulletlist
+Warning: more than one word found in bulletlist
+after stripping parentheses, references, Images, Categories, Superseded sentences, and after adding a final dot: 
+From {{inh|en|enm|fower}}, from {{inh|en|ang|fēower}}, from {{inh|en|gem-pro|*fedwōr}}, from previous pre-[[w:Grimm's law|Grimm]] {{m|gem-pro||*petwṓr}}, from {{inh|en|ine-pro|*kʷetwṓr}}, the neuter form of {{m|ine-pro|*kʷetwóres}}. Cognate with {{etyl|de|-}} {{m|de|vier}}, {{etyl|got|-}} {{m|got|𐍆𐌹𐌳𐍅𐍉𐍂}}, {{etyl|grc|-}} {{m|grc|τέσσαρες}}, {{etyl|la|-}} {{m|la|quattuor}} , {{etyl|non|-}} {{m|non|fjórir}} , {{etyl|ru|-}} {{m|ru|четы́ре}}, {{etyl|sa|-}} {{m|sa|चतुर्|tr=catur|sc=Deva}}.
+
+.
+m|eng|four etymologically_derives_from inh|en|enm|fower
+inh|en|enm|fower etymologically_derives_from inh|en|ang|fēower
+inh|en|ang|fēower etymologically_derives_from inh|en|gem-pro|*fedwōr
+inh|en|gem-pro|*fedwōr etymologically_derives_from m|gem-pro||*petwṓr
+m|gem-pro||*petwṓr etymologically_derives_from inh|en|ine-pro|*kʷetwṓr
+inh|en|ine-pro|*kʷetwṓr etymologically_equivalent_to m|ine-pro|*kʷetwóres
+@prefix olia:  <http://purl.org/olia/olia.owl#> .
+@prefix dbnary: <http://kaiko.getalp.org/dbnary#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix gem-pro-eng: <http://kaiko.getalp.org/dbnary/gem-pro/eng/> .
+@prefix lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#> .
+@prefix lemon: <http://lemon-model.net/lemon#> .
+@prefix ine-pro-eng: <http://kaiko.getalp.org/dbnary/ine-pro/eng/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix enm-eng: <http://kaiko.getalp.org/dbnary/enm/eng/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lexvo: <http://lexvo.org/id/iso639-3/> .
+@prefix ang-eng: <http://kaiko.getalp.org/dbnary/ang/eng/> .
+@prefix eng:   <http://kaiko.getalp.org/dbnary/eng/> .
+
+eng:four-dimensional  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:__ws_5_four__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "5"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A person who is four years old."@en ] .
+
+eng:four-on-the-floor
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:fourpenny  a            dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-footed  a          dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four_of_a_kind  a       dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:__ws_9_four__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "9"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A four-pennyworth of spirits."@en ] .
+
+eng:four-by-four  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+ine-pro-eng:_kwetwṓr  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyEquivalentTo
+                ine-pro-eng:_kwetwóres .
+
+eng:fourplex  a             dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-string_banjo
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:fourth  a               dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:__ws_4_four__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "4"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Anything measuring four units, as length."@en ] .
+
+eng:fourfold  a             dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four_hundred  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-flush  a           dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:__ws_1_four__Numeral__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A numerical value equal to 4; the number after three and before five; two plus two. This many dots (••••)"@en ] .
+
+eng:four-color  a           dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-letter_word  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four_square  a          dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four__Numeral__1  a       lemon:LexicalEntry , lexinfo:Numeral ;
+        dbnary:partOfSpeech   "Numeral" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "four"@en ;
+                                lexinfo:pronunciation  "/fo(ː)ɹ/"@en-fonipa , "/fɔː/"@en-fonipa , "/foə/"@en-fonipa , "/fɔɹ/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_2_four__Numeral__1 , eng:__ws_1_four__Numeral__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:numeral .
+
+eng:foursome  a             dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:fourfooted  a           dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+gem-pro-eng:_fedwōr  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                gem-pro-eng:_petwṓr .
+
+eng:foursquare  a           dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:__ws_8_four__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "8"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Quadruple sculls."@en ] .
+
+eng:four-bagger  a          dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+<http://kaiko.getalp.org/dbnary/eng/four-o'clock>
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four  a              dbnary:Vocable ;
+        dbnary:refersTo  eng:four__Noun__1 , eng:four__Numeral__1 .
+
+eng:fourpence  a            dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+enm-eng:fower  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                ang-eng:fēower .
+
+eng:four-pounder  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:fourling  a             dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+ine-pro-eng:_kwetwóres
+        a       dbnary:EtymologyEntry .
+
+eng:four-star  a            dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+gem-pro-eng:_petwṓr  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                ine-pro-eng:_kwetwṓr .
+
+eng:__ws_3_four__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "3"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "The digit or figure 4; an occurrence thereof."@en ] .
+
+eng:four-in-hand  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:__ws_7_four__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "7"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "A power forward."@en ] .
+
+eng:four__Noun__1  a          lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Noun" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "four"@en ;
+                                lexinfo:pronunciation  "/fo(ː)ɹ/"@en-fonipa , "/fɔː/"@en-fonipa , "/foə/"@en-fonipa , "/fɔɹ/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_4_four__Noun__1 , eng:__ws_8_four__Noun__1 , eng:__ws_3_four__Noun__1 , eng:__ws_5_four__Noun__1 , eng:__ws_9_four__Noun__1 , eng:__ws_7_four__Noun__1 , eng:__ws_6_four__Noun__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:noun .
+
+eng:two-by-four  a          dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-string_guitar
+        a                   dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:__ws_2_four__Numeral__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "2"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Describing a set or group with four components."@en ] .
+
+eng:four-leaf_clover  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-eyes  a            dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-colour  a          dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-handed  a          dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:4X4  a                  dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four_horsemen  a        dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:on_all_fours  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:__ws_6_four__Noun__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "6"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "An event whereby a batsman hits a ball which bounces on the ground before passing over a boundary in the air, resulting in an award of 4 runs for the batting team. If the ball does not bounce before passing over the boundary, a six is awarded instead."@en ] .
+
+eng:four__Etymology_1
+        a                dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                enm-eng:fower ;
+        dbnary:refersTo  eng:four__Numeral__1 .
+
+ang-eng:fēower  a  dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                gem-pro-eng:_fedwōr .
+
+eng:four-post_bed  a        dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:fourscore  a            dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-wheel_drive  a     dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-poster  a          dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:back_four  a            dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-ball  a            dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .
+
+eng:four-wheeler  a         dbnary:EtymologyEntry ;
+        dbnary:derivesFrom  eng:four__Etymology_1 .

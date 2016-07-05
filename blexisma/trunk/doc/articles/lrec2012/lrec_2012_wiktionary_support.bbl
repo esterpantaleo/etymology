@@ -1,0 +1,49 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citename{Archer}2010]{archer:2010}
+Vincent Archer.
+\newblock 2010.
+\newblock {MuLLinG: MultiLevel Linguistic Graphs for Knowledge Extraction}.
+\newblock In {\em Proceedings of TextGraphs-5 - ACL-2010 Workshop on
+  Graph-based Methods for Natural Language}, pages 69--73. Association for
+  Computational Linguistics.
+
+\bibitem[\protect\citename{Auer \bgroup et al.\egroup }2007]{Auer07dbpedia:a}
+Sören Auer, Christian Bizer, Georgi Kobilarov, Jens Lehmann, and Zachary Ives.
+\newblock 2007.
+\newblock Dbpedia: A nucleus for a web of open data.
+\newblock In {\em In 6th Int’l Semantic Web Conference, Busan, Korea}, pages
+  11--15. Springer.
+
+\bibitem[\protect\citename{Francopoulo \bgroup et al.\egroup
+  }2006]{FRANCOPOULO:2006:INRIA-00121468:1}
+Gil Francopoulo, Monte George, Nicoletta Calzolari, Monica Monachini, Nuria
+  Bel, Mandy Pet, and Claudia Soria.
+\newblock 2006.
+\newblock {Lexical Markup Framework (LMF)}.
+\newblock In {\em {International Conference on Language Resources and
+  Evaluation - LREC 2006}}, G{\^e}nes/Italie. elra.
+\newblock LIRICS.
+
+\bibitem[\protect\citename{Sajous \bgroup et al.\egroup
+  }2010]{sajous-EtAl-IceTAL2010}
+Franck Sajous, Emmanuel Navarro, Bruno Gaume, Laurent Pr\'{e}vot, and Yannick
+  Chudy.
+\newblock 2010.
+\newblock Semi-automatic {E}ndogenous {E}nrichment of {C}ollaboratively
+  {C}onstructed {L}exical {R}esources: {P}iggybacking onto {W}iktionary.
+\newblock In Hrafn Loftsson, Eir\'{i}kur R\"{o}gnvaldsson, and Sigr\'{u}n
+  Helgad\'{o}ttir, editors, {\em Advances in Natural Language Processing},
+  volume 6233 of {\em Lecture Notes in Computer Science}, pages 332--344.
+  Springer Berlin / Heidelberg.
+
+\bibitem[\protect\citename{Zesch \bgroup et al.\egroup
+  }2008]{ZeschMuellerGurevych2008}
+Torsten Zesch, Christof M{\"{u}}ller, and Iryna Gurevych.
+\newblock 2008.
+\newblock {Extracting Lexical Semantic Knowledge from Wikipedia and
+  Wiktionary}.
+\newblock In {\em Proceedings of the Conference on Language Resources and
+  Evaluation (LREC)}.
+
+\end{thebibliography}

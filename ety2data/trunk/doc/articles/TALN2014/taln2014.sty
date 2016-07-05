@@ -1,0 +1,174 @@
+% Modifs pour RECITAL et TALN 2014 par B. Bigi (brigitte.bigi@lpl-aix.fr)
+% Modifs pour RECITAL et TALN 2011 par Alexandre Labadié (alexandre.labadie@gmail.com)
+% Modifs pour RECITAL 2010 par Alexandre Patry (patryale@iro.umontreal.ca): remplacement des accents par leur commande latex
+% MOdifs pour TALN 2010 pr Michel Gagnon michel.gagnon@polymtl.ca
+% Modifs pour TALN 2009 par Laurent Audibert laurent.audibert@lipn.univ-paris13.fr
+% Modifs pour TALN 2008 par Marie-Laure Guenot, mlguenot@gmail.com 
+% Modifs pour TALN 2007 par Philippe Muller muller@irit.fr + (version finale) Dominique Longin longin@irit.fr
+% Modifs pour TALN 2006 par Pierre Zweigenbaum <pz@biomath.jussieu.fr>, 20050811
+% Modifs pour RECITAL 2005 par Nicolas Hernandez et Guillaume Pitel (LIMSI/CNRS), 17/09/2003. mail : nicolas.hernandez@gmail.com et Guillaume.Pitel@laposte.net
+% Modifs pour RECITAL 2004 par Tristan VanRullen (LPL/CNRS), 17/09/2003. mail : tristan.vanrullen@wanadoo.fr
+% Modifs pour RECITAL 2003 par Erwan Moreau, 06/12/02. mail : Erwan.Moreau@irin.univ-nantes.fr
+
+\def\fileversion{1}
+\def\filedate{26 janvier 2014} 
+\def\Copyright{Copyright (C) 1999 Jean Charlet, Pierre Zweigenbaum, SIM, AP--HP, France}
+\NeedsTeXFormat{LaTeX2e}[1994/01/01]
+\typeout{Package `taln2014' <\filedate>.}
+\typeout{\Copyright}
+\typeout{Tir\'e du style des pr\'ec\'edentes conf\'erences TALN} 
+
+\usepackage{times}
+
+% Les marges ont \'et\'e ajust\'es pour le format A4 (B. Bigi, 2014)
+\setlength{\topmargin}{-1in}
+\addtolength{\topmargin}{1cm}
+  % \topmargin definit un espace supplementaire au dessus de l'entete
+\headheight 5mm
+  % \headheight definit la hauteur de l'entete
+\setlength{\headsep}{10mm}
+  % \headsep definit la distance entre la derniere ligne d'entete
+  % et la premiere ligne du corps du document
+
+\textheight 237mm 
+
+% Set left margin to 20mm
+\evensidemargin -3.1mm  
+  % \evensidemargin definit un espace supplementaire dans la marge
+  % gauche des pages paires des documents recto-verso.
+\oddsidemargin -3.1mm
+  % \oddsidemargin definit cet espace pour les pages impaires d'un
+  % document recto-verso ou pour toutes les pages dans le cas d'un
+  % document recto uniquement.
+\textwidth 170mm % this set right margin to 20mm!
+\addtolength{\oddsidemargin}{-.1in}
+
+
+%% Fancy headers: apr\`es r\'eglage de \textwidth (r\`egle la largeur de l'en-t\^ete)
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt} % on ne d\'esire pas de ligne de s\'eparation pour l'ent\^ete
+\renewcommand{\footrulewidth}{0pt} % on ne d\'esire pas de ligne de s\'eparation pour le bas de page 
+
+%% Je red\'efinis fancyhead pour que l'ent\^ete soit en smallcaps (MG 2010)
+\def\@fancyhead#1#2#3#4#5{#1\hbox to\headwidth{\fancy@reset
+  \@fancyvbox\headheight{\hbox
+    {\rlap{\parbox[b]{\headwidth}{\raggedright#2}}\hfill
+      \parbox[b]{\headwidth}{\centering{\sc #3}}\hfill
+      \llap{\parbox[b]{\headwidth}{\raggedleft#4}}}\headrule}}#5}
+
+
+\def\maketitle{\talnmaketitle}
+
+\def\talnmaketitle{\par
+ \begingroup
+ \def\thefootnote{\fnsymbol{footnote}}
+ \def\@makefnmark{\hbox to 0pt{$^{\@thefnmark}$\hss}}
+ \newpage
+ \global\@topnum\z@ \@talnmaketitle 
+ \thispagestyle{firstpage}
+ \@thanks
+ \endgroup
+ \setcounter{footnote}{0}
+ \let\talnmaketitle\relax
+ \let\@talnmaketitle\relax
+ \gdef\@thanks{}
+ \gdef\@author{}\gdef\@title{}
+ \let\thanks\relax
+ }
+
+\def\@talnmaketitle{\newpage
+  \begin{center}
+    \parindent 0pt
+    \null
+    \vskip 0.3cm
+    {\Large\bf \@title \par}    % 17pt au lieu de 18pt
+    \vskip 0.6cm
+    {\large \@author \par}
+    \vskip 0.4cm
+  \end{center}}
+
+% En-t\^ete
+\def\ps@firstpage{\let\@mkboth\@gobbletwo
+\def\@oddhead{\sl21$^{\textsl{\scriptsize \`eme}}$ Traitement Automatique des Langues Naturelles, Marseille, 2014\hfil}
+}
+
+\setlength{\parindent}{0cm} 
+\setlength{\parskip}{.5\baselineskip}
+
+% Citations
+
+\RequirePackage{natbib}
+\renewcommand\cite{\citep}
+\newcommand\shortcite{\citet}
+
+\ProcessOptions
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dominique Longin (longin@irit.fr)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% on ajoute un point \`a la fin des num\'erations de mots-cl\'es
+% De plus, le style Word orthographie "Mots-cl\'es" => en LaTeX aussi !
+\def\motsClefs#1#2{
+{\Large {\bf Mots-cl\'es :\hspace{10pt}}}
+#1.\\
+\\
+{\Large {\bf Keywords:\hspace{10pt}}}
+#2.}
+
+% on ajoute un point \`a la fin de R\'esum\'e et Abstract
+\def\resume#1{{\Large\textbf{R\'esum\'e.\hspace{10pt}}}#1}
+
+\def\abstract#1{{\Large\textbf{Abstract.\hspace{10pt}}}#1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dominique Longin (longin@irit.fr)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% on red\'efinit le pied de page \`a vide juste avant le begin{document}
+% de fa\c{c}on \`a annuler toute valeur donn\'ee par l'auteur
+\let\oldDocument\document
+
+\renewcommand{\document}{\cfoot{}\oldDocument}
+
+
+%
+% pour pouvoir inclure les adresses web et mail sans pb...
+\RequirePackage{url}
+%
+% un bug : la biblio fait apparaitre la chaine "R\'ef\'erences" dans l'en-t\^ete
+% en fin de fichier (en + de l'en-t\^ete d\'efini par les auteurs
+% => il faut emp\^echer \c{c}a en red\'efinissant l'environnement bibliographie
+\renewenvironment{thebibliography}[1]
+     {\section*{\refname}%
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Alexandre Patry (patryale@iro.umontreal.ca
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Déplacement de ces commandes du fichier .tex vers le .sty
+\renewcommand\sectionmark[1]{}
+\renewcommand\subsectionmark[1]{}
+\renewcommand\refname{}
+\date{}

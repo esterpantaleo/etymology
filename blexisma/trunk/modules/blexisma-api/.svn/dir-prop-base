@@ -1,0 +1,13 @@
+K 10
+svn:ignore
+V 58
+.settings
+.project
+target
+.classpath
+
+.umlproject
+
+.euml2
+
+END

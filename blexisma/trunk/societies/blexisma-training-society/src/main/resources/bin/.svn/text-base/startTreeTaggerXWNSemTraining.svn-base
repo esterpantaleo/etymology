@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bin/launch -d -s TreeTaggerXWNSemLearningSociety.xml -n BlexismaMain -n BlexismaSyntax1 -n BlexismaSyntax2 -n BlexismaSyntax3 -n BlexismaSyntax4

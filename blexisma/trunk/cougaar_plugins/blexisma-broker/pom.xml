@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>blexisma-cougaar-plugins</artifactId>
+    <groupId>org.getalp.blexisma.cougaar_plugins</groupId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+  <groupId>org.getalp.blexisma.cougaar_plugins</groupId>
+  <artifactId>blexisma-broker</artifactId>
+  <version>1.1-SNAPSHOT</version>
+  <name>blexisma-broker</name>
+  <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Should we put these dependancies in the parent (cougaar_plugins pom ?) -->
+    <dependency>
+      <groupId>org.cougaar</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>12.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.cougaar</groupId>
+      <artifactId>util</artifactId>
+      <version>12.4</version>
+      <scope>provided</scope>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.cougaar</groupId>
+      <artifactId>core</artifactId>
+      <version>12.4</version>
+      <type>jar</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.getalp.blexisma</groupId>
+    	<artifactId>blexisma-core</artifactId>
+    	<version>1.1-SNAPSHOT</version>
+    	<type>jar</type>
+    </dependency>
+  </dependencies>
+</project>

@@ -1,0 +1,212 @@
+%% flushend.sty
+%% Copyright 1997-2002 Sigitas Tolu\v sis
+%% VTeX Ltd., Akademijos 4, Vilnius, Lithuania
+%% e-mail sigitas@vtex.lt
+%% http://www.vtex.lt/tex/download/macros/
+%%
+% This program can redistributed and/or modified under the terms
+% of the LaTeX Project Public License Distributed from CTAN
+% archives in directory macros/latex/base/lppl.txt; either
+% version 1 of the License, or (at your option) any later version.
+%
+% PURPOSE:   Balanced columns on the page in twocolumn mode.
+%
+% SHORT DESCRIPTION:
+%
+% --- Package Options ---
+%
+% encneu 
+% ------
+%   Change \unskip to \hbox{} after leftcolumn break on balanced page
+%
+% autobase
+% --------
+%   Attempt to guess \baselineskip value on original columns break
+%
+% --- Commands ---
+%
+% \flushend (loaded by default)
+% ---------
+%   Switches on column balancing at last page
+%
+% \raggedend
+% ----------
+%   Switches off column balancing at last page
+%
+% \flushcolsend
+% -------------
+%   Switches on column balancing at the current page
+%
+% \atColsBreak={#1}
+% ------------------
+%   Adds #1 in place of original column break (without balancing)
+%   Example: \atColsBreak{\vskip-2pt}
+%
+% \showcolsendrule
+% ----------------
+%   Adds rule to the bottom of columns (just for debugging)
+%
+% P.S. To stretch right column by #1 add command \vskip-#1 just before
+%      command \end{document}.
+%      TO shrink right column by #1 add command \vskip#1 just before
+%      command \end{document}.
+%      Example: \vskip-10pt
+%               \end{document}
+%
+% \changes{1997/05/16}{first version}
+% \changes{1997/09/09}{support for compatibility with cuted.sty}
+% \changes{1997/10/01}{\vipersep changed to \stripsep for compatibility with cuted.sty}
+% \changes{2002/06/10}{added new command \flushcolsend (80929)}
+% \changes{2002/06/10}{added package option encneu (81023)}
+% \changes{2002/06/10}{added package option autobase}
+%
+\def\get@CVSdate#1Id: #2,v #3 #4 #5 #6 #7${#4}%$
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{flushend}[\get@CVSdate$Id: flushend.sty,v 1.4 2002/12/13 16:01:53 sigitas Exp $]
+
+\def\on@lastcols@break{\unskip}
+\DeclareOption{encneu}{\gdef\on@lastcols@break{\hbox{}}}
+\newif\if@auto@baselineskip
+\DeclareOption{autobase}{\global\@auto@baselineskiptrue}
+\ProcessOptions
+
+\newbox\@aaa
+\newbox\@ccc
+\@ifundefined{lastskip@a}{\newskip\lastskip@a}{}
+\@ifundefined{lastskip@b}{\newskip\lastskip@b}{}
+\@ifundefined{lastskip@d}{\newskip\lastskip@d}{}
+\@ifundefined{lastbox@a}{\newbox\lastbox@a}{}
+\@ifundefined{@viper}{\newbox\@viper}{}
+\@ifundefined{hold@viper}{\newbox\hold@viper}{}
+\newtoks\atColsBreak \atColsBreak={}
+\newdimen\@extra@skip \@extra@skip\z@
+\newdimen\@nd@page@rule \@nd@page@rule\z@
+\@ifundefined{fmt@box@adds}{\def\fmt@box@adds#1{#1}}{}
+\@ifundefined{fmt@vbox@adds}{\def\fmt@vbox@adds[#1]#2{#2}}{}
+
+\def\last@outputdblcol{%
+  \if@firstcolumn
+    \global \@firstcolumnfalse
+    \global \setbox\@leftcolumn \box\@outputbox
+  \else
+    \global \@firstcolumntrue
+    \if@lastpage
+      \@tempdima\ht\@leftcolumn
+      \splittopskip\topskip\splitmaxdepth\maxdepth
+      \if@auto@baselineskip
+        \setbox\@tempboxa\vbox{\unvcopy\@leftcolumn
+	  \global\lastskip@d\lastskip
+	  \global\lastskip@b\lastskip
+          \loop
+	  \global\lastskip@a\lastskip@b
+	  \unskip\unpenalty
+	  \global\lastskip@b\lastskip
+	  \global\advance\lastskip@d by\lastskip
+	  \ifdim\lastskip@b=-\lastskip@a
+	    \global\advance\lastskip@d by-\lastskip
+          \else\repeat
+	  \ifdim\lastskip@b=-\lastskip@a
+	    \ifdim\lastskip@b=\z@
+	      \setbox\lastbox@a\lastbox
+	      \global\advance\lastskip@d by\ht\lastbox@a
+	      \global\advance\lastskip@d by\lastskip
+	      \unskip\unpenalty
+	      \setbox\lastbox@a\lastbox
+	      \global\advance\lastskip@d by\dp\lastbox@a
+	    \else
+	      \global\lastskip@d\lastskip
+	      \global\advance\lastskip@d by\topskip
+	    \fi
+          \fi
+          \global\advance\lastskip@d by-\topskip
+	  }%
+        \setbox\@tempboxa\vbox{\unvbox\@leftcolumn\unskip\unpenalty
+          \vskip\lastskip@d
+          \the\atColsBreak
+	  \unvbox\@outputbox\unskip
+	  }%
+     \else
+       \setbox\@tempboxa\vbox{%
+         \unvbox\@leftcolumn\setbox0\lastbox\on@lastcols@break%
+         \the\atColsBreak%
+         \unvbox\@outputbox\setbox0\lastbox\unskip}%
+     \fi
+     \@tempdimb .5\ht\@tempboxa%
+     \loop
+     \setbox\@aaa\copy\@tempboxa%
+     \setbox\@ccc\vbox to\@tempdimb{%
+                \vsplit\@aaa to\@tempdimb\vss\vsplit\@aaa to\@tempdimb}%
+     \wlog{Extra height:\the\ht\@aaa\space when \the\@tempdimb}%
+     \ifvoid\@aaa \else \advance\@tempdimb 1pt \repeat%
+     \loop
+     \setbox\@aaa\copy\@tempboxa%
+     \setbox\@ccc\vbox to\@tempdimb{%
+                \vsplit\@aaa to\@tempdimb\vss}%
+     \wlog{(2)Left:\the\ht\@ccc\space Right:\the\ht\@aaa\space Output:\the\@tempdimb}%
+     \ifdim \ht\@ccc<\ht\@aaa \@tempdimb \the\ht\@aaa \repeat%
+     \wlog{- LAST -^^JExtra skip:\the\@extra@skip^^JLeft:\the\ht\@ccc^^JRight:\the\ht\@aaa^^JOutput:\the\@tempdimb}%
+    \setbox\@ccc\vbox to\@tempdimb{%
+                \vsplit\@tempboxa to\@tempdimb\vss}%
+    \setbox\@leftcolumn\vbox to\@tempdima{%
+                \fmt@vbox@adds[\columnwidth]{\vbox to\@tempdimb{\unvbox\@ccc}}%
+                \hrule\@height\@nd@page@rule%
+                \vss}%
+    \setbox\@outputbox\vbox to\@tempdima{%
+                \fmt@vbox@adds[\columnwidth]{\vbox to\@tempdimb{\unvbox\@tempboxa\vfilneg\vskip\@extra@skip}}%
+                \hrule\@height\@nd@page@rule%
+                \vss}%
+    \setbox\@outputbox \vbox {%
+                         \hb@xt@\textwidth {%
+                           \hb@xt@\columnwidth {%
+                             \box\@leftcolumn \hss}%
+                           \hfil
+                           \vrule \@width\columnseprule
+                           \hfil
+                           \hb@xt@\columnwidth {%
+                             \box\@outputbox \hss}%
+                                             }%
+                              }%
+    \else
+    \setbox\@outputbox \vbox {%
+                         \hb@xt@\textwidth {%
+                           \hb@xt@\columnwidth {%
+                             \fmt@box@adds{\box\@leftcolumn}\hss}%
+                           \hfil
+                           \vrule \@width\columnseprule
+                           \hfil
+                           \hb@xt@\columnwidth {%
+                             \fmt@box@adds{\box\@outputbox}\hss}%
+                                             }%
+                              }%
+    \fi
+    \ifvoid\hold@viper
+    \else
+      \setbox\@outputbox \vbox{\box\hold@viper\box\@outputbox}%
+    \fi
+    \@combinedblfloats
+    \@outputpage
+    \begingroup
+      \@dblfloatplacement
+      \@startdblcolumn
+      \@whilesw\if@fcolmade \fi
+        {\@outputpage
+         \@startdblcolumn}%
+      \ifvoid\@viper
+      \else
+        \global\setbox\@viper\vbox{%
+                \vskip-\stripsep\unvbox\@viper}\@viperoutput
+      \fi
+    \endgroup
+  \fi
+}
+
+\def\lasta@outputdblcol{\global\@lastpagetrue\last@outputdblcol
+	\global\let\@outputdblcol\org@outputdblcol\global\@lastpagefalse}
+\def\flushcolsend{\global\let\org@outputdblcol\@outputdblcol\global\let\@outputdblcol\lasta@outputdblcol}
+\let\prev@enddocument\enddocument
+\newif\if@lastpage \@lastpagefalse
+\def\enddocument{\global\@lastpagetrue\let\@outputdblcol\last@outputdblcol\prev@enddocument}
+\def\raggedend{\global\let\enddocument\prev@enddocument}
+\def\flushend{\gdef\enddocument{\global\@lastpagetrue\let\@outputdblcol\last@outputdblcol\prev@enddocument}}
+\def\showcolsendrule{\global\@nd@page@rule=.4pt}
+\endinput

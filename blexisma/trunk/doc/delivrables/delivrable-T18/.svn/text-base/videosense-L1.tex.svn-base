@@ -1,0 +1,422 @@
+\documentclass[titlepage]{article}
+
+\usepackage{graphicx}
+
+\usepackage{multicol}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[french]{babel}
+%Décommenter l'encodage souhaité (Mac ou UTF8). UTF8 est préconisé vu que l'ensemble des contributeurs ne travaille pas sous MacOS.
+%\usepackage[applemac]{inputenc}
+\usepackage[utf8x]{inputenc}
+%\usepackage[T1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{array}
+\usepackage{hhline}
+\usepackage{picins}
+\usepackage{subfigure}
+\usepackage{url}
+\usepackage[final]{pdfpages} 
+
+\usepackage{slashbox}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\newcommand{\auteurs}{Francis Brunet-Manquat, Jérôme Goulian, Alexandre Labadié, Didier Schwab, Gilles Sérasset}
+
+\usepackage[backref,colorlinks=true,linkcolor=blue,citecolor=blue, pdftitle={apport ANR VIdeoSense - équipe getalp - Ensemble de descripteurs textuels}, pdfauthor={\auteurs}]{hyperref}
+
+\usepackage{fullpage}
+\setcounter{tocdepth}{7}
+% Package algorithme de Fiorio
+\usepackage[french,ruled, vlined]{algorithm2e}
+
+\newcommand{\citep}[2]{(\cite{#1}, p.~#2)} %% si on veut mettre la
+%% page
+\newcommand{\cites}[2]{(\cite{#1}, section #2)} %% si on veut mettre la section
+
+\newcommand{\calgo}[1]{\emph{\small \% #1}}%commentaires algos
+
+\newcommand{\smallurl}[1]{\url{\small{#1}}}
+
+\newcommand{\cname}[1]{\emph{\textrm{\scriptsize{\uppercase{#1}}}}}
+\newcommand{\lexItem}[1]{$\lhook${\small\emph{#1}}$\rhook$}
+\newcommand{\lexie}[1]{$\lhook${\small\emph{#1}}$\rhook$}
+\newcommand{\acception}[1]{$\lhook${\small\emph{#1}}$\rhook$}
+\newcommand{\glos}[1]{$\lceil${\small\emph{#1}}$\rfloor$}
+\newcommand{\cnamev}[2]{\cname{#1}\glos{#2}}
+\newcommand{\mot}[1]{$\lhook\lhook${\small #1}$\rhook\rhook$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\eps}{$\epsilon$}
+
+\newcommand{\cnames}[1]{\tiny{\uppercase{#1}}}
+
+%\newcommand{\cnames}[1]{\emph{\textrm{\tiny{\uppercase{#1}}}}}
+%\newcommand{\cnames}[1]{\tiny{\uppercase{\letterspace to 0.9\naturalwidth{#1}}}}
+
+\newcommand{\con}{\gamma}
+\newcommand{\anticon}{\overline{\gamma}}
+
+\newcommand{\strongcon}{\Gamma}
+\newcommand{\strionganticon}{\overline{\Gamma}}
+
+\newcommand{\lexscope}{\Lambda}
+
+\newcommand{\inlinequote}[1]{``#1''}
+
+\newcommand{\dang}[2]{$D_{A}($#1, #2$)$}
+\newcommand{\dum}[1]{D_{u}(#1)}
+\newcommand{\dsynt}[1]{D_{s}(#1)}
+
+\newcommand{\mlquote}[1]{\textquotedblleft#1\textquotedblright}
+
+\newcommand{\mlcite}[1]{\textrm{\small{[#1]}}}
+
+\newcommand{\veczero}{\vec{\mathbf{0}}}
+\newcommand{\vecun}{\vec{\mathbf{1}}}
+
+\newcommand{\vrn}{{\R^{+}}^n}
+
+\newcommand{\vecpttnorm}{\otimes}
+\newcommand{\vecptt}{\odot}
+\newcommand{\vecadd}{\oplus}
+\newcommand{\vecminus}{\ominus}
+
+\newcommand{\bigvecadd}{\bigoplus}
+\newcommand{\bigvecptt}{\bigotimes}
+\newcommand{\bigvecpttnorm}{\bigodot}
+
+\newcommand{\nclasse}[1]{\textit{#1}}
+\newcommand{\keyword}[1]{\textbf{#1}}
+
+\newcommand{\N}{\ensuremath{\rm{I \! N}}}
+\newcommand{\R}{\ensuremath{\rm{I \! R}}}
+%\newcommand{\R}{\ensuremath{{\mathbb{R}}}}  bof bof bof
+\newcommand{\C}{\ensuremath{{\mathbb C}}}
+\newcommand{\Z}{\ensuremath{{\mathbb Z}}}
+%\newcommand{\Vec}{\overrightarrow} %flèche sur plus d'un caract contrairement à
+%\vec
+\newcommand{\norm}[1]{\parallel #1 \parallel}
+\newcommand{\pscal}[2]{#1 \cdot #2}%produit scalaire
+%\newcommand{\EnsVC}{V}%ensemble des vecteurs conceptuels
+%\newcommand{\EnsIL}{W}%ensemble des items lexicaux
+\newcommand{\EnsVC}{\vartheta}%ensemble des vecteurs conceptuels
+\newcommand{\EnsIL}{\omega}%ensemble des items lexicaux
+\newcommand{\EnsAcc}{\kappa}%ensemble des acceptions
+\newcommand{\EnsLex}{\iota}%ensemble des lexies
+\newcommand{\EnsObjLex}{\sigma}%ensemble des objets lexicaux
+\newcommand{\EnsMorpho}{m}%ensemble des morpho
+\newcommand{\EnsFLE}{{\cal F}}%ensemble des Fonctions Lexicales d'évaluation
+\newcommand{\vois}{{\cal V}}%fonction voisinage
+
+\newcommand{\morp}[1]{m(#1)}%morpho(item)
+\newcommand{\freq}[1]{\mbox{\emph{freq}}(#1)}%morpho(item)
+
+\newcommand{\pj}{\emph{(jou)}}%morpho(item)
+
+\newcommand{\Vcont}{V_c}
+\newcommand{\Vci}{V_{c_i}}
+
+\newcommand{\sentence}[1]{\og \emph{#1} \fg}
+%\newcommand{\falsesentence}[1]{$\mbox{\og \emph{#1} \fg}^*$}
+\newcommand{\falsesentence}[1]{${}^*$\og \emph{#1} \fg}
+\newcommand{\phoneme}[1]{\slash #1\slash}
+\newcommand{\annotation}[1]{\textbf{\footnotesize{#1}}}
+\newcommand{\annot}[2]{\emph{#1}\slash\annotation{#2}}
+%\newcommand{\annotation}[2]{\og \emph{#1/#2} \fg}
+\newcommand{\epit}[2]{(\emph{#1 - #2})}
+\newcommand{\born}[1]{(\emph{né en #1})}
+
+\newcommand{\agent}[1]{\texttt{#1}}
+\newcommand{\lexobj}[1]{\textsc{#1}}
+\newcommand{\relation}[1]{\textsl{#1}}
+\newcommand{\rel}[3]{\relation{#1}(#2,#3)}
+\newcommand{\relu}[2]{\relation{#1}(#2)}
+\newcommand{\caste}[1]{\textbf{\textsl{#1}}}
+
+%POUR LES PROBLEMES D'HYPERREF
+%\newcommand{\url}[1]{}
+
+\newcounter{propnum}
+\newenvironment{Proplist}%
+{\begin{list}{\arabic{propnum}.}{\usecounter{propnum}%
+   \setlength{\parsep}{0pt}%
+   \setlength{\itemsep}{2pt}%
+   \setlength{\topsep}{2pt}%
+   }}%
+{\end{list}}
+
+
+\newcounter{algolinenum}
+\setcounter{algolinenum}{1}
+\newcommand{\algoline}[2]{{\footnotesize{\arabic{algolinenum}}}{\stepcounter{algolinenum}} \hspace{#1in} #2 \newline}
+\newcommand{\algocomment}[1]{\hspace{0.2in}{\textrm{\footnotesize{#1}}}}
+\newcommand{\algofunction}[1]{\setcounter{algolinenum}{1} \textbf{function} #1 \newline}
+
+\newcommand{\tuple}[1]{<#1>}
+
+% FONCTIONS LEXICALES  relative : 3 arguments, 2 arguments : partielle, absolue : 1 argument
+
+%% ANTONYMIE
+
+%%% POTENTIEL
+
+\newcommand{\mantpot}{Anti_{Pot}}
+\newcommand{\mantpotc}{Anti_{Pot_c}}
+\newcommand{\mantpots}{Anti_{Pot_s}}
+\newcommand{\mantpotd}{Anti_{Pot_d}}
+\newcommand{\mantpoti}{Anti_{Pot_i}}
+
+%%%CONSTRUCTION
+
+%%%% Vecteurs
+\newcommand{\cantig}{Canti_{P_g}}
+\newcommand{\cantic}{Canti_{P_c}}
+\newcommand{\cantis}{Canti_{P_s}}
+\newcommand{\cantid}{Canti_{P_d}}
+
+\newcommand{\cantira}{Canti_{R_\alpha}}
+\newcommand{\cantir}{Canti_R}
+\newcommand{\cantirc}{Canti_{R_c}}
+\newcommand{\cantirs}{Canti_{R_s}}
+\newcommand{\cantird}{Canti_{R_d}}
+
+\newcommand{\cantipa}{Canti_{P_\alpha}}
+\newcommand{\cantip}{Canti_P}
+\newcommand{\cantipc}{Canti_{P_c}}
+\newcommand{\cantips}{Canti_{P_s}}
+\newcommand{\cantipd}{Canti_{P_d}}
+
+\newcommand{\cantia}{Canti_A}
+\newcommand{\cantica}{Canti_{A_c}}
+\newcommand{\cantisa}{Canti_{A_s}}
+\newcommand{\cantida}{Canti_{A_a}}
+
+%%%%Concepts
+\newcommand{\canticoncept}{CantiC}
+\newcommand{\canticonceptc}{CantiC_{c}}
+\newcommand{\canticoncepts}{CantiC_{s}}
+\newcommand{\canticonceptd}{CantiC_{d}}
+
+%\newcommand{\canticonceptr}{CantiC_{R}}
+%\newcommand{\canticonceptcr}{CantiC_{R_c}}
+%\newcommand{\canticonceptsr}{CantiC_{R_s}}
+%\newcommand{\canticonceptdr}{CantiC_{R_d}}
+
+%%% EVALUATION
+
+\newcommand{\anti}{Anti_R}
+\newcommand{\antic}{Anti_{R_c}}
+\newcommand{\antis}{Anti_{R_s}}
+\newcommand{\antid}{Anti_{R_d}}
+
+\newcommand{\antip}{Anti_P}
+\newcommand{\antipc}{Anti_{P_c}}
+\newcommand{\antips}{Anti_{P_s}}
+\newcommand{\antipd}{Anti_{P_d}}
+
+%%% DIVERS
+
+\newcommand{\antilex}{AntiLex}
+\newcommand{\antilexs}{AntiLex_{S}}
+\newcommand{\antilexr}{AntiLex_{R}}
+\newcommand{\antilexp}{AntiLex_{P}}
+\newcommand{\antilexpc}{AntiLex_{P_c}}
+\newcommand{\antilexps}{AntiLex_{P_s}}
+\newcommand{\antilexpd}{AntiLex_{P_d}}
+\newcommand{\antilexa}{AntiLex_{A}}
+
+\newcommand{\TypeAnti}{type_{anto}}
+
+%% SYNONYMIE
+
+%% EVALUATION
+
+\newcommand{\synr}{Syn_R}
+\newcommand{\synp}{Syn_P}
+
+%% CONSTRUCTION
+
+\newcommand{\csynr}{Csyn_R}
+\newcommand{\csynp}{Csyn_P}
+
+%% HYPERONYMIE
+
+%% EVALUATION
+
+\newcommand{\hyperr}{Hyper_R}%??
+\newcommand{\hyperp}{Hyper_P}%??
+
+%% CONSTRUCTION
+
+\newcommand{\chyperr}{Chyper_R}
+\newcommand{\chyperp}{Chyper_P}
+
+%% HYPONYMIE
+
+%% EVALUATION
+
+\newcommand{\hypor}{Hypo_R}%??
+\newcommand{\hypop}{Hypo_P}%??
+
+%% CONSTRUCTION
+
+\newcommand{\chypor}{Chypo_R}
+\newcommand{\chypop}{Chypo_P}
+
+%% RLV
+
+\newcommand{\rlv}[3]{$R_{#1}($#2$,$#3$)$}
+\newcommand{\rlvex}[1]{$R_{#1}$}
+
+%% FOURMIS
+
+\newcommand{\phero}{\varphi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\citename}[1]{\textit{#1}}
+
+\newcommand{\algolinenonum}[2]{\noindent \null \hspace{#1in} #2 \newline}
+\newcommand{\algolinenoreturn}[2]{{\footnotesize{\arabic{algolinenum}}}{\stepcounter{algolinenum}} \hspace{#1in} #2}
+\newcommand{\algolinenonumnoreturn}[2]{\noindent \null \hspace{#1in} #2}
+
+\newcommand{\morpho}[1]{{\small \textsf{\uppercase{#1}}}} 
+
+%\newcommand{\opposition}[2]{\lexItem{#1}$\prec\succ$\lexItem{#2}}
+\newcommand{\opposition}[2]{\lexItem{#1} $\shortmid\shortmid\shortmid$
+  \lexItem{#2}}
+
+\newcommand{\oppositionC}[2]{\lexItem{#1}
+  $\shortmid\shortmid\shortmid_{_c}$ \lexItem{#2}}
+\newcommand{\oppositionS}[2]{\lexItem{#1}
+  $\shortmid\shortmid\shortmid_{_s}$ \lexItem{#2}}
+\newcommand{\oppositionD}[2]{\lexItem{#1}
+  $\shortmid\shortmid\shortmid_{_d}$ \lexItem{#2}}
+
+\newcommand{\synonymes}[2]{\lexItem{#1}$\cong$\lexItem{#2}}
+\newcommand{\abssynonymes}[2]{\lexItem{#1}$\equiv$\lexItem{#2}}
+\newcommand{\relsynonymes}[2]{\lexItem{#1}$\cong$\lexItem{#2}}
+
+
+\newcommand{\prefopposition}[2]{\emph{#1}~{$\shortmid\shortmid\shortmid$}~\emph{#2}}
+
+\newcommand{\falseopposition}[2]{\lexItem{#1}$\not \shortmid\shortmid\shortmid$\lexItem{#2}}
+
+\newcommand{\falseoppositionC}[2]{\lexItem{#1}\ $\not \shortmid\shortmid\shortmid_{_c}$\lexItem{#2}}
+\newcommand{\falseoppositionS}[2]{\lexItem{#1}\ $\not \shortmid\shortmid\shortmid_{_s}$\lexItem{#2}}
+\newcommand{\falseoppositionD}[2]{\lexItem{#1}\ $\not \shortmid\shortmid\shortmid_{_d}$\lexItem{#2}}
+
+
+%GLOSSAIRE
+\newcommand{\definition}[2]{\noindent{\textbf{#1} : #2} \vspace{0.3cm}}
+
+%LISTE FLs
+
+\newcommand{\FLA}[9]{
+\item \textbf{#1} [\relation{#2}]. #9\\\relu{#2}{\lexItem{#3}} =
+  \lexItem{#4}; \relu{#2}{\lexItem{#5}} = \lexItem{#6};
+  \relu{#2}{\lexItem{#7}} = \lexItem{#8}}
+% #1 nom FL, #2 mnémo, #3
+
+%ATTENTION FLA == FLM
+
+\newcommand{\FLM}[9]{
+\item \textbf{#1} [\relation{#2}]. #9\\\relu{#2}{\lexItem{#3}} =
+  \lexItem{#4}; \relu{#2}{\lexItem{#5}} = \lexItem{#6};
+  \relu{#2}{\lexItem{#7}} = \lexItem{#8}}
+
+\newcommand{\UNL}[9]{
+\item \textbf{#1} [\relation{#2}].
+  #3.\\
+  \relation{#2}(#4, #5)\\
+  \relation{#2}(#6, #7)\\
+  \emph{exemple :} {\footnotesize
+    \relation{#2} (#8) #9\\
+  }}
+ 
+
+\begin{document}
+\includepdf[pages={1}]{pageDeGarde.pdf}
+
+%layout
+
+%
+%	\lhead{\includegraphics[height=15mm]{logo_videosense}}
+
+%	\rhead{\includegraphics[height=15mm]{logo_ANR}}
+
+%\begin{titlepage}
+%	
+%		\thispagestyle{fancy}
+
+%		\cfoot{}
+%.\\
+%\vfill
+%\noindent
+%\Large{\textbf{Projet :ANR-09-CORD-026}} \\
+%\bigskip
+%\Large{\textbf{Titre : VideoSense - Reconnaissance multimodale de concepts enrichis (statiques, dynamiques, émotionnels) dans des vidéos multilingues au travers de langages pivots.}} \\	
+%\Large{\textbf{Equipe : GETALP (LIG)}} \\
+
+%\vfill
+
+%\begin{center}
+%	\huge{\textbf{Ensemble de descripteurs textuels\\(Version provisoire du \today})}
+%\end{center}
+
+%\vfill
+
+%\begin{table}[h!]
+%	\centering
+%	\begin{tabular}{|ll|}
+%		\hline
+%		&\\
+%		Livrables : & L3.4 et L3.5 \\
+%		&\\
+%		Auteurs : & Francis Brunet-Manquat, Jérôme Goulian, Alexandre Labadié, Didier Schwab, Gilles Sérasset\\
+%		&\\
+%		Affiliation : & UPMF-UJF-CNRS, LIG-GETALP \\
+%		&\\
+%		Version : & 0 \\ 		
+%		&\\
+%		Date : &  09/06/2011 \\
+%		&\\
+%		Type de document : & interne \\
+%		&\\
+%		\hline
+%	\end{tabular}
+%\end{table}
+
+%\vfill
+
+%%\footnotetext[1]{Copyright 2010 OMNIA : XEROX Reseach Centre Europe, École Centrale de Lyon, Université Joseph Fourier.}
+%\end{titlepage}						
+
+\tableofcontents
+
+\newpage
+
+
+
+% DEBUT DE L'ARTICLE
+%
+\section{Introduction}
+\input{1_Introduction/intro.tex}
+
+\section{Les descripteurs textuels : état de l'art}
+\input{2_Etat-art/representations_textuelles.tex}
+\input{2_Etat-art/multilinguisme.tex}
+
+\section{Expériences mises en œuvre dans VideoSense}
+\input{3_Experiences/experiences_menees.tex}
+
+%\section{Conclusion}
+
+
+\bibliography{biblio-utf8}
+\bibliographystyle{schwabBibStyleFR}
+
+\end{document}

@@ -1,0 +1,11 @@
+K 10
+svn:ignore
+V 69
+.settings
+.project
+target
+.classpath
+svn-commit.2.tmp
+svn-commit.tmp
+
+END

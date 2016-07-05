@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>experiments</artifactId>
+    <groupId>org.getalp.blexisma</groupId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+  <groupId>org.getalp.blexisma</groupId>
+  <artifactId>kernel_fr</artifactId>
+  <version>1.1-SNAPSHOT</version>
+  <name>French Kernel</name>
+  <packaging>pom</packaging>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+</project>

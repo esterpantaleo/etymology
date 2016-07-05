@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+
+  Do NOT alter this file!  It is for Cougaar internal use only!
+
+  This file configures Tomcat to load our "HookServlet", which
+  delegates all service requests back into Cougaar.
+  -->
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_3.dtd">
+
+<web-app>
+
+    <!--
+      Load the hook for Cougaar ServletService delegation.
+
+      From Tomcat's point of view, there's only this single servlet!
+
+      Note that Tomcat creates the HookServlet instance, not Cougaar,
+      so the HookServlet implementation uses a static field to
+      forward all requests into Cougaar.
+    -->
+    <servlet>
+        <servlet-name>cougaar</servlet-name>
+        <servlet-class>org.cougaar.lib.web.tomcat.HookServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>cougaar</servlet-name>
+        <url-pattern>/*</url-pattern> 
+    </servlet-mapping>
+
+    <!-- 
+      Example FORM-based authentication.
+
+      In this example we'll force all "*.secure" URL requests 
+      to popup a username-password login.  See 
+      "conf/tomcat-users.xml" for the username-password list.
+
+      This is an example of server-specific security that's
+      hidden from the user Servlets.
+
+      Tomcat only supports limited pattern matching:
+        1) exact-match  (e.g. "/test")
+        2) prefix*      (e.g. "/test/*")
+        3) *extension   (e.g. "*test")
+      I'd *really* prefer full regular expressions..
+    -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Cougaar</web-resource-name>
+            <url-pattern>*.secure</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>secure</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Cougaar</realm-name>
+    </login-config>
+    <security-role>
+        <role-name>secure</role-name>
+    </security-role>
+
+</web-app>

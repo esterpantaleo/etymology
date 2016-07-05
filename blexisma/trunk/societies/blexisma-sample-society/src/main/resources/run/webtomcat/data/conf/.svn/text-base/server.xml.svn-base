@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- 
+  Do NOT modify this file!  It is for Cougaar internal use only!
+
+  This partially configures the "TomcatServletEngine" for Cougaar
+  ServletService, in combination with Java code to configure
+  the HTTP/HTTPS port listeners.  Eventually all of this XML file
+  may move into code...
+  -->
+
+<Server>
+  <!-- There must be one and only one Service for cougaar -->
+  <Service name="CougaarWebService">
+
+    <!-- There must be one and only one Engine tag representing the engine
+         that is used for all web applications -->
+    <Engine name="CougaarWebEngine" defaultHost="DEFAULT">
+
+      <!-- turn on fatal error logging to webtomcat-*.log -->
+      <Logger className="org.apache.catalina.logger.FileLogger"
+       verbosity="0" timestamp="true" prefix="webtomcat" directory="logs"/>
+
+      <!-- Turn on memory realm. We will later be moving to the JNDIRealm -->
+      <Realm className="org.apache.catalina.realm.MemoryRealm" 
+       debug="-1" pathname="conf/tomcat-users.xml" />
+
+      <!-- set up the host. For cougaar there is only a single host.
+           Unpack-wars is false; we should only have the ROOT. -->
+      <Host name="DEFAULT" appBase="webapps" unpackWARs="false">
+
+        <!-- Set the default context configuration for the automatically
+             added webapps.
+             Reloadable is false; we should only have the ROOT. -->
+        <DefaultContext cookies="true" crossContext="false" reloadable="false"/>
+
+        <!-- set up the default Context -->
+        <Context path="" docBase="ROOT" workDir="work">
+
+          <!-- Create a session manager. I don't like the seeding mechanism
+               which seems to rely on a seed within the server.xml file as
+               opposed to using the /dev/urandom in Tomcat 3.3. It might
+               be a good idea to write our own session manager class. This
+               class also can persist the data across startups if the correct
+               shutdown command is given (which won't happen since it isn't
+               implemented in org.cougaar.lib.web.tomcat.EmbeddedTomcat) -->
+          <Manager className="org.apache.catalina.session.StandardManager"
+           entropy="ND(L{=$#fas993Fa-d91Fsf0aA512ofka9emASg9_^elfkjf02ldmxc23DFjf9mI)mfls9wh4mrpfd0eWsklf9a(^fk2vcxzz03/f0wk.,r-xc93j36390-7luydSJUT87ejgmRy9shwf"
+           checkInterval="83" randomClass="java.security.SecureRandom"
+           maxActiveSession="-1" pathname="UserSessions.dat"/>
+        </Context>
+
+        <!-- Normally, users must authenticate themselves to each web app
+             individually.  Uncomment the following entry if you would like
+             a user to be authenticated the first time they encounter a
+             resource protected by a security constraint, and then have that
+             user identity maintained across *all* web applications contained
+             in this virtual host. -->
+        <Valve className="org.apache.catalina.authenticator.SingleSignOn"
+                   debug="0"/>
+      </Host>
+    </Engine>
+  </Service>
+</Server>

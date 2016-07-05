@@ -1,0 +1,9 @@
+K 10
+svn:ignore
+V 31
+*.aux
+*.log
+*.synctex.gz
+*.dvi
+
+END

@@ -1,0 +1,43 @@
+after stripping parentheses, references, Images, Categories, Superseded sentences, and after adding a final dot: 
+Name of the Norwegian mathematician {{w|Niels Henrik Abel|Abel}} {{suffix||-ian|lang=en}}.
+
+.
+m|eng|abelian etymologically_derives_from suffix||-ian|lang=en
+@prefix olia:  <http://purl.org/olia/olia.owl#> .
+@prefix lemon: <http://lemon-model.net/lemon#> .
+@prefix dbnary: <http://kaiko.getalp.org/dbnary#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lexvo: <http://lexvo.org/id/iso639-3/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#> .
+@prefix eng:   <http://kaiko.getalp.org/dbnary/eng/> .
+
+eng:abelian  a           dbnary:Vocable ;
+        dbnary:refersTo  eng:abelian__Adjective__1 .
+
+eng:__ws_1_abelian__Adjective__1
+        a                   lemon:LexicalSense ;
+        dbnary:senseNumber  "1"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        lemon:definition    [ lemon:value  "Having a commutative defining operation. <ref></ref>"@en ] .
+
+eng:    a       dbnary:EtymologyEntry .
+
+eng:__-ian  a   dbnary:EtymologyEntry .
+
+eng:abelian__Etymology_1
+        a                dbnary:EtymologyEntry ;
+        dbnary:etymologicallyDerivesFrom
+                eng:__-ian , eng: ;
+        dbnary:refersTo  eng:abelian__Adjective__1 .
+
+eng:abelian__Adjective__1
+        a                     lemon:LexicalEntry ;
+        dbnary:partOfSpeech   "Adjective" ;
+        lemon:canonicalForm   [ lemon:writtenRep       "abelian"@en ;
+                                lexinfo:pronunciation  "/əˈbi.li.ən/"@en-fonipa
+                              ] ;
+        lemon:language        "en" ;
+        lemon:sense           eng:__ws_1_abelian__Adjective__1 ;
+        dcterms:language      lexvo:eng ;
+        lexinfo:partOfSpeech  lexinfo:adjective .
