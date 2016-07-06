@@ -26,170 +26,122 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 
 public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionaryDataHandler {
 
-    public ArrayList<Resource> etymologyPos;
+    private Logger log = LoggerFactory.getLogger(LemonBasedRDFDataHandler.class);
+    
+    public ArrayList<Resource> etymologyPos = new ArrayList<Resource>();
     public String etymologyString;
-	protected static class PosAndType {
-		protected Resource pos;
-		protected Resource type;
-		public PosAndType(Resource p, Resource t) {this.pos = p; this.type = t;}
-	}
-	private Logger log = LoggerFactory.getLogger(LemonBasedRDFDataHandler.class);
+    protected Resource currentEtymologyEntry;
+    protected int currentEtymologyNumber;
+
+    protected static class PosAndType {
+	protected Resource pos;
+	protected Resource type;
+	public PosAndType(Resource p, Resource t) {this.pos = p; this.type = t;}
+    }
 	
-	protected Model aBox;
-        protected Map<Feature,Model> featureBoxes;
+    protected Model aBox;
+    protected Map<Feature,Model> featureBoxes;
 
-	// States used for processing    
-	protected Resource currentLexEntry;
-	protected Resource currentLexinfoPos;
-	protected String currentWiktionaryPos;
-        private String currentEntryLanguageCode = null;
-        private String currentPrefix = null;
+    // States used for processing    
+    protected Resource currentLexEntry;
+    protected Resource currentLexinfoPos;
+    protected String currentWiktionaryPos;
     
-	protected Resource currentSense;
-	protected int currentSenseNumber;
-	protected int currentSubSenseNumber;
-        protected int currentEtymologyNumber;
-	protected CounterSet translationCount = new CounterSet();
-	private CounterSet reifiedNymCount = new CounterSet();
-	protected String extractedLang;
-	protected Resource lexvoExtractedLanguage;
-        protected String mainLanguageIsoCode;
-        protected Resource currentEtymologyEntry;
-        public HashMap<String,String> prefixes = new HashMap<String,String>();
+    protected Resource currentSense;
+    protected int currentSenseNumber;
+    protected int currentSubSenseNumber;
+    protected CounterSet translationCount = new CounterSet();
+    private CounterSet reifiedNymCount = new CounterSet();
+    protected String extractedLang;
+    protected Resource lexvoExtractedLanguage;
+    public String currentEntryLanguage;
+    protected String currentPrefix;
+    private HashMap<String,String> prefixes = new HashMap<String,String>();
     
-	private Set<Statement> heldBackStatements = new HashSet<Statement>();
+    private Set<Statement> heldBackStatements = new HashSet<Statement>();
 
-	protected int nbEntries = 0;
-	private String NS;
-	protected String currentEncodedPageName;
-	protected String currentWiktionaryPageName;
-	protected CounterSet currentLexieCount = new CounterSet();
-	protected Resource currentMainLexEntry;
-	protected Resource currentCanonicalForm;
+    protected int nbEntries = 0;
+    private String NS;
+    protected String currentEncodedPageName;
+    protected String currentWiktionaryPageName;
+    protected CounterSet currentLexieCount = new CounterSet();
+    protected Resource currentMainLexEntry;
+    protected Resource currentCanonicalForm;
 	
-	protected Set<PronunciationPair> currentSharedPronunciations;
-//	private String currentSharedPronunciation;
-//	private String currentSharedPronunciationLang;
+    protected Set<PronunciationPair> currentSharedPronunciations;
+//  private String currentSharedPronunciation;
+//  private String currentSharedPronunciationLang;
 
-	private HashMap<SimpleImmutableEntry<String,String>, HashSet<HashSet<PropertyObjectPair>>> heldBackOtherForms = new HashMap<SimpleImmutableEntry<String,String>, HashSet<HashSet<PropertyObjectPair>>>();
+    private HashMap<SimpleImmutableEntry<String,String>, HashSet<HashSet<PropertyObjectPair>>> heldBackOtherForms = new HashMap<SimpleImmutableEntry<String,String>, HashSet<HashSet<PropertyObjectPair>>>();
 
-	private static HashMap<String,Property> nymPropertyMap = new HashMap<String,Property>();
-	protected static HashMap<String,PosAndType> posAndTypeValueMap = new HashMap<String,PosAndType>();
+    private static HashMap<String,Property> nymPropertyMap = new HashMap<String,Property>();
+    protected static HashMap<String,PosAndType> posAndTypeValueMap = new HashMap<String,PosAndType>();
 
-	static {
-				
-		nymPropertyMap.put("syn", DBnaryOnt.synonym);
-		nymPropertyMap.put("ant", DBnaryOnt.antonym);
-		nymPropertyMap.put("hypo", DBnaryOnt.hyponym);
-		nymPropertyMap.put("hyper", DBnaryOnt.hypernym);
-		nymPropertyMap.put("mero", DBnaryOnt.meronym);
-		nymPropertyMap.put("holo", DBnaryOnt.holonym);
-		nymPropertyMap.put("qsyn", DBnaryOnt.approximateSynonym);
+    static {			
+        nymPropertyMap.put("syn", DBnaryOnt.synonym);
+	nymPropertyMap.put("ant", DBnaryOnt.antonym);
+	nymPropertyMap.put("hypo", DBnaryOnt.hyponym);
+	nymPropertyMap.put("hyper", DBnaryOnt.hypernym);
+	nymPropertyMap.put("mero", DBnaryOnt.meronym);
+	nymPropertyMap.put("holo", DBnaryOnt.holonym);
+	nymPropertyMap.put("qsyn", DBnaryOnt.approximateSynonym);
         nymPropertyMap.put("tropo", DBnaryOnt.troponym);
 
-		// Portuguese
-		posAndTypeValueMap.put("Substantivo", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("Adjetivo", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("Verbo", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("Advérbio", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
+	// Portuguese
+        posAndTypeValueMap.put("Substantivo", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("Adjetivo", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("Verbo", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("Advérbio", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
 
-		// Italian
-		posAndTypeValueMap.put("noun", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("sost", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
+	// Italian
+	posAndTypeValueMap.put("noun", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("sost", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
 
-		posAndTypeValueMap.put("adjc", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("agg", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("verb", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("adv", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
+        posAndTypeValueMap.put("adjc", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("agg", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("verb", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("adv", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
 
-		// Finnish
-		posAndTypeValueMap.put("Substantiivi", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("Adjektiivi", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("Verbi", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("Adverbi", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("Erisnimi", new PosAndType(LexinfoOnt.properNoun, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("subs", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("adj", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("verbi", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("adv", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
+	// Finnish
+	posAndTypeValueMap.put("Substantiivi", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("Adjektiivi", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("Verbi", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("Adverbi", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("Erisnimi", new PosAndType(LexinfoOnt.properNoun, LemonOnt.LexicalEntry));
+        posAndTypeValueMap.put("subs", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("adj", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("verbi", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("adv", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
 		
-		// Greek
-		posAndTypeValueMap.put("επίθετο", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("επίρρημα", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("ουσιαστικό", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("ρήμα", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
-		posAndTypeValueMap.put("κύριο όνομα", new PosAndType(LexinfoOnt.properNoun, LemonOnt.LexicalEntry));
+	// Greek
+	posAndTypeValueMap.put("επίθετο", new PosAndType(LexinfoOnt.adjective, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("επίρρημα", new PosAndType(LexinfoOnt.adverb, LemonOnt.LexicalEntry));
+        posAndTypeValueMap.put("ουσιαστικό", new PosAndType(LexinfoOnt.noun, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("ρήμα", new PosAndType(LexinfoOnt.verb, LemonOnt.LexicalEntry));
+	posAndTypeValueMap.put("κύριο όνομα", new PosAndType(LexinfoOnt.properNoun, LemonOnt.LexicalEntry));
 
 	//	posAndTypeValueMap.put("", new PosAndType(null, LemonOnt.LexicalEntry)); // other Part of Speech
 
-	}
-	
-	// Map of the String to lexvo language entity
-    private HashMap<String,Resource> languages = new HashMap<String, Resource>();//////!!!new
-
-    public String getPrefixe(String lang){
-	return getPrefixe(lang, false);
-    }
-
-    public String getPrefixe(String languageIsoCode, Boolean dontcheck){
-	if (dontcheck)
-	    return this.prefixes.get(languageIsoCode);
-	if(this.prefixes.containsKey(languageIsoCode)){
-	    return this.prefixes.get(languageIsoCode);
-	}
-	String prefix = DBNARY_NS_PREFIX + "/" + languageIsoCode + "/" + mainLanguageIsoCode + "/";
-	prefixes.put(languageIsoCode, prefix);
-	aBox.setNsPrefix(languageIsoCode + "-" + mainLanguageIsoCode, prefix);
-	return prefix;
-    }
-
-        @Override
-	public String getMainLanguageIsoCode(){
-	    return mainLanguageIsoCode;
-	}
-
-        @Override
-	public String getCurrentEntryLanguageCode(){
-	    return currentEntryLanguageCode;
-	}
-
-    public void setCurrentLanguage(String lang) {
-	setCurrentLanguage(lang, false);
-    }
-
-    public void setCurrentLanguage(String languageCode, Boolean dontcheck) {
-	if (languageCode == null){
-	    return;
-	}
-	if (languageCode.equals(mainLanguageIsoCode)){
-	    currentEntryLanguageCode = null;
-	    currentPrefix = null;
-	    return;
-	}
-	if (!currentEntryLanguageCode.equals(languageCode)){
-	    currentEntryLanguageCode = languageCode;
-	    currentPrefix = getPrefixe(languageCode, dontcheck);
-	}
-    }
-
-    public String getPrefix() {
-	if (currentPrefix != null){
-	    return currentPrefix;
-	}
-	return NS;
     }
     
+    public void setCurrentLanguage(String lang) {
+	extractedLang = LangTools.getPart1OrId(lang);
+	lexvoExtractedLanguage = tBox.createResource(LEXVO + lang);
+	currentEntryLanguage = lang;
+	currentPrefix = getPrefixe(lang);
+    }
+    
+    // Map of the String to lexvo language entity
+    private HashMap<String,Resource> languages = new HashMap<String, Resource>();//////!!!new
 	
-	public LemonBasedRDFDataHandler(String lang) {
-		super();
-		NS = DBNARY_NS_PREFIX + "/" + lang + "/";
-                mainLanguageIsoCode = lang; 
-		extractedLang = LangTools.getPart1OrId(lang);
+    public LemonBasedRDFDataHandler(String lang) {
+        super();
+	NS = DBNARY_NS_PREFIX + "/" + lang + "/";
 
-		lexvoExtractedLanguage = tBox.createResource(LEXVO + lang);
+	setCurrentLanguage(lang);
 		
-		// Create aBox
-		aBox = ModelFactory.createDefaultModel();
+	// Create aBox
+	aBox = ModelFactory.createDefaultModel();
         aBox.setNsPrefix(lang, NS);
         aBox.setNsPrefix("dbnary", DBnaryOnt.getURI());
         aBox.setNsPrefix("lemon", LemonOnt.getURI());
@@ -198,12 +150,11 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
         aBox.setNsPrefix("dcterms", DCTerms.getURI());
         aBox.setNsPrefix("lexvo", LEXVO);
         aBox.setNsPrefix("rdf", RDF.getURI());
-		aBox.setNsPrefix("olia", OliaOnt.getURI());
+	aBox.setNsPrefix("olia", OliaOnt.getURI());
 
-
-		featureBoxes = new HashMap<>();
+	featureBoxes = new HashMap<>();
         featureBoxes.put(Feature.MAIN, aBox);
-	}
+    }
 
     @Override
     public void enableFeature(Feature f) {
@@ -219,7 +170,12 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 
     @Override
     public void initializePageExtraction(String wiktionaryPageName) {
-        currentLexieCount.resetAll();
+        resetCurrentLexieCount();
+    }
+
+    @Override
+    public void resetCurrentLexieCount() {
+	currentLexieCount.resetAll();
     }
 
     @Override
@@ -230,6 +186,7 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     @Override
     public void extractEtymology(String pageContent, int start, int end){
 	etymologyString = pageContent.substring(start, end);
+	//System.out.format("ety=%s\n", etymologyString);
     }
 
     @Override
@@ -251,7 +208,7 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     }
 
     @Override
-	public void initializeEntryExtraction(String wiktionaryPageName) {
+    public void initializeEntryExtraction(String wiktionaryPageName) {
         currentSense = null;
         currentSenseNumber = 0;
         currentSubSenseNumber = 0;
@@ -263,6 +220,11 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
         currentCanonicalForm = null;
         currentSharedPronunciations = new HashSet<PronunciationPair>();
 
+	etymologyString = null;
+	etymologyPos.clear();
+	currentEtymologyNumber = 0;
+	currentEtymologyEntry = null;
+	
         // Create a dummy lexical entry that points to the one that corresponds to a part of speech
         currentMainLexEntry = getVocableResource(wiktionaryPageName, true);
 
@@ -274,68 +236,71 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
         currentLexEntry = null;
     }
 
-	@Override
-	public void finalizeEntryExtraction() {
-		// Clear currentStatements. If statemenents do exist-s in it, it is because, there is no extractable part of speech in the entry.
-		heldBackStatements.clear();
-		promoteNymProperties();
-	}
+    @Override
+    public void finalizeEntryExtraction() {
+	// Clear currentStatements. If statemenents do exist-s in it, it is because, there is no extractable part of speech in the entry.
+	heldBackStatements.clear();
+	promoteNymProperties();
+    }
 
-	public static String getEncodedPageName(String pageName, String pos, int defNumber) {
-		return uriEncode(pageName, pos) + "__" + defNumber;
-	}
+    public static String getEncodedPageName(String pageName, String pos, int defNumber) {
+	return uriEncode(pageName, pos) + "__" + defNumber;
+    }
 
-	public Resource getLexEntry(String languageCode, String pageName, String pos, int defNumber) {
-		//FIXME this doesn't use its languageCode parameter
-		return getLexEntry(
-			getEncodedPageName(pageName, pos, defNumber),
-			typeResource(pos)
-		);
-	}
+    public Resource getLexEntry(String languageCode, String pageName, String pos, int defNumber) {
+	//FIXME this doesn't use its languageCode parameter
+	return getLexEntry(
+	        getEncodedPageName(pageName, pos, defNumber),
+	        typeResource(pos)
+	    );
+    }
 
-	public Resource getLexEntry(String encodedPageName, Resource typeResource) {
-		return aBox.createResource(getPrefix() + encodedPageName, typeResource);
-	}
+    public Resource getLexEntry(String encodedPageName, Resource typeResource) {
+	return aBox.createResource(getPrefix() + encodedPageName, typeResource);
+    }
 
-	public int currentDefinitionNumber() {
-		return currentLexieCount.get(currentWiktionaryPos);
-	}
+    public int currentDefinitionNumber() {
+	System.out.format("currentLexieCount.get(currentWiktionaryPos)=%s\n", currentLexieCount.get(currentWiktionaryPos));
+	return currentLexieCount.get(currentWiktionaryPos);
+    }
 
     @Override
-	public String currentWiktionaryPos() {
-		return currentWiktionaryPos;
-	}
+    public String currentWiktionaryPos() {
+	return currentWiktionaryPos;
+    }
 
     @Override
     public Resource currentLexinfoPos() {
         return currentLexinfoPos;
     }
 
-	public Resource addPartOfSpeech(String originalPOS, Resource normalizedPOS, Resource normalizedType) {
+    public Resource addPartOfSpeech(String originalPOS, Resource normalizedPOS, Resource normalizedType) {
         // DONE: create a LexicalEntry for this part of speech only and attach info to it.
-		currentWiktionaryPos = originalPOS;
-		currentLexinfoPos = normalizedPOS;
+	currentWiktionaryPos = originalPOS;
+	currentLexinfoPos = normalizedPOS;
 		
         nbEntries++;
 
-		currentEncodedPageName = getEncodedPageName(currentWiktionaryPageName, originalPOS, currentLexieCount.incr(currentWiktionaryPos));
-		currentLexEntry = getLexEntry(currentEncodedPageName, normalizedType);
+	currentEncodedPageName = getEncodedPageName(currentWiktionaryPageName, originalPOS, currentLexieCount.incr(currentWiktionaryPos));
+	currentLexEntry = getLexEntry(currentEncodedPageName, normalizedType);
 
+	etymologyPos.add(currentLexEntry);
+	
         if (! normalizedType.equals(LemonOnt.LexicalEntry)) {
             // Add the Lexical Entry type so that users may refer to all entries using the top hierarchy without any reasoner.
             aBox.add(aBox.createStatement(currentLexEntry, RDF.type, LemonOnt.LexicalEntry));
         }
         
-		// import other forms
-		SimpleImmutableEntry<String,String> keyOtherForms = new SimpleImmutableEntry<String,String>(currentWiktionaryPageName, originalPOS);
-		HashSet<HashSet<PropertyObjectPair>> otherForms = heldBackOtherForms.get(keyOtherForms);
+	// import other forms
+	SimpleImmutableEntry<String,String> keyOtherForms = new SimpleImmutableEntry<String,String>(currentWiktionaryPageName, originalPOS);
+	HashSet<HashSet<PropertyObjectPair>> otherForms = heldBackOtherForms.get(keyOtherForms);
 
         // TODO: check that other forms point to valid entries and log faulty entries for wiktionary correction.
-		if (otherForms != null) {
-			for (HashSet<PropertyObjectPair> otherForm : otherForms) {
-				addOtherFormPropertiesToLexicalEntry(currentLexEntry, otherForm);
-			}
-		}
+        if (otherForms != null) {
+	    for (HashSet<PropertyObjectPair> otherForm : otherForms) {
+	        addOtherFormPropertiesToLexicalEntry(currentLexEntry, otherForm);
+	    }
+	}
 
         // All translation numbers are local to a lexEntry
         translationCount.resetAll();
@@ -352,197 +317,193 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
             }
         }
 
-		aBox.add(currentLexEntry, LemonOnt.canonicalForm, currentCanonicalForm);
-		aBox.add(currentCanonicalForm, LemonOnt.writtenRep, currentWiktionaryPageName, extractedLang);
-		aBox.add(currentLexEntry, DBnaryOnt.partOfSpeech, currentWiktionaryPos);
-		if (null != currentLexinfoPos)
-			aBox.add(currentLexEntry, LexinfoOnt.partOfSpeech, currentLexinfoPos);
+	aBox.add(currentLexEntry, LemonOnt.canonicalForm, currentCanonicalForm);
+	aBox.add(currentCanonicalForm, LemonOnt.writtenRep, currentWiktionaryPageName, extractedLang);
+	aBox.add(currentLexEntry, DBnaryOnt.partOfSpeech, currentWiktionaryPos);
+	if (null != currentLexinfoPos)
+	    aBox.add(currentLexEntry, LexinfoOnt.partOfSpeech, currentLexinfoPos);
 
-		aBox.add(currentLexEntry, LemonOnt.language, extractedLang);
-		aBox.add(currentLexEntry, DCTerms.language, lexvoExtractedLanguage);
+	    aBox.add(currentLexEntry, LemonOnt.language, extractedLang);
+	    aBox.add(currentLexEntry, DCTerms.language, lexvoExtractedLanguage);
 
-		// Register the pending statements.
-		for (Statement s: heldBackStatements) {
-			aBox.add(s);
-		}
-		heldBackStatements.clear();
-		aBox.add(currentMainLexEntry, DBnaryOnt.refersTo, currentLexEntry);
+	    // Register the pending statements.
+	    for (Statement s: heldBackStatements) {
+		aBox.add(s);
+	    }
+	    heldBackStatements.clear();
+	    aBox.add(currentMainLexEntry, DBnaryOnt.refersTo, currentLexEntry);
         return currentLexEntry;
-	}
+    }
 
-	public Resource posResource(PosAndType pat) {
-		return (null == pat) ? null : pat.pos;
-	}
+    public Resource posResource(PosAndType pat) {
+	return (null == pat) ? null : pat.pos;
+    }
 
-	public Resource typeResource(PosAndType pat) {
-		return (pat == null) ? LemonOnt.LexicalEntry : pat.type;
-	}
+    public Resource typeResource(PosAndType pat) {
+	return (pat == null) ? LemonOnt.LexicalEntry : pat.type;
+    }
 
-	public Resource posResource(String pos) {
-		return posResource(posAndTypeValueMap.get(pos));
-	}
+    public Resource posResource(String pos) {
+       	return posResource(posAndTypeValueMap.get(pos));
+    }
 
-	public Resource typeResource(String pos) {
-		return typeResource(posAndTypeValueMap.get(pos));
-	}
+    public Resource typeResource(String pos) {
+       	return typeResource(posAndTypeValueMap.get(pos));
+    }
 
-	@Override
-	public void addPartOfSpeech(String pos) {
-		PosAndType pat = posAndTypeValueMap.get(pos);
-		addPartOfSpeech(pos, posResource(pat), typeResource(pat));
-	}
+    @Override
+    public void addPartOfSpeech(String pos) {
+	PosAndType pat = posAndTypeValueMap.get(pos);
+	addPartOfSpeech(pos, posResource(pat), typeResource(pat));
+    }
 
     private String computeEtymologyId(int etymologyNumber) {
 	return  getPrefix() + uriEncode(currentWiktionaryPageName) + "__Etymology_" + etymologyNumber;
     }
+	
+    @Override
+    //type = 0 etymologically equivalent
+    //type = 1 etymologically derives from
+    //type = 2 derives from
+    //type = 3 descendent of
+    public boolean registerEtymology(Map<String, String> args1, Map<String, String> args2, int type){
+	String tmp = currentEntryLanguage;
+        if (args1.size() == 0 || args2.size() == 0){
+	    return false;
+	}
 
-            @Override
-	    //type = 0 etymologically equivalent
-	    //type = 1 etymologically derives from
-	    //type = 2 derives from
-	    //type = 3 descendent of
-	    public boolean registerEtymology(Map<String, String> args1, Map<String, String> args2, int type){
-		if (args1.size() == 0 || args2.size() == 0){
-		    return false;
-		}
-		System.out.println("currentEtymologyEntry="+currentEtymologyEntry+"\n");
-		System.out.println("args1="+args1+"args2="+args2+"\n");
-		if (currentEtymologyEntry != null){
-		    currentEtymologyNumber ++;
-		    currentEtymologyEntry = aBox.createResource(computeEtymologyId(currentEtymologyNumber), DBnaryOnt.EtymologyEntry);
-		    System.out.println("etymologyPos.size()="+etymologyPos.size()+"/n"); 
-		    for (int i=0; i<etymologyPos.size(); i++){
-			aBox.add(currentEtymologyEntry, DBnaryOnt.refersTo, etymologyPos.get(i));
-		    }
-		}
-
-		System.out.println("currentEntryLanguageCode, mainLanguageIsoCode="+currentEntryLanguageCode+","+mainLanguageIsoCode+"\n");
-		String currentLanguageCode = currentEntryLanguageCode == null? mainLanguageIsoCode : currentEntryLanguageCode;
-		if (type == 0 || type == 1){
-		    setCurrentLanguage(args1.get("lang"));
-		}
-		System.out.println("currentEntryLanguageCode, mainLanguageIsoCode="+currentEntryLanguageCode+","+mainLanguageIsoCode+"\n");
-		System.out.println("args1.get(word1).split(,)[0].trim()="+args1.get("word1").split(",")[0].trim()+"\n");
-		Resource vocable1;
-		if (args1.get("isCurrentEtymologyEntry")!=null){
-		    vocable1 = currentEtymologyEntry;
-		} else {
-		    vocable1 = getVocableResource(args1.get("word1").split(",")[0].trim(), true);
-		}
-		//if args2 represents a compound word return true
-		int counter = 0;
-		for (String key : args2.keySet()){
-		    if (key.startsWith("word")){
-			counter++;
-			if (type == 0){
-			    if (counter > 1){
-				//it cannot be a compound word
-				System.out.format("Warning: word etymologically equivalent to a compound word; returning\n");
-				break;
-			    }
-			} else if (type == 1 || type == 2 || type == 3){
-			    setCurrentLanguage(args2.get("lang"));
-			}
-			if (type == 0 || type == 1){
-			    //split args2.get(key) and for each entry register it as an etymology entry and as etymologically equivalent to entry 0
-			    String[] words = args2.get(key).split(",");
-			    //entry 0
-			    System.out.println("words[0].trim()="+words[0].trim()+"\n");
-			    Resource vocable2_0 = getVocableResource(words[0].trim(), true);
-			    aBox.add(vocable2_0, RDF.type, DBnaryOnt.EtymologyEntry);
-			    if (type == 0){
-				aBox.add(vocable1, DBnaryOnt.etymologicallyEquivalentTo, vocable2_0);
-			    } else if (type == 1){
-				aBox.add(vocable1, DBnaryOnt.etymologicallyDerivesFrom, vocable2_0);
-			    }
-			    if (words.length>1){
-				for (int i=1; i<words.length; i++){
-				    Resource vocable2 = getVocableResource(words[i].trim(), true);
-				    aBox.add(vocable2, RDF.type, DBnaryOnt.EtymologyEntry);
-				    aBox.add(vocable2_0, DBnaryOnt.etymologicallyEquivalentTo, vocable2);
-				}
-			    }
-			} else if (type == 2 || type == 3){
-			    Resource vocable2 = getVocableResource(args2.get(key), true);
-			    aBox.add(vocable2, RDF.type, DBnaryOnt.EtymologyEntry);
-			    if (type == 2){
-				aBox.add(vocable2, DBnaryOnt.derivesFrom, vocable1);
-			    } else if (type == 3){
-				aBox.add(vocable2, DBnaryOnt.descendsFrom, vocable1);
-			    }
-			}
-		    }
-		}
-		setCurrentLanguage(currentLanguageCode, true);
-		return counter > 1 ? true : false;
+	//System.out.println("args1="+args1+"args2="+args2+"\n");
+	if (currentEtymologyEntry == null){
+	    currentEtymologyNumber ++;
+	    currentEtymologyEntry = aBox.createResource(computeEtymologyId(currentEtymologyNumber), DBnaryOnt.EtymologyEntry);
+	    for (int i=0; i<etymologyPos.size(); i++){
+	        aBox.add(currentEtymologyEntry, DBnaryOnt.refersTo, etymologyPos.get(i));
 	    }
+	 }
+
+	 //System.out.println("args1.get(word1).split(,)[0].trim()="+args1.get("word1").split(",")[0].trim()+"\n");
+	 Resource vocable1;
+	 if (args1.get("isCurrentEtymologyEntry")!=null){
+	     vocable1 = currentEtymologyEntry;
+	 } else {
+	     vocable1 = getVocableResource(args1.get("word1").split(",")[0].trim(), true);
+	 }
+	 //if args2 represents a compound word return true
+	 int counter = 0;
+	 for (String key : args2.keySet()){
+	     if (key.startsWith("word")){
+	         counter++;
+		 if (type == 0){
+		     if (counter > 1){
+		         //it cannot be a compound word
+			 System.out.format("Warning: word etymologically equivalent to a compound word; returning\n");
+			 break;
+		     }
+		 } else if (type == 1 || type == 2 || type == 3){
+		     setCurrentLanguage(args2.get("lang"));
+		 }
+		 if (type == 0 || type == 1){
+		     //split args2.get(key) and for each entry register it as an etymology entry and as etymologically equivalent to entry 0
+		     String[] words = args2.get(key).split(",");
+		     //entry 0
+		     //System.out.println("words[0].trim()="+words[0].trim()+"\n");
+		     Resource vocable2_0 = getVocableResource(words[0].trim(), true);
+		     aBox.add(vocable2_0, RDF.type, DBnaryOnt.EtymologyEntry);
+		     if (type == 0){
+		         aBox.add(vocable1, DBnaryOnt.etymologicallyEquivalentTo, vocable2_0);
+		     } else if (type == 1){
+			 aBox.add(vocable1, DBnaryOnt.etymologicallyDerivesFrom, vocable2_0);
+		     }
+		     if (words.length>1){
+			 for (int i=1; i<words.length; i++){
+			     Resource vocable2 = getVocableResource(words[i].trim(), true);
+			     aBox.add(vocable2, RDF.type, DBnaryOnt.EtymologyEntry);
+			     aBox.add(vocable2_0, DBnaryOnt.etymologicallyEquivalentTo, vocable2);
+			 }
+		     }
+		 } else if (type == 2 || type == 3){
+		     Resource vocable2 = getVocableResource(args2.get(key), true);
+		     aBox.add(vocable2, RDF.type, DBnaryOnt.EtymologyEntry);
+		     if (type == 2){
+		         aBox.add(vocable2, DBnaryOnt.derivesFrom, vocable1);
+		     } else if (type == 3){
+			 aBox.add(vocable2, DBnaryOnt.descendsFrom, vocable1);
+		     }
+		 }
+	     }
+	 }
+
+	 //set language back to initial value
+	 setCurrentLanguage(tmp);
+	 return counter > 1 ? true : false;
+    }
     
-	@Override
-	public void registerPropertyOnCanonicalForm(Property p, RDFNode r) {
-		if (null == currentLexEntry) {
-			log.debug("Registering property when lex entry is null in \"{}\".", this.currentMainLexEntry);
-			return; // Don't register anything if current lex entry is not known.
-		}
-
-		Resource canonicalForm = currentLexEntry.getPropertyResourceValue(LemonOnt.canonicalForm);
-
-		if (canonicalForm == null) {
-			log.debug("Registering property when lex entry's canonicalForm is null in \"{}\".", this.currentMainLexEntry);
-			return;
-		}
-
-		aBox.add(canonicalForm, p, r);
+    @Override
+    public void registerPropertyOnCanonicalForm(Property p, RDFNode r) {
+        if (null == currentLexEntry) {
+	    log.debug("Registering property when lex entry is null in \"{}\".", this.currentMainLexEntry);
+	    return; // Don't register anything if current lex entry is not known.
 	}
 
+	Resource canonicalForm = currentLexEntry.getPropertyResourceValue(LemonOnt.canonicalForm);
 
-	@Override
-	public void registerPropertyOnLexicalEntry(Property p, RDFNode r) {
-		if (null == currentLexEntry) {
-			log.debug("Registering property on null lex entry in \"{}\".", this.currentMainLexEntry);
-			return; // Don't register anything if current lex entry is not known.
-		}
-
-		aBox.add(currentLexEntry, p, r);
+	if (canonicalForm == null) {
+	    log.debug("Registering property when lex entry's canonicalForm is null in \"{}\".", this.currentMainLexEntry);
+	    return;
 	}
 
+	aBox.add(canonicalForm, p, r);
+    }
 
-	@Override
+
+    @Override
+    public void registerPropertyOnLexicalEntry(Property p, RDFNode r) {
+	if (null == currentLexEntry) {
+	    log.debug("Registering property on null lex entry in \"{}\".", this.currentMainLexEntry);
+	    return; // Don't register anything if current lex entry is not known.
+	}
+
+        aBox.add(currentLexEntry, p, r);
+    }
+
+
+    @Override
     public void registerAlternateSpelling(String alt) {
-		if (null == currentLexEntry) {
-			log.debug("Registering Alternate Spelling when lex entry is null in \"{}\".", this.currentMainLexEntry);
-			return; // Don't register anything if current lex entry is not known.
-		}
+        if (null == currentLexEntry) {
+	    log.debug("Registering Alternate Spelling when lex entry is null in \"{}\".", this.currentMainLexEntry);
+	    return; // Don't register anything if current lex entry is not known.
+	}
 
     	Resource altlemma = aBox.createResource();
     	aBox.add(currentLexEntry, LemonOnt.lexicalVariant, altlemma);
     	aBox.add(altlemma, LemonOnt.writtenRep, alt, extractedLang);
     }
     
-	@Override
-	public void registerNewDefinition(String def) {
-		this.registerNewDefinition(def, 1);
-	}
+    @Override
+    public void registerNewDefinition(String def) {
+	this.registerNewDefinition(def, 1);
+    }
 
     @Override
-	public void registerNewDefinition(String def, int lvl) {
-		if (null == currentLexEntry) {
-			log.debug("Registering Word Sense when lex entry is null in \"{}\".", this.currentMainLexEntry);
-			return; // Don't register anything if current lex entry is not known.
-		}
-		if (lvl > 1) {
-			currentSubSenseNumber++;
-		} else {
+    public void registerNewDefinition(String def, int lvl) {
+        if (null == currentLexEntry) {
+	    log.debug("Registering Word Sense when lex entry is null in \"{}\".", this.currentMainLexEntry);
+	    return; // Don't register anything if current lex entry is not known.
+	}
+	if (lvl > 1) {
+	    currentSubSenseNumber++;
+	} else {
             currentSenseNumber++;
             currentSubSenseNumber = 0;
-		}
+	}
         registerNewDefinition(def, computeSenseNum());
     }
 
-	public void registerNewDefinition(String def, String senseNumber) {
-		if (null == currentLexEntry) {
-			log.debug("Registering Word Sense when lex entry is null in \"{}\".", this.currentMainLexEntry);
-			return; // Don't register anything if current lex entry is not known.
-		}
+    public void registerNewDefinition(String def, String senseNumber) {
+	if (null == currentLexEntry) {
+	    log.debug("Registering Word Sense when lex entry is null in \"{}\".", this.currentMainLexEntry);
+	    return; // Don't register anything if current lex entry is not known.
+	}
 		
 		// Create new word sense + a definition element 
     	currentSense = aBox.createResource(computeSenseId(senseNumber), LemonOnt.LexicalSense);
@@ -559,114 +520,114 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     	aBox.add(defNode, LemonOnt.value, AbstractWiktionaryExtractor.cleanUpMarkup(def, true), extractedLang);
 
     	// TODO: Extract domain/usage field from the original definition.
+    }
 
-	}
-
-	private String computeSenseId(String senseNumber) {
-		return getPrefix() + "__ws_" + senseNumber + "_" + currentEncodedPageName;
-	}
+    private String computeSenseId(String senseNumber) {
+	return getPrefix() + "__ws_" + senseNumber + "_" + currentEncodedPageName;
+    }
 	
-	private String computeSenseNum() {
-		return "" + currentSenseNumber + ((currentSubSenseNumber == 0) ? "" : (char) ('a' + currentSubSenseNumber - 1));
-	}
+    private String computeSenseNum() {
+	return "" + currentSenseNumber + ((currentSubSenseNumber == 0) ? "" : (char) ('a' + currentSubSenseNumber - 1));
+    }
 
     protected Resource registerTranslationToEntity(Resource entity, String lang, String currentGlose, String usage, String word) {
-		if (null == entity) {
-			log.debug("Registering Translation when lex entry is null in \"{}\".", this.currentMainLexEntry);
-			return null; // Don't register anything if current lex entry is not known.
-		}
-		word = word.trim();
-		// Do not register empty translations
-		if (word.length() == 0 && (usage == null || usage.length() == 0)) {
-			return null;
-		}
-		// Ensure language is in its standard form.
-		String tl = LangTools.getPart1OrId(lang);
-		lang = LangTools.normalize(lang);
+        if (null == entity) {
+	    log.debug("Registering Translation when lex entry is null in \"{}\".", this.currentMainLexEntry);
+	    return null; // Don't register anything if current lex entry is not known.
+	}
+	word = word.trim();
+        // Do not register empty translations
+	if (word.length() == 0 && (usage == null || usage.length() == 0)) {
+	    return null;
+	}
+	// Ensure language is in its standard form.
+	String tl = LangTools.getPart1OrId(lang);
+	lang = LangTools.normalize(lang);
 
-		Resource trans = aBox.createResource(computeTransId(lang, entity), DBnaryOnt.Translation);
+	Resource trans = aBox.createResource(computeTransId(lang, entity), DBnaryOnt.Translation);
     	aBox.add(trans, DBnaryOnt.isTranslationOf, entity);
     	aBox.add(createTargetLanguageProperty(trans, lang));
 
-		if (null == tl) {
-			aBox.add(trans, DBnaryOnt.writtenForm, word);
-		} else {
-			aBox.add(trans, DBnaryOnt.writtenForm, word, tl);
-		}
+	if (null == tl) {
+	    aBox.add(trans, DBnaryOnt.writtenForm, word);
+	} else {
+	    aBox.add(trans, DBnaryOnt.writtenForm, word, tl);
+	}
 
-		if (currentGlose != null && ! currentGlose.equals("")) {
-			aBox.add(trans, DBnaryOnt.gloss, currentGlose, extractedLang);
-		}
+	if (currentGlose != null && ! currentGlose.equals("")) {
+	    aBox.add(trans, DBnaryOnt.gloss, currentGlose, extractedLang);
+	}
 
-		if (usage != null && ! usage.equals("")) {
-			aBox.add(trans, DBnaryOnt.usage, usage);
-		}
+        if (usage != null && ! usage.equals("")) {
+	    aBox.add(trans, DBnaryOnt.usage, usage);
+	}
     	return trans;
-	}
+    }
 
-	@Override
+    @Override
     public void registerTranslation(String lang, String currentGlose, String usage, String word) {
-		registerTranslationToEntity(currentLexEntry, lang, currentGlose, usage, word);
-	}
+	registerTranslationToEntity(currentLexEntry, lang, currentGlose, usage, word);
+    }
 
-	public String getVocableResourceName(String vocable) {
-		return getPrefix() + uriEncode(vocable);
-	}
-	public Resource getVocableResource(String vocable, boolean dontLinkWithType) {
-		if (dontLinkWithType) {
-			return aBox.createResource(getVocableResourceName(vocable));
-		}
-		return aBox.createResource(getVocableResourceName(vocable), DBnaryOnt.Vocable);
-	}
+    public String getVocableResourceName(String vocable) {
+	return getPrefix() + uriEncode(vocable);
+    }
 
-	public Resource getVocableResource(String vocable) {
-		return getVocableResource(vocable, false);
+    public Resource getVocableResource(String vocable, boolean dontLinkWithType) {
+	if (dontLinkWithType) {
+	    return aBox.createResource(getVocableResourceName(vocable));
 	}
+	return aBox.createResource(getVocableResourceName(vocable), DBnaryOnt.Vocable);
+    }
 
-	protected void mergePropertiesIntoResource(HashSet<PropertyObjectPair> properties, Resource res) {
-		for (PropertyObjectPair p : properties) {
-			if (!res.getModel().contains(res, p.getKey(), p.getValue())) {
+    public Resource getVocableResource(String vocable) {
+	return getVocableResource(vocable, false);
+    }
+
+    protected void mergePropertiesIntoResource(HashSet<PropertyObjectPair> properties, Resource res) {
+        for (PropertyObjectPair p : properties) {
+            if (!res.getModel().contains(res, p.getKey(), p.getValue())) {
                 res.getModel().add(res, p.getKey(), p.getValue());
-			}
+	    }
+	}
+    }
+
+    private boolean incompatibleProperties(Property p1, Property p2, boolean applyCommutativity) {
+	return (
+	    p1 == LexinfoOnt.mood && p2 == LexinfoOnt.gender
+	) || (applyCommutativity && incompatibleProperties(p2, p1, false));
+    }
+
+    private boolean incompatibleProperties(Property p1, Property p2) {
+	return incompatibleProperties(p1, p2, true);
+    }
+
+    private boolean isResourceCompatible(Resource r, HashSet<PropertyObjectPair> properties) {
+	for (PropertyObjectPair pr : properties) {
+	    Property p = pr.getKey();
+
+	    Statement roStat = r.getProperty(p);
+
+	    if (roStat != null) {
+	        RDFNode ro = roStat.getObject();
+
+		if (ro != null && !ro.equals(pr.getValue())) {
+		    return false;
 		}
-	}
 
-	private boolean incompatibleProperties(Property p1, Property p2, boolean applyCommutativity) {
-		return (
-			p1 == LexinfoOnt.mood && p2 == LexinfoOnt.gender
-		) || (applyCommutativity && incompatibleProperties(p2, p1, false));
-	}
-
-	private boolean incompatibleProperties(Property p1, Property p2) {
-		return incompatibleProperties(p1, p2, true);
-	}
-
-	private boolean isResourceCompatible(Resource r, HashSet<PropertyObjectPair> properties) {
-		for (PropertyObjectPair pr : properties) {
-			Property p = pr.getKey();
-
-			Statement roStat = r.getProperty(p);
-
-			if (roStat != null) {
-				RDFNode ro = roStat.getObject();
-
-				if (ro != null && !ro.equals(pr.getValue())) {
-					return false;
-				}
-
-				StmtIterator i = r.listProperties();
-				while (i.hasNext()) {
-					if (incompatibleProperties(p, i.nextStatement().getPredicate())) {
-						return false;
-					}
-				}
-			}
+		StmtIterator i = r.listProperties();
+		while (i.hasNext()) {
+		    if (incompatibleProperties(p, i.nextStatement().getPredicate())) {
+		        return false;
+		    }
 		}
-		return true;
+	    }
 	}
+	return true;
+    }
 
-	protected void addOtherFormPropertiesToLexicalEntry(Resource lexEntry, HashSet<PropertyObjectPair> properties) {
-		boolean foundCompatible = false;
+    protected void addOtherFormPropertiesToLexicalEntry(Resource lexEntry, HashSet<PropertyObjectPair> properties) {
+	boolean foundCompatible = false;
         Model morphoBox = featureBoxes.get(Feature.MORPHOLOGY);
 
         if (null == morphoBox) return;
@@ -674,22 +635,22 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
         lexEntry = lexEntry.inModel(morphoBox);
 
         // DONE: Add other forms to a morphology dedicated model.
-		StmtIterator otherForms = lexEntry.listProperties(LemonOnt.otherForm);
+	StmtIterator otherForms = lexEntry.listProperties(LemonOnt.otherForm);
 
-		while (otherForms.hasNext() && !foundCompatible) {
-			Resource otherForm = otherForms.next().getResource();
-			if (isResourceCompatible(otherForm, properties)) {
-				foundCompatible = true;
-				mergePropertiesIntoResource(properties, otherForm);
-			}
-		}
+	while (otherForms.hasNext() && !foundCompatible) {
+	    Resource otherForm = otherForms.next().getResource();
+	    if (isResourceCompatible(otherForm, properties)) {
+		    foundCompatible = true;
+		    mergePropertiesIntoResource(properties, otherForm);
+	        }
+	    }
 
-		if (!foundCompatible) {
-            String otherFormNodeName = computeOtherFormResourceName(lexEntry,properties);
-			Resource otherForm = morphoBox.createResource(getPrefix() + otherFormNodeName, LemonOnt.Form);
-            morphoBox.add(lexEntry, LemonOnt.otherForm, otherForm);
-			mergePropertiesIntoResource(properties, otherForm);
-		}
+	    if (!foundCompatible) {
+                String otherFormNodeName = computeOtherFormResourceName(lexEntry,properties);
+	        Resource otherForm = morphoBox.createResource(getPrefix() + otherFormNodeName, LemonOnt.Form);
+                morphoBox.add(lexEntry, LemonOnt.otherForm, otherForm);
+		mergePropertiesIntoResource(properties, otherForm);
+	    }
 	}
 
     protected String computeOtherFormResourceName(Resource lexEntry, HashSet<PropertyObjectPair> properties) {
@@ -707,16 +668,16 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 	                               HashSet<PropertyObjectPair> props,
 	                               HashSet<PronunciationPair> pronunciations) {
 
-		if (pronunciations != null) {
+	if (pronunciations != null) {
 			for (PronunciationPair pronunciation : pronunciations) {
 				props.add(PropertyObjectPair.get(LexinfoOnt.pronunciation, aBox.createLiteral(pronunciation.pron, pronunciation.lang)));
 			}
 		}
 
 		registerInflection(languageCode, pos, inflection, canonicalForm, defNumber, props);
-	}
+    }
 
-	public void registerInflection(String languageCode,
+    public void registerInflection(String languageCode,
 	                               String pos,
 	                               String inflection,
 	                               String canonicalForm,
@@ -763,38 +724,39 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 				props
 			);
 		}
-	}
+    }
 
-	private Statement createTargetLanguageProperty(Resource trans, String lang) {
+    private Statement createTargetLanguageProperty(Resource trans, String lang) {
 		lang = lang.trim();
 		if (isAnISO639_3Code(lang)) {
 			return aBox.createStatement(trans, DBnaryOnt.targetLanguage, getLexvoLanguageResource(lang));
 		} else {
 			return aBox.createStatement(trans, DBnaryOnt.targetLanguageCode, lang);
 		}
-	}
+    }
 
     private final static Pattern iso3letters = Pattern.compile("\\w{3}");
-	private boolean isAnISO639_3Code(String lang) {
-		// TODO For the moment, only check if the code is a 3 letter code...
-		return iso3letters.matcher(lang).matches();
-	}
 
-	private String computeTransId(String lang, Resource entity) {
+    private boolean isAnISO639_3Code(String lang) {
+            // TODO For the moment, only check if the code is a 3 letter code...
+		return iso3letters.matcher(lang).matches();
+    }
+
+    private String computeTransId(String lang, Resource entity) {
 		lang = uriEncode(lang);
 		return getPrefix() + "__tr_" + lang + "_" + translationCount.incr(lang) + "_" + entity.getURI().substring(getPrefix().length());
-	}
+    }
 
-	private Resource getLexvoLanguageResource(String lang) {
+    private Resource getLexvoLanguageResource(String lang) {
 		Resource res = languages.get(lang);
 		if (res == null) {
 			res = tBox.createResource(LEXVO + lang);
 			languages.put(lang, res);
 		}
 		return res;
-	}
+    }
 
-	public void registerNymRelationToEntity(String target, String synRelation, Resource entity) {
+    public void registerNymRelationToEntity(String target, String synRelation, Resource entity) {
 		if (null == entity) {
 			log.debug("Registering Lexical Relation when lex entry is null in \"{}\".", this.currentMainLexEntry);
 			return; // Don't register anything if current lex entry is not known.
@@ -817,20 +779,20 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 		Resource targetResource = getVocableResource(target);
 		
 		aBox.add(entity, nymProperty, targetResource);
-	}
+    }
 
-	@Override
-	public void registerNymRelation(String target, String synRelation) {
+    @Override
+    public void registerNymRelation(String target, String synRelation) {
 		registerNymRelationToEntity(target, synRelation, currentLexEntry);
     }
 
-	@Override
-	public void registerNymRelation(String target, String synRelation, String gloss) {
+    @Override
+    public void registerNymRelation(String target, String synRelation, String gloss) {
 		registerNymRelation(target, synRelation, gloss, null);
-	}
+    }
 	
-	@Override
-	public void registerNymRelation(String target, String synRelation, String gloss, String usage) {
+    @Override
+    public void registerNymRelation(String target, String synRelation, String gloss, String usage) {
 		if (null == currentLexEntry) {
 			log.debug("Registering Lexical Relation when lex entry is null in \"{}\".", this.currentMainLexEntry);
 			return; // Don't register anything if current lex entry is not known.
@@ -864,14 +826,14 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 			rnymR.addProperty(DBnaryOnt.usage, usage);
 			
     	
-	}
+    }
 
-	private String computeNymId(String nym) {
+    private String computeNymId(String nym) {
 		return getPrefix() + "__" + nym + "_" + reifiedNymCount.incr(nym) + "_" + currentEncodedPageName;
-	}
+    }
 
-	@Override
-	public void registerNymRelationOnCurrentSense(String target, String synRelation) {
+    @Override
+    public void registerNymRelationOnCurrentSense(String target, String synRelation) {
 		if (null == currentSense) {
 			log.debug("Registering Lexical Relation when current sense is null in \"{}\".", this.currentMainLexEntry);
 			registerNymRelation(target, synRelation);
@@ -895,26 +857,26 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 		Resource targetResource = getVocableResource(target);
 
 		aBox.add(currentSense, nymProperty, targetResource);
-	}
+    }
 
-	@Override
-	public void registerPronunciation(String pron, String lang) {
+    @Override
+    public void registerPronunciation(String pron, String lang) {
 		if (null == currentCanonicalForm) {
 			currentSharedPronunciations.add(new PronunciationPair(pron, lang));
 		} else {
 			registerPronunciation(currentCanonicalForm, pron, lang);
 		}
-	}
+    }
 
-	protected void registerPronunciation(Resource writtenRepresentation, String pron, String lang) {
+    protected void registerPronunciation(Resource writtenRepresentation, String pron, String lang) {
 		if (null != lang && lang.length() > 0) {
 			aBox.add(writtenRepresentation, LexinfoOnt.pronunciation, pron, lang);
 		} else {
 			aBox.add(writtenRepresentation, LexinfoOnt.pronunciation, pron);
 		}
-	}
+    }
 
-	private void promoteNymProperties() {
+    private void promoteNymProperties() {
 		StmtIterator entries = currentMainLexEntry.listProperties(DBnaryOnt.refersTo);
 		HashSet<Statement> toBeRemoved = new HashSet<Statement>();
 		while (entries.hasNext()) {
@@ -938,7 +900,7 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 		for (Statement s: toBeRemoved) {
 			s.remove();
 		}
-	}
+    }
 
     @Override
     public void dump(Feature f, OutputStream out, String format) {
@@ -948,25 +910,41 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
         }
     }
 
-	@Override
-	public int nbEntries() {
+    @Override
+    public int nbEntries() {
 		return nbEntries;
-	}
+    }
 
-	@Override
-	public String currentLexEntry() {
+    @Override
+    public String currentLexEntry() {
 		// TODO Auto-generated method stub
 		return currentWiktionaryPageName;
-	}
+    }
 
-	@Override
-	public void initializeEntryExtraction(String wiktionaryPageName, String lang) {
+    public String getPrefix() {
+	return currentPrefix;
+    }
+
+    public String getPrefixe(String lang){
+	if (lang.equals("eng")){
+	    return NS;
+	}
+	if(this.prefixes.containsKey(lang))
+	    return this.prefixes.get(lang);
+	String prefix = DBNARY_NS_PREFIX + "/eng/" + lang + "/";
+	prefixes.put(lang, prefix);
+	aBox.setNsPrefix(lang + "-eng", prefix);
+	return prefix;
+    }
+    
+    @Override
+    public void initializeEntryExtraction(String wiktionaryPageName, String lang) {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("Cannot initialize a foreign language entry.");
-	}
+    }
 
-	@Override
-	public Resource registerExample(String ex, Map<Property, String> context) {
+    @Override
+    public Resource registerExample(String ex, Map<Property, String> context) {
 		if (null == currentSense) {
 			log.debug("Registering example when lex sense is null in \"{}\".", this.currentMainLexEntry);
 			return null; // Don't register anything if current lex entry is not known.
@@ -983,5 +961,5 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     	aBox.add(aBox.createStatement(currentSense, LemonOnt.example, example));
 		return example;
 
-	}
+    }
 }

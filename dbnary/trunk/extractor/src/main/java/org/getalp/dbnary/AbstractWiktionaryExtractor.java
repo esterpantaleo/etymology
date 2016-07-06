@@ -11,16 +11,16 @@ import org.getalp.dbnary.wiki.WikiPatterns;
 */
 public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtractor {
     
-	// TODO: Alter the extraction process by allowing multiple lines in a macro and evaluate the final result
-	// TODO: Determine how many nested macro are used in the different wiktionary languages.
+    // TODO: Alter the extraction process by allowing multiple lines in a macro and evaluate the final result
+    // TODO: Determine how many nested macro are used in the different wiktionary languages.
     // These should be independent of the language
 
     
     protected String pageContent;
     protected IWiktionaryDataHandler wdh;
-	protected String wiktionaryPageName;
+    protected String wiktionaryPageName;
     
-	protected WiktionaryIndex wi = null;
+    protected WiktionaryIndex wi = null;
 	
     public AbstractWiktionaryExtractor(IWiktionaryDataHandler wdh) {
         super();
@@ -28,32 +28,32 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
     }
 
     @Override
-	public void setWiktionaryIndex(WiktionaryIndex wi) {
-		this.wi = wi;
-	}
+    public void setWiktionaryIndex(WiktionaryIndex wi) {
+	this.wi = wi;
+    }
 
 
-  // Suppression des commentaires XML d'un texte 
+    // Suppression des commentaires XML d'un texte 
     
-	protected final static String debutOrfinDecomPatternString;
+    protected final static String debutOrfinDecomPatternString;
 
-	static {
+    static {
 		debutOrfinDecomPatternString= "(?:" +
 				"(<!--)" +
 				")|(?:" +
 				"(-->)" +
 				")";
-	}
-	protected final static Pattern xmlCommentPattern;
+    }
+    protected final static Pattern xmlCommentPattern;
 
-	static {
+    static {
 		xmlCommentPattern=Pattern.compile(debutOrfinDecomPatternString, Pattern.DOTALL);
-	}
+    }
 
-	private static final int A= 0;
-	private static final int B = 1;
+    private static final int A = 0;
+    private static final int B = 1;
 
-	public static String removeXMLComments(String s) {
+    public static String removeXMLComments(String s) {
         if (null == s) return null;
 
 		int ET = A;
@@ -113,7 +113,7 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
 		}
 	   return result.toString();
 
-	}
+    }
     
     //Remove bibliographic references
     protected final static String biblRefPatternString = new StringBuilder()
@@ -159,11 +159,11 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
     public abstract void extractData();
     
     static String defOrExamplePatternString = new StringBuilder()
-    .append("(?:")
-    .append(WikiPatterns.definitionPatternString)
-    .append(")|(?:")
-    .append(WikiPatterns.examplePatternString)
-    .append(")").toString();
+        .append("(?:")
+        .append(WikiPatterns.definitionPatternString)
+        .append(")|(?:")
+        .append(WikiPatterns.examplePatternString)
+        .append(")").toString();
     
     static Pattern defOrExamplePattern = Pattern.compile(defOrExamplePatternString, Pattern.MULTILINE);
     
@@ -188,29 +188,29 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
 		extractDefinition(definition, defLevel);
 	}
 
-	public void extractDefinition(String definition, int defLevel) {
+    public void extractDefinition(String definition, int defLevel) {
 		String def = cleanUpMarkup(definition);
         if (def != null && ! def.equals("")) {
         	wdh.registerNewDefinition(definition, defLevel);
         }
-	}
+    }
 
 	/* public void extractDefinition(String definition) {
 		extractDefinition(definition, 1);
 	}*/
 
-	public static String cleanUpMarkup(String group) {
+    public static String cleanUpMarkup(String group) {
         return cleanUpMarkup(group, false);
     }
 
-	public void extractExample(Matcher definitionMatcher) {
+    public void extractExample(Matcher definitionMatcher) {
 		String example = definitionMatcher.group(2);
 		extractExample(example);
     }
 
-	public void extractExample(String example) {
-		// TODO: properly handle macros in definitions. 
-		String ex = cleanUpMarkup(example);
+    public void extractExample(String example) {
+	// TODO: properly handle macros in definitions. 
+        String ex = cleanUpMarkup(example);
         if (ex != null && ! ex.equals("")) {
         	wdh.registerExample(example, null);
         }	
@@ -401,7 +401,7 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
 
     // FIXME this doesn't handle nested parentheses. Is it correct?
     // Should be fixed now    --pantaleo  
-	public static String stripParentheses(String s) {
+    public static String stripParentheses(String s) {
 		final int A = 0;
 		final int B = 1;
 

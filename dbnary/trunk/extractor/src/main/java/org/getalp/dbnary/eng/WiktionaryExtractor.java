@@ -133,6 +133,7 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
         }
         // Finalize the entry parsing
         leaveCurrentBlock(m);
+	parseEtymology();
         wdh.finalizeEntryExtraction();
     }
 
@@ -195,7 +196,7 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
 	    case DESCENDANTSBLOCK:
 		break;
             case ETYMOLOGYBLOCK:
-		parseEtymology();
+		parseEtymology();  
                 break;
             default:
                 assert false : "Unexpected block while parsing: " + wiktionaryPageName;
@@ -219,7 +220,7 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
                 extractDefinitions(blockStart, end);
                 break;
             case TRADBLOCK:
-                extractTranslations(blockStart, end);
+                //extractTranslations(blockStart, end);
                 break;
             case ORTHOALTBLOCK:
                 extractOrthoAlt(blockStart, end);
@@ -235,7 +236,7 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
                 extractConjugation(blockStart, end);
                 break;
             case ETYMOLOGYBLOCK:
-		extractEtymology(blockStart, end);
+	        extractEtymology(blockStart, end);
                 break;
 	    case DERIVEDBLOCK:
 		extractDerived(blockStart, end);
@@ -251,15 +252,14 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
     }
 
     private void setCurrentEtymologyEntryAsPOE(){
-        String currentEntryLanguage = wdh.getCurrentEntryLanguageCode() == null ? wdh.getMainLanguageIsoCode() : wdh.getCurrentEntryLanguageCode();
-	System.out.format("m, %s, %s", currentEntryLanguage, wiktionaryPageName);
-        currentEtymologyEntryAsPOE = new POE("m|" + currentEntryLanguage + "|" + wiktionaryPageName, 1);
-        currentEtymologyEntryAsPOE.args.put("isCurrentEtymologyEntry","yes");
-	System.out.format("currentEtymologyEntryAsPOE.args=%s\n", currentEtymologyEntryAsPOE.args);
+	//System.out.format("m, %s, %s", ewdh.currentEntryLanguage, wiktionaryPageName);
+        currentEtymologyEntryAsPOE = new POE("m|" + ewdh.currentEntryLanguage + "|" + wiktionaryPageName, 1);
+        currentEtymologyEntryAsPOE.args.put("isCurrentEtymologyEntry", "yes");
+	//System.out.format("currentEtymologyEntryAsPOE.args=%s\n", currentEtymologyEntryAsPOE.args);
     }
     
     private void extractEtymology(int blockStart, int end){
-	wdh.extractEtymology(pageContent, blockStart, end);
+	ewdh.extractEtymology(pageContent, blockStart, end);
 	setCurrentEtymologyEntryAsPOE();
     }
 
@@ -267,9 +267,13 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
 	//System.out.format("registering derived\n");
 	Matcher bulletListMatcher = WikiPatterns.bulletListPattern.matcher(pageContent);
 	bulletListMatcher.region(blockStart, end);
+	//	System.out.format("currentEtymologyEntryAsPOE=%s",currentEtymologyEntryAsPOE);
 	if (currentEtymologyEntryAsPOE == null){
+	    //System.out.format("currentEtymologyEntryAsPOE=null");
 	    setCurrentEtymologyEntryAsPOE();
 	}
+	//System.out.format("currentEtymologyEntryAsPOE=%s",currentEtymologyEntryAsPOE.args);
+
 	while (bulletListMatcher.find()) {
 	    String bulletElement = bulletListMatcher.group(1);
 	    ArrayList<Pair> templatesLocation = WikiTool.locateEnclosedString(bulletElement,"{{","}}");
@@ -282,6 +286,7 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
 	    //  System.out.format("Warning: more than one word found in bulletlist: %s\n", bulletElement);
 	    //}
 	    for (Pair p: templatesLocation){
+		//System.out.format("bulletElement.substring(p.start+2, p.end-2)=%s",bulletElement.substring(p.start+2, p.end-2));
 		POE derivedPOE = new POE(bulletElement.substring(p.start+2, p.end-2), 1);
 		if (derivedPOE.args != null){
 		    wdh.registerEtymology(currentEtymologyEntryAsPOE.args, derivedPOE.args, 2);
@@ -309,6 +314,7 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
 	    for (Pair p: linksLocation){
 		//System.out.format("matched bullet=%s\n",bulletElement.substring(p.start+2, p.end-2));
 		POE derivedPOE = new POE(bulletElement.substring(p.start+2, p.end-2), 2);
+		//System.out.format("bulletElement.substring(p.start+2, p.end-2)=%s",bulletElement.substring(p.start+2, p.end-2));
 		//System.out.format("currentEtymologyEntryAsPOE.args=%s\n", currentEtymologyEntryAsPOE.args);
 		if (derivedPOE.args != null){
 		    System.out.format("%s derives_from %s\n", derivedPOE.string, currentEtymologyEntryAsPOE.string);
@@ -406,7 +412,6 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
 	}
 	}
     }
-
 
     private String cleanUpEtymologyString(String s){
 	//REMOVE TEXT WITHIN PARENTHESES UNLESS PARENTHESES FALL INSIDE A WIKI LINK OR A WIKI TEMPLATE
@@ -521,28 +526,26 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
 	}
 	return a;
 
-	/*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-        if (startCognate!=null){//match against cognate pattern                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-            matchesIndex = etymology.match(EtymologyPatterns.cognatePattern);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-            if (matchesIndex.size()>1){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                //print cognates                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-                System.out.format("matchesIndex=%s\n", matchesIndex);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                for (int i=0; i<matchesIndex.size()-1; i++){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-                    for (int j=matchesIndex.get(i); j<matchesIndex.get(i+1); j++){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                        for (int k=0; k<etymology.get(j).part.size(); k++){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                            if (etymology.get(j).part.get(k).equals("LEMMA")){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-                                System.out.format("%s cognate_with %s\n", lemma, etymology.get(j).string);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-                            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-                        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-                    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                    i++;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-                 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+	/*            
+        if (startCognate!=null){//match against cognate pattern                    
+            matchesIndex = etymology.match(EtymologyPatterns.cognatePattern);    
+            if (matchesIndex.size()>1){                                    
+                //print cognates                                      
+                System.out.format("matchesIndex=%s\n", matchesIndex);          
+                for (int i=0; i<matchesIndex.size()-1; i++){                
+                    for (int j=matchesIndex.get(i); j<matchesIndex.get(i+1); j++){   
+                        for (int k=0; k<etymology.get(j).part.size(); k++){          
+                            if (etymology.get(j).part.get(k).equals("LEMMA")){       
+                                System.out.format("%s cognate_with %s\n", lemma, etymology.get(j).string);                                                            
+                            }                                                 
+                        }                                                     
+                    }                                                          
+                    i++;                                                       
+                 }                                                             
+            }                                                                
+        }                                                                           
         */
     }
-
-
 
     private ArrayListPOE replaceCompoundPatternMatch(ArrayListPOE a){
 	ArrayList<Pair> matchesIndex = a.match(EtymologyPatterns.compoundPattern);
@@ -1133,7 +1136,6 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
     }
 
     protected void extractPron(int startOffset, int endOffset) {
-
         Matcher pronMatcher = pronPattern.matcher(pageContent);
         pronMatcher.region(startOffset,endOffset);
         while (pronMatcher.find()) {
@@ -1147,13 +1149,15 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
     
     public void parseEtymology(){
 	String currentEtymologyString = wdh.getEtymology();
-
+        //System.out.format("currentEtymologyString=%s\n", currentEtymologyString);
 	//check if etymology is empty or undefined
 	if (currentEtymologyString == null || currentEtymologyString.equals("")){
 	    return;
 	}
 
+	//extract only relevant part from etymology, i.e., text between boundary.start and boundary.end
 	currentEtymologyString = cleanUpEtymologyString(currentEtymologyString);
+	//System.out.format("current etymology string = %s\n",currentEtymologyString);
         ArrayListPOE currentEtymologyAsPOE = toArrayListPOE(currentEtymologyString);
 	currentEtymologyAsPOE = replaceCompoundPatternMatch(currentEtymologyAsPOE);
 
@@ -1162,11 +1166,10 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
 	    return;
 	}
 
-	System.out.format("poe.args=%s\n", currentEtymologyEntryAsPOE.args);
 	//differentiate between etymologically equivalent words and etymologically derived words
 	forLoop: for (int j=boundary.start; j<=boundary.end; j++){
 	    for (int k=0; k<currentEtymologyAsPOE.get(j).part.size(); k++){
-		System.out.format("part=%s; args=%s\n", currentEtymologyAsPOE.get(j).part.get(k), currentEtymologyAsPOE.get(j).args);
+		//System.out.format("part=%s; args=%s\n", currentEtymologyAsPOE.get(j).part.get(k), currentEtymologyAsPOE.get(j).args);
 		if (currentEtymologyAsPOE.get(j).part.get(k).equals("LEMMA")){
 		    if (k==0 && j-1>=boundary.start && currentEtymologyAsPOE.get(j-1).part.get(0).equals("LANGUAGE")){
 		        currentEtymologyAsPOE.get(j).args.put("lang", currentEtymologyAsPOE.get(j-1).args.get("lang"));
@@ -1180,8 +1183,8 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
 			    //System.out.format("j=%s\n", j);
 			    //System.out.format("equal language: %s,%s\n", currentEtymologyEntryAsPOE.args.get("lang"), a.get(j).args.get("lang"));
 			    if (j>1){
-				System.out.format("currentEtymologyAsPOE.get(j-1)=%s\n",currentEtymologyAsPOE.get(j-1));
-				System.out.format("currentEtymologyAsPOE.get(j-1).part.get(0)=%s\n", currentEtymologyAsPOE.get(j-1).part.get(0));
+				//System.out.format("currentEtymologyAsPOE.get(j-1)=%s\n",currentEtymologyAsPOE.get(j-1));
+				//System.out.format("currentEtymologyAsPOE.get(j-1).part.get(0)=%s\n", currentEtymologyAsPOE.get(j-1).part.get(0));
 				//if (currentEtymologyAsPOE.get(j-1).part!=null){not sure about this
 				if (currentEtymologyAsPOE.get(j-1).part.get(0).equals("COMMA")){
 				    type = 0;

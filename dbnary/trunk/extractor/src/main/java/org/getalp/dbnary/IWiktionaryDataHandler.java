@@ -9,17 +9,17 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 /** 
- * @author ?, pantaleo 
- * 
- */
+* @author ?, pantaleo 
+* 
+*/
 public interface IWiktionaryDataHandler {
 
-	enum Feature {MAIN, MORPHOLOGY};
+    enum Feature {MAIN, MORPHOLOGY};
     /**
      * Enable the extraction of morphological data in a second Model if available.
      */
     void enableFeature(Feature f);
-	boolean isEnabled(Feature f);
+    boolean isEnabled(Feature f);
 
     void initializePageExtraction(String wiktionaryPageName);
     void finalizePageExtraction();
@@ -31,11 +31,10 @@ public interface IWiktionaryDataHandler {
     void extractEtymology(String pageContent, int start, int end);
     void cleanEtymology();
     String getEtymology();
-    String getMainLanguageIsoCode();
-    String getCurrentEntryLanguageCode();
     
     void addPartOfSpeech(String pos);
 
+    void resetCurrentLexieCount(); 
     /**
      * 
      * @param def the not cleaned up version of the definition. This version contains macros (that may represent subject fields) and links.
@@ -51,7 +50,7 @@ public interface IWiktionaryDataHandler {
     * It is equivalent to registerNewDefinition(def, 1);
     * @param def
     */
-	void registerNewDefinition(String def);
+    void registerNewDefinition(String def);
 	
 	/**
 	 * Register definition def for the current lexical entry. 
@@ -62,7 +61,7 @@ public interface IWiktionaryDataHandler {
 	 * @param def the definition string
 	 * @param lvl an integer giving the level of the definition (1 or 2).
 	 */
-	void registerNewDefinition(String def, int lvl);
+    void registerNewDefinition(String def, int lvl);
 	
 	/**
 	 * Register example ex for the current lexical sense. 
@@ -70,7 +69,7 @@ public interface IWiktionaryDataHandler {
 	 * @param ex the example string
 	 * @param context map of property + object that are to be attached to the example object.
 	 */
-	Resource registerExample(String ex, Map<Property, String> context);
+    Resource registerExample(String ex, Map<Property, String> context);
 
 	
 	/**
@@ -81,45 +80,43 @@ public interface IWiktionaryDataHandler {
 	 * @param def the definition string
 	 * @param senseNumber a string giving the sense number of the definition.
 	 */
-	void registerNewDefinition(String def, String senseNumber);
+    void registerNewDefinition(String def, String senseNumber);
 
-
-
-	void registerAlternateSpelling(String alt);
+    void registerAlternateSpelling(String alt);
     
     void registerNymRelation(String target, String synRelation);
     
     void registerNymRelation(String target, String synRelation, String gloss);
-    void registerNymRelation(String target, String synRelation, String gloss,String usage);
 
+    void registerNymRelation(String target, String synRelation, String gloss,String usage);
 
     void registerTranslation(String lang, String currentGlose, String usage, String word);
 
     void registerPronunciation(String pron, String lang);
 
-	int nbEntries();
+    int nbEntries();
 	
-	String currentLexEntry();
+    String currentLexEntry();
 
-	/**
+    /**
 	 * Write a serialized represention of this model in a specified language.
 	 * The language in which to write the model is specified by the lang argument. 
 	 * Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
 	 * The default value, represented by null, is "RDF/XML".
 	 * @param out
 	 * @param format
-	 */
-	void dump(Feature f, OutputStream out, String format);
+    */
+    void dump(Feature f, OutputStream out, String format);
 
-	void registerNymRelationOnCurrentSense(String target, String synRelation);
+    void registerNymRelationOnCurrentSense(String target, String synRelation);
 
-        boolean registerEtymology(Map<String, String> args1, Map<String, String> args2, int type);
+    boolean registerEtymology(Map<String, String> args1, Map<String, String> args2, int type);
 
-        void registerPropertyOnLexicalEntry(Property p, RDFNode r);
+    void registerPropertyOnLexicalEntry(Property p, RDFNode r);
 
-	void registerPropertyOnCanonicalForm(Property p, RDFNode r);
+    void registerPropertyOnCanonicalForm(Property p, RDFNode r);
 
-	void registerInflection(String languageCode,
+    void registerInflection(String languageCode,
 	                        String pos,
 	                        String inflection,
 	                        String canonicalForm,
@@ -127,17 +124,17 @@ public interface IWiktionaryDataHandler {
 	                        HashSet<PropertyObjectPair> properties,
 	                        HashSet<PronunciationPair> pronunciations);
 
-	void registerInflection(String languageCode,
+    void registerInflection(String languageCode,
 	                               String pos,
 	                               String inflection,
 	                               String canonicalForm,
 	                               int defNumber,
 	                               HashSet<PropertyObjectPair> properties);
 
-	int currentDefinitionNumber();
+    int currentDefinitionNumber();
 
-	String currentWiktionaryPos();
-    Resource currentLexinfoPos();
-	
+    String currentWiktionaryPos();
+
+    Resource currentLexinfoPos();	
 
 }

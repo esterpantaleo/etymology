@@ -257,9 +257,9 @@ public class POE {
 	    } else if (args.get("1").equals("etyl")){
 		//System.out.format("LANGUAGE");
                 part.add("LANGUAGE");
-		if (args.get("3") != null){
-		    args.put("lang", args.get("3"));
-		    args.remove("3");
+		if (args.get("2") != null){
+		    args.put("lang", args.get("2"));
+		    args.remove("2");
 		}
 	    } else if (args.get("1").equals("etystub") || args.get("1").equals("rfe")){
 		//System.out.format("EMPTY");
