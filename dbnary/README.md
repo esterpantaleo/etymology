@@ -77,22 +77,22 @@
 * Added file eng POE.java
  * POE is a part of etymology and has properties: string(e.g., "m|en|door")
  * The constructor takes as input the content of a template or of a wiktionary link. If given the content of a template (e.g., "m|en|door") it parses it using function WikiTool.parseArgs and out puts an object POE with POE.string="m|en|door", POE.part="LEMMA", POE.args={("1","m"), "lang","eng"), ("word1", "door")}
- * If a template can handle:
-  * can handle "COGNATE_WITH" <-> {{cog|fr|orgue}} or {{cognate|fr|orgue}} or {{etymtwin|lang=en}}{{m|en|foo}}
-  * "LEMMA" <-> inh, inherited, der, derived, bor, borrowing, loan
-  * "LEMMA" <->  compound, calque, blend (with word1, word2, word3 etc)
-  * "LEMMA" <-> etycomp (e.g. {{etycomp|lang1=de|inf1=|case1=|word1=dumm|trans1=dumb|lang2=|inf2=|case2=|word2=Kopf|trans2=head}} )
-  * "LEMMA" <-> vi-etym-sino
-  * {"FROM", "LEMMA"} <-> abbreviation of
-  * {"FROM", "LEMMA"} <-> back-form, named-after
-  * "LEMMA" <-> m, mention, l, link
-  * "LEMMA" <-> affix, confix, prefix, suffix
-  * "LEMMA" <-> infix, circumfix, clipping, hu-prefix, hu-suffix
-  * "LANGUAGE" <-> etyl
-  * "EMPTY" <-> etystub, rfe
-  * "LEMMA" <-> -er, -or
- * If a wiktionary link (e.g., fr:bon)
-  * check that it does not contain character "|"
+ 1. If a template can handle:
+   * can handle "COGNATE_WITH" <-> {{cog|fr|orgue}} or {{cognate|fr|orgue}} or {{etymtwin|lang=en}}{{m|en|foo}}
+   * "LEMMA" <-> inh, inherited, der, derived, bor, borrowing, loan
+   * "LEMMA" <->  compound, calque, blend (with word1, word2, word3 etc)
+   * "LEMMA" <-> etycomp (e.g. {{etycomp|lang1=de|inf1=|case1=|word1=dumm|trans1=dumb|lang2=|inf2=|case2=|word2=Kopf|trans2=head}} )
+   * "LEMMA" <-> vi-etym-sino
+   * {"FROM", "LEMMA"} <-> abbreviation of
+   * {"FROM", "LEMMA"} <-> back-form, named-after
+   * "LEMMA" <-> m, mention, l, link
+   * "LEMMA" <-> affix, confix, prefix, suffix
+   * "LEMMA" <-> infix, circumfix, clipping, hu-prefix, hu-suffix
+   * "LANGUAGE" <-> etyl
+   * "EMPTY" <-> etystub, rfe
+   * "LEMMA" <-> -er, -or
+ 2. If a wiktionary link (e.g., fr:bon)
+   * check that it does not contain character "|"
  * split ":" and remove anything that looks like Image:... Category:... File:...
  * Replace the language code with the normalized language code
 
