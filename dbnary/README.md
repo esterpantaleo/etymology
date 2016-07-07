@@ -93,11 +93,11 @@
     * "LEMMA" <-> -er, -or
   * If a wiktionary link (e.g., fr:bon)
     * check that it does not contain character "|"
-  * split ":" and remove anything that looks like Image:... Category:... File:...
-  * Replace the language code with the normalized language code
+    * split ":" and remove anything that looks like Image:... Category:... File:...
+    * Replace the language code with the normalized language code
 
 * Added file eng/ArrayListPOE.java
-  * Needed to parse COMPOUND_OF LEMMA AND LEMMA -> LEMMA
+  * Needed to parse "COMPOUND_OF LEMMA AND LEMMA" -> "LEMMA"
   * ArrayList<Pair> match(Pattern p), public int getIndexOfCognateOr()
 
 
@@ -117,40 +117,40 @@ https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
 "DOT"   <-> dotPatternString="\\.|;";<br />
 "COMMA" <-> commaPatternString=",";<br />
 "FROM"  <-> fromPatternString="[Ff]rom|"+<br />
-                  "[Bb]ack-formation (?:from)?|"+<br />
-		  "[Aa]bbreviat(?:ion|ed)? (?:of|from)?|"+<br />
-	          "[Cc]oined from|"+<br />
-		  "[Bb]orrow(?:ing|ed)? (?:of|from)?|"+<br />
-		  "[Cc]ontracted from|"+<br />
-	          "[Aa]dopted from|"+<br />
-                  "[Cc]alque(?: of)?|"+<br />
-                  "[Ii]terative of|"+<br />
-	          "[Ss]hort(?:hening|hen|hened)? (?:form )?(?:of|from)?|"+<br />
-		  "[Tt]hrough|"+<br />
-	          //"\\>"<br />
-		  "[Aa]lteration of|"+<br />
-		  "[Vv]ia|"+<br />
-		  "[Dd]iminutive (?:form )?of|"+<br />
-		  "[Uu]ltimately of|"+<br />
-		  "[Vv]ariant of|"+<br />
-	          "[Pp]et form of|"+<br />
-		  "[Aa]phetic variation of|"+<br />
-		  "[Dd]everbal of|"+<br />
-		  "\\<"<br />
+                +  "[Bb]ack-formation (?:from)?|"+<br />
+		+  "[Aa]bbreviat(?:ion|ed)? (?:of|from)?|"+<br />
+	        +  "[Cc]oined from|"+<br />
+		+  "[Bb]orrow(?:ing|ed)? (?:of|from)?|"+<br />
+		+  "[Cc]ontracted from|"+<br />
+	        +  "[Aa]dopted from|"+<br />
+                +  "[Cc]alque(?: of)?|"+<br />
+                +  "[Ii]terative of|"+<br />
+	        +  "[Ss]hort(?:hening|hen|hened)? (?:form )?(?:of|from)?|"+<br />
+		+  "[Tt]hrough|"+<br />
+	        +  //"\\>"<br />
+		+  "[Aa]lteration of|"+<br />
+		+  "[Vv]ia|"+<br />
+		+  "[Dd]iminutive (?:form )?of|"+<br />
+		+  "[Uu]ltimately of|"+<br />
+		+  "[Vv]ariant of|"+<br />
+	        +  "[Pp]et form of|"+<br />
+		+  "[Aa]phetic variation of|"+<br />
+		+  "[Dd]everbal of|"+<br />
+		+  "\\<"<br />
 		  
 "COGNATE_WITH" <-> cognateWithPatternString="[Rr]elated(?: also)? to|"+<br />
-            "[Cc]ognate(?:s)? (?:include |with |to |including )?|"+<br />
-	    "[Cc]ompare (?:also )?|"+<br />
-	    "[Ww]hence (?:also )?|"+<br />
-	    "(?:[Bb]elongs to the )?[Ss]ame family as |"+<br />
-	    "[Mm]ore at |"+<br />
-	    "[Aa]kin to |"+<br />
-	    "[Ss]ee(?:n)? (?:also )?"<br />
+            +  "[Cc]ognate(?:s)? (?:include |with |to |including )?|"+<br />
+	    +  "[Cc]ompare (?:also )?|"+<br />
+	    +  "[Ww]hence (?:also )?|"+<br />
+	    +  "(?:[Bb]elongs to the )?[Ss]ame family as |"+<br />
+	    +  "[Mm]ore at |"+<br />
+	    +  "[Aa]kin to |"+<br />
+	    +  "[Ss]ee(?:n)? (?:also )?"<br />
 templatePatternString="\\{\\{";<br />
 wiktionaryPatternString="(?:'')?\\[\\[";<br />
 "COMPOUND_OF" <-> compoundOfPatternString="[Cc]ompound(?:ed)? (?:of|from) |"+<br />
-            "[Mm]erg(?:ing |er )(?:of |with )?(?: earlier )?|"+<br />
-	    "[Uu]niverbation of ";<br />
+            +  "[Mm]erg(?:ing |er )(?:of |with )?(?: earlier )?|"+<br />
+	    +  "[Uu]niverbation of ";<br />
 ? <-> uncertainPatternString="[Oo]rigin uncertain";<br />
 "ABOVE" <-> abovePatternString="[Ss]ee above";<br />
 "YEAR" <-> yearPatternString="(?:[Aa].\\s*?[Cc].?|[Bb].?\\s*[Cc].?)?\\s*\\d++\\s*(?:[Aa].?\\s*[Cc].?|[Bb].?\\s*[Cc].?|th century|\\{\\{C\\.E\\.\\}\\})?";<br />
@@ -160,23 +160,23 @@ wiktionaryPatternString="(?:'')?\\[\\[";<br />
 
 
 compoundPatternString = "((COMPOUND_OF )"+<br />
-	        "(LANGUAGE )?"+<br />
-		"(LEMMA )"+<br />
-		"(PLUS |AND |WITH )"+<br />
-		"(LANGUAGE )?"+<br />
-		"(LEMMA ))|"+<br />
-		"((LANGUAGE )?"+<br />
-	        "(LEMMA )"+<br />
-		"(PLUS )"+<br />
-		"(LANGUAGE )?"+<br />
-		"(LEMMA ))"<br />
+	      + "(LANGUAGE )?"+<br />
+              + "(LEMMA )"+<br />
+              + "(PLUS |AND |WITH )"+<br />
+	      +	"(LANGUAGE )?"+<br />
+	      + "(LEMMA ))|"+<br />
+              + "((LANGUAGE )?"+<br />
+	      + "(LEMMA )"+<br />
+	      + "(PLUS )"+<br />
+	      + "(LANGUAGE )?"+<br />
+	      + "(LEMMA ))"<br />
 
 originPatternString = "(FROM )?")+//aggiungere word boundary/b?????????????<br />
-	        "(LANGUAGE LEMMA |"+<br />
-	        "LEMMA )"+<br />
-		"(COMMA |DOT |OR )"<br />
+	       + "(LANGUAGE LEMMA |"+<br />
+	       + "LEMMA )"+<br />
+	       + "(COMMA |DOT |OR )"<br />
 
 cognatePatternString = "(COGNATE_WITH )"+//aggiungere word boundary/b?????????????<br />
-	        "(?:(LANGUAGE LEMMA |LEMMA )+"+<br />
-		"(COMMA |AND )?)+"+<br />
-	        "(DOT )?"<br />
+	       + "(?:(LANGUAGE LEMMA |LEMMA )+"+<br />
+	       + "(COMMA |AND )?)+"+<br />
+	       + "(DOT )?"<br />
