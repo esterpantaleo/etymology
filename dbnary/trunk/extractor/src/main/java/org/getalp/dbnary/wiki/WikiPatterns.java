@@ -9,6 +9,9 @@ public class WikiPatterns {
     public final static String macroOrLinkPatternString;
     public final static String definitionPatternString = "^#{1,2}([^\\*#:].*)$";
     public final static String bulletListPatternString = "\\*\\s*(.*)";
+    /**
+     * Pattern used to parse Section Descendants
+     */
     public final static String multipleBulletListPatternString = "(\\*+)\\s*(.*)"; 
     public final static String examplePatternString = "^#{1,2}\\*\\s*(.*)$";
 

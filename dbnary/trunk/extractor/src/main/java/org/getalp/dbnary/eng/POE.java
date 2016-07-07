@@ -14,23 +14,53 @@ import org.slf4j.LoggerFactory;
  * @author pantaleo
  *
  */
+/**                                                                                                                                                               
+ * POE is a part of etymology
+ * it has properties
+ * .part an ArrayList&lt;String&gt;, e.g., {"LANGUAGE", "LEMMA"}
+ * .args a Map&lt;String, String&gt;, e.g., {("1", "m"), ("lang","eng"), ("word1","door")}
+ * .string, e.g., "m|en|door"                                                                                            
+ */
 public class POE {
     public ArrayList<String> part;
     public Map<String, String> args;
     public String string;
     static Logger log = LoggerFactory.getLogger(POE.class);
 
+    /**
+     * Constructor
+     * @param ss a String specifying the "string" parameter of the object of class POE (e.g., "m|en|door")
+     * @param pp a String specifying the "part" parameter of the object of class POE (e.g., "LEMMA")
+     */ 
     public POE(String ss, String pp){
         part = new ArrayList<String>();
         part.add(pp);
         string = ss;
     }
- 
+
+    /**
+     * Given a String, this function replaces some symbols
+     * e.g., cleanUp("[[door]],[[dur]]") returns "door,dur"
+     * e.g., cleanUp("o'hare") returns "o__hare"
+     * e.g., cleanUp("*duhr") returns "_duhr"
+     * e.g., cleanUp ("anti-particle") returns "anti__-particle"
+     * @param word an input String
+     * @return a String where some characters have been replaced
+     */
     public String cleanUp(String word){
         word = word.replaceAll("\\[","").replaceAll("\\]", "").trim().replaceAll("'", "__").replaceAll("\\*", "_").replaceAll("^-", "__-");
         return word;
     }
-   
+
+    /**                                                     
+     * Constructor. Depending on the value of index it has different behaviours.
+     * Usage: POE("m|en|door", 1)   //for a template                                                                              
+     * or POE("en:door", 2)       //for a Wiktionary link
+     * e.g.: POE("cog|fr|orgue", 1) returns an object POE with POE.string="cog|fr|orgue", POE.part="COGNATE_WITH", POE.args={("1", "cog"), ("lang", "fra"), ("word1", "orgue"}  
+     * @param group a String specifying the "string" parameter of the object of class POE (e.g., "m|en|door") 
+     * @param index use 1 if the first parameter is a template (e.g., "m|en|door") 
+     * and 2 if the first parameter corresponds to a Wiktionary link (e.g. "en:door").
+     */
     public POE(String group, int index){
         //System.out.format("%s ", EtymologyPatterns.possibleString[index]);
         string = group;
@@ -276,7 +306,8 @@ public class POE {
 	        args.remove("2");
 		args.put("word2", cleanUp(args.get("1")));
 	        args.put("1", "agent noun ending in -or");
-	        args.put("lang", "en");       
+	        args.put("lang", "en");
+		part.add("LEMMA");
 	    } else {
                 log.debug("Ignoring template {} in either Etymology or Derived terms or Descendants section", string);
                 args.clear();
@@ -284,10 +315,6 @@ public class POE {
 		part = null;
                 //part.add("ERROR");
 	    }
-	    //for (String key: args.keySet()){		
-	    //String value = args.get(key);
-		//System.out.format("%s=%s; ", key, value);
-	    //}
 	} else if (index == 2){ //it's a Wiktionary link
             String[] subs = string.split("\\|");
             if (subs.length > 1){
@@ -335,12 +362,11 @@ public class POE {
             //System.out.format(EtymologyPatterns.possibleString[index]);
             part.add(EtymologyPatterns.possibleString[index]);
         }
+
+	//normalize the language code
         if (args != null){
             if (args.containsKey("lang")){
-		//normalize args.get("lang") 
                 String languageCode = args.get("lang");
-                //String languageName = EnglishLangToCode.getLanguageName(languageCode);
-                //languageCode = EnglishLangToCode.getLanguageCode(languageName);
                 languageCode = EnglishLangToCode.threeLettersCode(languageCode);
                 if (languageCode != null){
                    args.put("lang", languageCode);

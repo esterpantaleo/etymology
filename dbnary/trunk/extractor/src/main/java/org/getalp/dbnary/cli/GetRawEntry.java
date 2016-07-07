@@ -6,7 +6,7 @@ import org.getalp.dbnary.WiktionaryIndexerException;
 public class GetRawEntry {
 
     /**
-     * @param args
+     * @param args arguments
      * @throws WiktionaryIndexerException if any error occurs with indexer.
      */
     public static void main(String[] args) throws WiktionaryIndexerException {

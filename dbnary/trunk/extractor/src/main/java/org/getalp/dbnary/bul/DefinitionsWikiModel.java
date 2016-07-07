@@ -30,7 +30,7 @@ public class DefinitionsWikiModel extends DbnaryWikiModel {
 	/**
 	 * Convert a wiki code to plain text, while keeping track of all template calls.
 	 * @param definition the wiki code
-	 * @return
+	 * @return a String of plain text
 	 */
 	public String expandAll(String definition) {
 		try {

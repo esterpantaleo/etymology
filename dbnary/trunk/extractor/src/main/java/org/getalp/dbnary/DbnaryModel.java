@@ -11,12 +11,10 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 public class DbnaryModel {
+    public static final String DBNARY_NS_PREFIX = "http://kaiko.getalp.org/dbnary";
+    // protected static final String LMF = "http://www.lexicalmarkupframework.org/lmf/r14#";
 
-	
-	public static final String DBNARY_NS_PREFIX = "http://kaiko.getalp.org/dbnary";
-	// protected static final String LMF = "http://www.lexicalmarkupframework.org/lmf/r14#";
-
-	public static final String LEXVO = "http://lexvo.org/id/iso639-3/";
+    public static final String LEXVO = "http://lexvo.org/id/iso639-3/";
 
     public static Model tBox;
 

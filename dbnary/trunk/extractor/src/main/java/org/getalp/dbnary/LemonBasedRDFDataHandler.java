@@ -27,10 +27,25 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionaryDataHandler {
 
     private Logger log = LoggerFactory.getLogger(LemonBasedRDFDataHandler.class);
-    
+
+    /**
+     * An entry in a specific language can have multiple etymologies that correspond to multiple POS-s. 
+     * e.g.: the English noun and the English verb "tear" ("To cause to lose some kind of unity or coherence") derive from Proto-Indo-European "*der-", the noun "tear" ("A drop of clear, salty liquid produced from the eyes by crying or irritation.") derives from Proto-Indo-European  "*dáḱru-". see https://en.wiktionary.org/wiki/tear
+     * This ArrayList contains the list of POS associated to each etymology.  
+     */
     public ArrayList<Resource> etymologyPos = new ArrayList<Resource>();
+    
+    /**
+     * A String containing the etymological definition.
+     */
     public String etymologyString;
+    /**
+     * A Resource containing the current Etymology Entry.
+     */
     protected Resource currentEtymologyEntry;
+    /**
+     * An integer counting the number of alternative etymologies for the same entry.
+     */
     protected int currentEtymologyNumber;
 
     protected static class PosAndType {
@@ -56,6 +71,11 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     protected Resource lexvoExtractedLanguage;
     public String currentEntryLanguage;
     protected String currentPrefix;
+    /**
+     * An HashMap storing prefixes - this is needed when parsing etymologies to store
+     * ancestor languages of the given entry as well when parsing entries in Foreign Languages
+     * to store their language. 
+     */
     private HashMap<String,String> prefixes = new HashMap<String,String>();
     
     private Set<Statement> heldBackStatements = new HashSet<Statement>();
@@ -132,7 +152,7 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     }
     
     // Map of the String to lexvo language entity
-    private HashMap<String,Resource> languages = new HashMap<String, Resource>();//////!!!new
+    private HashMap<String,Resource> languages = new HashMap<String, Resource>();//needed by?
 	
     public LemonBasedRDFDataHandler(String lang) {
         super();
@@ -174,6 +194,10 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     }
 
     @Override
+    /**
+     * This function is needed for parsing a Wiktionary page with more than one Foreign Entry.
+     * It resets to zero the counters of the POS when switchinf rom one Foreign Language to the other.
+     */
     public void resetCurrentLexieCount() {
 	currentLexieCount.resetAll();
     }
@@ -184,12 +208,22 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     }
 
     @Override
+    /**  
+     * This functions extracts from the page content the text contained
+     * in the Etymology Section
+     * @param pageContent the page content
+     * @param pageContent the page content 
+     * @param end position where the Etymology Section starts 
+     */
     public void extractEtymology(String pageContent, int start, int end){
 	etymologyString = pageContent.substring(start, end);
 	//System.out.format("ety=%s\n", etymologyString);
     }
 
     @Override
+    /**
+     * This function sets etymologyString and currentEtymologyEbtry to null and clears the ArrayList etymologyPos.
+     */
     public void cleanEtymology(){
 	etymologyString = null;
 	etymologyPos.clear();
@@ -197,6 +231,11 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     }
 
     @Override
+    /**
+     * @return the String containing the etymology section extracted by
+     * function extractEtymology
+     * @see extractEtymology 
+     */
     public String getEtymology(){
 	return etymologyString;
     }
@@ -260,7 +299,6 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
     }
 
     public int currentDefinitionNumber() {
-	System.out.format("currentLexieCount.get(currentWiktionaryPos)=%s\n", currentLexieCount.get(currentWiktionaryPos));
 	return currentLexieCount.get(currentWiktionaryPos);
     }
 
@@ -372,7 +410,6 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 	    return false;
 	}
 
-	//System.out.println("args1="+args1+"args2="+args2+"\n");
 	if (currentEtymologyEntry == null){
 	    currentEtymologyNumber ++;
 	    currentEtymologyEntry = aBox.createResource(computeEtymologyId(currentEtymologyNumber), DBnaryOnt.EtymologyEntry);
@@ -381,7 +418,6 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 	    }
 	 }
 
-	 //System.out.println("args1.get(word1).split(,)[0].trim()="+args1.get("word1").split(",")[0].trim()+"\n");
 	 Resource vocable1;
 	 if (args1.get("isCurrentEtymologyEntry")!=null){
 	     vocable1 = currentEtymologyEntry;
@@ -406,7 +442,6 @@ public class LemonBasedRDFDataHandler extends DbnaryModel implements IWiktionary
 		     //split args2.get(key) and for each entry register it as an etymology entry and as etymologically equivalent to entry 0
 		     String[] words = args2.get(key).split(",");
 		     //entry 0
-		     //System.out.println("words[0].trim()="+words[0].trim()+"\n");
 		     Resource vocable2_0 = getVocableResource(words[0].trim(), true);
 		     aBox.add(vocable2_0, RDF.type, DBnaryOnt.EtymologyEntry);
 		     if (type == 0){

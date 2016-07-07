@@ -2587,7 +2587,7 @@ jib	Jibu
 jic	Tol
 jid	Bu
 jie	Jilbe
-jig	Jingulu
+jig	Jinglu
 jih	Shangzhai
 jii	Jiiddu
 jil	Jilim
@@ -5963,14 +5963,11 @@ teg	Teke-Tege
 teh	Tehuelche
 tei	Torricelli
 tek	Ibali Teke
-tem	Timne
 ten	Tama (Colombia)	Tama
 teo	Ateso
 tep	Tepecano
 teq	Temein
-ter	Tereno
 tes	Tengger
-tet	Tetum	Tetun
 teu	Soo
 tev	Teor
 tew	Tewa	Tano	Santa Clara Tewa	San Ildefonso Tewa	Tesuque Tewa	Nambe Tewa	Ohkay Owingeh	Pojoaque
@@ -6027,7 +6024,6 @@ tic	Tira
 tid	Tidong
 tie	Tingal
 tif	Tifal
-tig	Tigre
 tih	Timugon Murut
 tii	Tiene
 tij	Tilung
@@ -7469,7 +7465,6 @@ zyg	Yang Zhuang
 zyj	Youjiang Zhuang
 zyn	Yongnan Zhuang
 zyp	Zyphe	Zyphe Chin
-zza	Zazaki
 zzj	Zuojiang Zhuang
 
 

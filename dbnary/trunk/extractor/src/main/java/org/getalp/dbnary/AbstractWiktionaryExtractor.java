@@ -14,8 +14,6 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
     // TODO: Alter the extraction process by allowing multiple lines in a macro and evaluate the final result
     // TODO: Determine how many nested macro are used in the different wiktionary languages.
     // These should be independent of the language
-
-    
     protected String pageContent;
     protected IWiktionaryDataHandler wdh;
     protected String wiktionaryPageName;
@@ -33,8 +31,7 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
     }
 
 
-    // Suppression des commentaires XML d'un texte 
-    
+    // Suppression des commentaires XML d'un texte     
     protected final static String debutOrfinDecomPatternString;
 
     static {
@@ -119,19 +116,19 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
     protected final static String biblRefPatternString = new StringBuilder()
 	    .append("&lt;ref&gt;([^.]*?)&lt;ref&gt;").toString();
 
+    //TO DO: check that this function is working
+    /*
+     * A function to remove bibliographic references <ref> ... </ref> from a String
+     *
+     * @param s the input String
+     * @return a String without bibliographic references
+     */
     public static String removeBiblRef(String s) {
 	if (null == s) return null;
 	s.replaceAll(biblRefPatternString, "");
 	return(s);
     }
-    
-    /**
-     * @return the wiktionaryIndex
-     */
-    // public WiktionaryIndex getWiktionaryIndex() {
-    //    return wiktionaryIndex;
-    //}
-    
+        
     // DONE: filter out pages that are in specific Namespaces (Wiktionary:, Categories:, ...)
     // TODO: take Redirect page into account as alternate spelling.
     // TODO: take homography into account (ex: mousse) and separate different definitions for the same pos.
@@ -223,7 +220,7 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
     // DONE: Extract lemma AND OCCURENCE of links in non human readable form
 
     /**
-     * cleans up the wiktionary markup from a string in the following maner: <br/>
+     * cleans up the wiktionary markup from a string in the following manner: <br>
      * str is the string to be cleaned up.
      * the result depends on the value of humanReadable.
      * Wiktionary macros are always discarded.
@@ -234,9 +231,9 @@ public abstract class AbstractWiktionaryExtractor implements IWiktionaryExtracto
      * "will be discarded and fed to the void."
      * if humanReadable is false, it will produce:
      * "will be #{discard|discarded}# and #{feed|fed}# to the #{void|void}#."
-     * @param str
-     * @param humanReadable
-     * @return
+     * @param str is the String to be cleaned up
+     * @param humanReadable a boolean
+     * @return a String
      */
     public static String cleanUpMarkup(String str, boolean humanReadable) {
         Matcher m = WikiPatterns.macroOrLinkPattern.matcher(str);

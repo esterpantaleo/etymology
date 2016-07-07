@@ -17,6 +17,7 @@ public interface IWiktionaryDataHandler {
     enum Feature {MAIN, MORPHOLOGY};
     /**
      * Enable the extraction of morphological data in a second Model if available.
+     * @param f Feature
      */
     void enableFeature(Feature f);
     boolean isEnabled(Feature f);
@@ -28,12 +29,31 @@ public interface IWiktionaryDataHandler {
     void initializeEntryExtraction(String wiktionaryPageName, String lang);
     void finalizeEntryExtraction();
 
+    /**
+     * This functions extracts from the page content the text contained
+     * in the Etymology Section
+     * @param pageContent the page content
+     * @param start position where the Etymology Section starts
+     * @param end position where the Etymology Section starts 
+     */
     void extractEtymology(String pageContent, int start, int end);
+    /**
+     * This function sets etymologyString and currentEtymologyEbtry to null and  clears the ArrayList etymologyPos.
+     */
     void cleanEtymology();
+    /**
+     * @return the String containing the etymology section extracted by 
+     * function extractEtymology
+     * @see extractEtymology
+     */ 
     String getEtymology();
     
     void addPartOfSpeech(String pos);
 
+    /*                             
+     * This function is needed for parsing a Wiktionary page with more than one Foreign Entry.          
+     * It resets to zero the counters of the POS when switchinf rom one Foreign Language to the other.       
+     */ 
     void resetCurrentLexieCount(); 
     /**
      * 
@@ -48,7 +68,7 @@ public interface IWiktionaryDataHandler {
     * the entry.
     * 
     * It is equivalent to registerNewDefinition(def, 1);
-    * @param def
+    * @param def a string
     */
     void registerNewDefinition(String def);
 	
@@ -68,6 +88,7 @@ public interface IWiktionaryDataHandler {
 	 * 
 	 * @param ex the example string
 	 * @param context map of property + object that are to be attached to the example object.
+         * @return a Resource
 	 */
     Resource registerExample(String ex, Map<Property, String> context);
 
@@ -103,8 +124,9 @@ public interface IWiktionaryDataHandler {
 	 * The language in which to write the model is specified by the lang argument. 
 	 * Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
 	 * The default value, represented by null, is "RDF/XML".
-	 * @param out
-	 * @param format
+	 * @param f a Feature
+	 * @param out an OutputStream 
+	 * @param format a String
     */
     void dump(Feature f, OutputStream out, String format);
 

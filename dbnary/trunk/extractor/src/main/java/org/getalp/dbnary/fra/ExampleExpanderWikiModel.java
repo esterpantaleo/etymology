@@ -46,7 +46,7 @@ public class ExampleExpanderWikiModel extends ExpandAllWikiModel {
 	 * @param definition the wiki code
 	 * @param templates if not null, the method will add all called templates to the set.
 	 * @param context if not null, the method will add all contextual relation to the map.
-	 * @return
+	 * @return a String of plain text
 	 */
 	public String expandExample(String definition, Set<String> templates, Map<Property, String> context) {
 		log.trace("extracting examples in {}", this.getPageName());

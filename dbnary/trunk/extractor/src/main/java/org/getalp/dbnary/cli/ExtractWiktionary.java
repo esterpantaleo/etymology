@@ -97,9 +97,9 @@ public class ExtractWiktionary {
 
 
     /**
-	 * @param args
-	 * @throws IOException 
-	 * @throws WiktionaryIndexerException 
+	 * @param args arguments
+	 * @throws IOException ...
+	 * @throws WiktionaryIndexerException ...
 	 */
 	public static void main(String[] args) throws WiktionaryIndexerException, IOException {
 		ExtractWiktionary cliProg = new ExtractWiktionary();
@@ -111,7 +111,7 @@ public class ExtractWiktionary {
 	 * Validate and set command line arguments.
 	 * Exit after printing usage if anything is astray
 	 * @param args String[] args as featured in public static void main()
-	 * @throws WiktionaryIndexerException 
+	 * @throws WiktionaryIndexerException ..
 	 */
 	private void loadArgs(String[] args) throws WiktionaryIndexerException {
 		CommandLineParser parser = new PosixParser();

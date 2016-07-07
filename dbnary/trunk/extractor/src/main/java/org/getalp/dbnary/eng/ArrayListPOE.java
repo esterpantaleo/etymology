@@ -14,29 +14,30 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author pantaleo
- *
  */
 
+/**
+ * An ArrayList of POE, Part of Etymology
+ */
 public class ArrayListPOE extends ArrayList<POE>{
     static Logger log = LoggerFactory.getLogger(ArrayListPOE.class);
 
+    /**
+     * Used to replace "COMPOUND_OF LEMMA AND LEMMA" with a single "LEMMA"
+     * Given a pair of indexes it replaces whatever subarray of ArrayListPOE 
+     * with a "LEMMA" POE of type compound|lang|word1|word2
+     * @param m an ArrayList&lt;Pair&gt; specifying the start and end indexes of a subarray of ArrayListPOE
+     */ 
     public void replaceMatch(ArrayList<Pair> m){
         StringBuilder string = new StringBuilder();  
-        for (int i=m.size()-1; i>=0; i--){//iterate starting from ArrayList end
-            //System.out.format("%s\n", i);
-            //System.out.format("working on match (%s,%s) ", m.get(i).start, m.get(i).end);
+        for (int i=m.size()-1; i>=0; i--){//iterate starting from ArrayList end  
             int counter = 0; 
             string.setLength(0);
             wholeloop:for (int k=m.get(i).start; k<m.get(i).end+1; k++){
-                //System.out.format("loop on k: k=%s\n", k);
 	        partloop: for (int j=0; j<this.get(k).part.size(); j++){
-                    //System.out.format("loop on j: j=%s\n", j);  
-                    //System.out.format("this.get(k).args=%s\n", this.get(k).args);
                     if (this.get(k).part.get(j).equals("LEMMA")){
-                        //System.out.format("equals LEMMA, counter=%s\n", counter);
                         if (counter == 0){
                             string.append("compound|");
-                            //System.out.format("string=%s\n", string);
 			    if (this.get(k).args.get("lang") != null){
                                 string.append(this.get(k).args.get("lang"));
 			    } else {
@@ -46,25 +47,21 @@ public class ArrayListPOE extends ArrayList<POE>{
                             string.append(this.get(k).args.get("word1"));
                             string.append("|");
                             counter = 1;
-                            //System.out.format("string=%s; breaking partloop\n", string);
                             break partloop;
 		        } else {
                             if (this.get(k).args != null){
 			        string.append(this.get(k).args.get("word1"));
-                            } 
-			    //System.out.format("replacing compound with string: %s\n", string.toString());
+                            }
 			    POE p = new POE(string.toString(), 1);//1 corresponds to "TEMPLATE"
 			    this.set(m.get(i).start, p);
 			    if (m.get(i).end>m.get(i).start){
 			        this.subList(m.get(i).start+1, m.get(i).end+1).clear();
 			    }
-			    //System.out.format("this.subList(%s,%s).clear()", m.get(i).start, m.get(i).end+1);
                             break wholeloop; 
 			}
 		    }
 		}
 	    }
-            //System.out.format("\n");
 	}
                                                                                                                                                                       
         /*int j;         
@@ -123,6 +120,9 @@ public class ArrayListPOE extends ArrayList<POE>{
     }
 
     @Override
+    /**
+     * @return a String like "FROM LEMMA OR LEMMA" concatenating the property "part" of each element of ArrayListPOE
+     */
     public String toString(){
         StringBuilder s = new StringBuilder();
    
@@ -137,6 +137,12 @@ public class ArrayListPOE extends ArrayList<POE>{
         return s.toString();
     }
 
+    /**
+     * e.g., if a.toString() == "FROM LEMMA COMMA FROM LEMMA COMMA COGNATE_WITH LEMMA COMMA LEMMA COMMA LEMMA"
+     * a.getIndexOfCognateOr returns 6, the index of "COGNATE_WITH"
+     * e.g., if a.toString == "FROM LEMMA OR LEMMA" a.getIndexOfCognateOr returns 2, the index of "OR"
+     * @return an integer, the index of "COGNATE_WITH" or "OR" in the given ArrayListPOE
+     */
     public int getIndexOfCognateOr(){
         for (int i=0; i<this.size(); i++){
             if (this.get(i).part.size()>0){

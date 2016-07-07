@@ -20,22 +20,22 @@ import org.slf4j.LoggerFactory;
 public class WikiTool {
     static Logger log = LoggerFactory.getLogger(WikiTool.class);
 
-	static Pattern htmlRefElement = Pattern.compile("(<ref(?:\\s[^>]*|\\s*)>)|(</ref>)");
-	// WARN: not synchronized !
-	public static String removeReferencesIn(String definition) {
-		StringBuffer def = new StringBuffer();
-		Matcher m = htmlRefElement.matcher(definition);
+    static Pattern htmlRefElement = Pattern.compile("(<ref(?:\\s[^>]*|\\s*)>)|(</ref>)");
+    // WARN: not synchronized !
+    public static String removeReferencesIn(String definition) {
+        StringBuffer def = new StringBuffer();
+        Matcher m = htmlRefElement.matcher(definition);
         boolean mute = false;
         int previousPos = 0;
-		while (m.find()) {
-			if (null != m.group(1) && m.group().endsWith("/>")) {
-				// A opening/closing element
-				if (! mute) def.append(definition.substring(previousPos, m.start()));
-			} else if (null != m.group(1)) {
+	while (m.find()) {
+            if (null != m.group(1) && m.group().endsWith("/>")) {
+	        // A opening/closing element
+		if (! mute) def.append(definition.substring(previousPos, m.start()));
+	    } else if (null != m.group(1)) {
                 // An opening element
-				if (! mute) def.append(definition.substring(previousPos, m.start()));
-				mute = true;
-			} else if (null != m.group(2)) {
+	        if (! mute) def.append(definition.substring(previousPos, m.start()));
+	        mute = true;
+	    } else if (null != m.group(2)) {
                 // a closing element
                 if (! mute) def.append(definition.substring(previousPos, m.start()));
                 mute = false;
@@ -43,39 +43,39 @@ public class WikiTool {
             previousPos = m.end();
         }
         if (! mute) def.append(definition.substring(previousPos, definition.length()));
-		return def.toString();
-	}
+	    return def.toString();
+    }
 
-    //example:
-    //locateEnclosedString(s,"{{","}}", false) with:
-    //* s="string {{t}}" returns (9,10)
-    //* s= ="string {{with some {{text}} enclosed in curly {{brackets}}}}" returns (9,56)
-    //locateEnclosedString(s,"{{","}}", true) with:
-    //* s="string {{t}}" returns (7,18)
-    //* s= ="string {{with some {{text}} enclosed in curly {{brackets}}}}" returns (7,58)
+    /**
+     * This function locates the start and end position of two symbols (enclosingStringStart and enclosingStringEnd) 
+     * in input String s.
+     * It can handle nested symbols
+     * e.g., locateEnclosedString("string {{at}}","{{","}}") returns (7,13)
+     * e.g., locateEnclosedString("string {{at {{position}} }}","{{","}}") returns (7,27) 
+     * @param s the string to be parsed, this function returns the position of the second parameter enclosingStringStart and the position of the third parameter enclosingStringEnd in string s
+     * @param enclosingStringStart this function returns the position of the String enclosingStringStart in String s
+     * @param enclosingStringEnd this function returns the position of the String enclosingStringEn in String s  
+     * @return an ArrayList with the start and ens positions of the enclosing Strings in input String s  
+    */
     public static ArrayList<Pair> locateEnclosedString(String s, String enclosingStringStart, String enclosingStringEnd){
 	int eSS = enclosingStringStart.length();
 	int eSE = enclosingStringEnd.length();
 	int numberOfEnclosings = 0, start=-1, end=-1;
 	ArrayList<Pair> toreturn = new ArrayList<Pair>();
-	//boolean inside = false;
 	for (int i=0; i+eSE<=s.length(); i++){
 	    if (i+eSS+eSE<=s.length()){
 		if (s.substring(i,i+eSS).equals(enclosingStringStart)){
 		    if (start == -1){
 			start = i;
 		    }
-		    //System.out.format("found start at %s\n", i);
 		    numberOfEnclosings ++;
-		    i+=eSS-1;
+		    i += eSS-1;
 		}
 	    }
 	    if (s.substring(i,i+eSE).equals(enclosingStringEnd)){
-		//                System.out.format("found %s\n", enclosingStringEnd);
 		numberOfEnclosings --;
 		if (numberOfEnclosings==0 && start!=-1){
 		    end = i+eSE;
-		    //System.out.format("found end at %s\n", end);
 		    toreturn.add(new Pair(start,end));
 		    start = -1;//initialize start
 		}
@@ -83,7 +83,13 @@ public class WikiTool {
 	}
 	return toreturn;
     }
-
+    
+    /**
+     * This function removes from String s text between the positions specified in each of the Pair-s in ArrayList l
+     * @param s the input string
+     * @param l an ArrayList of Pairs, each Pair specifies a start and an end position
+     * @return a substring of s without the text contained between each of the positions specified in l 
+     */
     public static String removeTextWithin(String s, ArrayList<Pair> l){
 	int lsize = l.size();
 	for (int i=0; i<lsize; i++){
@@ -94,16 +100,14 @@ public class WikiTool {
 	return s;
     }
 
-    /**                                                                                                                                                                                
-     * @deprecated                                                                                                                                                                                        
-     * Parse the args of a Template.                                                                                                                                                                      
-     * @param args the String containing all the args (the part of a templae contained after the first pipe).                                                                                             
-     * @return a Map associating each argument name with its value.                                                                                                                                    
+    /**                                             
+     * @deprecated                                 
+     * Parse the args of a Template, e.g., parses a string like xxx=yyy|zzz=ttt
+     * It can handle nested parentheses, e.g., xxx=yyy|zzz={{aaa=bbb|ccc=ddd}}|kkk=hhh
+     * and xxx=yyy|zzz=[[aaa|bbb|ccc]]|kkk=hhh. 
+     * @param argsString the String containing all the args (the part of a template contained after the first pipe).              
+     * @return a Map associating each argument name with its value.          
      */
-    // Parse a string of args, like: xxx=yyy|zzz=ttt
-    // This function can parse args like xxx=yyy|zzz={{aaa=bbb|ccc=ddd}}|kkk=hhh (this template argument is encountered in etymology sections
-    // e.g. xxx="compound", zzz="word1"
-    // or like xxx=yyy|zzz=[[aaa|bbb|ccc]]|kkk=hhh (this template argument is encountered in etymology sections
     public static Map<String,String> parseArgs(String argsString) {
 	HashMap<String,String> argsMap = new HashMap<String,String>();
 	if (null == argsString || "" == argsString) return argsMap;
@@ -169,7 +173,6 @@ public class WikiTool {
 		n++;
 	    }
 	}
-	//System.out.format("argsMap=%s\n", argsMap);
 	return argsMap;
     }
 

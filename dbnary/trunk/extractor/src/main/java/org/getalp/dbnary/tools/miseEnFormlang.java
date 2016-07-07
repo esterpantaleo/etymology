@@ -10,8 +10,8 @@ public class miseEnFormlang {
 
 	
 	/**
-	 * @param args
-	 * @throws IOException 
+	 * @param args arguments
+	 * @throws IOException ...
 	 */
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub

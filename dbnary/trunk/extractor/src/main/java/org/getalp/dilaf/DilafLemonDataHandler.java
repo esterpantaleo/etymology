@@ -155,8 +155,8 @@ public class DilafLemonDataHandler extends DbnaryModel {
 	 * The language in which to write the model is specified by the lang argument. 
 	 * Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
 	 * The default value, represented by null, is "RDF/XML".
-	 * @param out
-	 * @param format
+	 * @param out an OutputStream
+	 * @param format a String
 	 */
 	public void dump(OutputStream out, String format) {
 		aBox.write(out, format);

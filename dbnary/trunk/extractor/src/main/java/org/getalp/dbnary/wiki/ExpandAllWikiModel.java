@@ -26,7 +26,7 @@ public class ExpandAllWikiModel extends DbnaryWikiModel {
 	 * Convert a wiki code to plain text, while keeping track of all template calls.
 	 * @param definition the wiki code
 	 * @param templates if not null, the method will add all called templates to the set.
-	 * @return
+	 * @return ...
 	 */
 	public String expandAll(String definition, Set<String> templates) {
 		this.templates = templates;

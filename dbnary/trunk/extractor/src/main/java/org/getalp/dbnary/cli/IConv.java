@@ -65,7 +65,7 @@ public class IConv {
     }
       
     /**
-     * @param args
+     * @param args arguments
      */
     public static void main(String[] args) {
         String from = null, to = null;
