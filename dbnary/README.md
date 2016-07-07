@@ -1,11 +1,10 @@
 #TO DO
 * Check if there is a memory leak
 * bug in FOREIGN: lavagga' utes : hu-suffix compound of 3 words
-* write the java code for symultaneous extraction of bot FOREIGn and ENGLISH words
+* write the java code for symultaneous extraction of bot FOREIGN and ENGLISH words
 * add try for each word with a warning if there is a parsing error
-* Automatically extract languages from Wikipedia
-
-#SOME NOTES
+* Automatically extract lua language modules
+* Use lua code to parse templates and links
 * parse template {{sense: connection}}
 * parse template {{PIE root|en|bleh_3}}
 
@@ -18,8 +17,6 @@
 * travel expense reports
 * which kind of resources can I use to: store the data etc
 * which kind of technical support can I get
-* can I be employed at the same time as the grant: part time job or postdoctoral research contract?
-* the editing tool
 
 #TECHNICAL DETAILS
 ##VISUALIZATION
@@ -39,7 +36,6 @@
 * https://www.wikidata.org/wiki/Wikidata:Data_collaborators#Machine-readable_Wiktionary
 
 #MERGING WITH Dbnary
-
 * In file pom.txt
  * using a new ontology owl file that includes an Etymological Ontology - this ontology will be improved soon
  * added javadoc - I'm using "mvn site" and "mvn javadoc:jar" 
@@ -74,37 +70,37 @@
  e.g. {{ and }} or between [[ and ]] or	between	<ref and \ref> etc
  * added function removeTextWithin to remove text between two specified	locations, locations are specified in Pairs, i.e. a start and an end
 
-* Added file eng POE.java
-  * POE is a part of etymology and has properties: string(e.g., "m|en|door")
-  * The constructor takes as input the content of a template or of a wiktionary link. If given the content of a template (e.g., "m|en|door") it parses it using function WikiTool.parseArgs and out puts an object POE with POE.string="m|en|door", POE.part="LEMMA", POE.args={("1","m"), "lang","eng"), ("word1", "door")}
+* Added file eng/POE.java
+  * POE is a part of etymology
+  * The constructor takes as input the content of a template or of a wiktionary link. If given the content of a template (e.g., "m|en|door") it parses it using function WikiTool.parseArgs and outputs an object POE with POE.string="m|en|door", POE.part={"LEMMA"}, POE.args={("1","m"), "lang","eng"), ("word1", "door")}
   * If a template can handle:
-    * can handle "COGNATE_WITH" <-> {{cog|fr|orgue}} or {{cognate|fr|orgue}} or {{etymtwin|lang=en}}{{m|en|foo}}
-    * "LEMMA" <-> inh, inherited, der, derived, bor, borrowing, loan
-    * "LEMMA" <->  compound, calque, blend (with word1, word2, word3 etc)
-    * "LEMMA" <-> etycomp (e.g. {{etycomp|lang1=de|inf1=|case1=|word1=dumm|trans1=dumb|lang2=|inf2=|case2=|word2=Kopf|trans2=head}} )
-    * "LEMMA" <-> vi-etym-sino
+    * {"COGNATE_WITH"} <-> {{cog|fr|orgue}} or {{cognate|fr|orgue}} or {{etymtwin|lang=en}}{{m|en|foo}} <-> cog, cognate, etymtwin
+    * {"LEMMA"} <-> inh, inherited, der, derived, bor, borrowing, loan
+    * {"LEMMA"} <->  compound, calque, blend (with word1, word2, word3 etc)
+    * {"LEMMA"} <-> etycomp (e.g. {{etycomp|lang1=de|inf1=|case1=|word1=dumm|trans1=dumb|lang2=|inf2=|case2=|word2=Kopf|trans2=head}} )
+    * {"LEMMA"} <-> vi-etym-sino
     * {"FROM", "LEMMA"} <-> abbreviation of
     * {"FROM", "LEMMA"} <-> back-form, named-after
-    * "LEMMA" <-> m, mention, l, link
-    * "LEMMA" <-> affix, confix, prefix, suffix
-    * "LEMMA" <-> infix, circumfix, clipping, hu-prefix, hu-suffix
-    * "LANGUAGE" <-> etyl
-    * "EMPTY" <-> etystub, rfe
-    * "LEMMA" <-> -er, -or
+    * {"LEMMA"} <-> m, mention, l, link
+    * {"LEMMA"} <-> affix, confix, prefix, suffix
+    * {"LEMMA"} <-> infix, circumfix, clipping, hu-prefix, hu-suffix
+    * {"LANGUAGE"} <-> etyl
+    * {"EMPTY"} <-> etystub, rfe
+    * {"LEMMA"} <-> -er, -or
   * If a wiktionary link (e.g., fr:bon)
     * check that it does not contain character "|"
-    * split ":" and remove anything that looks like Image:... Category:... File:...
+    * split ":" and remove anything that looks like "Image:..." "Category:..." "File:..."
     * Replace the language code with the normalized language code
 
 * Added file eng/ArrayListPOE.java
-  * Needed to parse "COMPOUND_OF LEMMA AND LEMMA" -> "LEMMA"
+  * to parse "COMPOUND_OF LEMMA AND LEMMA" -> "LEMMA"
   * ArrayList<Pair> match(Pattern p), public int getIndexOfCognateOr()
 
 
 
 * In file eng/EnglishLangToCode.java:
  * removed those keys that are already present in file data3.txt (mostly three letters codes)
- * would like to have automatic extration from the language module using
+ * would like to have automatic extraction from the language module using
 https://en.wiktionary.org/wiki/Module:JSON_data
 or
 https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
@@ -118,9 +114,9 @@ originPatternString = "(FROM )?(LANGUAGE LEMMA |LEMMA )(COMMA |DOT |OR )"<br />
 
 cognatePatternString = "(COGNATE_WITH )(?:(LANGUAGE LEMMA |LEMMA )+(COMMA |AND )?)+(DOT )?"<br />
 
-compoundPatternString = "((COMPOUND_OF )(LANGUAGE )?(LEMMA )(PLUS |AND |WITH )(LANGUAGE )?(LEMMA ))" <-> "LEMMA"+<br />
+compoundPatternString = "((COMPOUND_OF )(LANGUAGE )?(LEMMA )(PLUS |AND |WITH )(LANGUAGE )?(LEMMA ))"+<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "((LANGUAGE )?(LEMMA )(PLUS )(LANGUAGE )(LEMMA ))"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "((LANGUAGE )?(LEMMA )(PLUS )(LANGUAGE )(LEMMA ))" <-> "LEMMA"<br />
 
 "DOT"   <-> textAfterSupersededPatternString="(?:[Ss]uperseded|[Dd]isplaced( native)?|[Rr]eplaced|[Mm]ode(?:l)?led on)";<br />
 ??      <-> textEquivalentToPatternString="equivalent to\\s*\\{\\{[^\\}]+\\}\\}"; <br />
