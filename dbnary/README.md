@@ -111,13 +111,24 @@ https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
 
 
 * In file eng/EtymologyPatterns.java <br />
+
+//aggiungere word boundary/b?????????????
+
+originPatternString = "(FROM )?(LANGUAGE LEMMA |LEMMA )(COMMA |DOT |OR )"<br />
+
+cognatePatternString = "(COGNATE_WITH )(?:(LANGUAGE LEMMA |LEMMA )+(COMMA |AND )?)+(DOT )?"<br />
+
+compoundPatternString = "((COMPOUND_OF )(LANGUAGE )?(LEMMA )(PLUS |AND |WITH )(LANGUAGE )?(LEMMA ))" <-> "LEMMA"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "((LANGUAGE )?(LEMMA )(PLUS )(LANGUAGE )(LEMMA ))"<br />
+
 "DOT"   <-> textAfterSupersededPatternString="(?:[Ss]uperseded|[Dd]isplaced( native)?|[Rr]eplaced|[Mm]ode(?:l)?led on)";<br />
 ??      <-> textEquivalentToPatternString="equivalent to\\s*\\{\\{[^\\}]+\\}\\}"; <br />
 "PLUS"  <-> plusPatternString="\\+";  ;<br />
 "DOT"   <-> dotPatternString="\\.|;";<br />
 "COMMA" <-> commaPatternString=",";<br />
 "FROM"  <-> fromPatternString="[Ff]rom|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Bb]ack-formation (?:from)?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Bb]ack-formation (?:from)?|"+<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Aa]bbreviat(?:ion|ed)? (?:of|from)?|"+<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Cc]oined from|"+<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Bb]orrow(?:ing|ed)? (?:of|from)?|"+<br />
@@ -147,8 +158,6 @@ https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Aa]kin to |"+<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Ss]ee(?:n)? (?:also )?"<br />
 
-templatePatternString="\\{\\{";<br />
-wiktionaryPatternString="(?:'')?\\[\\[";<br />
 "COMPOUND_OF" <-> compoundOfPatternString="[Cc]ompound(?:ed)? (?:of|from) |"+<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Mm]erg(?:ing |er )(?:of |with )?(?: earlier )?|"+<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Uu]niverbation of ";<br />
@@ -159,13 +168,3 @@ wiktionaryPatternString="(?:'')?\\[\\[";<br />
 "AND" <-> andPatternString="\\s+and\\s+";<br />
 "OR" <-> orPatternString="[^a-zA-Z0-9]or[^a-zA-Z0-9]";<br />
 "WITH" <-> withPatternString="[^a-zA-Z0-9]with[^a-zA-Z0-9]";<br />
-
-
-compoundPatternString = "((COMPOUND_OF )(LANGUAGE )?(LEMMA )(PLUS |AND |WITH )(LANGUAGE )?(LEMMA ))"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "((LANGUAGE )?(LEMMA )(PLUS )(LANGUAGE )(LEMMA ))"<br />
-
-//aggiungere word boundary/b?????????????
-originPatternString = "(FROM )?(LANGUAGE LEMMA |LEMMA )(COMMA |DOT |OR )"<br />
-
-cognatePatternString = "(COGNATE_WITH )(?:(LANGUAGE LEMMA |LEMMA )+(COMMA |AND )?)+(DOT )?"<br />
