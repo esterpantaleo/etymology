@@ -161,24 +161,11 @@ wiktionaryPatternString="(?:'')?\\[\\[";<br />
 "WITH" <-> withPatternString="[^a-zA-Z0-9]with[^a-zA-Z0-9]";<br />
 
 
-compoundPatternString = "((COMPOUND_OF )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LANGUAGE )?"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LEMMA )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(PLUS |AND |WITH )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LANGUAGE )?"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LEMMA ))|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "((LANGUAGE )?"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LEMMA )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(PLUS )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LANGUAGE )?"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LEMMA ))"<br />
+compoundPatternString = "((COMPOUND_OF )(LANGUAGE )?(LEMMA )(PLUS |AND |WITH )(LANGUAGE )?(LEMMA ))"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "((LANGUAGE )?(LEMMA )(PLUS )(LANGUAGE )(LEMMA ))"<br />
 
-originPatternString = "(FROM )?"+//aggiungere word boundary/b?????????????<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LANGUAGE LEMMA |"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "LEMMA )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(COMMA |DOT |OR )"<br />
+//aggiungere word boundary/b?????????????
+originPatternString = "(FROM )?(LANGUAGE LEMMA |LEMMA )(COMMA |DOT |OR )"<br />
 
-cognatePatternString = "(COGNATE_WITH )"+//aggiungere word boundary/b?????????????<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(?:(LANGUAGE LEMMA |LEMMA )+"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(COMMA |AND )?)+"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(DOT )?"<br />
+cognatePatternString = "(COGNATE_WITH )(?:(LANGUAGE LEMMA |LEMMA )+(COMMA |AND )?)+(DOT )?"<br />
