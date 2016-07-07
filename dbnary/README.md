@@ -37,3 +37,148 @@
 * https://www.wikidata.org/wiki/Wikidata:Wiktionary/Development/Proposals/2015-05
 * https://www.wikidata.org/wiki/Wikidata:Wiktionary
 * https://www.wikidata.org/wiki/Wikidata:Data_collaborators#Machine-readable_Wiktionary
+
+#MERGING WITH Dbnary
+
+* In file pom.txt
+** using a new ontology owl file that includes an Etymological Ontology - this ontology will be improved soon
+** added javadoc - I'm using "mvn site" and "mvn javadoc:jar" 
+
+* In file AbstractWiktionaryExtractor.java:
+** functions removeXMLComments, removeBiblRef, stripParentheses could be merged into "removeContainedBetween()"
+** definiton of some Pattern Strings: debutOrfinDecomPatternString, biblRefPatternString, defOrExamplePatternString, definitionMarkupString
+** function stripParentheses now handles nested parentheses
+** TODO:not sure function removeBiblRef is working!!
+
+* In file IWiktionaryDataHandler.java:
+** added functions extractEtymology, cleanEtymology, getEtymology, resetCurrentLexieCount
+
+* In file Langtools.java:
+** edited function threeLettersCode
+
+* In file LemonBasedRDFDataHandler.java:
+** added variables etymologyPos, etymologyString, currentEtymologyEntry, currentEtymologyNumber, currentEntryLanguage, currentPrefix, prefixes
+** added functions setCurrentLanguage, resetCurrentLexieCount, extractEtymology, cleanEtymology, getEtymology, computeEtymologyId, getPrefixe
+** modified function addPartOfSpeech with "etymologyPos.add(currentLexEntry);"
+** modified function getPrefix to return currentPrefix;
+** what is "private HashMap<String,Resource> languages" needed for?
+
+* added file Pair.java:
+** this is needed to parse Etymology strings
+
+* In file wiki/WikiPatterns:
+** added multipleBulletListPatternString to parse section: Descendents
+
+* In file wiki/WikiTools.java:
+** added function locateEnclosedString locates a String	enclosed between any two symbols,
+ e.g. {{ and }} or between [[ and ]] or	between	<ref and \ref> etc
+** added function removeTextWithin to remove text between two specified	locations, locations are specified in Pairs, i.e. a start and an end
+
+* Added file eng POE.java
+** POE is a part of etymology and has properties: string(e.g., "m|en|door")
+** The constructor takes as input the content of a template or of a wiktionary link. If given the content of a template (e.g., "m|en|door") it parses it using function WikiTool.parseArgs and out puts an object POE with POE.string="m|en|door", POE.part="LEMMA", POE.args={("1","m"), "lang","eng"), ("word1", "door")}
+** If a template can handle:
+*** can handle "COGNATE_WITH" <-> {{cog|fr|orgue}} or {{cognate|fr|orgue}} or {{etymtwin|lang=en}}{{m|en|foo}}
+*** "LEMMA" <-> inh, inherited, der, derived, bor, borrowing, loan
+*** "LEMMA" <->  compound, calque, blend (with word1, word2, word3 etc)
+*** "LEMMA" <-> etycomp (e.g. {{etycomp|lang1=de|inf1=|case1=|word1=dumm|trans1=dumb|lang2=|inf2=|case2=|word2=Kopf|trans2=head}} )
+*** "LEMMA" <-> vi-etym-sino
+*** {"FROM", "LEMMA"} <-> abbreviation of
+*** {"FROM", "LEMMA"} <-> back-form, named-after
+*** "LEMMA" <-> m, mention, l, link
+*** "LEMMA" <-> affix, confix, prefix, suffix
+*** "LEMMA" <-> infix, circumfix, clipping, hu-prefix, hu-suffix
+*** "LANGUAGE" <-> etyl
+*** "EMPTY" <-> etystub, rfe
+*** "LEMMA" <-> -er, -or
+** If a wiktionary link (e.g., fr:bon)
+*** check that it does not contain character "|"
+*** split ":" and remove anything that looks like Image:... Category:... File:...
+** Replace the language code with the normalized language code
+
+* Added file eng/ArrayListPOE.java
+** Needed to parse COMPOUND_OF LEMMA AND LEMMA -> LEMMA
+** ArrayList<Pair> match(Pattern p), public int getIndexOfCognateOr()
+**
+
+
+
+* In file eng/EnglishLangToCode.java:
+** removed those keys that are already present in file data3.txt (mostly three letters codes)
+** would like to have automatic extration from the language module using
+https://en.wiktionary.org/wiki/Module:JSON_data
+or
+https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
+
+
+* In file eng/EtymologyPatterns.java 
+"DOT"   <-> textAfterSupersededPatternString="(?:[Ss]uperseded|[Dd]isplaced( native)?|[Rr]eplaced|[Mm]ode(?:l)?led on)";
+??      <-> textEquivalentToPatternString="equivalent to\\s*\\{\\{[^\\}]+\\}\\}"; 
+"PLUS"  <-> plusPatternString="\\+";  ;
+"DOT"   <-> dotPatternString="\\.|;";
+"COMMA" <-> commaPatternString=",";
+"FROM"  <-> fromPatternString="[Ff]rom|"+
+                  "[Bb]ack-formation (?:from)?|"+
+		  "[Aa]bbreviat(?:ion|ed)? (?:of|from)?|"+
+	          "[Cc]oined from|"+
+		  "[Bb]orrow(?:ing|ed)? (?:of|from)?|"+
+		  "[Cc]ontracted from|"+
+	          "[Aa]dopted from|"+
+                  "[Cc]alque(?: of)?|"+
+                  "[Ii]terative of|"+
+	          "[Ss]hort(?:hening|hen|hened)? (?:form )?(?:of|from)?|"+
+		  "[Tt]hrough|"+
+	          //"\\>"
+		  "[Aa]lteration of|"+
+		  "[Vv]ia|"+
+		  "[Dd]iminutive (?:form )?of|"+
+		  "[Uu]ltimately of|"+
+		  "[Vv]ariant of|"+
+	          "[Pp]et form of|"+
+		  "[Aa]phetic variation of|"+
+		  "[Dd]everbal of|"+
+		  "\\<"
+		  
+"COGNATE_WITH" <-> cognateWithPatternString="[Rr]elated(?: also)? to|"+
+            "[Cc]ognate(?:s)? (?:include |with |to |including )?|"+
+	    "[Cc]ompare (?:also )?|"+
+	    "[Ww]hence (?:also )?|"+
+	    "(?:[Bb]elongs to the )?[Ss]ame family as |"+
+	    "[Mm]ore at |"+
+	    "[Aa]kin to |"+
+	    "[Ss]ee(?:n)? (?:also )?"
+templatePatternString="\\{\\{";
+wiktionaryPatternString="(?:'')?\\[\\[";
+"COMPOUND_OF" <-> compoundOfPatternString="[Cc]ompound(?:ed)? (?:of|from) |"+
+            "[Mm]erg(?:ing |er )(?:of |with )?(?: earlier )?|"+
+	    "[Uu]niverbation of ";
+? <-> uncertainPatternString="[Oo]rigin uncertain";
+"ABOVE" <-> abovePatternString="[Ss]ee above";
+"YEAR" <-> yearPatternString="(?:[Aa].\\s*?[Cc].?|[Bb].?\\s*[Cc].?)?\\s*\\d++\\s*(?:[Aa].?\\s*[Cc].?|[Bb].?\\s*[Cc].?|th century|\\{\\{C\\.E\\.\\}\\})?";
+"AND" <-> andPatternString="\\s+and\\s+";
+"OR" <-> orPatternString="[^a-zA-Z0-9]or[^a-zA-Z0-9]";
+"WITH" <-> withPatternString="[^a-zA-Z0-9]with[^a-zA-Z0-9]";
+------------------------------------------------------------------
+
+compoundPatternString = "((COMPOUND_OF )"+
+	        "(LANGUAGE )?"+
+		"(LEMMA )"+
+		"(PLUS |AND |WITH )"+
+		"(LANGUAGE )?"+
+		"(LEMMA ))|"+
+		"((LANGUAGE )?"+
+	        "(LEMMA )"+
+		"(PLUS )"+
+		"(LANGUAGE )?"+
+		"(LEMMA ))"
+
+originPatternString = "(FROM )?")+//aggiungere word boundary/b?????????????
+	        "(LANGUAGE LEMMA |"+
+	        "LEMMA )"+
+		"(COMMA |DOT |OR )"
+
+cognatePatternString = "(COGNATE_WITH )"+//aggiungere word boundary/b?????????????
+	        "(?:(LANGUAGE LEMMA |LEMMA )+"+
+		"(COMMA |AND )?)+"+
+	        "(DOT )?"
+---------------------------

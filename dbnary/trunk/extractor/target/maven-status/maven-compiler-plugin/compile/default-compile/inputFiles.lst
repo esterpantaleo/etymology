@@ -42,6 +42,7 @@
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/rus/WiktionaryExtractor.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/swc/TreeStructureConverter.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/cli/CompareTradsAndIWLinks.java
+/Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/eng/EtymologyPatterns.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanOriginalExtractorWikiModel.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/WiktionaryGrep.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/jpn/JapaneseRelatedWordsExtractorWikiModel.java
@@ -54,6 +55,7 @@
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/por/PortugueseMorphoExtractorWikiModel.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/ind/WiktionaryDataHandler.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/mlg/WiktionaryExtractor.java
+/Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/Pair.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanMorphologyExtractor.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/por/PortugueseLangToCode.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/nor/WiktionaryExtractor.java
@@ -77,6 +79,7 @@
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/wiki/ClassBasedFilter.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dilaf/DilafLemonDataHandler.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/eng/ForeignLanguagesWiktionaryExtractor.java
+/Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/eng/ArrayListPOE.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/DbnaryModel.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/nld/NetherlandLangToCode.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/nld/WiktionaryExtractor.java
@@ -100,6 +103,7 @@
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/zho/ChineseTranslationExtractorWikiModel.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/iso639/ISO639_3.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/deu/GermanDeklinationExtractorWikiModel.java
+/Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/eng/POE.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/pol/PolishLangToCode.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/pol/DefinitionExpanderWikiModel.java
 /Users/esterpantaleo/src/etymology/dbnary/trunk/extractor/src/main/java/org/getalp/dbnary/ind/WiktionaryExtractor.java
