@@ -1,4 +1,6 @@
-<STYLE TYPE="text/css"> <!-- .indented { padding-left: 50pt; padding-right: 50pt; } --> </STYLE>
+<style type="text/css">
+.indented { padding-left: 50pt; padding-right: 50pt; }
+</style>
 #TO DO
 * Check if there is a memory leak
 * bug in FOREIGN: lavagga' utes : hu-suffix compound of 3 words
