@@ -1,3 +1,4 @@
+<STYLE TYPE="text/css"> <!-- .indented { padding-left: 50pt; padding-right: 50pt; } --> </STYLE>
 #TO DO
 * Check if there is a memory leak
 * bug in FOREIGN: lavagga' utes : hu-suffix compound of 3 words
@@ -117,7 +118,7 @@ https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
 "DOT"   <-> dotPatternString="\\.|;";<br />
 "COMMA" <-> commaPatternString=",";<br />
 "FROM"  <-> fromPatternString="[Ff]rom|"+<br />
-<pre>          "[Bb]ack-formation (?:from)?|"+<br />
+<p class="indented">          "[Bb]ack-formation (?:from)?|"+<br />
           "[Aa]bbreviat(?:ion|ed)? (?:of|from)?|"+<br />
           "[Cc]oined from|"+<br />
           "[Bb]orrow(?:ing|ed)? (?:of|from)?|"+<br />
@@ -137,22 +138,22 @@ https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
           "[Aa]phetic variation of|"+<br />
           "[Dd]everbal of|"+<br />
           "\\<"<br />
-</pre>		  
+	  </p>
 "COGNATE_WITH" <-> cognateWithPatternString="[Rr]elated(?: also)? to|"+<br />
-<pre>          "[Cc]ognate(?:s)? (?:include |with |to |including )?|"+<br />
+          "[Cc]ognate(?:s)? (?:include |with |to |including )?|"+<br />
           "[Cc]ompare (?:also )?|"+<br />
           "[Ww]hence (?:also )?|"+<br />
           "(?:[Bb]elongs to the )?[Ss]ame family as |"+<br />
           "[Mm]ore at |"+<br />
           "[Aa]kin to |"+<br />
           "[Ss]ee(?:n)? (?:also )?"<br />
-</pre>
+
 templatePatternString="\\{\\{";<br />
 wiktionaryPatternString="(?:'')?\\[\\[";<br />
 "COMPOUND_OF" <-> compoundOfPatternString="[Cc]ompound(?:ed)? (?:of|from) |"+<br />
-<pre>          "[Mm]erg(?:ing |er )(?:of |with )?(?: earlier )?|"+<br />
+          "[Mm]erg(?:ing |er )(?:of |with )?(?: earlier )?|"+<br />
           "[Uu]niverbation of ";<br />
-</pre>
+
 ? <-> uncertainPatternString="[Oo]rigin uncertain";<br />
 "ABOVE" <-> abovePatternString="[Ss]ee above";<br />
 "YEAR" <-> yearPatternString="(?:[Aa].\\s*?[Cc].?|[Bb].?\\s*[Cc].?)?\\s*\\d++\\s*(?:[Aa].?\\s*[Cc].?|[Bb].?\\s*[Cc].?|th century|\\{\\{C\\.E\\.\\}\\})?";<br />
@@ -162,7 +163,7 @@ wiktionaryPatternString="(?:'')?\\[\\[";<br />
 
 
 compoundPatternString = "((COMPOUND_OF )"+<br />
-<pre>          "(LANGUAGE )?"+<br />
+          "(LANGUAGE )?"+<br />
           "(LEMMA )"+<br />
           "(PLUS |AND |WITH )"+<br />
           "(LANGUAGE )?"+<br />
@@ -172,15 +173,13 @@ compoundPatternString = "((COMPOUND_OF )"+<br />
           "(PLUS )"+<br />
           "(LANGUAGE )?"+<br />
           "(LEMMA ))"<br />
-</pre>
 
 originPatternString = "(FROM )?")+//aggiungere word boundary/b?????????????<br />
-<pre>          "(LANGUAGE LEMMA |"+<br />
+          "(LANGUAGE LEMMA |"+<br />
           "LEMMA )"+<br />
           "(COMMA |DOT |OR )"<br />
-</pre>
+
 cognatePatternString = "(COGNATE_WITH )"+//aggiungere word boundary/b?????????????<br />
-<pre>          "(?:(LANGUAGE LEMMA |LEMMA )+"+<br />
+          "(?:(LANGUAGE LEMMA |LEMMA )+"+<br />
           "(COMMA |AND )?)+"+<br />
           "(DOT )?"<br />
-</pre>
