@@ -1,6 +1,3 @@
-<style type="text/css">
-.indented { padding-left: 50pt; padding-right: 50pt; }
-</style>
 #TO DO
 * Check if there is a memory leak
 * bug in FOREIGN: lavagga' utes : hu-suffix compound of 3 words
@@ -120,35 +117,35 @@ https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
 "DOT"   <-> dotPatternString="\\.|;";<br />
 "COMMA" <-> commaPatternString=",";<br />
 "FROM"  <-> fromPatternString="[Ff]rom|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Bb]ack-formation (?:from)?|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Aa]bbreviat(?:ion|ed)? (?:of|from)?|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Cc]oined from|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Bb]orrow(?:ing|ed)? (?:of|from)?|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Cc]ontracted from|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Aa]dopted from|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Cc]alque(?: of)?|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Ii]terative of|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Ss]hort(?:hening|hen|hened)? (?:form )?(?:of|from)?|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Tt]hrough|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          //"\\>"<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Aa]lteration of|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Vv]ia|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Dd]iminutive (?:form )?of|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Uu]ltimately of|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Vv]ariant of|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Pp]et form of|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Aa]phetic variation of|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Dd]everbal of|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "\\<"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Bb]ack-formation (?:from)?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Aa]bbreviat(?:ion|ed)? (?:of|from)?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Cc]oined from|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Bb]orrow(?:ing|ed)? (?:of|from)?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Cc]ontracted from|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Aa]dopted from|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Cc]alque(?: of)?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Ii]terative of|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Ss]hort(?:hening|hen|hened)? (?:form )?(?:of|from)?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Tt]hrough|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         //"\\>"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Aa]lteration of|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Vv]ia|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;         "[Dd]iminutive (?:form )?of|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Uu]ltimately of|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Vv]ariant of|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Pp]et form of|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Aa]phetic variation of|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Dd]everbal of|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "\\<"<br />
 
 "COGNATE_WITH" <-> cognateWithPatternString="[Rr]elated(?: also)? to|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Cc]ognate(?:s)? (?:include |with |to |including )?|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Cc]ompare (?:also )?|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Ww]hence (?:also )?|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(?:[Bb]elongs to the )?[Ss]ame family as |"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Mm]ore at |"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Aa]kin to |"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "[Ss]ee(?:n)? (?:also )?"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Cc]ognate(?:s)? (?:include |with |to |including )?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Cc]ompare (?:also )?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Ww]hence (?:also )?|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(?:[Bb]elongs to the )?[Ss]ame family as |"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Mm]ore at |"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Aa]kin to |"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "[Ss]ee(?:n)? (?:also )?"<br />
 
 templatePatternString="\\{\\{";<br />
 wiktionaryPatternString="(?:'')?\\[\\[";<br />
@@ -165,23 +162,23 @@ wiktionaryPatternString="(?:'')?\\[\\[";<br />
 
 
 compoundPatternString = "((COMPOUND_OF )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(LANGUAGE )?"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(LEMMA )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(PLUS |AND |WITH )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(LANGUAGE )?"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(LEMMA ))|"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "((LANGUAGE )?"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(LEMMA )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(PLUS )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(LANGUAGE )?"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(LEMMA ))"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LANGUAGE )?"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LEMMA )"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(PLUS |AND |WITH )"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LANGUAGE )?"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LEMMA ))|"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "((LANGUAGE )?"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LEMMA )"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(PLUS )"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LANGUAGE )?"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LEMMA ))"<br />
 
 originPatternString = "(FROM )?"+//aggiungere word boundary/b?????????????<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(LANGUAGE LEMMA |"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "LEMMA )"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(COMMA |DOT |OR )"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(LANGUAGE LEMMA |"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "LEMMA )"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(COMMA |DOT |OR )"<br />
 
 cognatePatternString = "(COGNATE_WITH )"+//aggiungere word boundary/b?????????????<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(?:(LANGUAGE LEMMA |LEMMA )+"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(COMMA |AND )?)+"+<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp          "(DOT )?"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(?:(LANGUAGE LEMMA |LEMMA )+"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(COMMA |AND )?)+"+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          "(DOT )?"<br />
