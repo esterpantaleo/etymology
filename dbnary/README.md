@@ -35,6 +35,7 @@
 * travel expense reports
 * which kind of resources can I use to: store the data etc
 * which kind of technical support can I get
+
 #REPORT OF MERGING WITH Dbnary
 * In file pom.txt
  * using a new ontology owl file that includes an Etymological Ontology - this ontology will be improved soon
