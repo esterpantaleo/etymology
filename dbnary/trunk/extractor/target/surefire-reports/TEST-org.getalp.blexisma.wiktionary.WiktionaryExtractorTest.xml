@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="19" failures="0" name="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" time="0.018" errors="0" skipped="0">
+<testsuite tests="19" failures="0" name="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" time="0.01" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/Contents/Home/jre/lib"/>
@@ -62,23 +62,23 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLeadingChars" time="0.001"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testInsiders" time="0.002"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testTrailingChars" time="0.002"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLeadingChars" time="0"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testInsiders" time="0"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testAllWhites" time="0.001"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testEmpty" time="0"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testEmpty" time="0.001"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testMacroIsIgnored" time="0"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLinkIsKeptInHumanReadableForm" time="0"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLinkIsKeptInDefaultForm" time="0.001"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLinkIsKeptInHumanReadableForm" time="0.001"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLinkIsKeptInDefaultForm" time="0"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLinkWithoutOccurenceIsKeptInDefaultForm" time="0"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLinkWithoutOccurenceIsHumanReadableForm" time="0"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testLinkWithStupidlyEncodedMorphology" time="0"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testDefWithStupidlyEncodedMorphology" time="0"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testDocumentationExampleNonHumanReadable" time="0"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testDocumentationExampleHumanReadable" time="0"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testEmphasized" time="0"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testEmphasized" time="0.001"/>
   <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testXmlComments1" time="0"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testXmlComments2" time="0.013"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testXmlCommentsOnRamangerie" time="0"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testDefinitionToHumanReadable" time="0"/>
-  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testTrailingChars" time="0"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testXmlComments2" time="0"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testXmlCommentsOnRamangerie" time="0.003"/>
+  <testcase classname="org.getalp.blexisma.wiktionary.WiktionaryExtractorTest" name="testDefinitionToHumanReadable" time="0.001"/>
 </testsuite>

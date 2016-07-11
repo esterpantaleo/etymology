@@ -1,22 +1,19 @@
+#DOCUMENTATION
+* the grant proposal https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary
+* the talk page of the grant proposal https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary
+* an extract of the RDF output in file /Volumes/TOSHIBA\ EXT/DBnary/extract_trance.rtf
+
 #TO DO
+* View the javadoc
+* Set emacs for java
 * Check if there is a memory leak
-* bug in FOREIGN: lavagga' utes : hu-suffix compound of 3 words
-* write the java code for symultaneous extraction of bot FOREIGN and ENGLISH words
+* symultaneous extraction of bot FOREIGN and ENGLISH words
 * add try for each word with a warning if there is a parsing error
 * Automatically extract lua language modules
 * Use lua code to parse templates and links
 * parse template {{sense: connection}}
 * parse template {{PIE root|en|bleh_3}}
-
-#DOCUMENTATION
-* the grant proposal https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary
-* the talk page of the grant proposal https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary
-* an extract of the RDF output in file /Volumes/TOSHIBA\ EXT/DBnary/extract_trance.rtf 
-
-#QUESTIONS
-* travel expense reports
-* which kind of resources can I use to: store the data etc
-* which kind of technical support can I get
+* bug in FOREIGN: lavagga' utes : hu-suffix compound of 3 words
 
 #TECHNICAL DETAILS
 ##VISUALIZATION
@@ -34,8 +31,11 @@
 * https://www.wikidata.org/wiki/Wikidata:Wiktionary/Development/Proposals/2015-05
 * https://www.wikidata.org/wiki/Wikidata:Wiktionary
 * https://www.wikidata.org/wiki/Wikidata:Data_collaborators#Machine-readable_Wiktionary
-
-#MERGING WITH Dbnary
+#QUESTIONS TO WIKIMEDIA TECH STAFF
+* travel expense reports
+* which kind of resources can I use to: store the data etc
+* which kind of technical support can I get
+#REPORT OF MERGING WITH Dbnary
 * In file pom.txt
  * using a new ontology owl file that includes an Etymological Ontology - this ontology will be improved soon
  * added javadoc - I'm using "mvn site" and "mvn javadoc:jar" 
@@ -96,15 +96,12 @@
   * to parse "COMPOUND_OF LEMMA AND LEMMA" -> "LEMMA"
   * ArrayList<Pair> match(Pattern p), public int getIndexOfCognateOr()
 
-
-
 * In file eng/EnglishLangToCode.java:
  * removed those keys that are already present in file data3.txt (mostly three letters codes)
  * would like to have automatic extraction from the language module using
 https://en.wiktionary.org/wiki/Module:JSON_data
 or
 https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format
-
 
 * In file eng/EtymologyPatterns.java <br />
 

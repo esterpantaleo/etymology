@@ -17,45 +17,51 @@ import org.slf4j.LoggerFactory;
  */
 
 /**
- * An ArrayList of POE, Part of Etymology
+ * An ArrayList of POE-s, Parts of Etymology
  */
 public class ArrayListPOE extends ArrayList<POE>{
     static Logger log = LoggerFactory.getLogger(ArrayListPOE.class);
 
     /**
-     * Used to replace "COMPOUND_OF LEMMA AND LEMMA" with a single "LEMMA"
+     * This function is used to replace "COMPOUND_OF LEMMA AND LEMMA" and equivalents 
+     * with a single "LEMMA"
      * Given a pair of indexes it replaces whatever subarray of ArrayListPOE 
      * with a "LEMMA" POE of type compound|lang|word1|word2
-     * @param m an ArrayList&lt;Pair&gt; specifying the start and end indexes of a subarray of ArrayListPOE
+     * @param positions an ArrayList&lt;Pair&gt; specifying the start and end indexes of a subarray of ArrayListPOE
      */ 
-    public void replaceMatch(ArrayList<Pair> m){
-        StringBuilder string = new StringBuilder();  
-        for (int i=m.size()-1; i>=0; i--){//iterate starting from ArrayList end  
-            int counter = 0; 
+    public void replaceMatch(ArrayList<Pair> positions){
+        StringBuilder string = new StringBuilder();
+	//iterate over elements of input positions
+	//starting from the last Pair in ArrayList positions
+        for (int i=positions.size()-1; i>=0; i--){
+	    int start = positions.get(i).start, end = positions.get(i).end;
+	    int counter = 0; 
             string.setLength(0);
-            wholeloop:for (int k=m.get(i).start; k<m.get(i).end+1; k++){
-	        partloop: for (int j=0; j<this.get(k).part.size(); j++){
-                    if (this.get(k).part.get(j).equals("LEMMA")){
-                        if (counter == 0){
+	    
+            wholeloop:for (int k=start; k<end+1; k++){
+		POE poe = this.get(k);
+	        partloop: for (int j=0; j<poe.part.size(); j++){
+                    if (poe.part.get(j).equals("LEMMA")){
+                        if (counter == 0){//set template as compound
                             string.append("compound|");
-			    if (this.get(k).args.get("lang") != null){
-                                string.append(this.get(k).args.get("lang"));
+			    if (poe.args.get("lang") != null){
+                                string.append(poe.args.get("lang"));
 			    } else {
-                                log.debug("no language in {}", this.get(k).args);
+                                log.debug("no language in {}", poe.args);
 			    }
 			    string.append("|");
-                            string.append(this.get(k).args.get("word1"));
+                            string.append(poe.args.get("word1"));
                             string.append("|");
                             counter = 1;
                             break partloop;
-		        } else {
-                            if (this.get(k).args != null){
-			        string.append(this.get(k).args.get("word1"));
+		        } else {//push words back in compound template
+                            if (poe.args != null){
+			        string.append(poe.args.get("word1"));
                             }
 			    POE p = new POE(string.toString(), 1);//1 corresponds to "TEMPLATE"
-			    this.set(m.get(i).start, p);
-			    if (m.get(i).end>m.get(i).start){
-			        this.subList(m.get(i).start+1, m.get(i).end+1).clear();
+			    this.set(start, p);
+			    if (end>start){
+			        this.subList(start+1, end+1).clear();
 			    }
                             break wholeloop; 
 			}
@@ -93,9 +99,10 @@ public class ArrayListPOE extends ArrayList<POE>{
 
         arrayListPosition.add(c);
         for (int i=0; i<this.size(); i++){
-            for (int j=0; j<this.get(i).part.size(); j++){
+	    POE poe = this.get(i);
+            for (int j=0; j<poe.part.size(); j++){
                 arrayListInteger.add(i);
-                c += this.get(i).part.get(j).length()+1;
+                c += poe.part.get(j).length()+1;
                 arrayListPosition.add(c);
 	    }
 	}

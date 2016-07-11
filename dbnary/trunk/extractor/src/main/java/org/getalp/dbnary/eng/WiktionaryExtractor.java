@@ -459,16 +459,7 @@ public class WiktionaryExtractor extends AbstractWiktionaryExtractor {
     public static ArrayListPOE toArrayListPOE(String s){
 	ArrayListPOE a = new ArrayListPOE();
 	ArrayList<Pair> templatesLocation = WikiTool.locateEnclosedString(s,"{{","}}");
-	//System.out.format("templates: ");
-	//for (Pair pp: templatesLocation){
-	//    System.out.format("(%s,%s) ",pp.start,pp.end);
-	//}
-	//System.out.format("\nlinks: ");
 	ArrayList<Pair> linksLocation = WikiTool.locateEnclosedString(s,"[[","]]");
-	//for (Pair pp: linksLocation){
-	//    System.out.format("(%s,%s) ",pp.start,pp.end);
-	//}
-	//System.out.format("\n");
 	//TODO:print to a file :1) lemma id; 2) text between parentheses
 	//match against each string in EtymologyPatterns.possiblePattern
 	Matcher possibleMatcher = EtymologyPatterns.possiblePattern.matcher(s);
