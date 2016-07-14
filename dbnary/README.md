@@ -4,37 +4,69 @@
 * an extract of the RDF output in file /Volumes/TOSHIBA\ EXT/DBnary/extract_trance.rtf
 
 #TO DO
-* View the javadoc
-* Set emacs for java
-* Check if there is a memory leak
-* symultaneous extraction of bot FOREIGN and ENGLISH words
-* add try for each word with a warning if there is a parsing error
-* Automatically extract lua language modules
+* select a subset of English words in wiktionary that are very popular; make sure they are represented correctly
+* symultaneous extraction of both FOREIGN and ENGLISH words
+* Automatically extract lua language modules:
+ * https://en.wiktionary.org/wiki/Module:etymology_languages/data
+ * https://en.wiktionary.org/wiki/Module:etymology
+ * https://en.wiktionary.org/wiki/Module:etymology_languages/templates
+ * https://en.wiktionary.org/wiki/Module:JSON_data
+ * https://en.wiktionary.org/wiki/Module:languages
+ * https://en.wiktionary.org/wiki/Wiktionary:List_of_languages/special
+ * https://en.wiktionary.org/wiki/Wiktionary:List_of_families
+
+ * https://en.wiktionary.org/wiki/Category:All_languages
+ * https://en.wiktionary.org/wiki/Index:All_languages
+ * https://en.wiktionary.org/wiki/Category:Language_indexes
+ * https://en.wiktionary.org/wiki/Category:Data_modules
+ * https://en.wiktionary.org/wiki/Module:labels/data
+ * https://en.wiktionary.org/wiki/Module:labels/data/regional
+ * https://en.wiktionary.org/wiki/Module:labels/data/subvarieties
+ * https://en.wiktionary.org/wiki/Module:wikimedia_languages/data
+ * https://en.wiktionary.org/wiki/Module:wikimedia_languages
+ * https://en.wiktionary.org/wiki/Module:IPA/data
+ * https://en.wiktionary.org/wiki/Module:list_of_languages,_csv_format
+ * https://en.wiktionary.org/wiki/Module:grc:Dialects
+ * https://en.wiktionary.org/wiki/Module:families/data
+ * https://en.wiktionary.org/wiki/Module:families/by_name
+ * https://en.wiktionary.org/wiki/Module:form_of/data
 * Use lua code to parse templates and links
 * parse template {{sense: connection}}
 * parse template {{PIE root|en|bleh_3}}
+* parse template {{rfv-etymology|lang=en}} ?
+* parse template {{term/t|gem-pro|*fadēr}} ?
+* check language LL. is correctly parsed
+* parse Coined by [[w:J. R. R. Tolkien|J.R.R. Tolkien]] in 1937.
+* parse {{calque|anti-|body|etyl lang=de|etyl term=Antikörper|lang=en}}.
+* {{etyl|und}}.
+* {{unk.}}
+* parse {{rel-top|Cognates}} ??
+* OR From {{etyl|fr|en}} {{term|assassin|lang=fr}} or {{etyl|it|en}} {{term|assassino|lang=it}}, from either {{etyl|ar|en}} {{term|حَشَّاشِين||hashish users|lang=ar}}, or {{term|أَسَاسِيُّون|lang=ar}}.
 * bug in FOREIGN: lavagga' utes : hu-suffix compound of 3 words
+* integrate this? https://www.knaw.nl/en/news/news/etymologiebank-online
+* integrate this? https://en.wikipedia.org/wiki/List_of_medical_roots,_suffixes_and_prefixes
+* Set emacs for java
+* Check if there is a memory leak
+* add try for each word with a warning if there is a parsing error
+
+* some examples:
+ * For an example of a medical etymology, the word "diabetes" is borrowed from the Greek word meaning "a siphon." The 2nd-century A.D. Greek physician, Aretus the Cappadocian, named the condition "diabetes." He explained that patients with it had polyuria and "passed water like a siphon."
+ * The English word milk is clearly a cognate of German Milch, Dutch melk, Russianмолоко (moloko) and Croatian mlijeko.[4] On the other hand, French lait, Catalan llet, Italian latte, Romanian lapte, and Spanish leche (all meaning "milk") are less obviously cognates of Ancient Greek γάλακτος gálaktos (genitive singular of γάλα gála, "milk"), a relationship more evidently seen through the intermediate Latin lac "milk", as well as the English word lactic and other terms borrowed from Latin.
+ * cognates may be semantic opposites. For instance, while the Hebrew word חוצפה chutzpah means "impudence," its Classical Arabic cognate حصافة ḥaṣāfah means "sound judgment."[5] English black and Polish biały, meaning white, are cognates with opposite meanings, both deriving from the PIE *bʰleg-, meaning, "to burn or shine."
+ * brunch {{blend|breakfast|lunch|lang=en}}.
+ * greed {{back-form|greedy}}
+ * hobbit Coined by [[w:J. R. R. Tolkien|J.R.R. Tolkien]] in 1937. Ostensibly from {{etyl|ang|en}} {{term|holbytla||hole-builder|lang=ang}}.
+ * chortle: Coined by [[w:Lewis Carroll|Lewis Carroll]] in ''[[w:Jabberwocky|Jabberwocky]]'', apparently as a {{blend|chuckle|snort|nocap=1|lang=en}}.
+ * antibody: {{calque|anti-|body|etyl lang=de|etyl term=Antikörper|lang=en}}.
+ * {{en-verb|head={{l|en|give}} {{l|en|up}}|gives up|giving up|gave up|given up}}. First attested in the United States in the 1920s period”. Further, one should state (briefly) when (and how) other senses came into use, if they differ from earlier meanings.
+ * http://list25.com/25-interesting-and-somewhat-strange-word-origins/5/
+
 
 #TECHNICAL DETAILS
-##VISUALIZATION
-* for the visualization the expert is yurik
-* link to an interesting visualization https://en.wikipedia.org/wiki/List_of_most_expensive_paintings
-* https://www.mediawiki.org/wiki/Extension:Graph/Interactive_Graph_Tutorial
-* https://www.mediawiki.org/wiki/Extension:Graph/Demo#Trees
-* jsonconfig extension https://phabricator.wikimedia.org/T120452
-##IMPLEMENTATION
-* to implement on http://tools.wmflabs.org/ as a tools lab project, i.e. virtual machines and not production server, where I can create my own database 
-##DATABASE
-* database updated at any article update
-* sparql query to generate data just in time (not stored - caching if needed)
 ##INTEGRATION OF WIKTIONARY
 * https://www.wikidata.org/wiki/Wikidata:Wiktionary/Development/Proposals/2015-05
 * https://www.wikidata.org/wiki/Wikidata:Wiktionary
 * https://www.wikidata.org/wiki/Wikidata:Data_collaborators#Machine-readable_Wiktionary
-#QUESTIONS TO WIKIMEDIA TECH STAFF
-* travel expense reports
-* which kind of resources can I use to: store the data etc
-* which kind of technical support can I get
 
 #REPORT OF MERGING WITH Dbnary
 * In file pom.txt
@@ -162,3 +194,21 @@ compoundPatternString = "((COMPOUND_OF )(LANGUAGE )?(LEMMA )(PLUS |AND |WITH )(L
 "AND" <-> andPatternString="\\s+and\\s+";<br />
 "OR" <-> orPatternString="[^a-zA-Z0-9]or[^a-zA-Z0-9]";<br />
 "WITH" <-> withPatternString="[^a-zA-Z0-9]with[^a-zA-Z0-9]";<br />
+
+
+#NOTES TO SELF
+##VISUALIZATION
+* for the visualization the expert is yurik
+* link to an interesting visualization https://en.wikipedia.org/wiki/List_of_most_expensive_paintings
+* https://www.mediawiki.org/wiki/Extension:Graph/Interactive_Graph_Tutorial
+* https://www.mediawiki.org/wiki/Extension:Graph/Demo#Trees
+* jsonconfig extension https://phabricator.wikimedia.org/T120452
+##IMPLEMENTATION
+* to implement on http://tools.wmflabs.org/ as a tools lab project, i.e. virtual machines and not production server, where I can create my own database
+##DATABASE
+* database updated at any article update
+* sparql query to generate data just in time (not stored - caching if needed)
+##QUESTIONS TO WIKIMEDIA TECH STAFF
+* travel expense reports
+* which kind of resources can I use to: store the data etc
+* which kind of technical support can I get
