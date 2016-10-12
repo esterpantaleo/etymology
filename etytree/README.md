@@ -2,7 +2,7 @@
 ## TO DO
 * collapsing not working for mindmaps
 
-* tooltip gets translated when zooming
+* tooltip gets spatially translated when zooming
 
 * in disambiguation pages, translation jumps?
 
@@ -12,7 +12,26 @@
 
 * fix timeline axis for caffellatte
 
-* aggiungi controversie relative a etimologie
+* add etymology controversies
+
+* SPARQL queries: http://biohackathon.org/d3sparql/  d3dendrogram
+http://togostanza.org/sparql
+
+PREFIX up: <http://purl.uniprot.org/core/>
+PREFIX tax: <http://purl.uniprot.org/taxonomy/>
+SELECT ?root_name ?parent_name ?child_name
+FROM <http://togogenome.org/graph/uniprot>
+WHERE
+{
+  VALUES ?root_name { "Tardigrada" }
+    ?root up:scientificName ?root_name .
+      ?child rdfs:subClassOf+ ?root .
+        ?child rdfs:subClassOf ?parent .
+	  ?child up:scientificName ?child_name .
+	    ?parent up:scientificName ?parent_name .
+	    }
+
+
 
 ## Some useful reference material
 
