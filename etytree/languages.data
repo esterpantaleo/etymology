@@ -88,10 +88,6 @@
 "year":700,
 "quote_year": "between the 8th and 16th centuries"
 },{
-"name": "Old English",
-"year":400,
-"quote_year": "5th century to the late 11th century"
-},{
 "name": "Middle English",
 "year":1066,
 "quote_year": "(1066) until the late 15th century"
@@ -149,10 +145,6 @@
 "name":"Spanish",
 "year":800,
 "quote_year": "from the 9th century"
-},{
-"name":"Old French",
-"year":800,
-"quote_year": "from the 9th century to the 14th century"
 },{
 "name":"French",
 "year":1300
