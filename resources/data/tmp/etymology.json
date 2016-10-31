@@ -1,0 +1,65 @@
+{
+    "language":  "Ancient Greek",
+    "name":  "ἐτυμολογία (etumología)",
+    "type": "noun",
+    "definition_english": "etymology",
+    "children": [{
+        "language": "Ancient Greek",
+        "name": "ἔτυμον (étumon) ",
+        "definition_english": "true sense",
+        "position": "left",
+        "order": 0,
+        "type": "noun"
+    },{
+        "language": "Ancient Greek",
+        "name": "-λογία (-logía)",
+        "definition_english": "study of",
+        "position": "left",
+        "order": 1,
+        "type": "noun"
+    },{
+        "language" : "Russian",
+        "name": "этимология (etimológija)",
+        "definition_english": "etymology", 
+        "type": "noun",
+        "link": "borrowing"
+    },{
+        "language": "Latin",
+        "name": "etymologia",
+        "definition_english": "etymology",
+        "type": "noun",
+        "children": [{
+            "language": "Old French",
+            "name": "ethimologie",
+            "definition_english": "etymology",
+      	    "type": "noun",
+            "children": [{
+                "language": "Middle French",
+                "name": "etimologie",
+                "definition_english": "etymology",
+                "type": "noun"
+            },{
+                "language": "Middle English",
+                "name": "etimologie",
+                "definition_english": "etymology",  
+                "type": "noun",
+                "children": [{
+                    "language": "English",
+                    "name": "etymology",
+                    "long_definition_english": ["(uncountable) The study of the historical development of languages, particularly as manifested in individual words.","(countable) An account of the origin and historical development of a word."],
+                    "type": "noun"
+                }]
+            }] 
+        },{
+            "language": "Spanish",
+            "name": "etimología",
+            "definition_english": "etymology",    
+            "type": "noun"    
+        },{
+            "language": "Italian",
+            "name":"etimologia",
+            "definition_english": "etymology", 
+            "type": "noun"
+        }]
+    }]
+}

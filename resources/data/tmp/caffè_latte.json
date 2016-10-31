@@ -1,0 +1,29 @@
+{
+    "language": "Italian",
+    "name": ["caffè latte","caffelatte"],
+    "type": "noun",
+    "long_definition_english": "Espresso coffee with steamed milk.",
+    "children": [{
+        "language": "Italian",
+        "name": "caffè",
+        "type": "noun",
+        "definition_english": "coffee",
+        "year": 1615,
+        "position": "left",
+        "order": 0
+    },{
+        "language": "Italian",
+        "name": "latte",
+        "type": "noun",
+        "definition_english": "milk",
+        "position": "left",
+        "order":1
+    },{
+        "language": "English",
+        "name": "latte",
+        "type": "noun",
+        "long_definition_english": "Abbreviation of caffè latte, Italian. A drink of coffee made from espresso and steamed milk, generally topped with foam. A similar drink, where the espresso is replaced with some other flavoring ingredient such as chai, maté or matcha (green tea).",
+        "link": "borrowing",
+        "link_note_english": "borrowing (abbreviation)"
+    }]
+}

@@ -1,0 +1,213 @@
+{ 
+   "language": "PIE",
+   "name": "*h₂melǵ-",
+   "definition_english": ["milk","to milk"],
+   "type": ["noun","verb"],
+   "children": [{
+      "language":"Latin",
+      "name": "mulgēre",
+      "type": "verb",
+      "definition_english": ["to milk","extract"],
+      "children": [{  
+          "language":"Vulgar Latin",
+          "name": "mŭlgĕre",
+          "type": "verb",
+          "definition_english": "to milk",
+          "children": [{
+              "language": "Italian",
+              "name": "mungere",
+              "type": "verb",
+              "definition_english": "to milk"
+          },{
+              "language": "Catalan",
+              "name": "munyir",
+              "type": "verb",
+      	      "definition_english": "to milk"
+          },{
+              "language": "Romanian",
+              "name": "a mulge",
+              "type": "verb",
+              "definition_english": "to milk" 
+          },{
+              "language":"Aromanian",
+              "name": ["mulgu","murgu"],
+              "type": "verb",
+              "definition_english":"I milk"
+          },{
+              "language":"Galician",
+              "name": "muxir",
+              "type": "verb",
+              "definition_english": "to milk"
+          },{
+              "language": "Occitan",
+              "name": "mólzer",
+              "type": "verb",
+              "definition_english": "to milk"              
+          },{
+              "language": "Portuguese",
+              "name": "mungir",
+              "type": "verb",    
+              "definition_english": "to milk"
+          },{
+              "language": "Spanish",
+              "name": "mecer",
+              "type":"verb",
+              "definition_english":"(rural, Asturias) to milk"
+          }]
+      }]
+   },{      
+      "language": "Ancient Greek",
+      "name": "ἀμέλγω ‎(amélgō)",
+      "long_definition_english": ["I milk","I press out, squeeze out, suck",
+"I drink, sip, imbib"]
+   },{
+      "language": "Proto-Slavic",
+      "name": "*melko",
+      "children": [{
+          "language": "Russian",
+          "name": "молоко́(molokó)",
+          "type": "noun",
+          "definition_english": "milk"
+      },{
+          "language": "Ukrainian",
+          "name": "молоко (molokó)", 
+          "type": "noun",
+          "definition_english": "(uncountable) milk"
+      },{
+          "language": "Belarusian",
+          "name": "малако́ ‎(malakó)",
+          "type": "noun",
+          "definition_english": "milk"
+      },{
+          "language": "Bulgarian",
+          "name": "мля́ко ‎(mlják)",
+          "type": "noun",           
+          "definition_english": "milk"  
+      },{
+          "language": "Macedonian", 
+          "name": "млеко ‎(mleko) ",
+          "type": "noun",       
+          "definition_english": "milk" 
+      },{
+          "language": "Serbo-Croatian",
+          "name": "млеко ‎(mleko) ",       
+          "type": "noun",           
+          "definition_english": "milk"   
+      },{
+          "language": "Slovene",
+          "name":"mleko",
+          "type": "noun",
+          "definition_english": "milk" 
+      },{
+          "language": "Czech",
+          "name": "mléko",
+          "type": "noun",
+          "definition_english": "milk"
+      },{
+          "language":"Kashubian",
+          "name": "mlékò",
+          "type": "noun",
+          "definition_english": "milk"
+      },{
+          "language":"Polabian",
+          "name": "mlåkă",
+          "type": "noun",
+          "definition_english": "milk"
+      },{
+          "language":"Polish",
+          "name": "mleko",
+          "type": "noun",
+          "definition_english": "milk"
+      },{
+          "language":"Slovak",
+          "name": "mlieko",
+          "type": "noun",   
+          "definition_english": "milk"  
+      },{
+          "language":"Lower Sorbian",
+          "name": "mloko",
+          "type": "noun", 
+          "long_definition_english": "milk, white liquid produced by the mammary glands of female mammals to nourish their young",
+          "definition_english": "milk"
+      },{  
+          "language":"Upper Sorbian",
+          "name": "mloko",
+          "type": "noun",
+          "definition_english": "milk" 
+      }]
+   },{
+      "language": "Proto-Slavic",
+      "name": "*mьlsti",
+      "type": "verb",
+      "definition_english": "to milk"
+   },{
+      "language": "Proto-Germanic",
+      "name": "*meluks",
+      "definition_english": "milk",
+      "children": [{
+         "language": "Old High German",
+         "name": "miluh",
+         "children": [{ 
+            "language": "Old Saxon",
+            "name": "miluk"
+         },{
+            "language": "German",
+            "name": "milch",
+            "long_definition_english":["milk; white liquid produced by female animals for their young to drink",
+"a white fluid that is exuded by certain plants","a white liquid that is a mixture of other substances, where one of the components is very finely distributed",
+"the white semen of a male fish"],
+            "type":"noun"
+         }]
+      },{
+         "language": "Old English",
+         "name": ["meolc", "meoluc","milc"],
+         "definition_english": "milk",
+         "type": "noun",
+         "children": [{
+            "language": "Middle English",
+            "name": ["milk", "mylk", "melk", "mulc"],
+            "type": "noun",       
+            "definition_english": "",
+            "children": [{
+               "language": "English",
+               "name": "milk",
+               "type": "noun",
+               "long_definition_english": ["A white liquid produced by the mammary glands of female mammals to nourish their young. From certain animals, especially cows, it is a common food for humans as a beverage or used to produce various dairy products such as butter, cheese, and yogurt.", "An individual serving of milk.","(uncountable) A white (or whitish) liquid obtained from a vegetable source such as soy beans, coconuts, almonds, rice, oats. Also called non-dairy milk.", "The ripe, undischarged spat of an oyster.", "(uncountable, slang) Semen."]
+            }]
+         }]
+      },{
+         "language": "Old Norse",
+         "name": ["mjolk", "mjǫlk"],
+         "definition_english":"milk",
+         "type":"noun",
+         "children": [{
+              "language": "Danish",
+              "name": "mælk",
+              "long_definition_english":["milk","(rare) milt, roe (also mælke)"],
+              "type":"noun"
+         },{
+              "language": "Icelandic",
+              "name": "mjólk",
+              "long_definition_english":["milk","any liquid resembling milk, as the liquid within a coconut (e.g. kókosmjólk), the juice or sap of certain plants (e.g. fíflamjólk), or various pharmaceutical preparations",
+"(rare) milt from a fish"],
+              "type":"noun" 
+         },{
+              "language": "Faroese",
+              "name": "mjólk",
+              "definition_english":"milk",
+              "type":"noun" 
+         },{
+              "language": "Norwegian",
+              "name": ["melk", "mjølk"],
+              "type":"noun",
+              "long_definition_english": ["milk (nutritious liquid produced by a lactating mammalian mother)",
+"(botany) A juice from plants that looks like milk."]
+         },{
+              "language": "Swedish",
+              "name": "mjölk",
+              "type":"noun",
+              "definition_english":"milk"
+         }]  
+      }]
+   }]
+}     
