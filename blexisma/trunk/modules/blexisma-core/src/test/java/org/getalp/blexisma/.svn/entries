@@ -1,46 +1,0 @@
-10
-
-dir
-1063
-svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/blexisma/trunk/modules/blexisma-core/src/test/java/org/getalp/blexisma
-svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/blexisma
-
-
-
-2012-01-24T14:21:26.564025Z
-1022
-serasset
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-13bcae58-2480-4095-8501-c3891a7c0856
-
-impl
-dir
-
-vectorialbase
-dir
-
-syntax
-dir
-
-semanalysis
-dir
-
-syntaxanalysis
-dir
-
-semnet
-dir
-

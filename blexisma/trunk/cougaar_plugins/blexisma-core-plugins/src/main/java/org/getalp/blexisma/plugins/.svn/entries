@@ -1,46 +1,0 @@
-10
-
-dir
-1063
-svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/blexisma/trunk/cougaar_plugins/blexisma-core-plugins/src/main/java/org/getalp/blexisma/plugins
-svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/blexisma
-
-
-
-2012-08-29T13:14:36.498723Z
-1062
-serasset
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-13bcae58-2480-4095-8501-c3891a7c0856
-
-semanticlearning
-dir
-
-syntax
-dir
-
-semanalysis
-dir
-
-semdictionary
-dir
-
-dummy
-dir
-
-syntaxtreebuilder
-dir
-

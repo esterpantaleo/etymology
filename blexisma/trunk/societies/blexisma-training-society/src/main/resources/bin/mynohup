@@ -1,4 +1,0 @@
-#! /bin/bash
-output=$1
-shift
-nohup "$@" > $output 2>&1 &

@@ -1,89 +1,0 @@
-10
-
-dir
-1063
-svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/blexisma/trunk/cougaar_plugins
-svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/blexisma
-
-
-
-2012-08-29T13:14:36.498723Z
-1062
-serasset
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-13bcae58-2480-4095-8501-c3891a7c0856
-
-blexisma-sygfran-provider
-dir
-
-blexisma-treetagger-provider
-dir
-
-blexisma-broker
-dir
-
-src
-dir
-
-blexisma-core-plugins
-dir
-
-blexisma-stanford-provider
-dir
-
-pom.xml
-file
-
-
-
-
-2016-01-23T08:22:31.000000Z
-20f8e821d7376114375cf74e1d5a8ff5
-2011-10-14T06:08:48.695464Z
-867
-alabadie
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2940
-
-blexisma-cougaar-commons
-dir
-
-blexisma-nosyntax-provider
-dir
-
-blexisma-sample-ping
-dir
-

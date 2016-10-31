@@ -1,3 +1,0 @@
-#!/bin/bash
-
-bin/launch -d -s WiktionaryBasedSygfranTrainingSociety.xml -n BlexismaMain
