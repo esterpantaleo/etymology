@@ -226,7 +226,7 @@ var toArray = function(item, arr, d){
 };
 
 function loadTreeFromFile(mynamefile){
-    hopscotch.endTour();    
+    //hopscotch.endTour();    
     var namefile = "tmp/" + mynamefile.split(' ').join('_') + ".json";
     treeJSON = d3.json(namefile, function(error, treeData) {    
             d3.select("#show-time")
@@ -250,10 +250,10 @@ function loadTreeFromFile(mynamefile){
             tmpTreeData = [],
             myTreeData = null;
 	    clean();
-            if (playTour){
-                hopscotch.startTour(tour2);
-                playTour = false;
-            }
+            //if (playTour){
+            //    hopscotch.startTour(tour2);
+            //    playTour = false;
+            //}
             //if treeData is scalar (i.e., json file does not have multiple etymology trees)
             //make it into an array of size one
             if (!isArray(treeData)){
@@ -878,7 +878,7 @@ function loadTreeFromFile(mynamefile){
                                 .style("opacity", 0);
 			});
 
-                    // Change the circle fill depending on whether it has children and is collapsed
+                    // Change the circle fill depending on whether it has children and it is collapsed
                     node.select("rect.nodeCircle")
 		        .attr("width", 33)
                         .style("fill", function(d) {
