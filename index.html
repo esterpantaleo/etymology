@@ -121,7 +121,6 @@ input:focus::-moz-placeholder { color:transparent; }
 input:focus:-ms-input-placeholder { color:transparent; } 
 </style>
 
-
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="vendors/css/hopscotch.min.css">
@@ -132,7 +131,8 @@ input:focus:-ms-input-placeholder { color:transparent; }
 <script src="vendors/js/hopscotch.min.js"></script>
 <script src="resources/js/tour.js"></script>
 <script src="resources/js/etyTree.js"></script>
-
+<script src="resources/js/autocomplete.js"></script>
+<script src="resources/js/query.js"></script>  
 <body>  
 <div data-role="page">
     <div data-role="header">
@@ -204,6 +204,15 @@ input:focus:-ms-input-placeholder { color:transparent; }
             </div>
         </div>
     </div>
+    <div id="query">
+      <form class="form-inline">
+	<div class="input-append">
+	  <button class="btn" type="button" onclick="exec()">Query</button>
+	</div>
+      </form>
+    </div>
+    <div id="result"></div> 
 </div>
+
 </body>
 </html>
