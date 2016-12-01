@@ -73,7 +73,7 @@ function drawAxis(myTreeData){    //draw time axis
 }
 
 //get data from languages.json  
-d3.json("resources/data/_languages_tree.json", function(error1, json){
+d3.json("/resources/data/_languages_tree.json", function(error1, json){
         if (error1){
             return console.warn(error1);
         }
@@ -227,7 +227,7 @@ var toArray = function(item, arr, d){
 
 function loadTreeFromFile(myWord){
     //hopscotch.endTour();    
-    var namefile = "resources/data/" + myWord.split(' ').join('_') + ".json";
+    var namefile = "/resources/data/" + myWord.split(' ').join('_') + ".json";
     treeJSON = d3.json(namefile, function(error, treeData) {    
             d3.select("#show-time")
                 .on("mouseover", function(d) {
