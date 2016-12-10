@@ -656,7 +656,7 @@ function loadTreeFromFile(myWord){
                     var newHeight = d3.max(levelWidth) * 35; // 25 pixels per line
                     var nodes;
                     if (isArray(root.left)){
-                        helpString="The " + source.language + " word <b>" + myWord + "</b> is a compound word</b>. <br><br> To visualize the etymological tree of the words composing word <i>" + myWord + "</i> click on them.";
+                        helpString = "The " + source.language + " word <b>" + myWord + "</b> is a compound word</b>. <br><br> To visualize the etymological tree of the words composing word <i>" + myWord + "</i> click on them.";
 			d3.select("#p-helpPopup").html(helpString);
                         var nodesLeft = tree.size([newHeight, viewerWidth / 2])
 			    .children(function(d){
@@ -796,7 +796,7 @@ function loadTreeFromFile(myWord){
 
                     // Update the text to reflect whether node has children or not.
                     node.append("text")
-		        .attr("class","nodeDescriptive")
+		        .attr("class", "nodeDescriptive")
                         .attr("x", function(d) {
                                 if (isArray(d.left)){
                                     return 19; 
@@ -861,7 +861,7 @@ function loadTreeFromFile(myWord){
 		        .filter(function(d) { return !d.hidden; })
 		        .attr("x", 0)
 		        .attr("y", 2)
-                        .attr("text-anchor","middle")
+                        .attr("text-anchor", "middle")
 		        .text(function(d){ return d.iso; })
                         .attr("font-size","8px")
 		        .on("mouseover", function(d) {
@@ -1010,8 +1010,7 @@ function loadTreeFromFile(myWord){
 		}
                 /////////////////////END OF DEFINE SOME FUNCTIONS
 
-
-                // Define the drag listeners for drag/drop behaviour of nodes.                                                              
+                // Define the drag listeners for drag/drop behaviour of nodes.   
                 dragListener = d3.behavior.drag()
 		    .on("dragstart", mydragstart)
 		    .on("drag", mydrag)
@@ -1026,8 +1025,8 @@ function loadTreeFromFile(myWord){
                     updateTempConnector();
                 };
 
-                //// Define the root                                                                                                                                                                                            
-                ////if there is left and right then define the root as the element in between them                                               
+                //// Define the root                                                   
+                ////if there is left and right then define the root as the element in between them                 
                 root = myTreeData;
                 root.x0 = viewerWidth / 4;
                 root.y0 = 0;
@@ -1050,8 +1049,7 @@ function loadTreeFromFile(myWord){
 		    centerNode(root);
                 }
                 //console.log(searchedWord);
-	    }
-         
+	    }         
             // Define the zoom function for the zoomable tree
             function zoom() {
                 div.transition().duration(0).style("opacity", 0);
@@ -1063,7 +1061,7 @@ function loadTreeFromFile(myWord){
             }
 
             function clean() {
-		    //remove any existing tree or tooltip                                                                            
+		    //remove any existing tree or tooltip                                
 		    d3.selectAll("svg").remove();
 		    d3.selectAll("g.node").remove();
 		    d3.select("#message").remove();
@@ -1082,7 +1080,7 @@ function loadTreeFromFile(myWord){
 		    // variables for drag/drop                        
 		    selectedNode = null;
 		    draggingNode = null;
-		    // Misc. variables                                                                                                                                                   
+		    // Misc. variables                                          
 		    i = 0;
 		    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents                    
                     zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
@@ -1154,7 +1152,7 @@ function loadTreeFromFile(myWord){
                         .attr("stroke-width", 1.5)
                         .attr("stroke", function(d){ return d[0]; })
                         .attr("stroke-dasharray", function(d){ return  d[1]; });
-		    //tooltips and help                                                                
+		    //tooltips and help                       
 		    div = d3.select("#tree-container").append("div")
                         .attr("class", "tooltip")
                         .style("opacity", 0),
