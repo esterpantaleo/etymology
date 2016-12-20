@@ -49,4 +49,31 @@ USEFUL? Module:hy:Dialects ?
 USEFUL? Module:la:Dialects (e.g.: aug -> link = Late Latin#Late and post-classical Latin, display = post-Augustan)
 * additional modules: 
 Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
+* template Template:defdate
 
+## NOTES TO SELF REGARDING dbnary_etymology
+### MAVEN
+ mvn site
+ mvn javadoc:jar
+ ##to install a local repository for the ontology                                                                                                        
+ cd ontology                                                                                            
+ mvn install:install-file -Dfile=target/ontology-1.6-SNAPSHOT.jar -DgroupId=org.getalp.dbnary -DartifactId=ontology -Dversion=1.6-SNAPSHOT -Dpackaging=jar -DgeneratePom=true                                                                                                                                  
+ mvn package
+### DATA EXTRACTION
+ VERSION=20161201
+ EXEC=target/dbnary-1.3e-SNAPSHOT-jar-with-dependencies.jar
+ DUMP=/home/getalp/serasset/dev/wiktionary/dumps/en/$VERSION/enwkt-$VERSION.xml
+ FPAGE=0
+ TPAGE=2000000
+ LOG=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.ttl.log
+ OUT=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.ttl
+ ETY=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.etymology.ttl
+ rm ${OUT}
+ java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.Extra
+ctWiktionary -l en -x --frompage ${FPAGE} --topage ${TPAGE} -E ${ETY} -o ${OUT} ${DUMP} 3>&1 1>>${LOG} 2>&1
+ java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology ${DUMP} door
+### MERGING
+using apache-jena-2.13.0  
+ riot --time foreign.ttl english.ttl >merge.ttl
+### ERRORS
+ #[main] ERROR info.bliki.extensions.scribunto.engine.lua.ScribuntoLuaEngine - error loading 'ParsedPageName{namespace=Module, pagename='module:ja'}'  
