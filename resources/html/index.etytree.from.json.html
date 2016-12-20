@@ -89,7 +89,7 @@ d3.json("../data/coffee2.json", function(error, json){
 
 console.log(nodes);
 
-
+console.log(json.links);
     var force = d3.layout.force()
         .nodes(d3.values(nodes))
         //.nodes(nodes2)           

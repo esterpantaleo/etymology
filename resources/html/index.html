@@ -1,20 +1,43 @@
- <!DOCTYPE html>
- <meta charset="utf-8">
- <style>
+<!DOCTYPE html>
+<meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" charset="UTF-8">
 
-  .link {
-    fill: none;
-    stroke: lightBlue;
-    stroke-width: 1.5px;
-  }
+<style>
+select {
+   width: 120px;
+   display: inline-block;
+}
 
-  #licensing {
-    fill: green;
-  }
+.ui-selectmenu-text {
+	font-size: 12px;
+        font-family: sans-serif;
+        font-weight: bold;
+}
 
-  .link.licensing {
-    stroke: green;
-  }
+.overlay {
+   background-color: #EEE;
+}
+
+.node circle {
+   fill: #fff;
+   stroke: steelblue;
+   stroke-width: 1.5px;
+}
+
+.node rect {
+   fill: #fff;
+   stroke: steelblue;
+   stroke-width: 1.5px;
+}
+
+.node text {
+   font-family: sans-serif;
+}
+
+.link {
+   fill: none;
+   stroke: lightBlue;
+   stroke-width: 1.5px;
+}
 
   .link.resolved {
     stroke-dasharray: 0,2 1;
@@ -31,7 +54,84 @@
     pointer-events: none;
     text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
   }
- 
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    shape-rendering: crispEdges;
+    stroke-width: 1px;
+}
+
+.templink {
+   fill: none;
+   stroke: red;
+   stroke-width: 3px;
+}
+
+.ghostCircle.show {
+   display: block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle {
+   display: none;
+}
+
+.tooltip {
+   font-size: 12px;
+   position: absolute;
+   text-align: left;
+   padding: 2px;
+   font-family: sans-serif;
+   background: white;
+   border: 2px;
+   border-radius: 8px;
+   pointer-events: none;
+   z-index: 1000;
+   max-width: 255px;
+   box-shadow: 10px 10px 5px #888888;
+}
+
+.tooltip2 {
+   font-size: 12px;
+   position: absolute;
+   text-align: left;
+   padding: 2px;
+   font-family: sans-serif;
+   background: transparent;
+   border: 2px;
+   border-radius: 8px;
+   pointer-events: none;
+   z-index: 1000;
+   max-width: 255px;
+   box-shadow: 10px 10px 5px #888888;
+}
+
+.tooltip3 {
+   font-size: 12px;
+   position: absolute;
+   text-align: left;
+   padding: 2px;
+   font-family: sans-serif;
+   background: white;
+   border: 2px;
+   border-radius: 8px;
+   pointer-events: none;
+   z-index: 1000;
+   max-width: 255px;
+   opacity: 0;
+   box-shadow: 10px 10px 5px #888888;
+}
+
+.tooltip:hover {
+   display: block;
+   opacity: 1;
+}
+
+.ui-menu-item {
+   font-size: 10px;
+}
+
   div.tooltip {
      position: absolute;
      text-align: center;
@@ -45,141 +145,75 @@
      pointer-events: none;
   }
 
+input:focus::-webkit-input-placeholder { color:transparent; }
+input:focus:-moz-placeholder { color:transparent; } 
+input:focus::-moz-placeholder { color:transparent; }
+input:focus:-ms-input-placeholder { color:transparent; } 
 </style>
 
-<body>
-<script src="//d3js.org/d3.v3.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="../../vendors/css/hopscotch.min.css">
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-<script>
-// Define the div for the tooltip
-var div = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
+<script src="../../vendors/js/hopscotch.min.js"></script>
+<script src="../../resources/js/tour.js"></script>
+<script src="../../resources/js/etyTree.js"></script>
+<script src="../../resources/js/autocomplete.js"></script>
+<script src="../../resources/js/query.js"></script>  
+<body>  
+<div data-role="page">
+    <div data-role="header">
+  <!-- <div class="ui-fieldcontain" id="tree-container">-->
+        <table style="empty-cells:hide; margin-left:auto; margin-right:auto;"> 
+            <tr> 
+                <td>
+                    <a id="go-back" class="ui-shadow ui-btn ui-corner-all ui-icon-arrow-l ui-btn-icon-notext"  data-inline="true" style="border:0" title="go back"></a>
+                </td>
+                <td id="ui-table">
+                    <a id="go-forward" class="ui-shadow ui-btn ui-corner-all ui-icon-arrow-r ui-btn-icon-notext"  data-inline="true" style="border:0" title="go forward"></a>
+                </td>
+                <td>
+                    <input type="text" data-type="search" placeholder="search etymology" id="tags"></input>
+		</td>
+		<td>
+		    <div id="query">
+		      <form class="form-inline">
+			<div class="input-append">
+			  <button class="btn" type="button" onclick="exec()">Query</button>
+			</div>
+		      </form>
+		    </div>
+                </td>
+                <td>
+                    <a href="#helpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left" style="border:0" data-inline="true">help</a>
+                    <div data-role="popup" id="helpPopup" class="ui-content" style="box-shadow:10px 10px 5px #888888">
+                        <p style="font-size:12px;border-radius:8px;max-width:255px;" id="p-helpPopup">
+                            Search the etymology of a word: enter a word in the search tab, then press Enter or click on one of the words in the drop-down menu. 
+                        </p>
+                    </div>
+                </td>
+                <td id="checkbox-col"> 
+                    <label id="show-time">
+                        show timeline
+                        <input type="checkbox" id="time-checkbox"></input>
+                    </label>
+                </td>
+                <td id="lan">
+                    <select class="ui-shadow ui-btn ui-corner-all ui-select" style="font-size:10px;border:0;">
+                        <option value="1">en - English</option>
+                        <option value="2">other languages not implemented yet</option>
+                        <option value="3">in principle any language in Wiktionary could be implemented</option>
+                    </select>
+                </td>
 
 
-d3.json("coffee2.json", function(error, json){
-    if (error) throw error;
-/*
-    function isClique(i,j,k){ if (i!=j && j!=k && k!=i){if (link[k].source == link[j].source && link[k].target == link[i].source && link[i].target == link[j].target) return true; else return false;}}
-    function inizializeFilter(link){ for     (i=0; i<link.size(); i++){link[i].toBeRemoved==false;}}
-    function applyFilter(link){for (i=0; i<link.size(); i++){ if (link[i].toBeRemoved==false) {for (j=0; j<link.size(); j++) {for (k=0;k<link.size(); k++) {if (isClique(i,j,k)) {link[j].toBeRemoved = true;}}}}}}
-
-    function finalizeFilter(link){for (i=link.size()-1; i>=0; i--) {if (link[i].toBeRemoved == true) remove link[i];}}
-																						    
-    function filterClique(link){
-	inizializeFilter(link);
-	applyFilter(link);
-	finalizeFilter(link);
-    }
-*/
-
-    var width = 1500,
-        height = 900;
-
-    var nodes = {};
-    json.links.forEach(function(link) {
-            link.source = nodes[link.source] || 
-                (nodes[link.source] = {name: link.source, gloss: link.sourceGloss});
-            link.target = nodes[link.target] || 
-                (nodes[link.target] = {name: link.target, gloss: link.targetGloss});
-            link.value = +link.value;
-    });
-    var nodesGloss = json.nodes;
-
-
-console.log(nodes);
-
-console.log(json.links);
-/*    var force = d3.layout.force()
-        .nodes(d3.values(nodes))
-        //.nodes(nodes2)           
-	.links(json.links)
-	.size([width, height])
-        .linkDistance(150)
-        .charge(-700)
-        .gravity(.2) 
-        .on("tick", tick)
-	.start();
-
-    var svg = d3.select("body").append("svg")
-        .attr("width", width)
-	.attr("height", height);
-
-    // Per-type markers, as they don't inherit styles.
-    svg.append("defs").selectAll("marker")
-        .data(["suit", "licensing", "resolved"])
-        .enter().append("marker")
-        .attr("id", function(d) { return d; })
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 26)
-        .attr("refY", -1.5)
-        .attr("markerWidth", 6)
-	.attr("markerHeight", 6)
-        .attr("orient", "auto")
-	.append("path")
-        .attr("d", "M0,-5L10,0L0,5")
-        .attr("fill", "lightBlue");
-
-    var path = svg.append("g").selectAll("path")
-        .data(force.links())
-	.enter().append("path")
-	.attr("class", function(d) { return "link " + d.type; })
-        .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
-
-    var circle = svg.append("g").selectAll("circle")
-        .data(force.nodes())
-	.enter().append("circle")
-        .attr("r", 12)
-        .call(force.drag)
-        .on("mouseover", function(d) {
-                div.transition()
-                    .duration(200)
-                    .style("opacity", .9);
-                div.html(nodesGloss.filter(function(n){ return n.name===d.name; })[0].gloss)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
-            })
-        .on("mouseout", function(d) {
-                div.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            });
-
-    var isoText = svg.append("g").selectAll("text")
-        .data(force.nodes())
-	.enter().append("text")
-	.attr("x", -8)
-        .attr("y", ".31em")
-        .attr("fill", "lightBlue")
-        .text(function(d) { return d.name.split("____")[0]; });
-    
-    var wordText = svg.append("g").selectAll("text")
-        .data(force.nodes())
-        .enter().append("text")
-        .attr("x", 14)
-        .attr("y", ".31em")
-        .attr("id", "word")
-        .text(function(d) { return d.name.split("____")[1]; });
-      
-
-    // Use elliptical arc path segments to doubly-encode directionality.
-    function tick() {
-	path.attr("d", linkArc);
-	circle.attr("transform", transform);
-        wordText.attr("transform", transform);
-        isoText.attr("transform", transform);
-    }
-
-    function linkArc(d) {
-        var dx = d.target.x - d.source.x,
-	    dy = d.target.y - d.source.y,
-	    dr = 0;//Math.sqrt(dx * dx + dy * dy);
-            return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
-    }
-
-    function transform(d) {
-        return "translate(" + d.x + "," + d.y + ")";
-    }*/
-});
-</script>
+            </tr>
+        </table>
+    </div>
 </body>
+</html>
+

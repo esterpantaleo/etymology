@@ -10,7 +10,7 @@ function exec(){
     //set query parameters
     var endpoint = "http://90.147.170.191:8890/sparql";
 
-    d3.text("/resources/data/prefixes", function(prefixes){
+    d3.text("../data/prefixes", function(prefixes){
 	    var query = [
                          "DEFINE input:same-as \"yes\"",
 
@@ -35,7 +35,7 @@ function exec(){
 			 ];
 	    //var sparql = prefixes.concat(query.join(" "));
 	    var sparql = query.join(" ");
-            d3.json("/resources/data/sparql_execution.json", function(data){
+            d3.json("../data/sparql_execution.json", function(data){
 		    console.log(data);
                     var sparqlLinks = [];
                     var sparqlNodes = {};
