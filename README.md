@@ -73,6 +73,7 @@ Module:families/data mapping language code -> language name  (e.g.: aav -> canon
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology ${DUMP} door
 ### MERGING
 using apache-jena-2.13.0  
+    
     riot --time foreign.ttl english.ttl >merge.ttl
 ### ERRORS
     [main] ERROR info.bliki.extensions.scribunto.engine.lua.ScribuntoLuaEngine - error loading 'ParsedPageName{namespace=Module, pagename='module:ja'}'  
