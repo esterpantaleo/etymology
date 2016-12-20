@@ -57,7 +57,7 @@ var div = d3.select("body").append("div")
     .style("opacity", 0);
 
 
-d3.json("../data/coffee2.json", function(error, json){
+d3.json("coffee2.json", function(error, json){
     if (error) throw error;
 /*
     function isClique(i,j,k){ if (i!=j && j!=k && k!=i){if (link[k].source == link[j].source && link[k].target == link[i].source && link[i].target == link[j].target) return true; else return false;}}
@@ -89,8 +89,8 @@ d3.json("../data/coffee2.json", function(error, json){
 
 console.log(nodes);
 
-
-    var force = d3.layout.force()
+console.log(json.links);
+/*    var force = d3.layout.force()
         .nodes(d3.values(nodes))
         //.nodes(nodes2)           
 	.links(json.links)
@@ -179,7 +179,7 @@ console.log(nodes);
 
     function transform(d) {
         return "translate(" + d.x + "," + d.y + ")";
-    }
+    }*/
 });
 </script>
 </body>
