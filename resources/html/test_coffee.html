@@ -1,64 +1,64 @@
- <!DOCTYPE html>
- <meta charset="utf-8">
- <style>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
 
-  .link {
-    fill: none;
-    stroke: lightBlue;
-    stroke-width: 1.5px;
-  }
+    .link {
+        fill: none;
+        stroke: lightBlue;
+        stroke-width: 1.5px;
+    }
 
-  #licensing {
-    fill: green;
-  }
+    #inherited {
+        fill: green;
+    }
 
-  .link.licensing {
-    stroke: green;
-  }
+    .link.inherited {
+        stroke: green;
+    }
 
-  .link.resolved {
-    stroke-dasharray: 0,2 1;
-  }
+    .link.derived {
+        stroke-dasharray: 0,2 1;
+    }
 
-  circle {
-    fill: white;
-    stroke: lightBlue;
-    stroke-width: 1.5px;
-  }
+    circle {
+        fill: white;
+        stroke: lightBlue;
+        stroke-width: 1.5px;
+    }
 
-  text {
-    font: 10px sans-serif;
-    pointer-events: none;
-    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-  }
+    text {
+        font: 10px sans-serif;
+        pointer-events: none;
+        text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    }
  
-  div.tooltip {
-     position: absolute;
-     text-align: center;
-     width: 60px;
-     height: 28px;
-     padding: 2px;
-     font: 12px sans-serif;
-     background: lightBlue;
-     border: 0px;
-     border-radius: 8px;
-     pointer-events: none;
-  }
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 60px;
+        height: 28px;
+        padding: 2px;
+        font: 12px sans-serif;
+        background: lightBlue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
 
 </style>
 
 <body>
-<script src="//d3js.org/d3.v3.min.js"></script>
-<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-<script>
-// Define the div for the tooltip
-var div = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script>
+        // Define the div for the tooltip
+        var div = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
 
 
-d3.json("../data/coffee2.json", function(error, json){
-    if (error) throw error;
+        d3.json("../data/coffee2.json", function(error, json){
+        if (error) throw error;
 /*
     function isClique(i,j,k){ if (i!=j && j!=k && k!=i){if (link[k].source == link[j].source && link[k].target == link[i].source && link[i].target == link[j].target) return true; else return false;}}
     function inizializeFilter(link){ for     (i=0; i<link.size(); i++){link[i].toBeRemoved==false;}}
@@ -73,113 +73,110 @@ d3.json("../data/coffee2.json", function(error, json){
     }
 */
 
-    var width = 1500,
-        height = 900;
+        var width = 1500,
+            height = 900;
 
-    var nodes = {};
-    json.links.forEach(function(link) {
-            link.source = nodes[link.source] || 
-                (nodes[link.source] = {name: link.source, gloss: link.sourceGloss});
-            link.target = nodes[link.target] || 
-                (nodes[link.target] = {name: link.target, gloss: link.targetGloss});
-            link.value = +link.value;
-    });
-    var nodesGloss = json.nodes;
+        var nodes = {};
+        json.links.forEach(function(link) {
+                link.source = nodes[link.source] || 
+                    (nodes[link.source] = {name: link.source, gloss: link.sourceGloss});
+                link.target = nodes[link.target] || 
+                    (nodes[link.target] = {name: link.target, gloss: link.targetGloss});
+                link.value = +link.value;
+        });
+        var nodesGloss = json.nodes;
 
+        console.log(nodes);
 
-console.log(nodes);
+        var force = d3.layout.force()
+            .nodes(d3.values(nodes))
+            //.nodes(nodes2)           
+	    .links(json.links)
+	    .size([width, height])
+            .linkDistance(150)
+            .charge(-700)
+            .gravity(.2) 
+            .on("tick", tick)
+	    .start();
 
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+	    .attr("height", height);
 
-    var force = d3.layout.force()
-        .nodes(d3.values(nodes))
-        //.nodes(nodes2)           
-	.links(json.links)
-	.size([width, height])
-        .linkDistance(150)
-        .charge(-700)
-        .gravity(.2) 
-        .on("tick", tick)
-	.start();
+        // Per-type markers, as they don't inherit styles.
+        svg.append("defs").selectAll("marker")
+            .data(["borrowing", "inherited", "derived"])
+	    .enter().append("marker")
+            .attr("id", function(d) { return d; })
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 26)
+            .attr("refY", -1.5)
+            .attr("markerWidth", 6)
+	    .attr("markerHeight", 6)
+            .attr("orient", "auto")
+	    .append("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", "lightBlue");
 
-    var svg = d3.select("body").append("svg")
-        .attr("width", width)
-	.attr("height", height);
+        var path = svg.append("g").selectAll("path")
+            .data(force.links())
+	    .enter().append("path")
+	    .attr("class", function(d) { return "link " + d.type; })
+            .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
 
-    // Per-type markers, as they don't inherit styles.
-    svg.append("defs").selectAll("marker")
-        .data(["suit", "licensing", "resolved"])
-        .enter().append("marker")
-        .attr("id", function(d) { return d; })
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 26)
-        .attr("refY", -1.5)
-        .attr("markerWidth", 6)
-	.attr("markerHeight", 6)
-        .attr("orient", "auto")
-	.append("path")
-        .attr("d", "M0,-5L10,0L0,5")
-        .attr("fill", "lightBlue");
+        var circle = svg.append("g").selectAll("circle")
+            .data(force.nodes())
+	    .enter().append("circle")
+            .attr("r", 12)
+            .call(force.drag)
+            .on("mouseover", function(d) {
+                    div.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    div.html(nodesGloss.filter(function(n){ return n.name===d.name; })[0].gloss)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+             })
+             .on("mouseout", function(d) {
+                    div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+             });
 
-    var path = svg.append("g").selectAll("path")
-        .data(force.links())
-	.enter().append("path")
-	.attr("class", function(d) { return "link " + d.type; })
-        .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
-
-    var circle = svg.append("g").selectAll("circle")
-        .data(force.nodes())
-	.enter().append("circle")
-        .attr("r", 12)
-        .call(force.drag)
-        .on("mouseover", function(d) {
-                div.transition()
-                    .duration(200)
-                    .style("opacity", .9);
-                div.html(nodesGloss.filter(function(n){ return n.name===d.name; })[0].gloss)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
-            })
-        .on("mouseout", function(d) {
-                div.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            });
-
-    var isoText = svg.append("g").selectAll("text")
-        .data(force.nodes())
-	.enter().append("text")
-	.attr("x", -8)
-        .attr("y", ".31em")
-        .attr("fill", "lightBlue")
-        .text(function(d) { return d.name.split("____")[0]; });
+        var isoText = svg.append("g").selectAll("text")
+            .data(force.nodes())
+	    .enter().append("text")
+	    .attr("x", -8)
+            .attr("y", ".31em")
+            .attr("fill", "lightBlue")
+            .text(function(d) { return d.name.split("____")[0]; });
     
-    var wordText = svg.append("g").selectAll("text")
-        .data(force.nodes())
-        .enter().append("text")
-        .attr("x", 14)
-        .attr("y", ".31em")
-        .attr("id", "word")
-        .text(function(d) { return d.name.split("____")[1]; });
-      
+        var wordText = svg.append("g").selectAll("text")
+            .data(force.nodes())
+            .enter().append("text")
+            .attr("x", 14)
+            .attr("y", ".31em")
+            .attr("id", "word")
+            .text(function(d) { return d.name.split("____")[1]; });
 
-    // Use elliptical arc path segments to doubly-encode directionality.
-    function tick() {
-	path.attr("d", linkArc);
-	circle.attr("transform", transform);
-        wordText.attr("transform", transform);
-        isoText.attr("transform", transform);
-    }
+        // Use elliptical arc path segments to doubly-encode directionality.
+        function tick() {
+	    path.attr("d", linkArc);
+	    circle.attr("transform", transform);
+            wordText.attr("transform", transform);
+            isoText.attr("transform", transform);
+        }
 
-    function linkArc(d) {
-        var dx = d.target.x - d.source.x,
-	    dy = d.target.y - d.source.y,
-	    dr = 0;//Math.sqrt(dx * dx + dy * dy);
+        function linkArc(d) {
+            var dx = d.target.x - d.source.x,
+	        dy = d.target.y - d.source.y,
+	        dr = 0;//Math.sqrt(dx * dx + dy * dy);
             return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
-    }
+        }
 
-    function transform(d) {
-        return "translate(" + d.x + "," + d.y + ")";
-    }
-});
-</script>
+        function transform(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        }
+    });
+    </script>
 </body>
