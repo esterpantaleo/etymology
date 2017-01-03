@@ -1,128 +1,128 @@
- <!DOCTYPE html>
- <meta charset="utf-8">
- <style>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
 
-  .link {
-    fill: none;
-      stroke: #666;
+    .link {
+        fill: none;
+        stroke: #666;
         stroke-width: 1.5px;
-	  }
+    }
 
-  #licensing {
-    fill: green;
-      }
+    #inherited {
+        fill: green;
+    }
 
-  .link.licensing {
-    stroke: green;
-      }
+    .link.inherited {
+        stroke: green;
+    }
 
-  .link.resolved {
-    stroke-dasharray: 0,2 1;
-      }
+    .link.derived {
+        stroke-dasharray: 0,2 1;
+    }
 
-  circle {
-    fill: #ccc;
-      stroke: #333;
+    circle {
+        fill: LightBlue; 
+        stroke: #333;
         stroke-width: 1.5px;
-	  }
+     }
 
-  text {
-    font: 10px sans-serif;
-      pointer-events: none;
-        text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-	  }
+     text {
+         font: 10px sans-serif;
+         pointer-events: none;
+         text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+     }
 
 </style>
 <body>
-  <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
     <script>
-    var links = [
-{target:"ido____doloro", source:"lat____dolor", type:"resolved"},
-{target:"ido____dolorous", source:"ido____doloro", type:"resolved"},
-{target:"ido____doloroza", source:"ido____doloro", type:"resolved"},
-{target:"ido____dolorozo", source:"ido____doloro", type:"resolved"},
-{target:"ist____dulur", source:"lat____dolor", type:"resolved"},
-{target:"ita____cordoglio", source:"lat____cordolium", type:"resolved"},
-{target:"ita____doglia", source:"lat____dolor", type:"resolved"},
-{target:"ita____dolente", source:"lat____dolēns", type:"resolved"},
-{target:"ita____dolo", source:"lat____dolus", type:"resolved"},
-{target:"ita____dolore", source:"lat____dolor", type:"resolved"},
-{target:"ita____dolorimetria", source:"ita____dolore", type:"resolved"},
-{target:"ita____doloroso", source:"la-lat____dolōrōsus", type:"resolved"},
-{target:"ita____duolo", source:"lat____dolus", type:"resolved"},
-{target:"ita____subdolamente", source:"lat____subdolus", type:"resolved"},
-{target:"ita____subdolo", source:"lat____subdolus", type:"resolved"},
-{target:"itc-pro_____doleō", source:"ine-pro_____dolh1éyeti", type:"resolved"},
-{target:"kea____dór", source:"por____dor", type:"resolved"},
-{target:"la-lat____dolōrōsus", source:"lat____doleo", type:"resolved"},
-{target:"la-lat____dolōrōsus", source:"lat____dolor", type:"resolved"},
-{target:"lat____condoleō", source:"lat____doleo", type:"resolved"},
-{target:"lat____cordolium", source:"lat____doleo", type:"resolved"},
-{target:"lat____cordolium", source:"lat____dolor", type:"resolved"},
-{target:"lat____dolentia", source:"lat____doleo", type:"resolved"},
-{target:"lat____doleo", source:"itc-pro_____doleō", type:"resolved"},
-{target:"lat____dolor", source:"itc-ola_____dolōs", type:"resolved"},
-{target:"lat____dolor", source:"itc-pro_____dolōs", type:"resolved"},
-{target:"lat____dolor", source:"lat____doleo", type:"resolved"},
-{target:"lat____dolorosus", source:"lat____doleo", type:"resolved"},
-{target:"lat____dolorosus", source:"lat____dolor", type:"resolved"},
-{target:"lat____dolus", source:"lat____doleo", type:"resolved"},
-{target:"lat____dolus", source:"lat____dolor", type:"resolved"},
-{target:"lat____dolēns", source:"lat____doleo", type:"resolved"},
-{target:"lat____indolentem", source:"lat____doleo", type:"resolved"},
-{target:"lat____indolentem", source:"lat____dolēns", type:"resolved"},
-{target:"lat____subdolus", source:"lat____dolus", type:"resolved"},
-{target:"mul____exceptio_doli", source:"lat____dolus", type:"resolved"},
-{target:"mul____exceptio_doli_generalis", source:"lat____dolus", type:"resolved"},
-{target:"nap____dulore", source:"lat____dolor", type:"resolved"},
-{target:"nld____condoleren", source:"lat____condoleō", type:"resolved"},
-{target:"fro____duel", source:"lat____dolus", type:"resolved"},
-{target:"nrf____deu", source:"fro____duel", type:"resolved"},  
-{target:"oci____dolor", source:"cat____dolor", type:"resolved"},
-{target:"oci____dolor", source:"pro____dolor", type:"resolved"},
-{target:"por____doente", source:"roa-opt____doente", type:"resolved"},
-{target:"por____doença", source:"roa-opt____doença", type:"resolved"},
-{target:"por____doloroso", source:"la-lat____dolōrōsus", type:"resolved"},
-{target:"por____dor", source:"glg____dor", type:"resolved"},
-{target:"por____dor", source:"roa-opt____door", type:"resolved"},
-{target:"por____dorzinha", source:"glg____dor", type:"resolved"},
-{target:"por____dorzinha", source:"por____dor", type:"resolved"},
-{target:"por____doído", source:"roa-opt____doer", type:"resolved"},
-{target:"por____dó", source:"roa-opt____doo", type:"resolved"},
-{target:"por____indolente", source:"lat____indolentem", type:"resolved"},
-{target:"pro____dolen", source:"lat____dolēns", type:"resolved"},
-{target:"pro____dolor", source:"lat____doleo", type:"resolved"},
-{target:"pro____dolor", source:"lat____dolor", type:"resolved"},
-{target:"roa-opt____doente", source:"lat____doleo", type:"resolved"},
-{target:"roa-opt____doente", source:"lat____dolēns", type:"resolved"},
-{target:"roa-opt____doença", source:"lat____dolentia", type:"resolved"},
-{target:"roa-opt____doença", source:"lat____doleo", type:"resolved"},
-{target:"roa-opt____doo", source:"lat____dolus", type:"resolved"},
-{target:"roa-opt____door", source:"lat____dolor", type:"resolved"},
-{target:"roh____dolur", source:"lat____dolor", type:"resolved"},
-{target:"ron____dor", source:"lat____dolus", type:"resolved"},
-{target:"ron____dori", source:"ron____dor", type:"resolved"},
-{target:"ron____dorință", source:"ron____dor", type:"resolved"},
-{target:"ron____durea", source:"rup____dor", type:"resolved"},
-{target:"ron____durere", source:"rup____dor", type:"resolved"},
-{target:"ron____dureros", source:"rup____dor", type:"resolved"},
-{target:"rup____dor", source:"lat____doleo", type:"resolved"},
-{target:"rup____dor", source:"lat____dolus", type:"resolved"},
-{target:"rup____dureari", source:"rup____dor", type:"resolved"},
-{target:"scn____duluri", source:"lat____dolor", type:"resolved"},
-{target:"scn____dulurusu", source:"lat____dolorosus", type:"resolved"},
-{target:"ast____dolorosu", source:"lat____dolorosus", type:"resolved"},
-{target:"spa____dolor", source:"lat____doleo", type:"resolved"},
-{target:"spa____dolor", source:"lat____dolor", type:"resolved"},
-{target:"spa____dolor_de_cabeza", source:"spa____dolor", type:"resolved"},
-{target:"spa____dolor_de_estómago", source:"spa____dolor", type:"resolved"},
-{target:"spa____doloroso", source:"la-lat____dolōrōsus", type:"resolved"},
-{target:"spa____duelo", source:"lat____dolus", type:"resolved"},
-{target:"vec____dolér", source:"lat____doleo", type:"resolved"},
-{target:"vec____dołoroxo", source:"lat____dolorosus", type:"resolved"},
-{target:"vec____giolér", source:"lat____doleo", type:"resolved"},
-{target:"vec____giołér", source:"lat____doleo", type:"resolved"}
-    ];
+        var links = [
+            {target:"ido____doloro", source:"lat____dolor", type:"derived"},
+            {target:"ido____dolorous", source:"ido____doloro", type:"derived"},
+            {target:"ido____doloroza", source:"ido____doloro", type:"derived"},
+            {target:"ido____dolorozo", source:"ido____doloro", type:"derived"},
+            {target:"ist____dulur", source:"lat____dolor", type:"derived"},
+            {target:"ita____cordoglio", source:"lat____cordolium", type:"derived"},
+            {target:"ita____doglia", source:"lat____dolor", type:"derived"},
+            {target:"ita____dolente", source:"lat____dolēns", type:"derived"},
+            {target:"ita____dolo", source:"lat____dolus", type:"derived"},
+            {target:"ita____dolore", source:"lat____dolor", type:"derived"},
+            {target:"ita____dolorimetria", source:"ita____dolore", type:"derived"},
+            {target:"ita____doloroso", source:"la-lat____dolōrōsus", type:"derived"},
+            {target:"ita____duolo", source:"lat____dolus", type:"derived"},
+            {target:"ita____subdolamente", source:"lat____subdolus", type:"derived"},
+            {target:"ita____subdolo", source:"lat____subdolus", type:"derived"},
+            {target:"itc-pro_____doleō", source:"ine-pro_____dolh1éyeti", type:"derived"},
+            {target:"kea____dór", source:"por____dor", type:"derived"},
+            {target:"la-lat____dolōrōsus", source:"lat____doleo", type:"derived"},
+            {target:"la-lat____dolōrōsus", source:"lat____dolor", type:"derived"},
+            {target:"lat____condoleō", source:"lat____doleo", type:"derived"},
+            {target:"lat____cordolium", source:"lat____doleo", type:"derived"},
+            {target:"lat____cordolium", source:"lat____dolor", type:"derived"},
+            {target:"lat____dolentia", source:"lat____doleo", type:"derived"},
+            {target:"lat____doleo", source:"itc-pro_____doleō", type:"derived"},
+            {target:"lat____dolor", source:"itc-ola_____dolōs", type:"derived"},
+            {target:"lat____dolor", source:"itc-pro_____dolōs", type:"derived"},
+            {target:"lat____dolor", source:"lat____doleo", type:"derived"},
+            {target:"lat____dolorosus", source:"lat____doleo", type:"derived"},
+            {target:"lat____dolorosus", source:"lat____dolor", type:"derived"},
+            {target:"lat____dolus", source:"lat____doleo", type:"derived"},
+            {target:"lat____dolus", source:"lat____dolor", type:"derived"},
+            {target:"lat____dolēns", source:"lat____doleo", type:"derived"},
+            {target:"lat____indolentem", source:"lat____doleo", type:"derived"},
+            {target:"lat____indolentem", source:"lat____dolēns", type:"derived"},
+            {target:"lat____subdolus", source:"lat____dolus", type:"derived"},
+            {target:"mul____exceptio_doli", source:"lat____dolus", type:"derived"},
+            {target:"mul____exceptio_doli_generalis", source:"lat____dolus", type:"derived"},
+            {target:"nap____dulore", source:"lat____dolor", type:"derived"},
+            {target:"nld____condoleren", source:"lat____condoleō", type:"derived"},
+            {target:"fro____duel", source:"lat____dolus", type:"derived"},
+            {target:"nrf____deu", source:"fro____duel", type:"derived"},  
+            {target:"oci____dolor", source:"cat____dolor", type:"derived"},
+            {target:"oci____dolor", source:"pro____dolor", type:"derived"},
+            {target:"por____doente", source:"roa-opt____doente", type:"derived"},
+            {target:"por____doença", source:"roa-opt____doença", type:"derived"},
+            {target:"por____doloroso", source:"la-lat____dolōrōsus", type:"derived"},
+            {target:"por____dor", source:"glg____dor", type:"derived"},
+            {target:"por____dor", source:"roa-opt____door", type:"derived"},
+            {target:"por____dorzinha", source:"glg____dor", type:"derived"},
+            {target:"por____dorzinha", source:"por____dor", type:"derived"},
+            {target:"por____doído", source:"roa-opt____doer", type:"derived"},
+            {target:"por____dó", source:"roa-opt____doo", type:"derived"},
+            {target:"por____indolente", source:"lat____indolentem", type:"derived"},
+            {target:"pro____dolen", source:"lat____dolēns", type:"derived"},
+            {target:"pro____dolor", source:"lat____doleo", type:"derived"},
+            {target:"pro____dolor", source:"lat____dolor", type:"derived"},
+            {target:"roa-opt____doente", source:"lat____doleo", type:"derived"},
+            {target:"roa-opt____doente", source:"lat____dolēns", type:"derived"},
+            {target:"roa-opt____doença", source:"lat____dolentia", type:"derived"},
+            {target:"roa-opt____doença", source:"lat____doleo", type:"derived"},
+            {target:"roa-opt____doo", source:"lat____dolus", type:"derived"},
+            {target:"roa-opt____door", source:"lat____dolor", type:"derived"},
+            {target:"roh____dolur", source:"lat____dolor", type:"derived"},
+            {target:"ron____dor", source:"lat____dolus", type:"derived"},
+            {target:"ron____dori", source:"ron____dor", type:"derived"},
+            {target:"ron____dorință", source:"ron____dor", type:"derived"},
+            {target:"ron____durea", source:"rup____dor", type:"derived"},
+            {target:"ron____durere", source:"rup____dor", type:"derived"},
+            {target:"ron____dureros", source:"rup____dor", type:"derived"},
+            {target:"rup____dor", source:"lat____doleo", type:"derived"},
+            {target:"rup____dor", source:"lat____dolus", type:"derived"},
+            {target:"rup____dureari", source:"rup____dor", type:"derived"},
+            {target:"scn____duluri", source:"lat____dolor", type:"derived"},
+            {target:"scn____dulurusu", source:"lat____dolorosus", type:"derived"},
+            {target:"ast____dolorosu", source:"lat____dolorosus", type:"derived"},
+            {target:"spa____dolor", source:"lat____doleo", type:"derived"},
+            {target:"spa____dolor", source:"lat____dolor", type:"derived"},
+            {target:"spa____dolor_de_cabeza", source:"spa____dolor", type:"derived"},
+            {target:"spa____dolor_de_estómago", source:"spa____dolor", type:"derived"},
+            {target:"spa____doloroso", source:"la-lat____dolōrōsus", type:"derived"},
+            {target:"spa____duelo", source:"lat____dolus", type:"derived"},
+            {target:"vec____dolér", source:"lat____doleo", type:"derived"},
+            {target:"vec____dołoroxo", source:"lat____dolorosus", type:"derived"},
+            {target:"vec____giolér", source:"lat____doleo", type:"derived"},
+            {target:"vec____giołér", source:"lat____doleo", type:"derived"}
+        ];
 /*
     <source>
     function isClique(i,j,k){ if (i!=j && j!=k && k!=i){if (link[k].source == link[j].source && link[k].target == link[i].source && link[i].target == link[j].target) return true; else return false;}}
@@ -137,80 +137,80 @@
 	finalizeFilter(link);
     }
     </source>*/
-    var nodes = {};
+        var nodes = {};
 
-    // Compute the distinct nodes from the links.
+        // Compute the distinct nodes from the links.
         links.forEach(function(link) {
-	    link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
-    link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
-    
-		    });
+	        link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+                link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+        });
 
-    var width = 1500,
-        height = 900;
+        var width = 1200,
+            height = 800;
 
-    var force = d3.layout.force()
-        .nodes(d3.values(nodes))
+        var force = d3.layout.force()
+            .nodes(d3.values(nodes))
 	    .links(links)
-	        .size([width, height])
-		    .linkDistance(60)
-		        .charge(-300)
-			    .on("tick", tick)
-			        .start();
+	    .size([width, height])
+            .linkDistance(90)
+            .charge(-200)
+	    .on("tick", tick)
+	    .start();
 
-    var svg = d3.select("body").append("svg")
-        .attr("width", width)
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
 	    .attr("height", height);
 
-    // Per-type markers, as they don't inherit styles.
+        // Per-type markers, as they don't inherit styles.
         svg.append("defs").selectAll("marker")
-	    .data(["suit", "licensing", "resolved"])
-	        .enter().append("marker")
-		    .attr("id", function(d) { return d; })
-		        .attr("viewBox", "0 -5 10 10")
-			    .attr("refX", 26)
-			        .attr("refY", -1.5)
-				    .attr("markerWidth", 6)
-				        .attr("markerHeight", 6)
-					    .attr("orient", "auto")
-					        .append("path")
-						    .attr("d", "M0,-5L10,0L0,5");
+	    .data(["borrowing", "inherited", "derived"])
+	    .enter().append("marker")
+            .attr("id", function(d) { return d; })
+            .attr("viewBox", "0 -5 10 10")
+	    .attr("refX", 26)
+            .attr("refY", -1.5)
+	    .attr("markerWidth", 6)
+	    .attr("markerHeight", 6)
+	    .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5");
 
-    var path = svg.append("g").selectAll("path")
-        .data(force.links())
+        var path = svg.append("g").selectAll("path")
+            .data(force.links())
 	    .enter().append("path")
-	        .attr("class", function(d) { return "link " + d.type; })
-		    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+	    .attr("class", function(d) { return "link " + d.type; })
+	    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
 
-    var circle = svg.append("g").selectAll("circle")
-        .data(force.nodes())
+        var circle = svg.append("g").selectAll("circle")
+            .data(force.nodes())
 	    .enter().append("circle")
-                .attr("r", 12)
-		    .call(force.drag);
+            .attr("r", 12)
+	    .call(force.drag);
 
-    var text = svg.append("g").selectAll("text")
-        .data(force.nodes())
+        var text = svg.append("g").selectAll("text")
+            .data(force.nodes())
 	    .enter().append("text")
-	        .attr("x", -8)
-		    .attr("y", ".31em")
-		        .text(function(d) { return d.name; });
+	    .attr("x", -8)
+            .attr("y", ".31em")
+            .text(function(d) { return d.name; });
     
-    // Use elliptical arc path segments to doubly-encode directionality.
+        // Use elliptical arc path segments to doubly-encode directionality.
         function tick() {
 	    path.attr("d", linkArc);
-	        circle.attr("transform", transform);
-		    text.attr("transform", transform);
-		        }
+	    circle.attr("transform", transform);
+            text.attr("transform", transform);
+        }
 
-    function linkArc(d) {
-        var dx = d.target.x - d.source.x,
-	    dy = d.target.y - d.source.y,
-	        dr = Math.sqrt(dx * dx + dy * dy);
-		    return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
-		        }
+        function linkArc(d) {
+            var dx = d.target.x - d.source.x,
+	        dy = d.target.y - d.source.y,
+	        dr = 0;//Math.sqrt(dx * dx + dy * dy);
+	    return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;     
+        }
 
-    function transform(d) {
-        return "translate(" + d.x + "," + d.y + ")";
-	    }
+        function transform(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+	}
 
     </script>
+</body>
