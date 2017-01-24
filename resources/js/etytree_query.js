@@ -28,7 +28,6 @@ var ambiguous,
     tree,
     zoomListener,
     nodesRight,
-    checked = false,
     helpString,
     minYear,
     maxYear,
@@ -36,41 +35,6 @@ var ambiguous,
     xAxis,
     xAxisGroup;
 
-function drawAxis(myTreeData){    //draw time axis
-    //set min and max year                                                                     
-    minYear = 5000,
-    maxYear = -7000;
-    visit(myTreeData,
-	  function(d) {
-              console.log(d);
-              console.log(!d.hidden);
-              if (!d.hidden){
-                  maxYear = Math.max(maxYear, + d.year);
-                  minYear = Math.min(minYear, + d.year);
-              }
-              console.log(minYear,maxYear,d.year);
-	  },
-	  function(d) {
-	      return d.children && d.children.length > 0 ? d.children : null;
-	  });
-    maxYear = Math.min(2020, maxYear);
-    //draw axis
-    axisScale = d3.scale.linear()
-        .domain([minYear, maxYear])
-        .range([ maxLabelLength * [ + minYear / 50 ] ,  maxLabelLength * [ + maxYear / 50 ] ]);
-    xAxis = d3.svg.axis()
-        .ticks(Math.max(Math.floor((maxYear - minYear) / 500), 5))
-        .tickFormat(function(d){
-		return d<0? Math.abs(d) + " BC" : d + " AD";
-        })
-        .scale(axisScale);
-    xAxisGroup = svgGroup.append("g")
-        .attr("class", "axis")
-        .attr("transform", "translate(0, -40)")
-        .call(xAxis);
-    d3.selectAll(".tick > text")
-	.style("font-size", "10px");
-}
 
 //get data from languages.json  
 d3.json("../data/_languages_tree.json", function(error1, json){
@@ -229,21 +193,7 @@ function loadTreeFromFile(myWord){
     //hopscotch.endTour();    
     var namefile = "../data/" + myWord.split(' ').join('_') + ".json";
     treeJSON = d3.json(namefile, function(error, treeData) {    
-            d3.select("#show-time")
-                .on("mouseover", function(d) {
-                    div3.transition()
-		        .duration(200)
-		        .style("opacity", 1);
-                    div3.html("Check box to visualize words on a time scale.")
-                        .style("left", d3.event.pageX + "px")                          
-                        .style("top", d3.event.pageY + "px");                        
-                })
-                .on("mouseout", function(d) {
-                    div3.transition()
-		    .duration(500)
-		    .style("opacity", 0);
-                });
-	    
+            	    
 	    searchedWordIndex = 0;
             var K = 0,
             data = [],
@@ -307,7 +257,7 @@ function loadTreeFromFile(myWord){
 			if (d.children && d.children.length > 0){
 			    for (hh=0; hh<d.children.length; hh++){
 				if ((!d.children[hh].year && (d.children[hh].link === "borrowing" || d.children[hh].link === "abbreviation"))|| (d.children[hh].language === d.language && d.children[hh].year_string && d.children[hh].year_string[0] == "_")) {//if a node has a special link || a node is derived from a word in the same language
-				    d.children[hh].year = + d.year + 300; //300 is arbitrary                                               
+				    d.children[hh].year = + d.year + 300; //300 is arbitrary   
 				    d.children[hh].year_string = "_inferred by parent node because of borrowed/abbreviated/derived from parent word " + d.name;
 			        }
                             }
@@ -361,7 +311,7 @@ function loadTreeFromFile(myWord){
                 tree = d3.layout.cluster()
                     .size([viewerHeight, viewerWidth]);
 
-                // Sort the tree initially in case the JSON isn't in a sorted order.            
+                // Sort the tree initially in case the JSON isn't in a sorted order.    
                 sortTree(tree);
 
                 zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
@@ -622,10 +572,11 @@ function loadTreeFromFile(myWord){
                         }
                     } else {
                         if (d3.event.defaultPrevented) return; // click suppressed
+                        if ((typeof(d.position) != "undefined" && d.position == "left") || d.link == "compound"){ 
+			    $("#tags").val(d.name[0]);
+                            loadTreeFromFile(d.name[0]); 
+                        }
                         if ((typeof(d.position) != "undefined" && d.position == "left") || d.link == "compound"){
-                            h++;
-                            myHistory[h] = d.name[0];
-			    $("#tags").val(myHistory[h]);
 			    loadTreeFromFile(d.name[0]);
                         } else {
 			    d = toggleChildren(d);
@@ -682,35 +633,6 @@ function loadTreeFromFile(myWord){
 			});
                     
                     links = tree.links(nodes);
-                    $("#time-checkbox").change(
-                    /////////////////timeout = setTimeout(function() { input.property("checked", true).each(changed); }, 2000);
-                        function () {
-                            checked = this.checked;
-                            if (checked){
-				drawAxis(root);
-			    } else {
-				d3.select(".axis").remove();
-			    }
-      	                    //clearTimeout(timeout);
-                            nodes.forEach(function (d) { 
-                                var dr = 1;
-                                if (d.position && d.position === "left"){
-                                    dr = -1;
-                                } 
-                                d.y = checked ? maxLabelLength * [ + d.year / 50 ] : dr * d.depth * (maxLabelLength * 10);
-                            });
-
-                            node.transition()
-	                        .duration(duration)
-	                        .attr("transform", function(d) {
-	                                return "translate(" + d.y + "," + d.x + ")";
-                                    });			     
-      
-                            link.transition()
-                                .duration(duration)
-                                .attr("d", diagonal);
-	                }
-		    );
 
                     // Set widths between levels based on maxLabelLength.
                     nodes.forEach(function(d) {
@@ -723,7 +645,7 @@ function loadTreeFromFile(myWord){
                         if (d.position && d.position == "left"){
                             dr = -1;
                         }
-                        d.y = checked ? maxLabelLength * [ +d.year / 50 ] : dr * d.depth * (maxLabelLength * 10); 
+                        d.y = dr * d.depth * (maxLabelLength * 10); 
                         // alternatively to keep a fixed scale one can set a fixed depth per level
                         // Normalize for fixed-depth by commenting out below line
                         // d.y = (d.depth * 500); //500px per level.
@@ -900,7 +822,7 @@ function loadTreeFromFile(myWord){
                             if (d.position && d.position === "left"){ 
 				dr = -1;
 			    }
-	                    d.y = checked ? maxLabelLength * [ + d.year / 50] : dr * d.depth * (maxLabelLength * 10);
+	                    d.y = dr * d.depth * (maxLabelLength * 10);
                             return "translate(" + d.y + "," + d.x + ")";
                         });
 
@@ -998,15 +920,10 @@ function loadTreeFromFile(myWord){
                         if (d.position && d.position === "left") { 
 			    d.r = -1;
 	                }   
-                        d.y = checked ? maxLabelLength * [(+ d.year) / 50] : dr * d.depth * (maxLabelLength * 10);
+                        d.y = dr * d.depth * (maxLabelLength * 10);
                         d.y0 = d.y;
                     });
                 
-                    if (checked){
-                        drawAxis(root);
-                    } else {
-                        d3.select(".axis").remove();
-                    }
 		}
                 /////////////////////END OF DEFINE SOME FUNCTIONS
 
@@ -1066,9 +983,7 @@ function loadTreeFromFile(myWord){
 		    d3.selectAll("g.node").remove();
 		    d3.select("#message").remove();
 		    d3.select("#logo").remove();
-		    if (!checked){
-			d3.select(".axis").remove();
-		    }
+		    
 		    d3.selectAll(".tooltip").remove();
 		    d3.selectAll(".tooltip2").remove();
 		    d3.selectAll(".tooltip3").remove();
