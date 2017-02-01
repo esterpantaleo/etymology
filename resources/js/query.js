@@ -27,9 +27,18 @@ $('document').ready(function(){
 
     // Define the div for the tooltip                               
     var div = d3.select("body").append("div")
-        .attr("id", "tooltip")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
+        .attr("data-role", "popup")
+        .attr("data-dismissible", "true")
+        .attr("id", "myPopup")
+	.attr("class", "ui-content")
+	.style("position", "absolute")
+	.style("background", "lightBlue")
+	.style("text-align", "left")
+	.style("padding", "2px")
+	.style("font", "12px sans-serif")
+	.style("border", "0px")
+	.style("border-radius", "8px");
+
     
     var margin = [0, 0, 0, 0],
     width = window.innerWidth - margin[0],
@@ -125,8 +134,14 @@ $('document').ready(function(){
 		d3.xhr(treeUrl, treeMime, function(request) {
 		    if (request != null) {
                         d3.select("#tree-overlay").remove();
-			d3.select("#tooltip").style("opacity", 0);
+			div.style("opacity", 0);
                         d3.select("#message").remove();
+			d3.select("#p-helpPopup").remove(); 
+			d3.select("#helpPopup")
+			    .append("p")
+			    .attr("id", "p-helpPopup")
+			    .attr("style", "font-size:12px;border-radius:8px;max-width:255px")
+			    .html("<ul><li>Click on a circle to display the language</li> <li>Click on a word to display the data.</li></ul>");
 			var treeJson = request.responseText;
 			treeJson = JSON.parse(treeJson);
 			var treeGraph = treeJson.results.bindings;
@@ -238,7 +253,10 @@ $('document').ready(function(){
 			    .attr("height", height)
 			    .call(d3.behavior.zoom().on("zoom", function () {
 				svgGraph.attr("transform", "translate(" + d3.event.translate + ")")
-			    }));
+			    }))
+			    .on("click", function(){
+				div.style("opacity", 0);
+			    });
 			
 			if (treeSparqlLinks.length == 0){
 			    d3.select("#tree-overlay").remove();
@@ -249,7 +267,7 @@ $('document').ready(function(){
 				.html("Sorry, no etymology available for this word");
 			}
 			
-			// Per-type markers, as they don't inherit styles.                      
+			// Per-type markers, as they don't inherit styles.     
 			svgGraph.append("defs").selectAll("marker")
 			    .data(["clonedInto", "borrowedBy", "inherited"])
 			    .enter().append("marker")
@@ -278,19 +296,21 @@ $('document').ready(function(){
 			    .attr("stroke", "red")
 			    .call(force.drag)
 			    .on("mouseover", function(d) {
-				div.transition()
-				    .duration(100)
-				    .style("opacity", .9);
+				d3.select(this).style("cursor", "pointer");
+			    }) 
+			    .on("click", function(d) {
+				 d3.select(this)
+				    .append("a") 
+				    .attr("href", "#myPopup") 
+				    .attr("data-rel", "popup")
+				    .attr("class", "ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right")  
+				    .attr("data-position-to", "origin"); 
+				div.style("opacity", 1);
 				div.html(langMap.get(d.iso))
 				    .style("left", (d3.event.pageX) + "px")
 				    .style("top", (d3.event.pageY - 28) + "px");
-			    })
-			    .on("mouseout", function(d) {
-				div.transition()
-				    .duration(100)
-				    .style("opacity", 0);
+				d3.event.stopPropagation();
 			    });
-
 			
 			var isoText = svgGraph.append("g").selectAll("text")
 			    .data(force.nodes())
@@ -310,7 +330,7 @@ $('document').ready(function(){
 				links.forEach(function(element, i) {
 				    var a = element.split("/");
 				    var b = a[a.length-1].split("#");
-				    toreturn = toreturn + " <a href=\"" + element + "\">" + b[1].replace(/_/g," ") + " " + b[0].replace(/_/g," ") +"</a>\n";
+				    toreturn = toreturn + " <a href=\"" + element + "\" target=\"_blank\">" + b[1].replace(/_/g," ") + " " + b[0].replace(/_/g," ") +"</a>\n";
 				});
 			    }
 			    return toreturn;
@@ -325,18 +345,17 @@ $('document').ready(function(){
 			    .attr("height", "0.7em")
 			    .attr("fill", "red")
 			    .attr("fill-opacity", 0)
-			    .on("mouseover", function(d) {
-				div.transition()
-				    .duration(500)
-				    .style("opacity", .9);
-				div.html("<b>" + treeSparqlNodes[d.id].word + "</b>-" + treeSparqlNodes[d.id].pos + "<br><br>" + treeSparqlNodes[d.id].gloss + showLinks(treeSparqlNodes[d.id].link))
+			    .on("click", function(d) {
+				d3.select(this)
+				    .append("a")
+				    .attr("href", "#myPopup") 
+				    .attr("data-rel", "popup")
+				    .attr("data-transition", "pop");
+				div.style("opacity", 1);
+				div.html("<b>" + treeSparqlNodes[d.id].word + "</b> - " + treeSparqlNodes[d.id].pos + "<br><br>" + treeSparqlNodes[d.id].gloss + showLinks(treeSparqlNodes[d.id].link))
 				    .style("left", (d3.event.pageX + 18) + "px")
 				    .style("top", (d3.event.pageY - 28) + "px");
-			    })
-			    .on("mouseout", function(d) {
-				div.transition()
-				    .duration(500)
-				    .style("opacity", 1);
+				d3.event.stopPropagation();
 			    });
 		
 			var wordText = svgGraph.append("g").selectAll("text")
@@ -347,7 +366,6 @@ $('document').ready(function(){
 			    .attr("id", "word")
 			    .text(function(d) { return d.word; });
 			
-			// Use elliptical arc path segments to doubly-encode directionality.
 			function tick() {
 			    path.attr("d", function(d){ 
 				return "M" + d.source.x + "," + d.source.y + "A0,0 0 0,1 " + d.target.x + "," + d.target.y; 
@@ -417,12 +435,20 @@ $('document').ready(function(){
 		
 		d3.xhr(url, mime, function(request) {
 		    if (request != null) {
+			//clean screen and change help
 			d3.select("#tree-overlay").remove();
-			d3.select("#tooltip").style("opacity", 0);
+			div.style("opacity", 0);
 			d3.select("#message").remove();
-		    
-			var json = request.responseText;
-			json = JSON.parse(json);
+			d3.select("#p-helpPopup").remove();
+			d3.select("#helpPopup")
+			    .append("p")
+			    .attr("id", "p-helpPopup")
+			    .attr("style", "font-size:12px;border-radius:8px;max-width:255px")
+			    .html("Choose which word you are interested in. <ul><li>Click on a circle to display the language</li> <li>Click on a word to display the data</li> <li>Double click on a circle to choose a word</li></ul>");
+			
+			//perform query
+			var json = JSON.parse(request.responseText);
+
 			var theGraph = json.results.bindings;
 			if (debug) { console.log(theGraph) };
 			var sparqlLinks = {};
@@ -437,7 +463,7 @@ $('document').ready(function(){
 			    if (uri[uri.length - 1].startsWith("__ee_")){
 				if (element.et.value == ""){
 				    mySource.ignore = false;
-				} else { //if element.et != undefined
+				} else { 
 				    var tmp = element.et.value.split(",");
 				    if (tmp.length > 1){
                                         mySource.refersTo = tmp;
@@ -455,8 +481,8 @@ $('document').ready(function(){
 				mySource.iso = element.iso.value;
                                 mySource.et = (element.et != undefined) ? element.et.value : "";
 
-				mySource.merge = false;
-								
+				//merge iri-s with the same etymological origin
+				mySource.merge = false;			
 				for (var i in sparqlNodes){
 				    if (sparqlNodes[i].et != undefined){ 
 					if (sparqlNodes[i].iso == mySource.iso){
@@ -497,13 +523,13 @@ $('document').ready(function(){
 			var svgGraph = d3.select("#tree-container").append("svg")
 			    .attr("id", "tree-overlay")
 			    .attr("width", width)  
-			    .attr("height", height);         
-						
-			var path = svgGraph.append("g").selectAll("path")
-			    .data(force.links())           
-			    .enter().append("path")      
-			    .attr("class", function(d) { return "link " + d.type; })  
-			    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+			    .attr("height", height)
+			    .call(d3.behavior.zoom().on("zoom", function () {
+                                svgGraph.attr("transform", "translate(" + d3.event.translate + ")")
+                            }))
+                            .on("click", function(){
+                                div.style("opacity", 0);
+                            });
 			
 			var circle = svgGraph.append("g").selectAll("circle") 
 			    .data(force.nodes())             
@@ -511,23 +537,24 @@ $('document').ready(function(){
 			    .attr("r", 12)  
 			    .attr("fill", "orange")
 			    .attr("stroke", "red")               
-			    .call(force.drag) 
+			    .call(force.drag)
 			    .on("mouseover", function(d) {
 				d3.select(this).style("cursor", "pointer");
-				d3.selectAll("circle").attr("fill", "orange");
-				div.transition()           
-				    .duration(200)            
-				    .style("opacity", .9);  
-				div.html(langMap.get(d.iso)) 
-				    .style("left", (d3.event.pageX) + "px")     
-				    .style("top", (d3.event.pageY - 28) + "px");
-			    })                                         
-			    .on("mouseout", function(d) {          
-				div.transition()           
-				    .duration(500)               
-				    .style("opacity", 0);    
 			    })
-			    .on("click", loadTree);
+			    .on("click", function(d) {
+				d3.selectAll("circle").attr("fill", "orange");
+				d3.select(this)
+				    .append("a")
+				    .attr("href", "#myPopup")
+				    .attr("data-rel", "popup")
+				    .attr("data-transition", "pop");
+				div.style("opacity", 1);
+				div.html(langMap.get(d.iso)) 
+				    .style("left", (d3.event.pageX) + "px")    
+				    .style("top", (d3.event.pageY - 28) + "px");
+				d3.event.stopPropagation();
+			    })    
+			    .on("dblclick", loadTree);
 			
 			var isoText = svgGraph.append("g").selectAll("text")  
 			    .data(force.nodes())                             
@@ -548,12 +575,18 @@ $('document').ready(function(){
 			    .attr("fill", "red")
 			    .attr("fill-opacity", 0)
 			    .on("mouseover", function(d) {
-				div.transition()
-				    .duration(500)
-				    .style("opacity", .9);
+				d3.select(this).style("cursor", "pointer");
+			    })
+			    .on("click", function(d) {
+				d3.select(this)
+				    .append("a") 
+				    .attr("href", "#myPopup")
+				    .attr("data-rel", "popup") 
+				    .attr("data-transition", "pop");  
+				div.style("opacity", 1);
 				var optionalHtml = "";		
                                 if (d.refersTo != undefined){
-				    optionalHtml = "<br><br>The etymological tree of this word corresponds to either of the words higlighted in red";
+				    optionalHtml = "<br><br>If you choose this word you will visualize the etymological tree of either of the words higlighted in red, probably of the most popular word among them. This is because in Wiktionary (for the most part) Etymology Sections refer to words without specifying their meaning and this data has been extracted from Etymology Sections.";
 				    d.refersTo.forEach(function(iri){ d3.selectAll("circle").filter(function(f) { return (f.et == iri); }).attr("fill", "red")});
 				} else {
 				    d3.selectAll("circle").attr("fill", "orange");
@@ -561,11 +594,7 @@ $('document').ready(function(){
 				div.html("<b>" + sparqlNodes[d.id].word + "</b>" + showGlosses(sparqlNodes[d.id]) + optionalHtml)
                                     .style("left", (d3.event.pageX + 18) + "px")
                                     .style("top", (d3.event.pageY - 28) + "px");
-			    })
-			    .on("mouseout", function(d) {
-				div.transition()
-				    .duration(500)
-				    .style("opacity", 0);
+				d3.event.stopPropagation();
 			    });
 			
 			function showGlosses(sparqlNode){
@@ -573,6 +602,7 @@ $('document').ready(function(){
                             for (var i = 0; i < sparqlNode.pos.length; i ++) { toreturn += "<br><br>" + sparqlNode.pos[i] + " - " + sparqlNode.gloss[i]}
 			    return toreturn;
 			}
+
 			var wordText = svgGraph.append("g").selectAll("text")
 			    .data(force.nodes())
 			    .enter().append("text")

@@ -39,19 +39,6 @@ text {
     font: 10px sans-serif; 
     pointer-events: none; 
 }
-
-div.tooltip {  
-    position: absolute;
-    text-align: left;  
-    max-width: 255px;
-    padding: 2px;  
-    font: 12px sans-serif;
-    background: lightBlue;
-    border: 0px; 
-    border-radius: 8px; 
-    pointer-events: none;
-}
-
 input:focus::-webkit-input-placeholder { color:transparent; }
 input:focus:-moz-placeholder { color:transparent; } 
 input:focus::-moz-placeholder { color:transparent; }
@@ -69,12 +56,10 @@ input:focus:-ms-input-placeholder { color:transparent; }
 <script src="../../vendors/js/hopscotch.min.js"></script>
 <script src="../js/liveTour.js"></script>
 <script src="../js/query.js"></script>  
-<script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
 <body>  
 <div data-role="page">
     <div data-role="header">
-  <!-- <div class="ui-fieldcontain" id="tree-container">-->
-        <table style="empty-cells:hide; margin-left:auto; margin-right:auto;"> 
+         <table style="empty-cells:hide; margin-left:auto; margin-right:auto;"> 
             <tr> 
                 <td> 
                     <input type="text" data-type="search" placeholder="search etymology" id="tags"></input>
@@ -92,7 +77,7 @@ input:focus:-ms-input-placeholder { color:transparent; }
                 </td>
                 <td id="lan">
                     <select class="ui-shadow ui-btn ui-corner-all ui-select" style="font-size:10px;border:0;">
-                        <option value="1">en - English</option>
+                        <option value="1">eng - English</option>
                         <option value="2">other languages not implemented yet</option>
                     </select>
                 </td>
