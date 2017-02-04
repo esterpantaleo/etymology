@@ -1,6 +1,6 @@
 $('document').ready(function(){
     var debug = true;
-
+    var excludeStarLikeStructures = true;
     //load languages
     if (debug) console.log("loading languages");
     var langMap = new Map();
@@ -25,7 +25,6 @@ $('document').ready(function(){
 	});
     });
 
-    // Define the div for the tooltip                               
     var div = d3.select("body").append("div")
         .attr("data-role", "popup")
         .attr("data-dismissible", "true")
@@ -46,8 +45,8 @@ $('document').ready(function(){
     
     var endpoint = "http://etytree-virtuoso.wmflabs.org/sparql";
     var mime = "application/sparql-results+json";
-
-    $('#tags').on("keypress click", function(e){
+    
+    $('#tags').on("keypress click ", function(e){
         if (e.which == 13 || e.type === 'click') {
             var search = $('#tags').val();
 	    if (debug) console.log("loading nodes");
@@ -158,87 +157,101 @@ $('document').ready(function(){
 			var treeSparqlNodes = {};
 			
 			//set nodes
-			treeGraph.forEach(function(element, j){
-			    var mySource = {};
-			    mySource.id = reduceIRI(element.source.value);
-			    mySource.word = (element.word == undefined) ? "?" : element.word.value.replace("__","'").replace(/^_/g,"*").replace(/_/g," ");
-			    mySource.iso = element.iso.value;
-			    mySource.gloss = (element.gloss == undefined) ? "" : element.gloss.value;
-			    mySource.pos = (element.pos == undefined) ? "" : element.pos.value;
-			    mySource.link = (element.link == undefined) ? "" : element.link.value;
-			    treeSparqlNodes[mySource["id"]] = mySource;
-			    
-			    if (element.target1 != undefined) {
-				mySource = {};
-				mySource.id = reduceIRI(element.target1.value);
-				if (treeSparqlNodes[mySource.id] == undefined){
-				    var tmp = fromIRItoCircle(element.target1.value);
-				    mySource.iso = tmp.iso;
-                                    mySource.word = tmp.word;
-				    treeSparqlNodes[mySource.id] = mySource;
+			function treeNode(iri){
+			    this.id = reduceIRI(iri.value);
+			    this.initialize = function(word, iso, gloss, pos, link){
+				this.word = (word == undefined) ? "?" : word.value.replace("__","'").replace(/^_/g,"*").replace(/_/g," ");
+				this.iso = iso.value;
+				this.gloss = (gloss == undefined) ? "" : gloss.value; 
+				this.pos = (pos == undefined) ? "" : pos.value;
+				this.link = (link == undefined) ? "" : link.value;
+			    };
+
+			    this.merge = function(nodes){
+				if (nodes[this.id]  == undefined){
+				    var splitted = iri.value.replace("http://kaiko.getalp.org/dbnary/","").split("/");
+				    this.iso = (splitted > 2) ? splitted[1] : "eng";
+				    this.word = (splitted.length > 2) ? fromIRItoWord(splitted[2]) : fromIRItoWord(splitted[1]);
+				    nodes[this.id] = this;
 				}
+			    };
+			}
+
+			treeGraph.forEach(function(element, j){
+			    var mySourceNode = new treeNode(element.source);
+			    mySourceNode.initialize(element.word, element.iso, element.gloss, element.pos, element.link);
+			    treeSparqlNodes[mySourceNode.id] = mySourceNode;
+			   
+			    if (element.target1 != undefined) {
+				var myTarget1Node = new treeNode(element.target1);
+				myTarget1Node.merge(treeSparqlNodes);
 			    }
 			    if (element.target2 != undefined) {
-				mySource = {};
-				mySource.id = reduceIRI(element.target2.value);
-				if (treeSparqlNodes[mySource.id] == undefined){
-				    var tmp = fromIRItoCircle(element.target2.value);
-				    mySource.iso = tmp.iso;
-                                    mySource.word = tmp.word;
-				    treeSparqlNodes[mySource.id] = mySource;
-				}
+				var myTarget2Node = new treeNode(element.target2);
+				myTarget2Node.merge(treeSparqlNodes);
 			    }
 			    if (element.target3 != undefined) {
-				mySource = {};
-				mySource.id = reduceIRI(element.target3.value);
-				if (treeSparqlNodes[mySource.id] == undefined){
-                                    var tmp = fromIRItoCircle(element.target3.value);
-				    mySource.iso = tmp.iso;
-				    mySource.word = tmp.word;
-				    treeSparqlNodes[mySource.id] = mySource;
-				}
+				var myTarget3Node = new treeNode(element.target3);
+				myTarget3Node.merge(treeSparqlNodes);
 			    }
 			})
 			
 			//set links
 			treeGraph.forEach(function(element, j){
 			    var source = reduceIRI(element.source.value);
+			    
 			    var target = null;
 			    if (element.target1 != undefined ) {
 				target = reduceIRI(element.target1.value);
 				if (target != source){
-				    var Link = {"source": treeSparqlNodes[target],"target": treeSparqlNodes[source], "type": "inherited"};
-				    var a = treeSparqlLinks.indexOf(Link);
-				    if (a == -1) {treeSparqlLinks.push(Link);}
+				    var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": "inherited"};
+				    if (treeSparqlLinks.indexOf(Link) == -1) {treeSparqlLinks.push(Link);}
 				} 
 			    }
 			    if (element.target2 != undefined ) {
 				target = reduceIRI(element.target2.value);
 				if (target != source){
-				    var Link = {"source": treeSparqlNodes[target],"target": treeSparqlNodes[source], "type": "inherited"};
+				    var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": "inherited"};
 				    if (treeSparqlLinks.indexOf(Link) == -1) {treeSparqlLinks.push(Link);}
 				}
 			    }
 			    if (element.target3 != undefined ) {
 				target = reduceIRI(element.target3.value);
 				if (target != source){
-				    var Link = {"source": treeSparqlNodes[target],"target": treeSparqlNodes[source], "type": "inherited"};
+				    var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": "inherited"};
 				    if (treeSparqlLinks.indexOf(Link) == -1) {treeSparqlLinks.push(Link);}
 				}
 			    }
 			    
 			})
 			
-			if (treeSparqlLinks.length > 100){
-			    var sameIsoLinks = treeSparqlLinks.filter(function(d) { return d.source["iso"] == d.target["iso"]; })
-			    
-			    var toDeleteLinks = sameIsoLinks.filter(function(d) { for (var i=0; i<treeSparqlLinks.length; i++) {if (d.target.id == treeSparqlLinks[i].source.id) return false; } return true;});
-			    treeSparqlLinks = treeSparqlLinks.filter(function(d) { for (var i=0; i<toDeleteLinks.length; i++) {if (toDeleteLinks[i] == d) return false;} return true;}); 
+			if (excludeStarLikeStructures = true){
+			    //if (treeSparqlLinks.length > 10){			    
+			    var toDeleteLinks = treeSparqlLinks.filter(function(d) {
+				return d.source.iso == d.target.iso; 
+			    }).filter(function(d) { 
+				for (var i=0; i<treeSparqlLinks.length; i++) {
+				    if (d.target.id == treeSparqlLinks[i].source.id) 
+					return false; 
+				} 
+				return true;
+			    });
+
+			    treeSparqlLinks = treeSparqlLinks.filter(function(d) { 
+				for (var i=0; i<toDeleteLinks.length; i++) {
+				    if (toDeleteLinks[i] == d) return false;
+				} 
+				return true;
+			    }); 
             		    
 			    for (var aNode in treeSparqlNodes) {
-				
 				var isLinked = false;
-				for (var i=0; i<treeSparqlLinks.length; i++) { if (treeSparqlLinks[i].source["id"] == aNode || treeSparqlLinks[i].target["id"] == aNode) {isLinked = true; break;}}
+				for (var i=0; i<treeSparqlLinks.length; i++) { 
+				    if (treeSparqlLinks[i].source.id == aNode || treeSparqlLinks[i].target.id == aNode) {
+					isLinked = true; 
+					break;
+				    }
+				}
 				if (isLinked == false) {
 				    delete treeSparqlNodes[aNode];
 				}
@@ -268,8 +281,9 @@ $('document').ready(function(){
 			    .attr("id", "tree-overlay")
 			    .attr("width", width)
 			    .attr("height", height)
-			    .call(d3.behavior.zoom().on("zoom", function () {
-				svgGraph.attr("transform", "translate(" + d3.event.translate + ")")
+			    .call(d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", function () {
+				svgGraph.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+				div.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 			    }))
 			    .on("click", function(){
 				div.style("opacity", 0);
@@ -465,10 +479,9 @@ $('document').ready(function(){
                         }
 			
 			//node constructor
-			function Node(element){		
-	    
+			function Node(element){	
 			    //merge iri-s with the same etymological origin
-			    this.doMerge = function(nodes, pos, gloss){
+			    this.doMerge = function(pos, gloss, nodes){
 				var merge = false;
 				for (var i in nodes){
                                     if (nodes[i].et != undefined){
@@ -520,7 +533,7 @@ $('document').ready(function(){
                                     pos = "";
 				}
 				var gloss = (jsonNode.gloss != undefined) ? jsonNode.gloss.value : "";
-				if (!aNode.doMerge(sparqlNodes, pos, gloss)){
+				if (!aNode.doMerge(pos, gloss, sparqlNodes)){
 				    aNode.finalize(jsonNode.uri, jsonNode.et, pos, gloss);
 				    //push to sparqlNodes
 				    sparqlNodes[aNode.id] = aNode;
@@ -542,8 +555,9 @@ $('document').ready(function(){
 			    .attr("id", "tree-overlay")
 			    .attr("width", width)  
 			    .attr("height", height)
-			    .call(d3.behavior.zoom().on("zoom", function () {
-                                svgGraph.attr("transform", "translate(" + d3.event.translate + ")")
+			    .call(d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", function () {
+				svgGraph.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+				div.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
                             }))
                             .on("click", function(){
                                 div.style("opacity", 0);
