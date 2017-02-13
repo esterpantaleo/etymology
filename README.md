@@ -1,6 +1,6 @@
 # THE PROJECT
 
-This is a first version of the "etytree" project. The aim of the project is to visualize in an interactive web page the etymological tree (i.e., the etymology of a word in the form of a tree, with ancestors, cognate words, derived words, etc.) of any word in any language using data available extracted from Wiktionary. 
+This is a first version of the "etytree" project. The aim of the project is to visualize in an interactive web page the etymological tree (i.e., the etymology of a word in the form of a tree, with ancestors, cognate words, derived words, etc.) of any word in any language using data extracted from Wiktionary. 
 
 This project has been inspired by my interest in etymology, in  open source collaborative projects and in interactive visualizations.
 
@@ -17,7 +17,8 @@ This code is distributed under Creative Commons Attribution-ShareAlike 3.0.
 * Add etymology controversies.
 
 * Currently for some words the Virtuoso server doesn't return data because it reaches timeout. I want to try a different query like the following 
-```DEFINE input:inference "etymology_ontology"
+```
+    DEFINE input:inference "etymology_ontology"
     PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
