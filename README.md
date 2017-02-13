@@ -1,6 +1,6 @@
 # THE PROJECT
 
-This is a first version of the "etytree" project. The aim of the project is to visualize in an interactive web page the etymological tree (i.e., the etymology of a word in the form of a tree, with ancestors, cognate words, derived words, etc.) of any word in any language using data available in Wiktionary. 
+This is a first version of the "etytree" project. The aim of the project is to visualize in an interactive web page the etymological tree (i.e., the etymology of a word in the form of a tree, with ancestors, cognate words, derived words, etc.) of any word in any language using data available extracted from Wiktionary. 
 
 This project has been inspired by my interest in etymology, in  open source collaborative projects and in interactive visualizations.
 
@@ -12,12 +12,12 @@ This code is distributed under Creative Commons Attribution-ShareAlike 3.0.
 
 * I would like to add a preferred direction to the graph, that goes from left to right following the evolution of a word from the past to the present. This would mean in terms of force field to add a magnetic field that orients arrows towards a preferred direction.
 
-* Add zoom to tooltip, set zoom also in google chrome and other browsers
+* Add zoom to tooltip, set zoom also in google chrome and other browsers.
 
-* Add etymology controversies
+* Add etymology controversies.
 
 * Currently for some words the Virtuoso server doesn't return data because it reaches timeout. I want to try a different query like the following 
-    DEFINE input:inference "etymology_ontology"
+```DEFINE input:inference "etymology_ontology"
     PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -46,12 +46,12 @@ This code is distributed under Creative Commons Attribution-ShareAlike 3.0.
                 FILTER (?pcognate in (dbetym:etymologicallyDerivesFrom, dbetym:descendsFrom, dbetym:derivesFrom,dbetym:etymologicallyEquivalentTo)) 
             }
         }
-
+```
 which works for the English word door.
 
-* Click on word and interrogate the server to get data about the word
+* Click on a word and interrogate the server to get data about the word.
 
-* Extract Reconstructed words
+* Extract Reconstructed words.
 
 * Maybe consider Dialects:
     Module:da:Dialects ?
@@ -61,10 +61,10 @@ which works for the English word door.
     Module:hy:Dialects ?
     Module:la:Dialects (e.g.: aug -> link = Late Latin#Late and post-classical Latin, display = post-Augustan)
 
-* Maybe consider dditional modules: 
+* Maybe consider additional modules: 
     Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
-
-* Use Template:defdate
+* Use 
+    Template:defdate
 
 ## NOTES TO SELF REGARDING dbnary_etymology
 ### GENERATE DOCUMENTATION
