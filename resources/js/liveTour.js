@@ -5,14 +5,8 @@ var tour = {
             target: "tags",
             placement: "right",
             title: "Search bar",
-            content: "Enter a word here to visualize its etymological tree."
-        }]
-}
-
-var tour2 = {
-    id: "etytree_tutorial2",
-    steps:
-        [{
+            content: "<ul><li>Write a word then press enter.</li><li>Some words will appear: click on them to choose language and meaning.</li><li>Double click on the word you are interested in to visualize its etymological relationships.</li></ul>"
+        },{
             target: "aHelpPopup",
             placement: "right",
             title: "Help",
@@ -21,8 +15,28 @@ var tour2 = {
             target: "lan",
             placement: "left", 
             title: "Language",
-            content: "Choose language version."
-        }]
+            content: "Choose language version (not available yet)."
+        }],
+    onEnd: function() {
+	setCookie("toured", "toured");
+    },
+    onClose: function() {
+	setCookie("toured", "toured");
+    }
 };
-hopscotch.startTour(tour);
-var playTour = true;
+
+function setCookie(key, value) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+    document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
+};
+
+function getCookie(key) {
+    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+    return keyValue ? keyValue[2] : null;
+};
+
+// Initialize tour if it's the user's first time
+if (!getCookie("toured")) {
+    hopscotch.startTour(tour);
+}
