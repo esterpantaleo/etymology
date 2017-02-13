@@ -1,6 +1,7 @@
 $('document').ready(function(){
     var debug = true;
     var excludeStarLikeStructures = true;
+    var mergeEquivalentNodes = true;
     //load languages
     if (debug) console.log("loading languages");
     var langMap = new Map();
@@ -45,104 +46,124 @@ $('document').ready(function(){
     
     var endpoint = "http://etytree-virtuoso.wmflabs.org/sparql";
     var mime = "application/sparql-results+json";
+
+    //TODO: this is not working
+    function reloadTree(){
+	console.log("reloading with " + filter);
+    }
+
+    var filter = ".";
+    //"filter (<LONG::IRI_RANK> (?ancestor)<1000) .";    
+    var treeSparql = function(id, filter){
+	var treeQuery = [
+            "define input:inference \"etymology_ontology\"",
+            "PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>",
+            "PREFIX owl: <http://www.w3.org/2002/07/owl#>",
+            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+            "select distinct ?target1 ?target2 ?target3 ?target4 ?source (group_concat(distinct ?ee ; separator=\",\") as ?ref) ?iso (group_concat(distinct ?p ; separator=\",\") as ?ety) ?word ?pos ?gloss (group_concat(distinct ?links ; separator=\",\") as ?link){",
+            "?source ?p ?o . filter (?p in (dbetym:etymologicallyDerivesFrom,dbetym:descendsFrom,dbetym:derivesFrom,dbetym:etymologicallyEquivalentTo))",
+            "{select ?source",
+            "{?source dbetym:etymologicallyRelatedTo{1,} " + id + " . } LIMIT 100}",
+	    "UNION",
+            "{select ?source",
+            "{" + id + " dbetym:etymologicallyRelatedTo{1,} ?source . } LIMIT 100}",
+            " UNION",
+            "{select ?source",
+            "{" + id + " dbetym:etymologicallyRelatedTo{1,} ?ancestor ",
+            filter,
+            "     ?source dbetym:etymologicallyRelatedTo{1,} ?ancestor .} LIMIT 100}",
+            "OPTIONAL {?source rdfs:label ?l .}",
+            "            BIND (STR(?l)  AS ?word1) .",
+	    "OPTIONAL {?source rdfs:seeAlso ?links .}",
+            "OPTIONAL {?source dbnary:refersTo ?ee .",
+            "          ?ee dbnary:refersTo ?cf1 .",
+            "          ?cf1 dbnary:partOfSpeech ?pos1 .",
+                        "          ?cf1 lemon:sense ?sense1 .",
+            "          ?sense1 lemon:definition ?val1 .",
+            "          ?val1 lemon:value ?def1}",
+            "OPTIONAL {?source dbetym:etymologicallyDerivesFrom ?target1}",
+            "OPTIONAL {?source dbetym:derivesFrom ?target2}",
+            "OPTIONAL {?source dbetym:descendsFrom ?target3}",
+            "OPTIONAL {?source dbetym:etymologicallyEquivalentTo ?target4}",
+            "OPTIONAL {?source dbnary:refersTo ?le .",
+            "          ?le lemon:canonicalForm ?cf2 .",
+            "          ?cf2 lemon:writtenRep ?ww .",
+            "          ?le dbnary:partOfSpeech ?pos2 .",
+            "          ?le lemon:sense ?sense2 .",
+            "          ?sense2 lemon:definition ?val2 .",
+            "          ?val2 lemon:value ?def2 .}",
+            "            BIND (STR(?ww)  AS ?word2) .",
+            "BIND(if (bound(?word1),?word1,?word2) AS ?word )",
+            "BIND(if (bound(?pos1),?pos1,?pos2) AS ?pos )",
+            "BIND(if (bound(?def1),?def1,?def2) AS ?gloss )",
+            "BIND(strbefore(replace(str(?source),\"http://kaiko.getalp.org/dbnary/eng/\",\"\",\"i\"),\"/\") AS ?ll)",
+            "BIND(if (?ll = \"\",\"eng\",?ll) AS ?iso )",
+            "}"
+        ];
+	return treeQuery.join(" ");
+    }
+
+    function transform(d) {
+        return "translate(" + d.x + "," + d.y + ")";
+    }
     
-    $('#tags').on("keypress click ", function(e){
+    function reduceIRI(e){
+        return e.replace("http://kaiko.getalp.org/dbnary/eng/", "").replace(/_[0-9]+_/g,"_");//.replace("_2_","_").replace("_3_","_");
+    }
+    
+    function fromIRItoWord(e){
+        return e.replace(/__ee_[0-9]+_/g,"").replace("__ee_","").replace("__","'").replace(/^_/g,"*").replace(/_/g," ");
+    }
+
+    $('#tags').on("keypress click", function(e){
         if (e.which == 13 || e.type === 'click') {
-            var search = $('#tags').val();
+            var searchedWord = $('#tags').val();
+	    var searchedIso = undefined;
+
 	    if (debug) console.log("loading nodes");
-	    loadNodes(search, langMap, endpoint);
+	    loadNodes(searchedWord, langMap, endpoint);
 
-	    function transform(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            }
-
-	    function reduceIRI(e){
-                    return e.replace("http://kaiko.getalp.org/dbnary/eng/", "").replace("_1_","_").replace("_2_","_").replace("_3_","_");
-            }
-
-            function fromIRItoWord(e){
-		return e.replace("__ee_1_","").replace("__ee_2_","").replace("__ee_3_","").replace("__ee_","").replace("__","'").replace(/^_/g,"*").replace(/_/g," ");
-	    }
-
-	    function fromIRItoCircle(e){
-                var tmp = e.replace("http://kaiko.getalp.org/dbnary/","").split("/");
-                var toreturn = {};
-                toreturn.iso = (tmp.length> 2) ? tmp[1] : "eng";
-                toreturn.word = (tmp.length > 2) ? fromIRItoWord(tmp[2]) : fromIRItoWord(tmp[1]);
-                return toreturn;
-            }
-	    
 	    function loadTree(d) {
 		var nodeId = "<" + d.id + ">";
-                
-		if (debug) {
-		    console.log(d);
-		    console.log(nodeId)
-		}
+		
+		var splitted = reduceIRI(d.id).split("/");
+                searchedIso = (splitted.length > 1) ? splitted[0] : "eng";
 
-		var treeQuery = [
-		    "define input:inference \"etymology_ontology\"",
-		    "PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>",
-		    "PREFIX owl: <http://www.w3.org/2002/07/owl#>",
-		    "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-		    "select distinct ?target1 ?target2 ?target3 ?source (group_concat(distinct ?ee ; separator=\",\") as ?ref) ?iso (group_concat(distinct ?p ; separator=\",\") as ?ety) ?word  ?pos ?gloss (group_concat(distinct ?links ; separator=\",\") as ?link){",
-		    "?source ?p ?o . filter (?p in (dbetym:etymologicallyDerivesFrom,dbetym:descendsFrom,dbetym:derivesFrom))",
-		    "{select ?source",
-		    "{?source dbetym:etymologicallyRelatedTo* " + nodeId + " . }}" ,
-		    "UNION",
-		    "{select ?source",
-		    "{" + nodeId + " dbetym:etymologicallyRelatedTo* ?source . }}",
-		    " UNION",
-		    "{select ?source",
-		    "{" + nodeId + " dbetym:etymologicallyRelatedTo* ?descendantOf .",
-		    "     filter (<LONG::IRI_RANK> (?descendantOf)<1000) .",
-		    "     ?source dbetym:etymologicallyRelatedTo* ?descendantOf .}}",
-		    "OPTIONAL {?source rdfs:label ?l .}",
-		    "            BIND (STR(?l)  AS ?word1) .",
-		    "OPTIONAL {?source rdfs:seeAlso ?links .}",
-		    "OPTIONAL {?source dbnary:refersTo ?ee .",
-		    "          ?ee dbnary:refersTo ?cf1 .",
-		    "          ?cf1 dbnary:partOfSpeech ?pos1 .",
-		    "          ?cf1 lemon:sense ?sense1 .",
-		    "          ?sense1 lemon:definition ?val1 .",
-		    "          ?val1 lemon:value ?def1}",
-		    "OPTIONAL {?source dbetym:etymologicallyDerivesFrom ?target1}",
-		    "OPTIONAL {?source dbetym:derivesFrom ?target2}",
-		    "OPTIONAL {?source dbetym:descendsFrom ?target3}",
-		    "OPTIONAL {?source dbnary:refersTo ?le .",
-		    "          ?le lemon:canonicalForm ?cf2 .",
-		    "          ?cf2 lemon:writtenRep ?ww .",
-		    "          ?le dbnary:partOfSpeech ?pos2 .",
-		    "          ?le lemon:sense ?sense2 .",
-		    "          ?sense2 lemon:definition ?val2 .",
-		    "          ?val2 lemon:value ?def2 .}",
-		    "            BIND (STR(?ww)  AS ?word2) .",
-		    "BIND(if (bound(?word1),?word1,?word2) AS ?word )",
-		    "BIND(if (bound(?pos1),?pos1,?pos2) AS ?pos )",
-		    "BIND(if (bound(?def1),?def1,?def2) AS ?gloss )",
-		    "BIND(strbefore(replace(str(?source),\"http://kaiko.getalp.org/dbnary/eng/\",\"\",\"i\"),\"/\") AS ?ll)",
-		    "BIND(if (?ll = \"\",\"eng\",?ll) AS ?iso )",
-		    "}"
-		];
-		var treeSparql = treeQuery.join(" ");
-		var treeUrl = endpoint + "?query=" + encodeURIComponent(treeSparql);
+		var treeUrl = endpoint + "?query=" + encodeURIComponent(treeSparql(nodeId, filter));
+		
 		if (debug) { 
+                    console.log(nodeId)
 		    console.log(endpoint); 
 		    console.log(treeUrl);
 		}
-		
+
+		//TODO: use wheel
 		d3.select("#tree-container")
-                    .insert("p", ":first-child")
-                    .attr("id", "message")
-                    .attr("align", "center")
-                    .html("Loading ...");
-		
+		    .insert("p", ":first-child")
+		    .attr("id", "message")
+		    .attr("align", "center")
+		    .html("Loading, please wait...");
+
+		//TODO: MANAGE ERROR and RELOAD FROM CALLBACK
 		d3.xhr(treeUrl, mime, function(request) {
-		    if (request != null) {
-			//clean screen and and change help       
-                        d3.select("#tree-overlay").remove();
-			div.style("opacity", 0);
-                        d3.select("#message").remove();
+		    //clean screen
+		    d3.select("#tree-overlay").remove();
+		    div.style("opacity", 0);
+		    d3.select("#message").remove();
+		    if (request == null){
+			//print error message
+                        d3.select("#tree-container")
+                            .append("p")
+                            .attr("id", "message")
+			    .attr("align", "center")
+                            .html("Sorry, the server cannot extract etymological relationships correctly for this word. <br>We are working to fix this!")
+                            .append("p")
+			    .attr("id", "messageReload")
+                            .attr("align", "center")
+                            //.html("<input type=\"button\" id=\"loadTree\" value=\"Reload with filter\" onclick=\"reloadTree()\"/>");
+			optionalFilter = ". filter (<LONG::IRI_RANK> (?ancestor)<1000) ."; 
+		    } else {
+			//change help       
 			d3.select("#p-helpPopup").remove(); 
 			d3.select("#helpPopup")
 			    .append("p")
@@ -157,106 +178,243 @@ $('document').ready(function(){
 			var treeSparqlNodes = {};
 			
 			//set nodes
-			function treeNode(iri){
-			    this.id = reduceIRI(iri.value);
-			    this.initialize = function(word, iso, gloss, pos, link){
-				this.word = (word == undefined) ? "?" : word.value.replace("__","'").replace(/^_/g,"*").replace(/_/g," ");
+			function treeNode(id, word, iso, gloss, pos, link){
+			    if (word == undefined) {
+				this.id = id;
+				var splitted = id.split("/");
+                                this.iso = (splitted.length > 1) ? splitted[0] : "eng";
+				this.word = [];
+                                this.word.push((splitted.length > 1) ? fromIRItoWord(splitted[1]) : fromIRItoWord(splitted[0]));
+				this.gloss = ["-"];
+				this.pos = [""];
+				this.link = [""];
+			    } else {
+				this.id = id;
+				this.word = [];
+				this.word.push((word == undefined) ? "?" : word.value.replace("__","'").replace(/^_/g,"*").replace(/_/g," "));
 				this.iso = iso.value;
-				this.gloss = (gloss == undefined) ? "" : gloss.value; 
-				this.pos = (pos == undefined) ? "" : pos.value;
-				this.link = (link == undefined) ? "" : link.value;
-			    };
+				this.gloss = [];
+				this.gloss.push((gloss == undefined) ? "-" : gloss.value);
+				this.pos = [];
+				this.pos.push((pos == undefined) ? "" : pos.value);
+				this.link = [];
+				this.link.push((link == undefined) ? "" : link.value);
+			    }
+			    //TODO: improve this function
+			    this.mergeInto = function(nodes, pos, gloss){
+                                var merge = false;
+                                for (var i in nodes){
+                                    if (nodes[i].et != undefined){
+                                        if (nodes[i].iso == this.iso){
+                                            if (nodes[i].word == this.word){
+						if (nodes[i].et == this.et) {
+                                                    if (this.refersTo != undefined){
+                                                        nodes[i].pos = [];
+                                                        nodes[i].refersTo = this.refersTo;
+                                                    }
+                                                    nodes[i].pos.push(pos);
+                                                    nodes[i].gloss.push(gloss);
+                                                    merge = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                return merge;
+                            }
 
-			    this.merge = function(nodes){
-				if (nodes[this.id]  == undefined){
-				    var splitted = iri.value.replace("http://kaiko.getalp.org/dbnary/","").split("/");
-				    this.iso = (splitted > 2) ? splitted[1] : "eng";
-				    this.word = (splitted.length > 2) ? fromIRItoWord(splitted[2]) : fromIRItoWord(splitted[1]);
-				    nodes[this.id] = this;
+			    this.printWord = function(separator){
+				var toreturn = "";
+				this.word.forEach(function(d){ toreturn += d + separator; });
+				return toreturn.slice(0, -1); //trim the last separator
+                            }
+
+			    this.printData = function(){
+				var toreturn = "";
+				for (var i=0; i<this.word.length; i++){
+				    
+				    toreturn += "<b>" + this.word[i] + "</b>";
+				    var pos = this.pos[i];
+				    if (pos != ""){
+					toreturn += " - " + this.pos[i];
+				    }
+				    toreturn += "<br><br>";
+				    var gloss = this.gloss[i];
+				    if (gloss != ""){
+					toreturn += this.gloss[i];
+				    }
+				    var link = this.link[i];
+				    if (link != ""){
+					toreturn += this.printLinks(link);
+				    }
+				    toreturn += "<br><br><hr>";
 				}
-			    };
+				return toreturn.slice(0, -12);
+			    }
+
+			    this.printLinks = function(l){
+				var toreturn = "";
+				var links = l.split(",");
+				if (links.length == 0) return toreturn;
+				toreturn = "<br><br>as extracted from: ";
+				links.forEach(function(element, i) {
+				    var a = element.split("/");
+				    var b = a[a.length-1].split("#");
+				    toreturn = toreturn + " <a href=\"" + element + "\" target=\"_blank\">" + b[1].replace(/_/g," ") + " " + b[0].replace(/_/g," ") +"</a>\n";
+				});
+				
+				return toreturn;
+			    }
 			}
 
 			treeGraph.forEach(function(element, j){
-			    var mySourceNode = new treeNode(element.source);
-			    mySourceNode.initialize(element.word, element.iso, element.gloss, element.pos, element.link);
-			    treeSparqlNodes[mySourceNode.id] = mySourceNode;
-			   
-			    if (element.target1 != undefined) {
-				var myTarget1Node = new treeNode(element.target1);
-				myTarget1Node.merge(treeSparqlNodes);
-			    }
-			    if (element.target2 != undefined) {
-				var myTarget2Node = new treeNode(element.target2);
-				myTarget2Node.merge(treeSparqlNodes);
-			    }
-			    if (element.target3 != undefined) {
-				var myTarget3Node = new treeNode(element.target3);
-				myTarget3Node.merge(treeSparqlNodes);
-			    }
-			})
+			    var mySourceNodeId = reduceIRI(element.source.value);
+			    var mySourceNode = new treeNode(mySourceNodeId, element.word, element.iso, element.gloss, element.pos, element.link);
+			    //if (treeSparqlNodes[mySourceNodeId] == undefined){
+				treeSparqlNodes[mySourceNodeId] = mySourceNode;
+			    //} else {
+				mySourceNode.mergeInto(treeSparqlNodes, element.pos, element.gloss);
+				//merge treeSparqlNodes[mySourceNodeId] with mySourceNode
+			    //}
+			    ["target1", "target2", "target3", "target4"].map(function(target){
+				//console.log(element[target])
+				if (element[target] != undefined) {
+				    var myTargetNodeId = reduceIRI(element[target].value);
+				    if (treeSparqlNodes[myTargetNodeId] == undefined) {
+					var myTargetNode = new treeNode(myTargetNodeId);
+					treeSparqlNodes[myTargetNodeId] = myTargetNode;
+				    }
+				}			    
+			    });
+			});
 			
 			//set links
-			treeGraph.forEach(function(element, j){
+			treeGraph.forEach(function(element){
 			    var source = reduceIRI(element.source.value);
 			    
 			    var target = null;
-			    if (element.target1 != undefined ) {
-				target = reduceIRI(element.target1.value);
-				if (target != source){
-				    var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": "inherited"};
-				    if (treeSparqlLinks.indexOf(Link) == -1) {treeSparqlLinks.push(Link);}
-				} 
-			    }
-			    if (element.target2 != undefined ) {
-				target = reduceIRI(element.target2.value);
-				if (target != source){
-				    var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": "inherited"};
-				    if (treeSparqlLinks.indexOf(Link) == -1) {treeSparqlLinks.push(Link);}
+			    var t = ["target1", "target2", "target3"]
+			    //inherited
+			    for (var i in t){
+				if (element[t[i]] != undefined) {
+				    target = reduceIRI(element[t[i]].value);
+				    if (target != source){
+					var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": "inherited"};
+					if (treeSparqlLinks.indexOf(Link) == -1) {
+					    treeSparqlLinks.push(Link);
+					}
+				    } 
 				}
-			    }
-			    if (element.target3 != undefined ) {
-				target = reduceIRI(element.target3.value);
-				if (target != source){
-				    var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": "inherited"};
-				    if (treeSparqlLinks.indexOf(Link) == -1) {treeSparqlLinks.push(Link);}
-				}
-			    }
-			    
+			    }	
+			    //equivalent
+			    t = "target4";
+			    if (element[t] != undefined ) {
+                                target = reduceIRI(element[t].value);
+                                if (target != source){
+                                    var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": "equivalent"};
+                                    if (treeSparqlLinks.indexOf(Link) == -1) { 
+					treeSparqlLinks.push(Link); 
+				    }
+                                }
+                            }
 			})
-			
-			if (excludeStarLikeStructures = true){
-			    //if (treeSparqlLinks.length > 10){			    
-			    var toDeleteLinks = treeSparqlLinks.filter(function(d) {
-				return d.source.iso == d.target.iso; 
-			    }).filter(function(d) { 
-				for (var i=0; i<treeSparqlLinks.length; i++) {
-				    if (d.target.id == treeSparqlLinks[i].source.id) 
-					return false; 
-				} 
-				return true;
-			    });
 
-			    treeSparqlLinks = treeSparqlLinks.filter(function(d) { 
-				for (var i=0; i<toDeleteLinks.length; i++) {
-				    if (toDeleteLinks[i] == d) return false;
-				} 
-				return true;
-			    }); 
-            		    
-			    for (var aNode in treeSparqlNodes) {
-				var isLinked = false;
-				for (var i=0; i<treeSparqlLinks.length; i++) { 
-				    if (treeSparqlLinks[i].source.id == aNode || treeSparqlLinks[i].target.id == aNode) {
-					isLinked = true; 
-					break;
+                        //merge nodes that are linked by a Link of type equivalent             
+                        if (mergeEquivalentNodes) {
+			    treeSparqlLinks.forEach(function(d){
+                                if (d.type == "equivalent"){
+				    if (d.source.id != d.target.id){
+					if (d.target.equivalentTo == undefined){
+					    if (d.source.equivalentTo == undefined){
+						d.target.equivalentTo = [];
+					    } else {
+						d.target.equivalentTo = d.source.equivalentTo;
+						d.source.equivalentTo = undefined;
+					    }
+					}
+					d.target.equivalentTo = d.target.equivalentTo.concat(d.source.id);
+					
+					d.target.word = d.target.word.concat(d.source.word);
+					if (d.source.pos == undefined){
+					    d.source.pos = "";
+					}
+					d.target.pos = d.target.pos.concat(d.source.pos);
+					if (d.source.gloss == undefined){
+					    d.source.gloss = "";
+					}
+					d.target.gloss = d.target.gloss.concat(d.source.gloss);
+					if (d.source.link == undefined){
+					    d.source.link = "";
+					}
+					d.target.link = d.target.link.concat(d.source.link);
+					//merge node d.source into node d.target, and delete node d.source                 
+					treeSparqlLinks.forEach(function(f){
+                                            if (f != d){
+						if (f.source.id == d.source.id) {
+						    f.source = d.target;
+						} else if (f.target.id == d.source.id) {
+						    f.target = d.target;
+						}
+                                            }
+					})
 				    }
 				}
-				if (isLinked == false) {
-				    delete treeSparqlNodes[aNode];
-				}
-			    }
+                            });
+			    
+                            for (var i = treeSparqlLinks.length-1; i >= 0; i--){
+				if (treeSparqlLinks[i].source.id == treeSparqlLinks[i].target.id){
+				    treeSparqlLinks.splice(i, 1);
+				} else if (treeSparqlLinks[i].type == "equivalent"){
+				    if (treeSparqlLinks[i].source.equivalentTo == undefined){
+					delete treeSparqlNodes[treeSparqlLinks[i].source.id];
+				    }
+				    if (treeSparqlLinks[i].target.equivalentTo == undefined){
+					delete treeSparqlNodes[treeSparqlLinks[i].target.id];
+                                    }
+                                    treeSparqlLinks.splice(i, 1);
+                                }
+                            }
 			}
+
+			if (excludeStarLikeStructures){
+			    //find links between words in the same language, but exclude links that have as target the searched word
+                            var toDeleteLinks = treeSparqlLinks.filter(function(d) {
+				if (d.target.word.find(function(w){ return w == searchedWord; }) == undefined){
+				    return d.source.iso == d.target.iso;
+				} else {
+				    return false;
+				}
+                            }).filter(function(d) {//don't delete a node if a link starts from it
+                                for (var i=0; i<treeSparqlLinks.length; i++) {
+                                    if (d.target.id == treeSparqlLinks[i].source.id)
+                                        return false;
+                                }
+                                return true;
+                            });
+
+			    //remove links  
+                            treeSparqlLinks = treeSparqlLinks.filter(function(d) {
+                                for (var i=0; i<toDeleteLinks.length; i++) {
+                                    if (toDeleteLinks[i] == d) return false;
+                                }
+                                return true;
+                            });
+			    
+			    //remove nodes that are not conneted by a link
+                            for (var aNode in treeSparqlNodes) {
+                                var isLinked = false;
+                                for (var i=0; i<treeSparqlLinks.length; i++) {
+                                    if (treeSparqlLinks[i].source.id == aNode || treeSparqlLinks[i].target.id == aNode) {
+                                        isLinked = true;
+                                        break;
+                                    }
+                                }
+                                if (isLinked == false) {
+                                    delete treeSparqlNodes[aNode];
+                                }
+                            }
+                        }
 			
 			if (treeSparqlLinks.length == 0){
                             d3.select("#tree-overlay").remove();
@@ -266,7 +424,7 @@ $('document').ready(function(){
                                 .attr("align", "center")
                                 .html("Sorry, no etymology available for this word");
                         }
-
+			
 			var force = d3.layout.force()
 			    .nodes(d3.values(treeSparqlNodes))
 			    .links(treeSparqlLinks)
@@ -291,7 +449,7 @@ $('document').ready(function(){
 			
 			// Per-type markers, as they don't inherit styles.     
 			svgGraph.append("defs").selectAll("marker")
-			    .data(["clonedInto", "borrowedBy", "inherited"])
+			    .data(["borrowed", "inherited"])
 			    .enter().append("marker")
 			    .attr("id", function(d) { return d; })
 			    .attr("viewBox", "0 -5 10 10")
@@ -314,8 +472,13 @@ $('document').ready(function(){
 			    .data(force.nodes())
 			    .enter().append("circle")
 			    .attr("r", 12)
-			    .attr("fill", "orange")
-			    .attr("stroke", "red")
+			    .attr("fill", function(d){ 
+				if (d.iso == searchedIso && d.word == searchedWord) 
+				    return "red"; 
+				else 
+				    return "orange"; 
+			    })
+			    .attr("stroke", "lightBlue")
 			    .call(force.drag)
 			    .on("mouseover", function(d) {
 				d3.select(this).style("cursor", "pointer");
@@ -343,21 +506,6 @@ $('document').ready(function(){
 			    .attr("text-anchor", "middle")
 			    .text(function(d) { return d.iso; });
 			
-			function showLinks(l){
-			    var toreturn = "";
-			    if (l != undefined && l != ""){
-				var links = l.split(",");
-				if (links.length == 0) return toreturn;
-                                toreturn = "<br><br>as extracted from: ";
-				links.forEach(function(element, i) {
-				    var a = element.split("/");
-				    var b = a[a.length-1].split("#");
-				    toreturn = toreturn + " <a href=\"" + element + "\" target=\"_blank\">" + b[1].replace(/_/g," ") + " " + b[0].replace(/_/g," ") +"</a>\n";
-				});
-			    }
-			    return toreturn;
-			}
-			
 			var rectangle = svgGraph.append("g").selectAll("rectangle")
 			    .data(force.nodes())
 			    .enter().append("rect")
@@ -374,7 +522,7 @@ $('document').ready(function(){
 				    .attr("data-rel", "popup")
 				    .attr("data-transition", "pop");
 				div.style("opacity", 1);
-				div.html("<b>" + treeSparqlNodes[d.id].word + "</b> - " + treeSparqlNodes[d.id].pos + "<br><br>" + treeSparqlNodes[d.id].gloss + showLinks(treeSparqlNodes[d.id].link))
+				div.html(treeSparqlNodes[d.id].printData())
 				    .style("left", (d3.event.pageX + 18) + "px")
 				    .style("top", (d3.event.pageY - 28) + "px");
 				d3.event.stopPropagation();
@@ -386,7 +534,7 @@ $('document').ready(function(){
 			    .attr("x", 14)
 			    .attr("y", ".31em")
 			    .attr("id", "word")
-			    .text(function(d) { return d.word; });
+			    .text(function(d) { return d.printWord(","); });
 			
 			function tick() {
 			    path.attr("d", function(d){ 
@@ -398,9 +546,11 @@ $('document').ready(function(){
 			    isoText.attr("transform", transform);
 			}
 		    }	
-		})		
-	    }	    
+		});
+	
+	    }
 	    
+	    //TO DO: could ask server if the word has an etymological relationship and if the answer is no ignore that node
 	    function loadNodes(search, langMap, endpoint){
 		var query = [
 		    "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
@@ -454,7 +604,7 @@ $('document').ready(function(){
 			    .append("p")
 			    .attr("id", "p-helpPopup")
 			    .attr("style", "font-size:12px;border-radius:8px;max-width:255px")
-			    .html("Choose which word you are interested in. <ul><li>Click on a circle to display the language</li> <li>Click on a word to display the data</li> <li>Double click on a circle to choose a word</li></ul>");
+			    .html("Pick the word you are interested in. <ul><li>Click on a circle to display the language</li> <li>Click on a word to display the data</li> <li>Double click on a circle to choose a word</li></ul>");
 			
 			//perform query
 			var json = JSON.parse(request.responseText);
@@ -481,7 +631,7 @@ $('document').ready(function(){
 			//node constructor
 			function Node(element){	
 			    //merge iri-s with the same etymological origin
-			    this.doMerge = function(pos, gloss, nodes){
+			    this.mergeInto = function(nodes, pos, gloss){
 				var merge = false;
 				for (var i in nodes){
                                     if (nodes[i].et != undefined){
@@ -533,7 +683,7 @@ $('document').ready(function(){
                                     pos = "";
 				}
 				var gloss = (jsonNode.gloss != undefined) ? jsonNode.gloss.value : "";
-				if (!aNode.doMerge(pos, gloss, sparqlNodes)){
+				if (!aNode.mergeInto(sparqlNodes, pos, gloss)){
 				    aNode.finalize(jsonNode.uri, jsonNode.et, pos, gloss);
 				    //push to sparqlNodes
 				    sparqlNodes[aNode.id] = aNode;
@@ -568,7 +718,7 @@ $('document').ready(function(){
 			    .enter().append("circle")                     
 			    .attr("r", 12)  
 			    .attr("fill", "orange")
-			    .attr("stroke", "red")               
+			    .attr("stroke", "lightBlue")               
 			    .call(force.drag)
 			    .on("mouseover", function(d) {
 				d3.select(this).style("cursor", "pointer");
@@ -610,7 +760,6 @@ $('document').ready(function(){
 				d3.select(this).style("cursor", "pointer");
 			    })
 			    .on("click", function(d) {
-				console.log(d)
 				d3.select(this)
 				    .append("a") 
 				    .attr("href", "#myPopup")
@@ -619,8 +768,20 @@ $('document').ready(function(){
 				div.style("opacity", 1);
 				d3.selectAll("circle").attr("fill", "orange");
 				if (d.refersTo != undefined){
-				    d.refersTo.forEach(function(iri){ d3.selectAll("circle").filter(function(f) { return (f.et == iri); }).attr("fill", "red")});
-				    div.html("<b>" + sparqlNodes[d.id].word + "</b><br><br><i>If you choose this word you will visualize the etymological tree of either of the words higlighted in red, probably of the most popular word among them. <br><br>This is because in Wiktionary (for the most part) Etymology Sections refer to words without specifying their meaning and this data has been extracted from Etymology Sections.</i>");
+				    d.refersTo.forEach(function(iri){ 
+					d3.selectAll("circle")
+					    .filter(function(f) { return (f.et == iri); })
+					    .attr("fill", "red")
+				    });
+				    div.html("<b>" + 
+					     sparqlNodes[d.id].word + 
+					     "</b><br><br><i>" +
+					     "If you choose this word you will visualize the etymological tree of either of the words higlighted in red," +
+					     "probably of the most popular word among them." +
+					     "<br><br>" +
+					     "This is because this data has been extracted from Wiktionary Etymology Sections and (for the most part)" +
+					     "Wiktionary Etymology Sections link to etymologically related words without specifying their meaning." +
+					     "</i>");
 				} else {
 				    div.html("<b>" + sparqlNodes[d.id].word + "</b>" + showPosAndGlosses(sparqlNodes[d.id]))
 					.style("left", (d3.event.pageX + 18) + "px")
@@ -631,12 +792,8 @@ $('document').ready(function(){
 			
 			function showPosAndGlosses(e){
 			    var toreturn = "";
-                            for (var i = 0; i < e.pos.length; i ++)  toreturn += showPosAndGloss(e, i);
+                            for (var i = 0; i < e.pos.length; i ++)  toreturn += "<br><br>" + e.pos[i] + " - " + e.gloss[i];
 			    return toreturn;
-			}
-
-			function showPosAndGloss(e, i){
-			    return "<br><br>" + e.pos[i] + " - " + e.gloss[i];
 			}
 
 			var wordText = svgGraph.append("g").selectAll("text")
