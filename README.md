@@ -55,23 +55,28 @@ which works for the English word door.
 * Extract Reconstructed words.
 
 * Maybe consider Dialects:
+    ```
     Module:da:Dialects ?
     Module:en:Dialects This module provides labels to {{alter}}, which is used in the Alternative forms section.
     Module:grc:Dialects This module translates from dialect codes to dialect names for templates such as {{alter}}. (e.g. aio -> link = 'Aeolic Greek', display = 'Aeolic')
     Module:he:Dialects
     Module:hy:Dialects ?
     Module:la:Dialects (e.g.: aug -> link = Late Latin#Late and post-classical Latin, display = post-Augustan)
-
+```
 * Maybe consider additional modules: 
+```
     Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
+```
 * Use 
+```
     Template:defdate
-
+```
+## NOTE
+The files contained in [https://github.com/esterpantaleo/etymology/tree/master/resources/data resources/data] are imported from Wiktionary
 ## NOTES TO SELF REGARDING dbnary_etymology
 ### GENERATE DOCUMENTATION
     mvn site
     mvn javadoc:jar
-    ##to install a local repository for the ontology                                                                                                 
 ### UPDATE ONTOLOGY
     cd ontology                                                                                            
     mvn install:install-file -Dfile=target/ontology-1.6-SNAPSHOT.jar -DgroupId=org.getalp.dbnary -DartifactId=ontology -Dversion=1.6-SNAPSHOT -Dpackaging=jar -DgeneratePom=true                                                                                                                          
