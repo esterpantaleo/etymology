@@ -1,6 +1,6 @@
 # THE PROJECT
 
-This is a pre-alpha version of the "etytree" project. The aim of the project is to visualize in an interactive web page the etymological tree (i.e., the etymology of a word in the form of a tree, with ancestors, cognate words, derived words, etc.) of any word in any language using data available in Wiktionary. 
+This is a first version of the "etytree" project. The aim of the project is to visualize in an interactive web page the etymological tree (i.e., the etymology of a word in the form of a tree, with ancestors, cognate words, derived words, etc.) of any word in any language using data available in Wiktionary. 
 
 This project has been inspired by my interest in etymology, in  open source collaborative projects and in interactive visualizations.
 
@@ -10,54 +10,71 @@ This code is distributed under Creative Commons Attribution-ShareAlike 3.0.
 
 ## TO DO
 
-* collapsing not working for mindmaps
+* I would like to add a preferred direction to the graph, that goes from left to right following the evolution of a word from the past to the present. This would mean in terms of force field to add a magnetic field that orients arrows towards a preferred direction.
 
-* tooltip gets spatially translated when zooming
+* Add zoom to tooltip, set zoom also in google chrome and other browsers
 
-* in disambiguation pages, translation jumps?
+* Add etymology controversies
 
-* if node.position==left && link==abbreviation||borrowing||derived: node.year=node.parent.year -300
+* Currently for some words the Virtuoso server doesn't return data because it reaches timeout. I want to try a different query like the following 
+    DEFINE input:inference "etymology_ontology"
+    PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-* fix timeline for nodes borrowing from abbreviations
+    SELECT DISTINCT ?source ?p ?o ?cognate ?pcognate ?scognate
+        { 
+            ?source ?p ?o . 
+            FILTER (?p in (dbetym:etymologicallyDerivesFrom, dbetym:descendsFrom, dbetym:derivesFrom,dbetym:etymologicallyEquivalentTo))
+     #      {
+     #          SELECT ?source
+     #          {
+     #              ?source dbetym:etymologicallyRelatedTo{1,}  <http://kaiko.getalp.org/dbnary/eng/__ee_1_water> . 
+     #          }
+     #      }
+     #      UNION
+            {
+                SELECT ?source
+                {
+                    <http://kaiko.getalp.org/dbnary/eng/__ee_1_water> dbetym:etymologicallyRelatedTo{1,} ?source . 
+                } 
+            }
+            OPTIONAL 
+            {
+                ?source dbetym:etymologicallyRelatedTo{1,} ?cognate . 
+                ?scognate ?pcognate ?cognate . 
+                FILTER (?pcognate in (dbetym:etymologicallyDerivesFrom, dbetym:descendsFrom, dbetym:derivesFrom,dbetym:etymologicallyEquivalentTo)) 
+            }
+        }
 
-* fix timeline axis for caffellatte
+which works for the English word door.
 
-* add etymology controversies
+* Click on word and interrogate the server to get data about the word
 
-## Some useful reference material
+* Extract Reconstructed words
 
-http://stackoverflow.com/questions/29873947/hide-unrelated-parent-nodes-but-child-node-in-d3-js
+* Maybe consider Dialects:
+    Module:da:Dialects ?
+    Module:en:Dialects This module provides labels to {{alter}}, which is used in the Alternative forms section.
+    Module:grc:Dialects This module translates from dialect codes to dialect names for templates such as {{alter}}. (e.g. aio -> link = 'Aeolic Greek', display = 'Aeolic')
+    Module:he:Dialects
+    Module:hy:Dialects ?
+    Module:la:Dialects (e.g.: aug -> link = Late Latin#Late and post-classical Latin, display = post-Augustan)
 
-http://stackoverflow.com/questions/19994357/multiple-tree-layouts-on-page-linking-between-them
+* Maybe consider dditional modules: 
+    Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
 
-http://stackoverflow.com/questions/21100058/using-d3-can-semantic-zoom-be-applied-to-a-radial-tree
-
-http://bl.ocks.org/jdarling/2d4e84460d5f5df9c0ff
-
-http://bl.ocks.org/jdarling/2503502
-
-https://github.com/mbostock/d3/issues/213
-
-a static hierarchical tree in wikipedia https://en.wikipedia.org/wiki/Hellenic_languages
-
-* Dialects:
-USEFUL? Module:da:Dialects ?
-Module:en:Dialects This module provides labels to {{alter}}, which is used in the Alternative forms section.
-USEFUL? Module:grc:Dialects This module translates from dialect codes to dialect names for templates such as {{alter}}. (e.g. aio -> link = 'Aeolic Greek', display = 'Aeolic')
-Module:he:Dialects
-USEFUL? Module:hy:Dialects ?
-USEFUL? Module:la:Dialects (e.g.: aug -> link = Late Latin#Late and post-classical Latin, display = post-Augustan)
-* additional modules: 
-Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
-* template Template:defdate
+* Use Template:defdate
 
 ## NOTES TO SELF REGARDING dbnary_etymology
-### MAVEN
+### GENERATE DOCUMENTATION
     mvn site
     mvn javadoc:jar
-    ##to install a local repository for the ontology                                                                                                        
+    ##to install a local repository for the ontology                                                                                                 
+### UPDATE ONTOLOGY
     cd ontology                                                                                            
-    mvn install:install-file -Dfile=target/ontology-1.6-SNAPSHOT.jar -DgroupId=org.getalp.dbnary -DartifactId=ontology -Dversion=1.6-SNAPSHOT -Dpackaging=jar -DgeneratePom=true                                                                                                                                  
+    mvn install:install-file -Dfile=target/ontology-1.6-SNAPSHOT.jar -DgroupId=org.getalp.dbnary -DartifactId=ontology -Dversion=1.6-SNAPSHOT -Dpackaging=jar -DgeneratePom=true                                                                                                                          
+###UPDATE PACKAGE
     mvn package
 ### DATA EXTRACTION
     VERSION=20161201
@@ -71,9 +88,3 @@ Module:families/data mapping language code -> language name  (e.g.: aav -> canon
     rm ${OUT}
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.ExtractWiktionary -l en -x --frompage ${FPAGE} --topage ${TPAGE} -E ${ETY} -o ${OUT} ${DUMP} 3>&1 1>>${LOG} 2>&1
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology ${DUMP} door
-### MERGING
-using apache-jena-2.13.0  
-    
-    riot --time foreign.ttl english.ttl >merge.ttl
-### ERRORS
-    [main] ERROR info.bliki.extensions.scribunto.engine.lua.ScribuntoLuaEngine - error loading 'ParsedPageName{namespace=Module, pagename='module:ja'}'  
