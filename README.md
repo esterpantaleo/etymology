@@ -72,7 +72,7 @@ which works for the English word door.
     Template:defdate
 ```
 ## NOTE
-The files contained in [https://github.com/esterpantaleo/etymology/tree/master/resources/data resources/data] are imported from Wiktionary
+Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary
 ## NOTES TO SELF REGARDING dbnary_etymology
 ### GENERATE DOCUMENTATION
     mvn site
