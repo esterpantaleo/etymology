@@ -11,19 +11,24 @@ This project has been inspired by my interest in etymology, in  open source coll
 This code is distributed under Creative Commons Attribution-ShareAlike 3.0.
 
 ##The SPARQL ENDPOINT 
-This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology).
+This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - data was extracted on 12/20/2016).
+
+I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyDerivesFrom, derivesFrom and descendsFrom (and also etymologicallyEquivalentTo) as subproperties of etymologicallyRelatedTo. All these properties are transitive, etymologicallyEquivalentTo is reflexive. 
+
+Besides etymological relationships data also contain POS, definition, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
+
 An example query follows:
 
     PREFIX eng: <http://kaiko.getalp.org/dbnary/eng/>
-    SELECT DISTINCT ?p ?o { 
-        eng:__ee_get ?p ?o 
+    SELECT DISTINCT ?p ?o {
+        eng:__ee_get ?p ?o
     }
 
-Property http://www.w3.org/2000/01/rdf-schema#seeAlso is used to link to the Wiktionary page the etymological entry was extracted from. 
+Property http://www.w3.org/2000/01/rdf-schema#seeAlso is used to link to the Wiktionary page the etymological entry was extracted from.
 If you want to find all entries containing string "door"
-   
-    SELECT DISTINCT ?s { 
-        ?s rdfs:label ?label . 
+
+    SELECT DISTINCT ?s {
+        ?s rdfs:label ?label .
         ?label bif:contains "door" .
     }
 If you want to find ancestors of "door":
