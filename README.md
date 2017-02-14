@@ -11,14 +11,14 @@ This project has been inspired by my interest in etymology, in  open source coll
 This code is distributed under Creative Commons Attribution-ShareAlike 3.0.
 
 ##Note
-Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updates when a new dump of the English Wiktionary is generated.
+Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated.
 
 ##The SPARQL ENDPOINT 
 This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - data was extracted on 12/20/2016).
 
 I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyDerivesFrom, derivesFrom and descendsFrom (and also etymologicallyEquivalentTo) as subproperties of etymologicallyRelatedTo. All these properties are transitive, etymologicallyEquivalentTo is reflexive. 
 
-Besides etymological relationships data also contain POS, definition, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
+Besides etymological relationships data also contain POS-s, definitions, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
 
 An example query follows:
 
@@ -46,7 +46,6 @@ If you want to find ancestors of "door":
 
 ## DATA EXTRACTION: dbnary_etymology
 ###COMPILING THE CODE
-Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary
 #### GENERATE DOCUMENTATION
     mvn site
     mvn javadoc:jar
@@ -131,29 +130,3 @@ Files contained in [resources/data](https://github.com/esterpantaleo/etymology/t
 ```
     Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
 ```
-## NOTE
-Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary
-## NOTES TO SELF REGARDING dbnary_etymology
-### GENERATE DOCUMENTATION
-    mvn site
-    mvn javadoc:jar
-### UPDATE ONTOLOGY
-    cd ontology                                                                                            
-    mvn install:install-file -Dfile=target/ontology-1.6-SNAPSHOT.jar -DgroupId=org.getalp.dbnary -DartifactId=ontology -Dversion=1.6-SNAPSHOT -Dpackaging=jar -DgeneratePom=true                                                                                                                          
-###UPDATE PACKAGE
-    mvn package
-###FULL DATA EXTRACTION
-    VERSION=20161220
-    EXEC=~/dbnary_etymology/extractor/target/dbnary-1.3e-SNAPSHOT-jar-with-dependencies.jar
-    DUMP=/srv/datasets/dumps/$VERSION/enwiktionary-$VERSION-pages-articles.utf-16.xml
-    FPAGE=0
-    TPAGE=2000000
-    LOG=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.ttl.log
-    OUT=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.ttl
-    ETY=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.etymology.ttl 
-    rm ${OUT}
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.ExtractWiktionary -l en -x --frompage ${FPAGE} --topage ${TPAGE} -E ${ETY} -o ${OUT} ${DUMP} 3>&1 1>>${LOG} 2>&1
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology ${DUMP} door
-###SINGLE ENTRY EXTRACTION
-    WORD="door"
-    java -Xmx24G -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology $DUMP $WORD
