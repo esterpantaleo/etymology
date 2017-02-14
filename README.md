@@ -20,7 +20,7 @@ I have defined an ontology for etymologies [here](https://bitbucket.org/esterpan
 
 Besides etymological relationships data also contain POS-s, definitions, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
 
-An example query follows:
+An example query to the [sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) follows:
 
     PREFIX eng: <http://kaiko.getalp.org/dbnary/eng/>
     SELECT DISTINCT ?p ?o {
