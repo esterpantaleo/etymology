@@ -1,16 +1,20 @@
 $('document').ready(function(){
-    console.log("message2")
+
     //CONFIGURE - print debugging messages when debug == true
     var debug = true;
+
+
     //CONFIGURE - if excludeStarLikeStructures == true don't visualize node B if node B is the target of a node in the same language and if node B itself is not the source of a link 
-    //when set to trues this remove many links that show up as stars in the graph (nodes with many links departing from it)
+    //when set to true this removes many links that show up as stars in the graph (nodes with many links departing from it)
     var excludeStarLikeStructures = true;
+
+
     //CONFIGURE - if mergeEquivalentnodes == true, if node A is etymologically equivalent to node B merge A and B into one node and merge their links too
     //otherwise equivalent nodes are linked by links with no arrow
     var mergeEquivalentNodes = true;
 
     //LOAD LANGUAGES
-    //languages are used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English")
+    //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English")
     if (debug) console.log("loading languages");
     var langMap = new Map();
     var ssv = d3.dsv(";", "text/plain"); 
@@ -32,6 +36,7 @@ $('document').ready(function(){
 	});
     });
 
+
     //DEFINE DIVISION FOR THE TOOLTIP
     var div = d3.select("body").append("div")
         .attr("data-role", "popup")
@@ -50,8 +55,9 @@ $('document').ready(function(){
     var margin = [0, 0, 0, 0],
     width = window.innerWidth - margin[0],
     height = window.innerHeight - margin[0] - margin[2];
+
     
-    //SET ENDPOINT PARAMETERS FOR FUNCTION d3.xhr()
+    //SET PARAMETERS FOR FUNCTION d3.xhr()
     var endpoint = "http://etytree-virtuoso.wmflabs.org/sparql";
     var mime = "application/sparql-results+json";
 
@@ -60,60 +66,98 @@ $('document').ready(function(){
 	console.log("reloading with " + filter);
     }
 
+
     //DEFINE QUERY USED TO PLOT THE ETYMOLOGICAL TREE
     var filter = ".";
     //"filter (<LONG::IRI_RANK> (?ancestor)<1000) .";    
     var treeSparql = function(id, filter){
 	var treeQuery = [
-            "define input:inference \"etymology_ontology\"",
+            "DEFINE input:inference \"etymology_ontology\"",
             "PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>",
-            "PREFIX owl: <http://www.w3.org/2002/07/owl#>",
             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-            "select distinct ?target1 ?target2 ?target3 ?target4 ?source (group_concat(distinct ?ee ; separator=\",\") as ?ref) ?iso (group_concat(distinct ?p ; separator=\",\") as ?ety) ?word ?pos ?gloss (group_concat(distinct ?links ; separator=\",\") as ?link){",
-            "?source ?p ?o . filter (?p in (dbetym:etymologicallyDerivesFrom,dbetym:descendsFrom,dbetym:derivesFrom,dbetym:etymologicallyEquivalentTo))",
-            "{select ?source",
-            "{?source dbetym:etymologicallyRelatedTo{1,} " + id + " . } LIMIT 100}",
-	    "UNION",
-            "{select ?source",
-            "{" + id + " dbetym:etymologicallyRelatedTo{1,} ?source . } LIMIT 100}",
-            " UNION",
-            "{select ?source",
-            "{" + id + " dbetym:etymologicallyRelatedTo{1,} ?ancestor ",
+            "SELECT DISTINCT ?target1 ?target2 ?target3 ?target4 ?source (group_concat(distinct ?ee ; separator=\",\") as ?ref) ?iso (group_concat(distinct ?p ; separator=\",\") as ?ety) ?word ?pos ?gloss (group_concat(distinct ?links ; separator=\",\") as ?link){",
+            "    ?source ?p ?o .",
+	    "    FILTER (?p in (dbetym:etymologicallyDerivesFrom,dbetym:descendsFrom,dbetym:derivesFrom,dbetym:etymologicallyEquivalentTo))",
+            "    {",
+            "        SELECT ?source",
+            "            {",
+            "                ?source dbetym:etymologicallyRelatedTo{1,} " + id + " .",
+            "            } LIMIT 100",
+            "    }",
+	    "    UNION",
+            "    {",
+            "        SELECT ?source",
+            "            {" + id + " dbetym:etymologicallyRelatedTo{1,} ?source .",
+            "            } LIMIT 100",
+            "    }",
+            "    UNION",
+            "    {",
+            "        SELECT ?source",
+            "            {" + id + " dbetym:etymologicallyRelatedTo{1,} ?ancestor ",
             filter,
-            "     ?source dbetym:etymologicallyRelatedTo{1,} ?ancestor .} LIMIT 100}",
-            "OPTIONAL {?source rdfs:label ?l .}",
-            "            BIND (STR(?l)  AS ?word1) .",
-	    "OPTIONAL {?source rdfs:seeAlso ?links .}",
-            "OPTIONAL {?source dbnary:refersTo ?ee .",
-            "          ?ee dbnary:refersTo ?cf1 .",
-            "          ?cf1 dbnary:partOfSpeech ?pos1 .",
-                        "          ?cf1 lemon:sense ?sense1 .",
-            "          ?sense1 lemon:definition ?val1 .",
-            "          ?val1 lemon:value ?def1}",
-            "OPTIONAL {?source dbetym:etymologicallyDerivesFrom ?target1}",
-            "OPTIONAL {?source dbetym:derivesFrom ?target2}",
-            "OPTIONAL {?source dbetym:descendsFrom ?target3}",
-            "OPTIONAL {?source dbetym:etymologicallyEquivalentTo ?target4}",
-            "OPTIONAL {?source dbnary:refersTo ?le .",
-            "          ?le lemon:canonicalForm ?cf2 .",
-            "          ?cf2 lemon:writtenRep ?ww .",
-            "          ?le dbnary:partOfSpeech ?pos2 .",
-            "          ?le lemon:sense ?sense2 .",
-            "          ?sense2 lemon:definition ?val2 .",
-            "          ?val2 lemon:value ?def2 .}",
-            "            BIND (STR(?ww)  AS ?word2) .",
-            "BIND(if (bound(?word1),?word1,?word2) AS ?word )",
-            "BIND(if (bound(?pos1),?pos1,?pos2) AS ?pos )",
-            "BIND(if (bound(?def1),?def1,?def2) AS ?gloss )",
-            "BIND(strbefore(replace(str(?source),\"http://kaiko.getalp.org/dbnary/eng/\",\"\",\"i\"),\"/\") AS ?ll)",
-            "BIND(if (?ll = \"\",\"eng\",?ll) AS ?iso )",
+            "                ?source dbetym:etymologicallyRelatedTo{1,} ?ancestor .",
+            "            } LIMIT 100",
+            "    }",
+            "    OPTIONAL",
+            "    {",
+            "        ?source rdfs:label ?l .",
+            "    }",
+            "    BIND (STR(?l)  AS ?word1) .",
+	    "    OPTIONAL",
+            "    {",
+            "        ?source rdfs:seeAlso ?links .",
+            "    }",
+            "    OPTIONAL",
+            "    {",
+            "        ?source dbnary:refersTo ?ee .",
+            "        ?ee dbnary:refersTo ?cf1 .",
+            "        ?cf1 dbnary:partOfSpeech ?pos1 .",
+            "        ?cf1 lemon:sense ?sense1 .",
+            "        ?sense1 lemon:definition ?val1 .",
+            "        ?val1 lemon:value ?def1",
+            "    }",
+            "    OPTIONAL",
+            "    {",
+            "        ?source dbetym:etymologicallyDerivesFrom ?target1",
+            "    }",
+            "    OPTIONAL",
+            "    {",
+	    "        ?source dbetym:derivesFrom ?target2",
+            "    }",
+            "    OPTIONAL",
+            "    {",
+            "        ?source dbetym:descendsFrom ?target3",
+            "    }",
+            "    OPTIONAL",
+            "    {",
+            "        ?source dbetym:etymologicallyEquivalentTo ?target4",
+	    "    }",
+            "    OPTIONAL",
+	    "    {",
+	    "        ?source dbnary:refersTo ?le .",
+            "        ?le lemon:canonicalForm ?cf2 .",
+            "        ?cf2 lemon:writtenRep ?ww .",
+            "        ?le dbnary:partOfSpeech ?pos2 .",
+            "        ?le lemon:sense ?sense2 .",
+            "        ?sense2 lemon:definition ?val2 .",
+            "        ?val2 lemon:value ?def2 .",
+	    "    }",
+            "    BIND (STR(?ww)  AS ?word2) .",
+            "    BIND(if (bound(?word1),?word1,?word2) AS ?word )",
+            "    BIND(if (bound(?pos1),?pos1,?pos2) AS ?pos )",
+            "    BIND(if (bound(?def1),?def1,?def2) AS ?gloss )",
+            "    BIND(strbefore(replace(str(?source),\"http://kaiko.getalp.org/dbnary/eng/\",\"\",\"i\"),\"/\") AS ?ll)",
+            "    BIND(if (?ll = \"\",\"eng\",?ll) AS ?iso )",
             "}"
         ];
 	return treeQuery.join(" ");
     }
 
+
     //DEFINE QUERY TO PLOT CLOUD OF WORDS
     var nodeSparql = function(search){
+	//var encodedSearch = encodeURIComponent(search);
+	var encodedSearch = search;
 	var query = [
             "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
             "PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>",
@@ -122,9 +166,9 @@ $('document').ready(function(){
             "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
             "SELECT DISTINCT (group_concat(distinct ?ee ; separator=\",\") as ?et) ?uri ?word ?iso ?pos ?gloss (group_concat(distinct ?links ; separator=\",\") as ?link)",
             "WHERE {",
-            "    ?uri rdfs:label ?label . ?label bif:contains \"" + search + "\" .",
+            "    ?uri rdfs:label ?label . ?label bif:contains \"" + encodedSearch + "\" .",
             //exclude entries that contain the searched word but include other words (e.g.: search="door" label="doorbell", exclude "doorbell")          
-            "    FILTER REGEX(?label, \"^" + search + "$\", 'i') .",
+            "    FILTER REGEX(?label, \"^" + encodedSearch + "$\", 'i') .",
             "    BIND (STR(?label)  AS ?word) .",
             "    OPTIONAL {",
             "        ?uri rdfs:seeAlso ?links",
@@ -177,22 +221,38 @@ $('document').ready(function(){
         return toreturn;
     }
 
+
     //node constructor  
-    function Node(element){
-        //merge iri-s with the same etymological origin
-        this.mergeInto = function(nodes, pos, gloss){
+    function Node(element){ //iso, word, et, refersTo (an array with the specific etymology entries that the generic etymology entry refers to), pos (an array of pos-s), gloss, id
+	//word is a string
+	this.word = element.word.value;
+	//iso is a string containing the language code
+	this.iso = element.iso.value;
+	//et is a uri 
+	this.et = (element.et != undefined) ? element.et.value : "";
+	var splitted = this.et.split(",");
+        if (splitted.length > 1){//uri is a generic etymology entry (e.g.: __ee_door)                                                     
+            this.refersTo = splitted;
+            this.et = element.uri.value;
+        }
+        this.pos = [];
+        this.pos.push((element.pos != undefined) ? element.pos.value : "");
+	this.gloss = [];
+        this.gloss.push((element.gloss != undefined) ? element.gloss.value : "");
+	//merge iri-s with the same etymological origin
+        this.doMerge = function(nodes){
             var merge = false;
             for (var i in nodes){
                 if (nodes[i].et != undefined){
                     if (nodes[i].iso == this.iso){
                         if (nodes[i].word == this.word){
                             if (nodes[i].et == this.et) {
-                                if (this.refersTo != undefined){
-                                    nodes[i].pos = [];
+                                if (this.refersTo != undefined){//if the node is a generic etymology entry (e.g. __ee_door) and refers to different specific etymology entries
+                                    nodes[i].pos = [];//no pos can be associated to it
                                     nodes[i].refersTo = this.refersTo;
                                 }
-                                nodes[i].pos.push(pos);
-                                nodes[i].gloss.push(gloss);
+                                nodes[i].pos.push(this.pos[0]);
+                                nodes[i].gloss.push(this.gloss[0]);
                                 merge = true;
                                 break;
                             }
@@ -201,20 +261,6 @@ $('document').ready(function(){
                 }
             }
             return merge;
-        }
-	
-        this.initialize = function(word, iso, et){
-            this.word = word.value;
-            this.iso = iso.value;
-            this.et = (et != undefined) ? et.value : "";
-        }
-	
-        this.finalize = function(uri, et, pos, gloss){
-            this.id = (et.value.split("/").pop().startsWith("__ee_")) ? this.et : uri.value;
-            this.pos = [];
-            this.pos.push(pos);
-            this.gloss = [];
-            this.gloss.push(gloss);
         }
     }
     
@@ -241,7 +287,7 @@ $('document').ready(function(){
             this.link = [];
             this.link.push((link == undefined) ? "" : link.value);
         }
-        //TODO: improve this function                                                                                                                                     
+        //TODO: improve this function             
         this.mergeInto = function(nodes, pos, gloss){
             var merge = false;
             for (var i in nodes){
@@ -331,6 +377,14 @@ $('document').ready(function(){
                 var json = JSON.parse(request.responseText);
 
                 var theGraph = json.results.bindings;
+		if (theGraph.length == 0){
+		    d3.select("#tree-container")
+			.append("p")
+			.attr("id", "message")
+			.attr("align", "center")
+			.html("This word is not available in the database")
+			.append("p")
+		}
                 if (debug) { console.log(theGraph) };
                 var sparqlLinks = {};
                 var sparqlNodes = {};
@@ -338,38 +392,29 @@ $('document').ready(function(){
                 //ignore element with uri starting with __ee_ if there is a corresponding element with uri starting with __cf_
                 function doIgnore(n){
                     var ignore = true;
-                    var tmp = n.uri.value.split("/");
-                    if (tmp[tmp.length - 1].startsWith("__ee_")){
-                        if (n.et.value == "" || n.et.value.split(",").length > 1){
-                            ignore = false;
-                        }
+		    if (n.uri.value.split("/").pop().startsWith("__ee_")){
+			var et = n.et.value;
+			if (et == "") ignore = false;
+			var splitted = et.split(",");
+			if (splitted.length >1 && splitted[1].split("/").pop().startsWith("__ee_")) ignore = false; //ignore if et is a list like gipsy__Noun_1
                     } else {
-                        ignore = false;
-                    }
-                    return ignore;
+			ignore = false; 
+		    }
+		    return ignore;
                 }
 		
                 theGraph.forEach(function(jsonNode){
                     if (!doIgnore(jsonNode)){
                         var aNode = new Node(jsonNode);
-                        var splitted = jsonNode.et.value.split(",");
-                        if (splitted.length > 1){
-                            aNode.refersTo = splitted;
-                            jsonNode.et.value = jsonNode.uri.value;
-                        }
-                        aNode.initialize(jsonNode.word, jsonNode.iso, jsonNode.et);
-                        var pos = (jsonNode.pos != undefined) ? jsonNode.pos.value : "";
-                        if (aNode.refersTo != undefined) {
-                            pos = "";
-                        }
-                        var gloss = (jsonNode.gloss != undefined) ? jsonNode.gloss.value : "";
-                        if (!aNode.mergeInto(sparqlNodes, pos, gloss)){
-                            aNode.finalize(jsonNode.uri, jsonNode.et, pos, gloss);
-                            //push to sparqlNodes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                        if (!aNode.doMerge(sparqlNodes)){
+			    aNode.id = (jsonNode.et.value.split("/").pop().startsWith("__ee_")) ? aNode.et : jsonNode.uri.value;
+                         
+                            //push to sparqlNodes  
                             sparqlNodes[aNode.id] = aNode;
                         }
                     }
                 })
+		console.log(sparqlNodes)
 		
                 var force = d3.layout.force()
                     .nodes(d3.values(sparqlNodes))
@@ -385,10 +430,10 @@ $('document').ready(function(){
                     .attr("id", "tree-overlay")
                     .attr("width", width)
                     .attr("height", height)
-                    .call(d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", function () {
-                        svgGraph.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-                        div.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-                    }))
+                    //.call(d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", function () {
+                    //    svgGraph.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                    //    div.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                    //}))
                     .on("click", function(){
                         div.style("opacity", 0);
                     });
@@ -456,10 +501,10 @@ $('document').ready(function(){
                             div.html("<b>" +
                                      sparqlNodes[d.id].word +
                                      "</b><br><br><i>" +
-                                     "If you choose this word you will visualize the etymological tree of either of the words higlighted in red," +
+                                     "If you choose this word you will visualize the etymological tree of either of the words higlighted in red, " +
                                      "probably of the most popular word among them." +
                                      "<br><br>" +
-                                     "This is because this data has been extracted from Wiktionary Etymology Sections and (for the most part)" +
+                                     "This is because this data has been extracted from Wiktionary Etymology Sections and (for the most part) " +
                                      "Wiktionary Etymology Sections link to etymologically related words without specifying their meaning." +
                                      "</i>");
                         } else {
