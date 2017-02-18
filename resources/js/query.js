@@ -58,7 +58,7 @@ $('document').ready(function(){
 
     
     //SET PARAMETERS FOR FUNCTION d3.xhr()
-    var endpoint = "http://etytree-virtuoso.wmflabs.org/sparql";
+    var endpoint = "https://etytree-virtuoso.wmflabs.org/sparql";
     var mime = "application/sparql-results+json";
 
     //TODO: this is not used right now
@@ -871,10 +871,12 @@ $('document').ready(function(){
 
     $('#tags').on("keypress click", function(e){
 	if (e.which == 13 || e.type === 'click') {
-            searchedWord = $('#tags').val();
+            searchedWord = $(this).val();
 	    
-            if (debug) console.log("loading nodes");
-            loadNodes(searchedWord, langMap, endpoint);
+            if (searchedWord){
+		if (debug) console.log("loading nodes");
+		loadNodes(searchedWord, langMap, endpoint);
+	    }
 	};
     });
 });

@@ -8,7 +8,7 @@ This project has been inspired by my interest in etymology, in  open source coll
 
 ##Licence
 
-This code is distributed under Creative Commons Attribution-ShareAlike 3.0.
+The code and the data are distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
 
 ##Note
 Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated.
@@ -28,7 +28,7 @@ An example query to the [sparql endpoint](http://etytree-virtuoso.wmflabs.org/sp
     }
 
 Property http://www.w3.org/2000/01/rdf-schema#seeAlso is used to link to the Wiktionary page the etymological entry was extracted from.
-If you want to find all entries containing string "door"
+If you want to find all entries containing string "door":
 
     SELECT DISTINCT ?s {
         ?s rdfs:label ?label .
@@ -58,7 +58,7 @@ The RDF database of etymological relationships is periodically extracted when a 
 #### UPDATE PACKAGE
     cd dbnary_etymology/extractor
     mvn package
-#### FULL DATA EXTRACTION
+#### FULL DATA EXTRACTION - FOREIGN WORDS
     VERSION=20161220
     EXEC=~/dbnary_etymology/extractor/target/dbnary-1.3e-SNAPSHOT-jar-with-dependencies.jar
     DUMP=/srv/datasets/dumps/$VERSION/enwiktionary-$VERSION-pages-articles.utf-16.xml
@@ -70,7 +70,12 @@ The RDF database of etymological relationships is periodically extracted when a 
     rm ${OUT}
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.ExtractWiktionary -l en -x --frompage ${FPAGE} --topage ${TPAGE} -E ${ETY} -o ${OUT} ${DUMP} 3>&1 1>>${LOG} 2>&1
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology ${DUMP} door
-#### SINGLE ENTRY EXTRACTION
+
+#### SINGLE ENTRY EXTRACTION - ENGLISH WORD
+    WORD="door"
+    java -Xmx24G -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -l en --etymology $DUMP $WORD
+
+#### SINGLE ENTRY EXTRACTION - FOREIGN WORD
     WORD="door"
     java -Xmx24G -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology $DUMP $WORD
 
