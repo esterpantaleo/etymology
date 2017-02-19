@@ -166,7 +166,7 @@ $('document').ready(function(){
             "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
             "SELECT DISTINCT (group_concat(distinct ?ee ; separator=\",\") as ?et) ?uri ?word ?iso ?pos ?gloss (group_concat(distinct ?links ; separator=\",\") as ?link)",
             "WHERE {",
-            "    ?uri rdfs:label ?label . ?label bif:contains \"" + encodedSearch + "\" .",
+            "    ?uri rdfs:label ?label . ?label bif:contains \"\'" + encodedSearch + "\'\" .",
             //exclude entries that contain the searched word but include other words (e.g.: search="door" label="doorbell", exclude "doorbell")          
             "    FILTER REGEX(?label, \"^" + encodedSearch + "$\", 'i') .",
             "    BIND (STR(?label)  AS ?word) .",
