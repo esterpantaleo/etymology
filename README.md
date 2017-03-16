@@ -46,7 +46,7 @@ If you want to find ancestors of "door":
 
 ## DATA EXTRACTION: dbnary_etymology
 The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology).
-###COMPILING THE CODE
+### COMPILING THE CODE
 [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology) is a [Maven](https://maven.apache.org/download.cgi) project
 #### GENERATE DOCUMENTATION
     cd dbnary_etymology/extractor/
