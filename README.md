@@ -127,7 +127,7 @@ The RDF database of etymological relationships is periodically extracted when a 
 * Extract Reconstructed words.
 
 * Maybe consider Dialects:
-    ```
+```
     Module:da:Dialects ?
     Module:en:Dialects This module provides labels to {{alter}}, which is used in the Alternative forms section.
     Module:grc:Dialects This module translates from dialect codes to dialect names for templates such as {{alter}}. (e.g. aio -> link = 'Aeolic Greek', display = 'Aeolic')
@@ -137,6 +137,6 @@ The RDF database of etymological relationships is periodically extracted when a 
 ```
 
 * Maybe consider additional modules: 
-    ```
+```
     Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
 ```
