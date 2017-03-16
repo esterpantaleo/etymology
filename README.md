@@ -6,14 +6,14 @@ If you have comments on the project please write on the [talk page](https://meta
  
 This project has been inspired by my interest in etymology, in  open source collaborative projects and in interactive visualizations.
 
-##Licence
+## Licence
 
 The code and the data are distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
 
-##Note
+## Note
 Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated.
 
-##The SPARQL ENDPOINT 
+## The SPARQL ENDPOINT 
 This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - data was extracted on 12/20/2016).
 
 I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyDerivesFrom, derivesFrom and descendsFrom (and also etymologicallyEquivalentTo) as subproperties of etymologicallyRelatedTo. All these properties are transitive, etymologicallyEquivalentTo is reflexive. 
