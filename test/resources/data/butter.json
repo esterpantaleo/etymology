@@ -1,0 +1,795 @@
+[{   
+    "language": "Ancient Greek",
+    "name": "βούτῡρον",
+    "type": "noun",
+    "definition_english": "cow cheese",
+    "children": [{
+        "name": "βοῦς",
+        "position": "left",
+        "language": "Ancient Greek",
+        "order":0,
+        "type":"noun",
+        "definition_english": ["ox","cow"]
+    },{
+        "language": "Ancient Greek",
+        "name": "τῡρός",
+        "type": "noun",
+        "definition_english": "cheese",
+        "position": "left",
+        "order":1
+    },{
+        "language": "Latin",
+        "name": "būtȳrum",
+      	"type": "noun",
+        "definition_english": "butter",
+        "position": "right",
+        "children":[{
+            "language": "Proto-Germanic",
+            "name": "*buterǭ",
+            "definition_english":"butter",
+            "children":[{
+                "language": "Old High German",
+                "type":"",
+                "definition_english":"",
+                "name": "butera",
+                "children": [{
+                    "definition_english":"butter",
+                    "language": "German",
+                    "name": "Butter"
+                },{
+                    "definition_english":"butter",
+                    "type": "noun",
+                    "language": "Yiddish",
+            "name" : "פּוטער(puter)"
+                }]
+            },{
+                "language": "Old English",
+                "name": "butere",
+                "type":"noun",
+                "definition_english":"butter",
+                "children":[{
+      	            "language": "English",
+                    "name": "butter",
+                    "type": "noun",
+                    "definition_english": "butter",
+                    "long_definition_english":["(uncountable) A soft, fatty foodstuff made by churning the cream of milk (generally cow's milk).", "(countable, obsolete, chemistry) Any specific soft substance.", "(uncountable) Any of various foodstuffs made from other foods or oils, similar in consistency to, eaten like or intended as a substitute for butter (preceded by the name of the food used to make it)."],
+                    "children": [{
+                        "language": "English",
+                        "name": "butterfly",
+                        "link": "composite"
+                    },{
+                        "language": "English",
+      	      	      	"name": "butter-ham",
+                        "link":	"composite"
+                    },{
+                        "language": "English",
+                        "name": "almond-butter",
+                        "link": "composite"
+                    },{
+                        "language": "English",
+                        "name": "apple butter",
+                        "link": "composite"
+                    },{
+                        "language": "English",
+      	      	      	"name": "bean-butter",
+                        "link": "composite"
+                    },{
+                        "language": "English",
+                        "name": "body butter",
+                        "link": "composite"
+                    },{ 
+                        "language": "English",
+                        "link": "composite",
+                        "name": "bog-butter"
+                    },{	
+      	      	      	"language": "English",
+      	      	      	"link": "composite",
+      	      	      	"name": "bog-butter"
+                    },{	
+      	      	      	"language": "English",
+      	      	      	"link": "composite",
+      	      	      	"name": "brandy butter"
+                    },{	
+      	      	      	"language": "English",
+      	      	      	"type": "sentence",
+      	      	      	"name": "bread and butter"
+                    },{
+                        "language": "English",
+			"type":	"sentence",
+                        "name": "bread buttered on both sides"
+                    },{
+                        "language": "English",
+                        "type": "noun",
+                        "name": "butteraceous"
+                    },{	
+      	      	      	"language": "English",
+      	      	      	"link": "composite",
+      	      	      	"name": "butter-ale"
+                    },{	
+      	      	      	"language": "English",
+      	      	      	"type": "sentence",
+      	      	      	"name": "butter-and-egg man"
+                    },{
+                        "language": "English",
+                        "type": "sentence",
+                        "name": ["butter and eggs","butter-and-eggs"]
+                    },{
+                        "language": "English",
+			"type": "sentence",
+                        "name": "butter and tallow tree"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-back"
+                    },{
+      	      	      	"language": "English",
+      	      	      	"link": "composite",
+                        "name": "butter-badger"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-bag"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-bake"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-ball", "butterball"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-barrel"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-basher"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter bean"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-bird"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-bitten"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-boat"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butterbore"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-bowzy"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-box"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-boy"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butterbread"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter brickle"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butterbur"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-bush"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-cake"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butterchurn"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter clam"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter cloth"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter color", "butter colour"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-cooler"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter cream"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter cross"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "buttercup"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter curler"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-cutter"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter dish", "butter-dish"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter dock", "butter-dock"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-duck"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-factor"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter fat", "butter-fat", "butterfat"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-fingered", "butterfingered"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-fingers", "butterfingers"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-fish", "butterfish"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-flip"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-flower"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter icing"
+                    },{
+                        "language": "English",
+                        "name": "butterie"
+                    },{
+                        "language": "English",
+                        "name": "butterine"
+                    },{
+                        "language": "English",
+                        "name": "butterish"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-jags"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter knife", "butter-knife"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-lamp"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-lamp"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-leaves"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butterless"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter letter"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-man"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-mark"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-milk", "buttermilk"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-mold", "butter-mould"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-mouth"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter muslin"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-nut", "butternut"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter oil"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter paddle"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter paper"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-pat"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name":	"butter-pear"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-plate"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-print"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-queen"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-rigged"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-root"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter salt"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter scoop"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butterscot", "butter-scotch", "butterscotch"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-slide", "butterslide"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter spade"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-spreader"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter stamp"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-stick"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter substitute"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter tart"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-toast"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter tongs"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-tooth"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-toothed"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-tree"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter trier"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["butter-weed", "butterweed"]
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter week"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-weight"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-whore"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-wife"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-woman"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-worker"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter-working"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butterwort"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "buttery"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "butter yellow"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "cacao butter"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "clarified butter"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "cocoa butter"
+                    },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "coconut butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["cocum butter", "kokum butter"]
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "dika-butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "drawn butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "duck butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": ["fairy butter", "fairy's butter"]
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "Galam butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "gren butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "mahwa-butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "May butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "melted butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "nut butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "palm-butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "peanut butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "process butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "renovated butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "rock butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "rum butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "shea butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "sugar-butter sauce"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "sweet butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "vegetable butter"
+                   },{
+                        "language": "English",
+                        "link": "composite",
+                        "name": "witches' butter"
+                   },{
+                        "language": "English",
+                        "type": "sentence",
+                        "name": "butter would not melt in one's mouth"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "make butter and cheese of"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of almonds"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of antimony"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of arsenic"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of bismuth"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of cacao"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of mace"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of tin"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of wax"
+                   },{
+                      	"language": "English",
+                        "type": "sentence",
+                        "name": "butter of zinc"
+                    }]
+                },{
+                    "language": "English",
+                    "name": "butter",
+      	      	    "type": "verb",
+      	      	    "definition_english": ["To spread butter on.","to move one's weight backwards or forwards onto the tips or tails of one's skis or snowboard so only the tip or tail is in contact with the snow.","To increase (stakes) at every throw of dice, or every game."],
+                    "children": [{
+                        "language": "English",
+                        "name": "butter one's bread on both sides",
+                        "type": "sentence"
+                    },{
+                        "language": "English",
+                        "name": "butter the cony",
+                        "type":	"sentence"
+                    },{
+                        "language": "English",
+      	      	      	"name":	"butter up",
+                        "type": "verb"
+                    },{
+                        "language": "English",
+                        "name": "fine words butter no parsnips",
+                        "type": "sentence"
+                    },{
+                        "language": "English",
+                        "name": "have one's bread buttered for life",
+                        "type": "sentence"
+                    },{
+                        "language": "English",
+                        "name": "know which side one's bread is buttered on",
+                        "type": "sentence"
+                    }]
+                }]
+            }]
+        },{
+            "language": "Aragonese",
+            "name": "buro",
+            "definition_english":"",
+            "type":""
+        },{
+            "language":	"Dalmatian",
+      	    "name": "butir",
+            "type":"noun",
+            "definition_english":"butter"
+        },{
+            "language": "West Frisian",
+            "name": "buter",
+            "type":"",
+            "definition_english":""
+        },{
+            "language": "Dutch",
+            "name": "boter",
+            "type":"noun",
+      	    "definition_english":"butter",
+            "children": [{
+                "language": "Dutch",
+                "type":"noun",
+                "link":"composite",
+                "name":"roomboter",
+                "definition_english":"butter",
+                "long_definition_english":"butter, made by churning the cream of milk"
+            },{
+                "name":"cacaoboter",
+                "link":"composite",
+                "type":"noun",
+                "language": "Dutch",
+                "definition_english":"cocoa butter"
+            }]
+        },{
+            "language": "French",
+            "name": "beurre",
+            "type":"noun",
+            "definition_english":"butter"
+        },{
+            "language": "Icelandic",
+            "name": "(obsolete) butur",
+            "type":"noun",
+            "definition_english":"butter"
+        },{
+            "language":	"Italian",
+            "name": "burro",
+            "definition_english":"butter",
+            "type":"noun"
+        },{
+            "language": "Maltese",
+            "name": "butir",
+            "type":"noun",
+            "definition_english":"butter"
+        },{
+            "language": "Occitan",
+            "name": ["bodre","burre"],
+            "type":"",
+            "definition_english":""
+        },{
+            "language": "Old Spanish",
+            "name": "buturo",
+            "type":"noun",
+            "definition_english":"butter"
+        },{
+            "language": "Venetian",
+            "name": ["butiro","butiéro"],
+            "type":"noun",
+            "definition_english":"butter"
+        },{
+            "language": "Norman",
+            "name": "burre",
+            "type":"noun",
+      	    "definition_english":"butter"
+        }]
+    }]
+},{
+    "language": "Swedish",
+    "name": "butter",
+    "type": "adjective",
+    "definition_english":"grumpy"
+},{
+    "language": "French",
+    "name": "butter",
+    "type": "verb",
+    "definition_English": "to heap",
+    "children": [{
+        "language": "French",
+        "name":"butte",
+        "type": "noun",
+        "definition_English": ["heap","small hill"],
+        "position": "left",
+        "order": 0
+    },{
+        "language": "French",
+        "name":"-er",
+        "position": "left",
+        "order": 1
+    }]
+},{
+    "language": "English",
+    "name": "butter",
+    "type": "noun",
+    "definition_english": "Someone who butts, or who butts in.",
+    "children": [{
+         "language": "English",
+         "name":"butt",
+         "position":"left",
+         "order":0,
+         "type":"composite" 
+    },{
+         "language": "English",
+         "name":"er",
+         "position":"left",
+         "order":1,
+         "type":"composite"
+    }]
+}]
