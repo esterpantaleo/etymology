@@ -5,7 +5,7 @@ var tour = {
             target: "tags",
             placement: "right",
             title: "Search bar",
-            content: "<ul><li>Write a word then press enter.</li><li>Some words will appear: click on them to choose language and meaning.</li><li>Double click on the word you are interested in to visualize its etymological relationships.</li></ul>"
+            content: "<ul><li>Write a word then press enter: Some words will appear.</li><li><b>Click</b> on them to choose language and meaning.</li><li><b>Double click</b> on the word you are interested in."
         },{
             target: "aHelpPopup",
             placement: "right",
@@ -36,7 +36,11 @@ function getCookie(key) {
     return keyValue ? keyValue[2] : null;
 };
 
-// Initialize tour if it's the user's first time
-if (!getCookie("toured")) {
-    hopscotch.startTour(tour);
+console.log(screen.width)
+//Run tour only if screen is large enough
+if (screen.width > 800){
+    // Initialize tour if it's the user's first time
+    if (!getCookie("toured")) {
+	hopscotch.startTour(tour);
+    }
 }
