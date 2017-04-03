@@ -496,28 +496,32 @@ function loadTree(d) {
 	    var treeJson = JSON.parse(request.responseText);
 
 	    var treeGraph = treeJson.results.bindings;
-	    
-	    if (debug) { 
-		console.log(treeGraph); 
+
+	    if (debug) {
+		console.log(treeGraph);
 	    }
 
 	    var treeSparqlLinks = [];
 	    var treeSparqlNodes = {};
 	    
-	    treeGraph.forEach(function(element, j){
-		
-		treeSparqlNodes[element.source.value] = new Node(element.source.value);
+	    //set nodes
+	    //TO DO: here I'm simply collapsing nodes like __ee_1_door and __ee_door and _ee_2_door into __ee_door
+	    treeGraph.forEach(function(element){
+		var source = element.source.value.replace(/__ee_[0-9]+_/g,"__ee_"); 
+		treeSparqlNodes[source] = new Node(source);
 	
 		["target1", "target2", "target3", "target4"].map(function(target){
 		    if (element[target] != undefined) {		
-			if (treeSparqlNodes[element[target].value] == undefined) {
-			    treeSparqlNodes[element[target].value] = new Node(element[target].value);
+			target = element[target].value.replace(/__ee_[0-9]+_/g,"__ee_");
+			if (treeSparqlNodes[target] == undefined) {
+			    treeSparqlNodes[target] = new Node(target);
 			}
 		    }			    
 		});
 	    });
-	    
+
 	    //set links
+	    //TO DO: here I'm simply collapsing nodes like __ee_1_door and __ee_door and _ee_2_door into __ee_door    
 	    treeGraph.forEach(function(element){
 		["target1", "target2", "target3", "target4"].forEach(function(target){
 		    var type = "inherited";
@@ -527,7 +531,9 @@ function loadTree(d) {
 
 		    if (element[target] != undefined) {
 			if (element[target].value != element.source.value){
-                            var Link = {"source": treeSparqlNodes[element[target].value], "target": treeSparqlNodes[element.source.value], "type": type};
+			    source = element.source.value.replace(/__ee_[0-9]+_/g,"__ee_");
+			    target = element[target].value.replace(/__ee_[0-9]+_/g,"__ee_");
+                            var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": type};
 			    if (treeSparqlLinks.indexOf(Link) == -1) {
                                 treeSparqlLinks.push(Link);
                             }
