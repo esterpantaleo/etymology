@@ -4,14 +4,25 @@ html * {
     text-shadow: none !important;
 }
 
-.link {
-    fill: none;
-    stroke: lightBlue;
-    stroke-width: 0.1em;
-}
-
 text {
     pointer-events: none;
+}
+
+.iso {
+    text-anchor: middle;
+    font-size: 0.5em;
+}
+
+.help {
+    font-size: 1em;
+    border-radius: 0.7em;
+    max-width: 15em;
+    box-shadow:1em 1em 0.5em #888888;
+}
+
+.helpButton {
+   border:0;
+   background-color:lightBlue !important;
 }
 
 .ui-page .ui-header {    
@@ -21,6 +32,28 @@ text {
     border-color: #f9f9f9 !important;
     border-bottom-left-radius: 1em;
     border-bottom-right-radius: 1em;
+}
+
+.blueSpan {
+    color:DarkCyan;
+    font-size:1em;
+}
+
+.redSpan {
+    color:red;
+    font-size:0.7em;
+}
+
+.smallSpan {
+    font-size:0.7em;
+}
+
+.bigSpan {
+    font-size:1.9em;
+}
+
+.mediumSpan {
+    font-size:1.5em;
 }
 
 input:focus::-webkit-input-placeholder { color:transparent; }
