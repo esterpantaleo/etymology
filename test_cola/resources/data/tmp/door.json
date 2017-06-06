@@ -1,0 +1,211 @@
+[{
+  "language": "Proto-Indo-European",
+  "name": "*dʰwer-",
+  "definition_english": ["doorway", "door", "gate"],
+  "type": "noun",
+  "children": [{
+      "language": "Sanskrit",
+      "name": "dvarah",
+      "definition_english": ["gate, door, entrance or issue", "(figuratively) expedient, means, opportunity"],
+      "type": "noun"
+      },{
+      "language": "Proto-Germanic",
+      "name": ["*durz","*duriz"],
+      "definition_english": ["door", "hatch", "flap","gate"],
+      "type": "noun",
+      "children": [{
+	   "language": "Old English",
+           "name": ["dor","doru","duru","dura"],
+           "definition_english": ["large door", "gate", "door","wicket"],
+           "type": "noun",
+           "children": [{
+                 "language": "Middle English",
+                 "name": ["dure", "dor"],
+                 "definition_english": "",
+                 "type": "noun", 
+                 "children": [{
+                        "language": "English",
+                        "name": "door",
+                        "long_definition_english": "A portal of entry into a building, room or vehicle, consisting of a rigid plane movable on a hinge. Doors are frequently made of wood or metal. May have a handle to help open and close, a latch to hold the door closed and a lock that ensures the door cannot be opened without the key.",
+                        "type": "noun"
+                  }]
+           }]
+      },{
+          "language": "Old High German",
+          "name": "turi",
+          "definition_english": "door",
+          "type":"noun",
+          "children": [{
+             "language": "German",
+             "long_name": ["tür","thür (obsolete)", "türe (dated, still regional)"],
+             "name": ["tür","thür","türe"],
+	     "definition_english": "door",
+             "type":"noun"
+          }]
+      },{
+         "language": "Old Saxon",
+         "name": "duru",
+         "type":"noun",
+         "definition_english": "door"
+      },{
+         "language": "Old Norse",
+         "name": ["dyrr","dura"],
+         "type":"noun",
+         "definition_english": ["door","doorway"]
+      },{
+	 "language": "Old Frisian",
+      	 "name": "dure",
+         "type":"noun",
+         "definition_english": "door"
+      },{   
+         "language": "Danish",
+         "name": "dør",
+         "type":"noun",
+         "definition_english": "door"
+      },{
+         "language": "Old Dutch",
+         "name": "thuro",
+         "definition_english": ["through", "forward", "on", "across", "around", "because of", "due to", "by"],
+         "type": "preposition",
+         "children": [{
+              "language": "Middle Dutch",
+              "name": "dore",
+              "definition_english": "through",
+              "type": "preposition",
+              "children": [{
+                   "language": "Dutch",
+                   "name": "deur",
+                   "definition_english": "door",
+                   "type": "noun"
+              }]
+          }]     
+     }]
+  },{
+     "language":"Ancient Greek",
+     "name":"θύρα ‎(thúra)",
+     "type": "noun",
+     "definition_english":"door",
+     "children":[{
+        "language": "Greek",
+        "name": "θύρα (thýra)",
+        "definition_english": "door",
+        "type": "noun"
+    }]
+  },{
+     "language": "Latin",
+     "name": "foris",
+     "definition_english": ["door", "gate", "opening", "entrance"],
+     "type": "noun"
+  },{
+     "language": "Latin",
+     "name": ["forum","fori"],
+     "definition_english": ["market","public place", "forum"],
+     "type": "noun"
+  },{
+     "language": "Gaulish",
+     "name": "doro",
+     "definition_english": "mouth",
+     "type": "noun"
+  },{
+     "language": "Gothic",
+     "name": "dauro",
+     "definition_english": "gate",
+     "type": "noun"
+  },{
+     "language": "Old Persian",
+     "name": "duara",
+     "definition_english": "door",
+     "type": "noun"
+  },{
+     "language": "Old Prussian",
+     "name": "dwaris",
+     "definition_english": "gate",
+     "type": "noun"
+  },{
+     "language": "Russian",
+     "name": "dver",
+     "definition_english": "door",
+     "type": "noun"
+  }]
+},{
+  "language": "Proto-Indo-European",
+  "name": "*delh",
+  "definition_english": ["to hew", "to split"],
+  "type": "verb",
+  "children": [{
+     "language": "Old Latin",
+     "name": "*dolhos",
+     "definition_english": "",
+     "type": "",
+     "children": [{
+        "language": "Latin",
+        "name": "dolor",
+        "definition_english": ["pain", "grief"],
+        "type": "noun",
+        "children": [{
+           "language": "Italian",
+           "name":"dolore",
+           "type":"noun",
+           "definition_english": ["ache","pain","sorrow","grief"]
+        },{
+           "language": "Old Portuguese",
+           "name": "door",
+           "definition_english": "pain",
+           "type": "noun",
+           "children": [{
+              "language": "Galician",
+              "name": "dor",
+              "definition_english": "pain",
+              "type": "noun"
+           },{
+              "language": "Portuguese",
+              "name": "dor",
+              "definition_english": "pain",
+              "type": "noun"
+           },{
+              "language": "Asturian",
+              "name":"dolor",
+              "type":"noun",
+              "definition_english": "pain"
+           }]
+        },{
+           "language": "Old Provençal",
+           "name": "dolor",
+           "definition_english": "pain",
+           "type":"noun",
+           "children": [{
+              "language": "Catalan",
+              "name": "dolor",
+              "definition_english": "pain",
+              "type":"noun"
+           },{
+              "language": "Occitan",
+              "name": ["dolor", "doulour"],
+              "definition_english": "pain",
+              "type":"noun"
+           }]
+        },{
+           "language": "Spanish",
+           "name": "dolor",
+           "definition_english": "pain",
+           "type":"noun"
+        },{
+           "language": "Old French",
+           "name": ["dolor", "dulor", "dulur"],
+           "type": "noun",
+           "definition_english": ["pain", "suffering"],
+           "children": [{
+              "language": "English",
+              "name": ["dolor", "dolour"],
+              "long_definition_english": ["(literary) sorrow, grief, misery or anguish"," a unit of pain used to theoretically weigh people's outcomes"],
+              "type": "noun"
+           },{
+              "language": "French",
+              "name": "douleur",
+              "type": "noun",
+              "definition_english": "pain"
+           }]
+        }]
+     }]
+  }]
+}]

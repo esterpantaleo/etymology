@@ -1,0 +1,139 @@
+[{
+            "language": "English",
+            "name": "WikiWikiWeb",
+            "type": "noun",
+            "year": 1995,
+            "children": [{
+                "name": "wikiwiki",
+                "language": "Hawaiian",
+                "definition_english": "speedy",
+                "type": "verb",
+                "position":"left",
+                "order":0,
+                "link":"composite"
+            },{
+                 "language": "English",
+                 "name": "web",
+                 "type": ["noun","verb"],
+                 "position":"left",
+                 "order":1,
+                 "link":"composite",
+                 "long_definition_english": ["The silken structure a spider builds using silk secreted from the spinnerets at the caudal tip of its abdomen; a spiderweb.", "Any interconnected set of persons, places, or things, which when diagrammed resembles a spider's web.", "(baseball) The part of a baseball mitt between the forefinger and thumb, the webbing.", "A latticed or woven structure.", "The interconnection between flanges in structural members, increasing the effective lever arm and so the load capacity of the member.", "(rail transport) The thinner vertical section of a railway rail between the top (head) and bottom (foot) of the rail.", "A fold of tissue connecting the toes of certain birds, or of other animals.", "The series of barbs implanted on each side of the shaft of a feather, whether stiff and united together by barbules, as in ordinary feathers, or soft and separate, as in downy feathers.", "(manufacturing) A continuous strip of material carried by rollers during processing.", "(lithography) A long sheet of paper which is fed from a roll into a printing press, as opposed to individual sheets of paper.", "(dated) A band of webbing used to regulate the extension of the hood of a carriage.","A thin metal sheet, plate, or strip, as of lead.","(intransitive) to construct or form a web", "(transitive) to cover with a web or network", "(transitive) to ensnare or entangle", "(transitive) to provide with a web"]
+            },{
+                "language": "English",
+                "name": "wiki",
+                "definition_english": ["Collaborative website","research on a wiki, contribute to a wiki"],
+                "long_definition_english": ["A collaborative website which can be directly edited merely by using a web browser, often by anyone with access to it.","To research on Wikipedia or some similar wiki. To conduct research on a wiki. To contribute to a wiki."],
+                "type": ["noun","verb"],
+                "link": "abbreviation",
+                "year": "1995",
+                "children": [{
+	            "language": "English",
+                    "name": "interwiki",
+                    "long_definition_english": "(Wiktionary and WMF jargon) A link between two wikis inside a pair of square brackets.",
+                    "type": "noun" 
+                },{
+                    "language": "English",
+                    "name": "wikify",
+                    "type": "verb",
+                    "long_definition_english": "To adapt to the standards and facilities of an existing wiki. To make into a wiki, or to use a wiki approach for. To use or participate in a wiki."
+                },{ 
+      	            "language": "English",
+      	            "name": "wikiholic",
+                    "type": "noun",
+                    "long_definition_english": "(Wiktionary and WMF jargon) A person who devotes a vast amount of time to a wiki-based project."
+                },{ 
+      	            "language": "English",
+      	            "name": "wikilink",
+                    "type": "noun",
+                    "long_definition_english": "an internal link to another page or page-section within the same wiki"
+                },{
+                    "language": "English",
+                    "name": "Wikipedia",
+                    "type": "noun",
+                    "long_definition_english": "A free encyclopedia built collaboratively using wiki software."
+                },{
+                    "language": "English",
+                    "name": "Wikisource",
+                    "type": "noun",
+                    "long_definition_english": "an online digital library of free content textual sources on a wiki, operated by the Wikimedia Foundation."
+                },{
+                    "language": "English",
+                    "name": "Wiktionary",
+                    "long_definition_english": "Collaborative project for creating a free lexical database in every language, complete with meanings, etymologies, and pronunciations.",
+                    "type": "noun"
+                },{
+                    "language": "English",
+                    "name": "Wikileaks",
+                    "type": "noun",
+                    "long_definition_english": "WikiLeaks is an international, non-profit,[3] journalistic[6][7][8] organisation, that publishes secret information, news leaks,[9] and classified media from anonymous sources."
+                },{
+                    "language": "English",
+                    "name": "Wikibooks",
+                    "type": "noun",
+                    "long_definition_english": "a Wikimedia community creating a free library of educational textbooks that anyone can edit."
+                },{
+                    "language": "English",
+                    "name": "Wikimedia",
+                    "type": "noun",
+                    "long_definition_english": "a global movement whose mission is to bring free educational content to the world."
+                },{
+                    "language": "Danish",
+                    "name": "wiki",
+                    "definition_english": "wiki",
+                    "type": "noun",
+                    "link":"borrowing",
+                    "children":[{
+                        "name":"wikikette",
+                        "language": "Danish",
+                        "definition_english":"", 
+                        "type":""
+                    },{
+                        "name":"wikikode",
+                        "language": "Danish",
+                        "definition_english":"",
+                        "type":""
+                    },{
+                        "name":"Wikipediabrugerside",
+                        "language": "Danish",
+                        "definition_english":"",
+                        "type":""
+                    }]
+                },{
+                    "language": "Dutch",
+                    "name": "wiki",
+                    "definition_english": "wiki",
+                    "type": "noun",
+                    "link": "borrowing"
+                },{
+                    "language": "French",
+                    "name": "wiki",
+      	      	    "definition_english": "wiki",
+                    "type": "noun",
+                    "link": "borrowing"
+                }]
+           }]
+        
+    },{
+        "language": "Proto-Eastern Polynesian",
+        "name": "*witi",
+        "children": [{
+            "language": "Hawaiian",
+            "name": "wiki",
+            "definition_english":["(stative) hasten, speed up","(stative) be swift, speedy, quick"],
+            "type": "verb",
+            "children": [{
+                "name": "wikiwiki",
+                "language": "Hawaiian",
+                "definition_english": "speedy",
+                "type": "verb",
+                "children": [{
+                    "name": "WikiWikiWeb",
+                    "language": "English",
+                    "type": "noun",
+                    "year": "1995",
+                    "link": "composite"
+                }]
+            }]  
+        }]
+    }]

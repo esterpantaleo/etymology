@@ -1,0 +1,76 @@
+{
+    "language": "Arabic",
+    "name": "قَهْو(qa)",
+    "type": "noun",
+    "definition_english": ["coffe (the drink)", "coffee shop, café (colloquial use)"],
+    "children": [{
+        "language": "Persian",
+        "name": "قهوه (qahve)",
+        "type": "noun",
+        "definition_english": "coffee",
+        "children": [{
+            "language": "Ottoman Turkish",
+            "name": "kahve",
+            "type": "noun",
+            "definition_english": "coffee",
+            "children": [{
+                "language": "Italian",
+                "name": "caffè",
+                "type": "noun",
+                "definition_english": "coffee",
+                "year": 1615,
+                "children": [{
+                    "language": "French",
+                    "link": "borrowing",
+                    "name": "café",
+                    "type": "noun",
+                    "year": 1650,
+                    "definition_english": ["coffee (drink)","coffee colour","public house","cafe, coffee shop"],
+                    "children": [{
+                        "language": "German",
+                        "name": "Café",
+                        "type": "noun",
+                        "definition_english": ["a cafe, a coffee shop", "coffee"]
+                    },{
+                        "language": "Norman",
+                        "name": "café",
+                        "type": "noun",
+                        "link": "borrowing",
+                        "definition_english": "(Jersey) coffee (beverage)"
+                    },{
+                        "language": "Swedish",
+                        "name": "café",
+                        "type": "noun",
+                        "link": "borrowing",
+                        "definition_english": "cafe, coffee shop"
+                    }]
+                },{
+                    "language": "Portuguese",
+                    "name": "café",
+                    "type": "noun",
+      	      	    "link": "borrowing",
+                    "definition_english": ["coffee","a café, an establishment selling coffee and other beverages, alcoholic or not, simple meals or snacks, with a facility to consume them on the premises"]
+                },{
+                    "language":	"Spanish",
+      	      	    "name": "café",
+                    "type": "noun",
+                    "link": "borrowing",
+      	      	    "definition_english": ["coffee","cafe, coffee-shop"]
+                },{
+                    "language": "Dutch",
+                    "name": "koffie",
+                    "type": "noun",
+                    "definition_english": "coffee",
+                    "children": [{
+                         "language": "English",
+                         "name": "coffee",
+                         "type": ["noun","verb"],
+                         "long_definition_english": ["A beverage made by infusing the beans of the coffee plant in hot water.", "The seeds of the plant used to make coffee, misnamed ‘beans’ due to their shape.", "A tropical plant of the genus Coffea", "A pale brown colour, like that of milk coffee.", "The end of the meal—when coffee is usually served.","to drink coffee"],
+                         "definition_english": ["beverage", "beans", "plant", "colour"],
+                         "year":1800
+                    }]
+                }]
+            }]
+        }]
+    }]
+}

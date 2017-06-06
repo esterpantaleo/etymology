@@ -1,0 +1,420 @@
+{
+    "name": "_languages_tree",
+    "year": "-6500",
+    "iso": "madeup",
+    "children": [{
+        "name": "Proto-Turkic",
+        "iso": "trk-pro",
+        "year": "-4500",
+        "children": [{
+            "name": "Turkic",
+            "year": 600,
+            "iso": "trk",
+            "children": [{
+                "name": "Ottoman Turkish",
+                "year": 1000,
+                "iso": "ota",
+                "children": [{
+                    "name": ["Turkish","Istanbul Turkish"],
+                    "year": 1930,
+                    "iso": "tr"
+                }]
+            }]
+        }]
+    },{         
+        "name": "Arabic",
+        "iso": "ar",
+        "year": 500
+    },{
+        "name": "Omotic",
+        "iso": "omv",
+        "year": -6000
+    },{
+        "name": ["PIE", "Proto-Indo-European"],
+        "iso": "ine-pro",
+        "year": "-4500",
+        "year_string": "~4500 BC",
+        "children": [{
+            "name": "Proto-Balto-Slavic",
+            "iso": "ine-bsl-pro",
+            "year": "0",
+            "year_string": "?made up",
+            "children": [{
+                "name": "Proto-Slavic",
+                "year": 600,
+                "iso": "sla-pro",
+                "children":[{
+                    "name":"Macedonian",
+                    "year": 1940,
+                    "iso": "mk"
+                },{
+                    "name": "Russian",
+                    "year": "1850",
+                    "iso": "ru"
+                },{
+                    "name": "Bulgarian",
+                    "year": 1500,
+                    "iso": "bg",
+                    "year_string": "dates from the 16th century onwards"
+                },{
+                    "name": "Belarusian", 
+                    "iso": "be",
+                    "year": 1790,
+                    "year_string": "The end 18th century (the times of the Divisions of Commonwealth) is the usual conventional borderline between the Old Belarusian language and Modern Belarusian language stages of development."
+                },{
+                    "name": "Ukrainian",
+                    "iso": "uk",
+                    "year": 1680,
+                    "year_string": "The Modern Ukrainian language has been in common use since the late 17th century, associated with the establishment of the Cossack Hetmanate."
+                },{
+                    "name": ["Serbo-Croatian","Serbo-Croat","Serbo-Croat-Bosnian","Bosnian-Croatian-Serbian","Bosnian-Croatian-Montenegrin-Serbian"],
+                    "iso": "scr",
+                    "year": 900,
+                    "year_string": "The beginning of written Serbo-Croatian can be traced from the 10th century "
+                },{
+                    "name": "Slovene",
+                    "iso": "sl",
+                    "year": 1700,
+                    "year_string": "Standard Slovene is the national standard language"
+                },{
+                    "name": "Czech",
+                    "iso": "cs",
+                    "year": 1750,
+                    "year_string": "During the mid-eighteenth century, it experienced a revival in which Czech academics stressed the past accomplishments of their people and advocated the return of Czech as a major language. It has changed little since this time, except for minor morphological shifts and the formalization of colloquial elements."
+                },{
+                    "name": ["Kashubian","Cassubian"],
+                    "iso": "csb",
+                    "year": 1500 
+                },{
+                    "name": "Polabian",
+                    "iso": "pox",
+                    "year": 1700
+                },{
+                    "name": "Slovak",
+                    "iso": "sk",
+                    "year": 1400,
+                    "year_string": "Documents in Slovak started to appear in the 15th century"
+                },{
+                    "name": ["Lower Sorbian","Dolnoserbski"],
+                    "iso": "dsb",
+                    "year": 400
+                },{
+                    "name": ["Upper Sorbian","Obersorbisch"],
+                    "iso": "hsb",
+                    "year": 400
+                },{
+                    "name": "Polish",
+                    "iso": "pl",
+                    "year": 900
+                }]
+            },{
+                "name": "Lithuanian",
+                "iso": "lt",
+                "year_string": "The differentiation between Lithuanian and Latvian started after AD 800;",
+                "year": 800
+            },{
+                "name": ["Old Prussian","Prussian"],
+                "iso": "prg",
+                "year": "1200",
+                "year_string": "in about the 13th century"
+            }]
+        },{
+            "name": "Indo-European",
+            "iso": "ine",
+            "type": "family",
+            "year": "-4200",
+            "year_string": "~4200 BC",
+            "children": [{
+                "name": "Sanskrit",
+                "iso": "sa",
+                "year": "-1200",
+                "year_string": "from the mid-to-late second millennium BCE"
+            },{
+                "name": "Old Persian",
+                "iso": "peo",
+                "year_string": "c. 600 BCE to 300 BCE",
+                "year": "-600",
+                "children": [{
+                    "name": "Persian",
+                    "iso": "fa",
+                    "year": 700
+                }]
+            },{
+                "name": "Ancient Greek",
+                "iso": "grc",
+                "year_string": "from around the 9th century BC to the 6th century AD",
+                "year": "-800",
+                "children": [{
+                    "name": "Greek",
+                    "year": "500",
+                    "iso": "el"
+                }]
+            },{
+                "name": ["Proto-Germanic","Common Germanic"],
+                "year": "-500",
+                "year_string": "about 500 BC",
+                "iso": "gem-pro",
+                "children":[{
+                    "name": "West Germanic",
+                    "year_string": "~200 AD",
+                    "year": "200",
+                    "iso": "gmw",
+                    "type": "family",
+                    "children": [{
+                        "name": ["Frankish", "Old Franconian", "Old Frankish"],
+                        "year": "300",
+                        "year_string": "spoken by the Franks between the 4th and 8th century",
+                        "iso": "frk"
+                    },{
+                        "name": ["Old Dutch","Old Low Franconian"],
+                        "year_string": "from around the 5th to the 12th century",
+                        "year": "400",
+                        "iso": "odt",
+                        "children": [{
+                            "name": "Middle Dutch",
+                            "year": "1150",
+                            "year_string": "between 1150 and 1500",
+                            "iso": "dum",
+                            "children": [{
+                                "name": "Dutch",
+                                "year_string": "1500–present",
+                                "year": "1500",
+                                "iso":"nl"
+                            }] 
+                        }]
+                    },{
+                        "name": "Old High German",
+                        "year_string": "from around 700 to 1050 AD",
+                        "year": "700",
+                        "iso": "goh",
+                        "children": [{
+                            "name": "German",
+                            "year": "1500",
+                            "iso": "de"
+                        },{
+                            "name": "Old Saxon",
+                            "year": "750",
+                            "year_string": "It is documented from the 8th century until the 12th century",
+                            "iso": "osx",
+                            "children": [{
+                                "name": ["Middle Low German", "Middle Saxon"],
+                                "year": "1100",
+                                "iso": "gml"
+                            }]
+                        },{
+                            "name": ["Luxembourgish", "Luxemburgish", "Letzeburgesch"],
+                            "year": "1000",
+                            "year_string": "Luxembourgish has been spoken since Frankish times (c. 1000 AD)",
+                            "iso": "lb"
+                        },{
+                            "name": "Yiddish",
+                            "year": "800",
+                            "year_string": "It originated during the 9th century",
+                            "iso": "yi"
+                        }]
+                    },{
+                        "name": "Old Frisian",
+                        "year_string": "between the 8th and 16th centuries",
+                        "year": "700",
+                        "iso": "ofs",
+                        "children": [{
+                            "name": ["West Frisian", "Frisian"],
+                            "iso": "fy",
+                            "year": "1850" 
+                        }]
+                    },{
+                        "name": ["Old English","Anglo-Saxon"],
+                        "year": "500",
+                        "year_string": "5th century to the late 11th century",
+                        "iso": "ang",
+                        "children": [{
+                            "name": ["Middle English","Medieval English","Mediaeval English"],
+                            "year": 1066,
+                            "year_string": "(1066) until the late 15th century",
+                            "iso": "enm",
+                            "children":[{
+                                "name": ["English", "Modern English", "New English", "Hawaiian Creole English", "Hawaiian Creole English", "Hawaiian Creole", "Hawaiian Creole", "Polari", "Yinglish"],
+                                "year": 1500,
+                                "iso": "en"
+                            }]
+                        }]
+                    }]
+                },{
+                    "name": "North Germanic",
+                    "year_string": "At last around the year 200 AD",
+                    "year": "200",
+                    "iso": "gmq",
+                    "type": "family",
+                    "children": [{
+                        "name": "Old Norse",
+                        "year_string": "during about the 9th to 13th centuries",
+                        "year": "800",
+                        "iso": "non",
+                        "children": [{
+                            "name": "Swedish",
+                            "iso": "sv",
+                            "year": 1500
+                        },{
+                            "name": "Norwegian",
+                            "iso": "no",
+                            "year": 1800,
+                            "year_string":"?"
+                        },{
+                            "name": "Faroese",
+                            "iso": "fo",
+                            "year": 900,
+                            "year_string":"Between the 9th and the 15th centuries, a distinct Faroese language evolved"
+                        },{
+                            "name": "Icelandic",
+                            "iso": "is",
+                            "year": 1100,
+                            "year_string":"It is ultimately based heavily on an orthography laid out in the early 12th century by a mysterious document"
+                        }]
+                    },{
+                        "name": "Danish",
+                        "year": "1650",
+                        "iso": "da"
+                    }] 
+                },{
+                    "name": "East Germanic",
+                    "year_string": "",
+                    "iso": "gme",
+                    "year": "100",
+                    "children": [{
+                        "name": "Gothic",
+                        "year": "400",
+                        "year_string": "4th century",
+                        "iso":"got"
+                    }]
+                }]
+            },{
+                "name": ["Old Latin","Archaic Latin", "Early Latin", "Pre-Classical Latin", "Ante-Classical Latin"],
+                "year_string": "Old Latin authored works began in the 3rd century BC",
+                "year": "-200",
+                "iso": "itc-ola",
+                "children": [{
+                    "name": "Latin",
+                    "year": "-75",
+                    "year_string": "from 75 BC to 3rd century AD",
+                    "iso": "la",
+                    "children": [{
+                        "name": ["Vulgar Latin","Common Romance"],
+                        "year": 700,
+                        "iso": "lat-vul",
+                        "children": [{
+                            "name": "Italian",
+                            "year": "900",
+                            "iso": "it"
+                        },{
+                            "name": "Norman",
+                            "iso": "nrf",
+                            "year": 1000
+                        },{
+                            "name": ["Romanian","Daco-Romanian", "Roumanian", "Rumanian"],
+                            "year_string": "during the 16th century",
+                            "year": "1500",
+                            "iso": "ro"
+                        },{
+                            "name": "Aromanian",
+                            "iso":"rup",
+                            "year":1100,
+                            "year_string":"It is generally considered that sometime between 800 and 1,200 years ago, Vulgar Latin spoken in the Balkan provinces of the Roman Empire, which is also known as Proto-Eastern Romance, broke up into four languages: Romanian, Aromanian, Megleno-Romanian and Istro-Romanian."
+                        },{
+                            "name": ["Old Occitan","Old Provençal"],
+                            "year": 700,
+                            "year_string": "was the earliest form of the Occitano-Romance languages, as attested in writings dating from the eighth through the fourteenth centuries.",
+                            "iso":"pro",
+                            "children": [{
+                                "name": ["Occitan","lenga d'òc"],
+                                "year":1000,
+                                "iso": "oc"
+                            }]
+                        },{
+                            "name": ["Catalan","Valencian"],
+                            "year_string": "By the 9th century",
+                            "year": "800",
+                            "iso": "ca"
+                        },{
+                            "name": ["Old Portuguese","Galician-Portuguese", "Galician Portuguese", "Medieval Galician"],
+                            "year": "400",
+                            "year_string": "in the 5th century",
+                            "iso": "roa-opt",
+                            "children": [{
+                                "name": ["Portuguese","Modern Portuguese"],
+                                "year": "1100",
+                                "iso": "pt"
+                            },{
+                                "name": "Galician",
+                                "year_string": "until the 12th century",
+                                "year": "1100",
+                                "iso":"gl"
+                            }]
+                        },{
+                            "name": ["Spanish","Castilian"],
+                            "iso": "es",
+                            "year": "800",
+                            "year_string": "from the 9th century"
+                        },{
+                            "name": "Asturian",
+                            "year": 900,
+                            "year_string": "Some documents appear from as early as the 10th century",
+                            "iso": "ast"
+                        },{
+                            "name": "Old French",
+                            "year": "800",
+                            "year_string": "from the 9th century to the 14th century",
+                            "iso":"fro",
+                            "children": [{
+                                "name": "Middle French",
+                                "year": 1340,
+                                "iso": "frm",
+                                "children": [{
+                                    "name": ["French","Modern French"],
+                                    "year": "1300",
+                                    "iso": "fr"
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }]
+    },{
+        "name": "Gaulish",
+        "year": "-500",
+        "year_string": "from the 6th century BC to the 6th century AD",
+        "iso": "cel-gau"
+    },{
+        "name": "Proto-Finnic",
+        "year_string": "around 1500–1000 BCE",
+        "year": "-1500",
+        "iso": "fiu-fin-pro",
+        "children": [{
+            "name": "Finnish",
+            "year_string": "The first known written example of Finnish comes from this era and was found in a German travel journal dating back to c.1450",
+            "year": "1450",
+            "iso":"fi"
+        }]
+    },{
+        "name": "Esperanto",
+        "year": "1870",
+        "iso": "eo"
+    },{
+        "name": "Austronesian",
+        "year_string": "6000 years ago?",
+        "year": "-4000",
+        "iso": "map",
+        "children": [{
+            "name": "Proto-Eastern Polynesian",
+            "year": "-3000",
+            "year_string": "made up",
+            "iso": "poz-pep-pro",
+            "children": [{
+                "name": "Hawaiian",
+                "year": "500",
+                "year_string": "in roughly 300 AD?",
+                "iso": "haw"
+            }]
+        }]
+    }]
+}

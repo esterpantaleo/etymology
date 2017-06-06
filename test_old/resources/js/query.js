@@ -6,33 +6,33 @@ function transform(d) {
     return "translate(" + d.x + "," + d.y + ")";
 }
 
-function writeDefinition(pos, gloss){
-    return gloss.split(";;;;").map(function(el) {
-        return pos + " - " + el + "<br><br>";
-    }).join("");
-}
-
-function writeLinks(links){
-    var toreturn = [];
-    links.split(",").forEach(function(e){
-        toreturn.push("<a href=\"" + e + "\" target=\"_blank\">" + e.split("/")
-		      .pop().split("#").reverse().join(" ").replace(/_/g," ") + "</a>");
-    })
-    return toreturn.join(", ");
-}
-
 function jsonToTooltip(json, printLinks){
-    var toreturn = "";
-    var last = json.results.bindings.length - 1;
-    json.results.bindings
-        .forEach(function(element, i ){
-            toreturn += writeDefinition(element.pos.value, element.gloss.value);
-            if (printLinks && i == last){
-                toreturn += "<br><br>as extracted from: " + writeLinks(element.links.value);
-            }
-        });
-    return toreturn;
-}
+        var toreturn = "";
+        var last = json.results.bindings.length - 1;
+        json.results.bindings
+            .forEach(function(element, i ){
+                toreturn += logDefinition(element.pos.value, element.gloss.value);
+                if (printLinks && i == last){
+                    toreturn += "<br><br>as extracted from: " + logLinks(element.links.value);
+                }
+            });
+        return toreturn;
+    }
+
+function logDefinition(pos, gloss){
+        return gloss.split(";;;;").map(function(el) {
+            return pos + " - " + el + "<br><br>";
+        }).join("");
+    }
+
+function logLinks(links){
+        var toreturn = [];
+        links.split(",").forEach(function(e){
+            toreturn.push("<a href=\"" + e + "\" target=\"_blank\">" + e.split("/")
+                          .pop().split("#").reverse().join(" ").replace(/_/g," ") + "</a>");
+        })
+        return toreturn.join(", ");
+    }
 
 class Node {
     constructor(i){
@@ -50,12 +50,8 @@ class Node {
 	this.word = this.word.replace("__","'").replace(/^_/g,"*").replace(/_/g," ").replace("__","'").replace(/_/g," ");
 	this.lang = langMap.get(this.iso)
     }
-/*
-    get links() {
-        return this.dfghjk;
-    } */
-    
-    d3DisambiguationText(){
+
+    disambiguate(){
 	this.refersTo.forEach(function(iri){
             d3.selectAll("circle")
 		.filter(function(f) { return (f.iri == iri); })
@@ -70,34 +66,34 @@ class Node {
 				   "</i>");
     }
 
-    d3XhrText(printLinks){
-	this.d3XhrTextPart(this.iri, this.word.split(",")[0], printLinks);
-	if (this.eqIri != undefined){
-	    for (var i=0; i<this.eqIri.length; i++){
-		this.d3XhrTextPart(this.eqIri[i], this.eqWord[i], printLinks);
-	    }
-	}
+    showTooltip(printLinks){
+        this.showTooltipPart(this.iri, this.word.split(",")[0], printLinks);
+        if (this.eqIri != undefined){
+            for (var i=0; i<this.eqIri.length; i++){
+                this.showTooltipPart(this.eqIri[i], this.eqWord[i], printLinks);
+            }
+        }
     }
 
-    d3XhrTextPart(iri, word, printLinks){
-	var url = ENDPOINT + "?query=" + encodeURIComponent(this.sparql(iri, printLinks)); 
-	
-	if (debug){
-	    console.log(url);
-	}
-	d3.xhr(url, MIME, function(requestData) {
-	    var text = "";
-	    if (requestData != null) {
-		text += jsonToTooltip(JSON.parse(requestData.responseText), printLinks);
-	    }
-	    if (text == ""){
-		text = "-";
-	    }
-	    text = "<b>" + word + "</b><br><br><br>" + text;
-	    d3.select("#myPopup").append("p").html(text)
-		.style("left", (d3.event.pageX + 18) + "px")
+    showTooltipPart(iri, word, printLinks){
+        var url = ENDPOINT + "?query=" + encodeURIComponent(this.sparql(iri, printLinks));
+
+        if (debug){
+            console.log(url);
+        }
+        d3.xhr(url, MIME, function(requestData) {
+            var text = "";
+            if (requestData != null) {
+                text += jsonToTooltip(JSON.parse(requestData.responseText), printLinks);
+            }
+            if (text == ""){
+                text = "-";
+            }
+            text = "<b>" + word + "</b><br><br><br>" + text;
+            d3.select("#myPopup").append("p").html(text)
+                .style("left", (d3.event.pageX + 18) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
-	});
+        });
     }
 
     //DEFINE QUERY TO GET LINKS, POS AND GLOSS           
@@ -342,7 +338,7 @@ function loadNodes(myWord, langMap){
                 .size([width, height])
                 .linkDistance(150)
                 .charge(-700)
-                .gravity(.2)
+               // .gravity(.2)
                 .on("tick", tick)
                 .start();
 	    
@@ -420,10 +416,10 @@ function loadNodes(myWord, langMap){
 		    d3.select("#myPopup").html("");
 		    d3.selectAll("circle").attr("fill", "#ffb380");
 		    if (d.refersTo != undefined){
-			d.d3DisambiguationText();
+			d.disambiguate();
 		    } else {
 			console.log(d)
-			d.d3XhrText(false);
+			d.showTooltip(false);
 		    }
 		    d3.event.stopPropagation();
 		});
@@ -447,6 +443,7 @@ function loadNodes(myWord, langMap){
 }
 
 function loadTree(d) {
+    var treeCenter = d.iri;
     var treeUrl = ENDPOINT + "?query=" + encodeURIComponent(treeSparql(d.iri));
     
     if (debug) { 
@@ -496,28 +493,32 @@ function loadTree(d) {
 	    var treeJson = JSON.parse(request.responseText);
 
 	    var treeGraph = treeJson.results.bindings;
-	    
-	    if (debug) { 
-		console.log(treeGraph); 
+
+	    if (debug) {
+		console.log(treeGraph);
 	    }
 
 	    var treeSparqlLinks = [];
 	    var treeSparqlNodes = {};
 	    
-	    treeGraph.forEach(function(element, j){
-		
-		treeSparqlNodes[element.source.value] = new Node(element.source.value);
+	    //set nodes
+	    //TO DO: here I'm simply collapsing nodes like __ee_1_door and __ee_door and _ee_2_door into __ee_door
+	    treeGraph.forEach(function(element){
+		var source = element.source.value.replace(/__ee_[0-9]+_/g,"__ee_"); 
+		treeSparqlNodes[source] = new Node(source);
 	
 		["target1", "target2", "target3", "target4"].map(function(target){
 		    if (element[target] != undefined) {		
-			if (treeSparqlNodes[element[target].value] == undefined) {
-			    treeSparqlNodes[element[target].value] = new Node(element[target].value);
+			target = element[target].value.replace(/__ee_[0-9]+_/g,"__ee_");
+			if (treeSparqlNodes[target] == undefined) {
+			    treeSparqlNodes[target] = new Node(target);
 			}
 		    }			    
 		});
 	    });
-	    
+
 	    //set links
+	    //TO DO: here I'm simply collapsing nodes like __ee_1_door and __ee_door and _ee_2_door into __ee_door    
 	    treeGraph.forEach(function(element){
 		["target1", "target2", "target3", "target4"].forEach(function(target){
 		    var type = "inherited";
@@ -527,7 +528,9 @@ function loadTree(d) {
 
 		    if (element[target] != undefined) {
 			if (element[target].value != element.source.value){
-                            var Link = {"source": treeSparqlNodes[element[target].value], "target": treeSparqlNodes[element.source.value], "type": type};
+			    source = element.source.value.replace(/__ee_[0-9]+_/g,"__ee_");
+			    target = element[target].value.replace(/__ee_[0-9]+_/g,"__ee_");
+                            var Link = {"source": treeSparqlNodes[target], "target": treeSparqlNodes[source], "type": type};
 			    if (treeSparqlLinks.indexOf(Link) == -1) {
                                 treeSparqlLinks.push(Link);
                             }
@@ -600,7 +603,9 @@ function loadTree(d) {
 		    }
 		}
 	    }
+
 console.log(treeSparqlNodes)
+
 	    if (excludeStarLikeStructures){
 		//find links between words in the same language, but exclude links that have as target the searched word
                 var toDeleteLinks = treeSparqlLinks.filter(function(element) {
@@ -653,9 +658,10 @@ console.log(treeSparqlNodes)
 		.nodes(d3.values(treeSparqlNodes))
 		.links(treeSparqlLinks)
 		.size([width, height])
-		.linkDistance(150)
-		.charge(-700)
-		.gravity(.2)
+		.linkDistance(200)
+//                .center(width, height)
+		.charge(0)
+//		.gravity(.2)
 		.on("tick", tick)
 		.start();
 
@@ -751,7 +757,7 @@ console.log(treeSparqlNodes)
                         .style("height", "auto")
 		        .style("display", "inline");
 		    console.log(d)
-		    d.d3XhrText(true);
+		    d.showTooltip(true);
 		    d3.event.stopPropagation();
 		});
 	    
@@ -764,17 +770,70 @@ console.log(treeSparqlNodes)
 		.text(function(d) { return d.word; });
 	    
 	    function tick() {
-		var radius = 13;
-                circle.attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+                
+/*
+                force.nodes()[0].x = width / 2;
+                force.nodes()[0].y = height / 2;*/
+		//var radius = 13;
+
+                /*circle.attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
                     .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
-		
+		*/
+                path.each(alignDipole());
+                circle.attr("transform", transform);
 		path.attr("d", function(d){
                     return "M" + d.source.x + "," + d.source.y + "A0,0 0 0,1 " + d.target.x + "," + d.target.y;
                 });
+
 		wordText.attr("transform", transform);
 		rectangle.attr("transform", transform);
 		isoText.attr("transform", transform);
 	    }
+  
+            function alignDipole() {
+                return function(d){
+                    var x = d.target.x - d.source.x;//+ d.target.px - d.source.x - d.source.px;
+		    var y = d.target.y - d.source.y;//+ d.target.py - d.source.y - d.source.py;
+                    var l = Math.sqrt(x * x + y * y);
+                    var fraction = 1 / 10;
+                    console.log("l=" + l + " x=" + x + " y=" + y);
+                    console.log("y'2=" + (l * l - (1 - fraction) * (1 - fraction) * x * x ))
+                    console.log("x'2=" + (l * l - (1 - fraction) * (1 - fraction) * y * y));
+                    
+                    if (l < 105){
+                        if (x < 0) {
+                            console.log("neg x");
+                            console.log("prima=" + d.source.x);
+                            d.source.x += x * fraction; //* simulation.alpha();
+                            console.log("dopo=" + d.source.x);
+                            console.log("sqrt of " + (l * l - (1 - fraction) * (1 - fraction) * x * x))
+                            d.source.y += Math.sign(y) * (Math.sqrt(l * l - (1 - fraction) * (1 - fraction) * x * x) - Math.abs(y));
+                        } else {
+                            console.log("pos");
+                            if (y != 0){
+                                console.log("sqrt of " + (l * l - (1 - fraction) * (1 - fraction) * y * y));
+                                console.log("prima=" + d.source.x);
+                                d.source.x += Math.sqrt(l * l - (1 - fraction) * (1 - fraction) * y * y) - x;
+                                console.log("dopo=" + d.source.x);
+                                d.source.y -= Math.sign(y) * y * fraction;
+			    }          
+		        }
+                        console.log("y=" + y);
+		        console.log("x=" + x);
+                        console.log("d.source.x=" + d.source.x)
+		        console.log("d.source.y=" + d.source.y)
+                    }
+/*                  console.log("y/x=" + y/x);
+                    var theta = Math.atan(y/(x+0.0000001));
+                    console.log("theta=" + theta * 180 /3.14);
+                    d.source.px += l * Math.cos(theta * 999 / 1000) - x;
+                    d.source.py += l * Math.sin(theta * 999 / 1000) - y;
+                    console.log("d.source.px=" + d.source.px);
+                    console.log("d.source.py=" + d.source.py);
+                    //d.source.x += d.source.px;
+                    //d.source.y += d.source.py;*/
+		}
+            }
 	}	
     });
 }

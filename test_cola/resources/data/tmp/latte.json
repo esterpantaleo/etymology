@@ -1,0 +1,188 @@
+   [{ 
+      "language": "English",
+      "name": ["latte","latte stone","latde"],
+      "type": "noun",
+      "long_definition_english": "A pillar capped by a hemispherical stone capital with the flat side facing up, used as building supports by the ancient Chamorro people and now used as a sign of Chamorro identity."
+   },{
+      "language": "Proto-Indo-European",
+      "name": "*ǵlákts",
+      "definition_english": "milk",
+      "type": "noun",
+      "children": [{
+         "language": "Greek",
+         "name": "γάλα",
+         "definition_english": "milk",
+         "type": "noun"
+      },{
+         "language": "Latin",
+         "name": ["lac", "lactis"],
+         "definition_english": "milk",
+         "type": "noun",
+         "children": [{
+            "language": "Italian",
+            "name": "latte",
+            "type": "noun",
+            "definition_english": "milk",
+            "children": [{
+                "language": "Italian",
+                "name": ["caffè latte","caffelatte"],
+                "type": "noun",
+                "long_definition_english": "Espresso coffee with steamed milk.",
+                "link":"composite",
+                "children": [{
+                    "language": "English",
+                    "name": "latte",
+                    "type": "noun",
+                    "long_definition_english": "Abbreviation of caffè latte, Italian. A drink of coffee made from espresso and steamed milk, generally topped with foam. A similar drink, where the espresso is replaced with some other flavoring ingredient such as chai, maté or matcha (green tea).",
+                    "link": "borrowing",
+                    "link_note_english": "borrowing (abbreviation)",
+                    "children": [{
+                        "language": "Finnish",
+                        "definition_english": "latte",
+                        "type": "noun",
+                        "name": "latte",
+                        "link": "borrowing"
+                    }]
+                }]
+            }] 
+         },{
+            "language": "Catalan",
+            "name": "llet",
+            "type": "noun",
+            "definition_english": "milk"
+         },{
+            "language": "Esperanto",
+            "name": "lakto",
+            "type": "noun",
+            "definition_english": "milk"
+         },{
+            "language": "French",
+            "name": "lait",
+            "type": "noun",
+            "definition_english": "milk"
+         },{
+            "language": "Portuguese",
+            "name": "leite",
+            "type": "noun",
+            "definition_english": "milk"
+         },{
+            "language": "Romanian",
+            "name": "lapte",
+            "translation_english": "milk",
+            "type": "noun"
+         },{
+            "language":"Aromanian",
+            "name": "lapti",
+            "definition_english": "milk",
+            "type": "noun"
+         },{
+            "language": "Spanish",
+            "name": "leche",
+            "definition_english": "milk",
+            "type": "noun"
+         }]
+      }]
+   },{ 
+      "language": "PIE",
+      "name": "*(s)lat-",
+      "definition_english": ["beam", "log"],
+      "type": "noun",
+      "children": [{
+         "language": "Proto-Germanic",
+         "name": ["*lattō(n)", "*laþþō(n)", "*laþēn"],
+         "definition_english": ["lath", "board"],
+         "type": "noun",
+         "children": [{
+            "language": "Frankish",
+            "name": "*latta",
+            "definition_english": "",
+            "children": [{
+               "language": "Old French",
+               "name": "lattis",
+               "definition_english": "",
+               "children": [{
+                  "language": "Middle French",
+                  "name": "lattis",
+                  "definition_english": "lathing",
+                  "type":"noun",
+                  "children": [{
+                     "language": "Middle English",
+                     "name": "latis",
+                     "definition_english": "",
+                     "children": [{
+                        "language": "English",
+                        "name": "lattice",
+                        "long_definition_english": ["A flat panel constructed with widely-spaced crossed thin strips of wood or other material, commonly used as a garden trellis. (heraldry) A bearing with vertical and horizontal bands.","(crystallography) A regular spacing or arrangement of geometric points, often decorated with a motif.", "(order theory) A partially ordered set in which every pair of elements has a unique supremum and an infimum.", "(group theory) A discrete subgroup of Rn which spans the real vector space Rn."],
+                        "type": "noun"
+                     }]
+                  }]
+               }]
+            }]
+         },{
+            "language": "Old High German",
+            "name": "latta",
+            "definition_english": "",
+            "type": "noun",
+            "children": [{
+               "language": "Italian",
+               "name": "latta",
+               "type": "noun",       
+               "definition_english": ["tin", "can","metal sheet"],
+               "link": "borrowing",
+               "children": [{
+                  "language": "Italian",
+                  "name": "lattina",
+                  "type": "noun",
+                  "definition_english": ["tin", "can"]
+               },{
+                  "language": "Italian",
+                  "name": "lattoniere",
+                  "type": "noun",
+                  "definition_english": ""
+               },{
+                  "language": "Italian",
+                  "name": "lattoniera",
+      	          "type": "noun",
+                  "definition_english": ""
+               }]
+            },{
+               "language": "Finnish",
+               "name": "latta",
+               "type": "noun",
+               "long_definition_english": "(nautical) A batten (strip inserted in a pocket sewn on the sail in order to keep the sail flat)."
+            },{
+               "language": "French",
+               "name": "latte",
+               "type": "noun",       
+               "definition_english": ["lath", "slat", "shoe", "foot", "ski"]
+            },{
+               "language": "German",
+               "name": "latte",
+               "type": "noun",
+               "definition_english": ["lath", "erection"]
+            },{
+               "language": "Dutch",
+               "name": "lat",
+               "type": "noun",
+               "long_definition_english": "A slate, lath. Specifically, the common shortening of meetlat: flat ruler, yardstick, notably used as spanking implement."
+            },{
+               "language": "Old English",
+               "name": "lætt",
+               "definition_english": "",
+               "children":[{
+                  "language": "Middle English",
+      		  "name": "laththe",
+                  "definition_english": "",
+                  "children":[{
+                     "language": "English",
+                     "definition_english": "A thin, narrow strip, fastened to the rafters, studs, or floor beams of a building, for the purpose of supporting a covering of tiles, plastering, etc.",
+      		     "name": "lath",
+                     "type": "noun"
+                  }]
+               }]
+            }]
+         }]
+      }]
+   }]
+
+       

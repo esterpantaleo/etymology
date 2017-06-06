@@ -1,0 +1,24 @@
+{
+    "language": "Proto-Eastern Polynesian",
+    "name": "*witi",
+    "type": "verb",
+    "definition_english": ["(stative) hasten, speed up","(stative) be swift, speedy, quick"],
+    "children": [{
+        "language": "Hawaiian",
+        "name": "wiki",
+        "definition_english":["(stative) hasten, speed up","(stative) be swift, speedy, quick"],
+        "type": "verb",
+        "children": [{
+            "language": "Hawaiian",
+            "name": "wikiwiki",
+            "definition_english": "speedy",
+            "type": "verb",
+            "children": [{
+                "language": "English",
+                "name": "WikiWikiWeb",
+                "type": "noun",
+                "link": "composite"
+            }]
+        }]
+    }]
+}

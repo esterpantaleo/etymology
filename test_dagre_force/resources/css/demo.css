@@ -1,0 +1,26 @@
+.node ellipse {
+  stroke: lightBlue;
+  fill: #ffb380 !important;
+  stroke-width: 0.1em;
+}
+
+.edgePath path {
+  stroke: lightBlue;
+  fill: lightBlue;
+  stroke-width: 0.1em;
+}
+
+/* This styles the title of the tooltip */
+.tipsy .name {
+  font-size: 1em;
+  font-weight: bold;
+  color: black;
+  margin: 0;
+}
+
+/* This styles the body of the tooltip */
+.tipsy .description {
+  font-size: 1em;
+  color: black;
+}
+
