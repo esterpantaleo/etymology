@@ -81,13 +81,33 @@ The RDF database of etymological relationships is periodically extracted when a 
 
 ## ETYTREE TO DO
 
-* I would like to add a preferred direction to the graph, that goes from left to right following the evolution of a word from the past to the present. This would mean in terms of force field to add a magnetic field that orients arrows towards a preferred direction.
+- [ ] To speed up queries edit ontology and add new properties to identify different etymological categories as described in [Wiktionary's Etymology help page](https://en.wiktionary.org/wiki/Wiktionary:Etymology):
+* inherited word (template inherited)
+* borrowed word (template borrowed)
+* named from people
+* developed from initialism
+* surface analysis
+* long detailed etymology - propose a new template??
+* invented word/coined expression (coined by)
+* back-formation (e.g.: burglar -> burgle, play the tamburine -> tambour, i.e. remove a morpheme, real or perceived) (template back-form)
+* compound (template compound)
+* phrase
+* initialism
+* acronym
+* abbreviation
+* clipping
+* blend/portmanteau (template blend)
+* calque/loan translation
+* year template - propose a new template??
+* cognates - I plan to ignore this
+- [ ] parse glosses in templates
+- [x] I would like to add a preferred direction to the graph, that goes from left to right following the evolution of a word from the past to the present. This would mean in terms of force field to add a magnetic field that orients arrows towards a preferred direction.
 
-* Add zoom to tooltip, set zoom also in google chrome and other browsers.
+- [ ] Add zoom to tooltip, set zoom also in google chrome and other browsers.
 
-* Add etymology controversies.
+- [ ] Add etymology controversies.
 
-* Currently for some words the Virtuoso server doesn't return data because it reaches timeout. I want to try a different query like the following 
+- [ ] Currently for some words the Virtuoso server doesn't return data because it reaches timeout. I want to try a different query like the following 
 ```
     DEFINE input:inference "etymology_ontology"
     PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>
@@ -120,13 +140,13 @@ The RDF database of etymological relationships is periodically extracted when a 
         }
 ```
 
-* Click on a word and interrogate the server to get data about the word.
+- [x] Click on a word and interrogate the server to get data about the word.
 
-* Search words with space or with accent 
+- [ ] Search words with space or with accent 
 
-* Extract Reconstructed words.
+- [ ] Extract Reconstructed words.
 
-* Maybe consider Dialects:
+- [ ] Maybe consider Dialects:
 ```
     Module:da:Dialects ?
     Module:en:Dialects This module provides labels to {{alter}}, which is used in the Alternative forms section.
@@ -136,7 +156,7 @@ The RDF database of etymological relationships is periodically extracted when a 
     Module:la:Dialects (e.g.: aug -> link = Late Latin#Late and post-classical Latin, display = post-Augustan)
 ```
 
-* Maybe consider additional modules: 
+- [ ] Maybe consider additional modules: 
 ```
     Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
 ```
