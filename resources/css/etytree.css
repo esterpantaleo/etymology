@@ -97,3 +97,9 @@ input:focus:-ms-input-placeholder { color:transparent; }
     50% { opacity: 0.1; }
     100% { opacity: 1.0; }
 }
+
+.edgePath path {
+  stroke: lightBlue;
+  fill: lightBlue;
+  stroke-width: 0.1em;
+}

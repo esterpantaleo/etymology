@@ -1,35 +1,77 @@
 <!DOCTYPE html> 
 
 <head>
-<meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" charset="UTF-8">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<style>
+.ui-overlay-a, .ui-page-theme-a, .ui-page-theme-a .ui-panel-wrapper {
+    background-color: white;
+}
+a:-webkit-any-link {
+    text-decoration: none;
+}
+</style>
 
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+
 <body>
-<div class="container">
-<h1>
-etytree
-</h1>
-<h4>
-This is Wikimedia Labs project "etytree" sponsored by the Wikimedia IEG <a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary">A graphical and interactive etymology dictionary based on Wiktionary</a>. 
-</h4>
-<p>
-<img src="./etymology/resources/images/door.png" alt="some_text" style="width:100%;height:100%;">
-</p>
-<h4>
-<ul>
-<li>Go to project <a href="http://www.epantaleo.com/wp-content/uploads/2015/12/index.html">demo</a></li>
-<li>See test result for word <a href="./etymology/resources/html/test_coffee.html">coffee</a></li>
-<li>See test result for word <a href="./etymology/resources/html/test_dolor.html">dolor</a></li>
-<li>Go to <a href="./etymology/resources/html/index.html"/>live test page</a></li> 
-</ul>
-If you would like to join this project or just ask questions or give feedback email esterpantaleo at gmail dot com or contact Wikimedia user <a href='https://meta.wikimedia.org/wiki/User_talk:Epantaleo'>Epantaleo</a>.
-</h4>
+<div data-role="page">
+<div data-role="header" style="background-color: #38c;">
+<table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
+<tr>
+<td>
+<a href="./etymology/resources/html/index.html" target="_blank" data-role="button" data-mini="true">Test etytree</a>
+</td>
+<td>
+<a href="https://www.youtube.com/watch?v=cbUK09E_FDY" target="_blank" data-role="button" data-mini="true">Video presentation @ www2017</a>
+</td>
+<td>
+<a href="http://etytree-virtuoso.wmflabs.org" target="_blank" data-role="button" data-mini="true">Query the database</a>
+</td>
+<td>
+<a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Renewal#Community_discussion" target="_blank" data-role="button" data-mini0"true">Endorse renewal!</a>
+</td>
+<td>
+<a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank" data-role="button" data-mini="true">IEG proposal</a> 
+</td>
+<td>
+<a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Final" target="_blank" data-role="button" data-mini="true">IEG final report</a> 
+</td>
+<td>
+<a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Renewal" target="_blank" data-role="button" data-mini="true">IEG renewal proposal</a>
+</td>
+<td>
+<a href="https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank" data-role="button" data-mini="true">Discuss the project!</a>
+</td>
+</tr>
+</table>
+</div>
+<div data-role="main" class="ui-content" >
+After six months of work supported by an <a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary">IEG grant</a>, a database of more than 6 million etymology entries in 3365 languages has been generated from the English Wiktionary (SPARQL endpoint <a href="http://etytree-virtuoso.wmflabs.org/sparql"  target="_blank">http://etytree-virtuoso.wmflabs.org</a>) and a first version of the visual etymology dictionary has been released:
+<h1 style="text-align: center;"><a href="./etymology/resources/html/index.html"  target="_blank">etytree</a>
+<span style="font-size:16px"><br>A graphical and interactive etymology dictionary based on Wiktionary</span></h1>
+
+<img src="./etymology/resources/images/door.png" alt="some_text" style="width:70%;height:70%;float: right;">
+Although the goal of the IEG project has been reached, six months were too short to optimise the tool as well as to attract a large community of users: priority was given to setting up the infrastructure and basic functionalities.
+
+<br>
+For this reason we are requesting a <a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Renewal"  target="_blank">renewal</a>.
+
+There are three main aspects that would require further work:
+
+<ul><li>Front end: visual interface improvement (a proof of concept of the tool is available <a href="http://www.epantaleo.com/etytree/index.html"  target="_blank">here</a>);</li>
+<li>Back end: improvement of Etymology sections parsing and improvement of queries;</li>
+<li>Community dissemination.</li></ul>
+
+For more details about the current version check the <a hre="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Renewal">renewal proposal</a>. 
+
+<br><br>
+<b>Like all Wikimedia projects, the renewal of this grant depends on community support. If you find the tool interesting and have comments, please write a comment in the <a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Renewal#Community_discussion" target="_blank">Endorsements section</a>. Your support will help this project become the first Visual Etymology Dictionary.</b>
 </div>
 </body>
 </html> 
