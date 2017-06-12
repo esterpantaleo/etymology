@@ -47,6 +47,18 @@ function treeSparql(id){
     return query.join(" ");   
 }
 
+function sort_unique(arr) {
+    if (arr.length === 0) return arr;
+    arr = arr.sort(function (a, b) { return a*1 - b*1; });
+    var ret = [arr[0]];
+    for (var i = 1; i < arr.length; i++) { // start loop at 1 as element 0 can never be a duplicate
+        if (arr[i-1] !== arr[i]) {
+            ret.push(arr[i]);
+        }
+    }
+    return ret;
+}
+
 function loadTree(iri) {
     var url = ENDPOINT + "?query=" + encodeURIComponent(treeSparql(iri));
     if (debug) { 
@@ -107,6 +119,10 @@ function loadTree(iri) {
 		});
 	    });
 
+            console.log("nodes")
+            console.log(nodes)
+//	    console.log(nodes.m(function(n) {return n.word}))
+
 	    //set links
 	    graph.forEach(function(element){
 		["target1", "target2", "target3", "target4"].forEach(function(target){
@@ -117,8 +133,10 @@ function loadTree(iri) {
 
 		    if (element[target] != undefined) {
 			if (element[target].value != element.source.value){
-                            var Link = {"source": nodes[element[target].value], "target": nodes[ element.source.value], "type": type};
-			    if (links.indexOf(Link) == -1) {
+			    console.log(element.source.value);
+			    console.log(element[target].value);
+                            var Link = {"source": nodes[element[target].value], "target": nodes[element.source.value], "type": type};
+			    if (links.indexOf(Link) == -1) {//if the link already exists ignore it
                                 links.push(Link);
                             }
 			}
@@ -245,13 +263,58 @@ function loadTree(iri) {
                             iso: nodes[n].iso,
 			    shape: "rect", 
 			    id: n,
-			    number: counter,
+			    counter: counter,
+			    category: nodes[n].iso + "_" + nodes[n].word, 
+			    ety: nodes[n].ety,
 			    style: "fill: #ffb380; stroke: lightBlue"
 			  });
 		counter ++;
 	    }
+	    //temporary hack to remove nodes             
+	    //if both ee_door and ee_1_door are rawn, and there is no other node (no ee_2_door or ee_3_door), then collapse ee_door into ee_1_door  
+	    var arrayCategory = g.nodes()
+		.map(function(v) { return g.node(v).category; })
+		.sort()
+		.filter(function(el, i, a){ if (i == a.indexOf(el)) return 1; return 0; });
+			  
+	    for (var numCategory in arrayCategory){
+		var filteredNodes = g.nodes()
+		    .filter(function(v) { return g.node(v).category === arrayCategory[numCategory]});
+		var numbers = filteredNodes
+		    .map(function(v) { return g.node(v).ety; })
+		
+		if (numbers.length == 2){
+		    var nodeToRemove = null;
+		    var nodeToKeep = null;
+		    if (numbers[0] == 0){
+			nodeToRemove = g.node(filteredNodes[0]);
+			nodeToKeep = g.node(filteredNodes[1]);
+		    } else if (numbers[1] == 0){
+			nodeToRemove = g.node(filteredNodes[1]);
+			nodeToKeep = g.node(filteredNodes[0]);
+		    }
+		    if (nodeToRemove){
+			
+			var linkToEdit = links.filter(function(element) { return element.source.iri == nodeToRemove.id; })[0];
+			
+			if (typeof linkToEdit != 'undefined'){
+			    linkToEdit.source.iri = nodeToKeep.id;
+			} else {
+                            linkToEdit = links.filter(function(element) { return element.target.iri == nodeToRemove.id; })[0];
+			    if (typeof linkToEdit != 'undefined'){
+				linkToEdit.target.iri = nodeToKeep.id;
+			    }
+                        }
+			console.log("splicing " + nodeToRemove.counter + " " + nodeToRemove.id);
+			console.log(g.nodes())
+			g.setNode(nodeToRemove.id, {iso: "", label: "" , style: "fill: none; stroke: none"})
+			
+			console.log(g.nodes())
+		    }
+		}
+	    }
 
-	     //style nodes
+	    //style nodes
 	    g.nodes().forEach(function(v) {
 		var node = g.node(v);
 		node.rx = node.ry = 7; 

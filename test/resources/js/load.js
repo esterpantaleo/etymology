@@ -29,7 +29,7 @@ function logLinks(links){
     var toreturn = [];
     links.split(",").forEach(function(e){
         toreturn.push("<a href=\"" + e + "\" target=\"_blank\">" + e.split("/")
-                      .pop().split("#").reverse().join(" ").replace(/_/g," ") + "</a>");
+                      .pop().split("#").reverse().join(" ").replace(/_/g, " ") + "</a>");
     })
     return toreturn.join(", ");
 }
@@ -48,15 +48,24 @@ class Node {
 	    this.iso = "eng";
 	    this.word = tmp[0];
 	}
+	this.ety = 0;
+	if (this.word.match(/__ee_[0-9]+_/g) != null){
+	    //ety is an integer specifying the etymology entry
+	    this.ety = this.word.match(/__ee_[0-9]+_/g)[0].match(/__ee_(.*?)_/)[1];
+	    
+	}
+
 	this.word = this.word
-	    .replace(/__ee_[0-9]+_/g,"")
-	    .replace("__ee_","");
+	    .replace(/__ee_[0-9]+_/g, "")
+	    .replace("__ee_", "");
+
+
 	this.word = this.word
-	    .replace("__","'")
-	    .replace(/^_/g,"*")
-	    .replace(/_/g," ")
-	    .replace("__","'")
-	    .replace(/_/g," ");
+	    .replace("__", "'")
+	    .replace(/^_/g, "*")
+	    .replace(/_/g, " ")
+	    .replace("__", "'")
+	    .replace(/_/g, " ");
 	this.lang = langMap.get(this.iso);
     }
 
@@ -167,7 +176,7 @@ var debug = true;
 
 //CONFIGURE - if excludeStarLikeStructures == true don't visualize node B if node B is the target of a node in the same language and if node B itself is not the source of a link  
 //when set to true this removes many links that show up as stars in the graph (nodes with many links departing from it)       
-var excludeStarLikeStructures = true;
+var excludeStarLikeStructures = false;
 
 //CONFIGURE - if mergeEquivalentnodes == true, if node A is etymologically equivalent to node B merge A and B into one node and merge their links too   
 //otherwise equivalent nodes are linked by links with no arrow              

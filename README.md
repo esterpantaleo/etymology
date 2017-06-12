@@ -55,6 +55,7 @@ The RDF database of etymological relationships is periodically extracted when a 
 #### UPDATE ONTOLOGY
     cd dbnary_etymology/ontology
     mvn install:install-file -Dfile=target/ontology-1.6-SNAPSHOT.jar -DgroupId=org.getalp.dbnary -DartifactId=ontology -Dversion=1.6-SNAPSHOT -Dpackaging=jar -DgeneratePom=true 
+    mvn install
 #### UPDATE PACKAGE
     cd dbnary_etymology/extractor
     mvn package
