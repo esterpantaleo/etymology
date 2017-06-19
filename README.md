@@ -73,11 +73,11 @@ The RDF database of etymological relationships is periodically extracted when a 
 
 #### SINGLE ENTRY EXTRACTION - ENGLISH WORD
     WORD="door"
-    java -Xmx24G -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -l en --etymology $DUMP $WORD
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -l en --etymology $DUMP $WORD
 
 #### SINGLE ENTRY EXTRACTION - FOREIGN WORD
     WORD="door"
-    java -Xmx24G -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology $DUMP $WORD
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology $DUMP $WORD
 
 ## ETYTREE TO DO
 
