@@ -10,8 +10,14 @@ This project has been inspired by my interest in etymology, in  open source coll
 
 The code and the data are distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
 
-## Note
-Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated.
+## Language data
+Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated. 
+
+File etymology-only_languages.csv has been created from Wiktionary data with a lua module available [here](https://en.wiktionary.org/wiki/Wiktionary:Etymology-only_languages,_csv_format).
+
+File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/iso639-3/iso-639-3.tab) (the first line has been removed) and dates back to 02/17/2017.
+
+File list_of_languages.csv has been downloaded from [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format).
 
 ## The SPARQL ENDPOINT 
 This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - data was extracted on 12/20/2016).
@@ -22,7 +28,7 @@ Besides etymological relationships data also contain POS-s, definitions, senses 
 
 An example query to the [sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) follows:
 
-    PREFIX eng: <http://kaiko.getalp.org/dbnary/eng/>
+    PREFIX eng: <http://etytree-virtuoso.wmflabs.org/dbnary/eng/>
     SELECT DISTINCT ?p ?o {
         eng:__ee_get ?p ?o
     }
@@ -36,12 +42,11 @@ If you want to find all entries containing string "door":
     }
 If you want to find ancestors of "door":
 
-    define input:inference "etymology_ontology"
-    PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>
-    PREFIX eng: <http://kaiko.getalp.org/dbnary/eng/>
+    PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#>
+    PREFIX eng: <http://etytree-virtuoso.wmflabs.org/dbnary/eng/>
 
     SELECT DISTINCT ?o { 
-         eng:__ee_1_door dbetym:etymologicallyRelatedTo{1,} ?o .
+         eng:__ee_1_door dbetym:etymologicallyRelatedTo+ ?o .
     }
 
 ## DATA EXTRACTION: dbnary_etymology
