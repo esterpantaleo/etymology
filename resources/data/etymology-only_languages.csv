@@ -1,119 +1,138 @@
 line;code;canonical name;parent;other names
 1;abh-prk;Abhiri;Sanskrit;Abhiri Prakrit
-2;Acadian French,fra-aca,fr-aca;Acadian French;French;
+2;Acadian French,fr-aca,fra-aca;Acadian French;French;
 3;add-dv;Addu Dhivehi;Dhivehi;Addu Divehi,Addu Bas
 4;grc-aeo;Aeolic Greek;Ancient Greek;Lesbic Greek,Lesbian Greek,Aeolian Greek
 5;AE.,American English,en-US;American English;English;
 6;nan-amo;Amoy;Hokkien;Xiamenese
 7;mkh-okm-A;Angkorian Old Khmer;Old Khmer;
 8;xno;Anglo-Norman;Old French;
-9;qfa-sub-ibe;a pre-Roman substrate of Iberia;substrate;
-10;qfa-sub-bal;a pre-Roman substrate of the Balkans;substrate;
-11;el-arc;Arcadian Greek;Greek;
-12;grc-arp;Arcadocypriot Greek;Ancient Greek;
-13;grc-att;Attic Greek;Ancient Greek;
-14;AG.,Austrian German,de-AT;Austrian German;German;
-15;prk-avt;Avanti;Sanskrit;Avanti Prakrit
-16;bhl-prk;Bahliki;Sanskrit;Bahliki Prakrit
-17;hbo;Biblical Hebrew;Hebrew;Classical Hebrew
-18;hi-mum;Bombay Hindi;Hindi;Mumbai Hindi,Bambai Hindi
-19;BE.,British English,en-GB;British English;English;
-20;gkm,Medieval Greek;Byzantine Greek;Ancient Greek;Medieval Greek
+9;el-arc;Arcadian Greek;Greek;
+10;grc-arp;Arcadocypriot Greek;Ancient Greek;
+11;klj-arg;Arghu;Khalaj;
+12;grc-att;Attic Greek;Ancient Greek;
+13;AG.,Austrian German,de-AT;Austrian German;German;
+14;prk-avt;Avanti;Sanskrit;Avanti Prakrit
+15;bhl-prk;Bahliki;Sanskrit;Bahliki Prakrit
+16;hbo;Biblical Hebrew;Hebrew;Classical Hebrew
+17;hi-mum;Bombay Hindi;Hindi;Mumbai Hindi,Bambai Hindi
+18;BE.,British English,en-GB;British English;English;
+19;sog-bud;Buddhist Sogdian;Sogdian;
+20;Medieval Greek,gkm;Byzantine Greek;Ancient Greek;Medieval Greek
 21;frc;Cajun French;French;Louisiana French
-22;Canadian French,CF.,fr-CA;Canadian French;French;
+22;CF.,Canadian French,fr-CA;Canadian French;French;
 23;cnd-prk;Candali;Sanskrit;Candali Prakrit
-24;xcg;Cisalpine Gaulish;Gaulish;
-25;fa-cls;Classical Persian;Persian;
-26;tl-cls;Classical Tagalog;Tagalog;
-27;el-crt;Cretan Greek;Greek;
-28;el-cyp;Cypriotic Greek;Greek;
-29;dks-prk;Daksinatya;Sanskrit;Daksinatya Prakrit
-30;grc-dor;Doric Greek;Ancient Greek;
-31;drm-prk;Dramili;Sanskrit;Dramili Prakrit
-32;Early Scots,Old Scots,O.Sc.,sco-osc;Early Scots;Scots;
-33;Ecclesiastical Latin,EL.,la-ecc;Ecclesiastical Latin;Latin;Church Latin
-34;grc-ela;Elean Greek;Ancient Greek;
-35;grc-epc;Epic Greek;Ancient Greek;
-36;el-grk;Griko;Greek;Grico
-37;roa-grn;Guernésiais;Norman;
-38;nan-hai;Hainanese;Min Nan;
-39;elu-prk;Helu;Sanskrit;Hela,Elu Prakrit,Helu Prakrit,Hela Prakrit
-40;nan-hok;Hokkien;Min Nan;
-41;grc-hmr;Homeric Greek;Ancient Greek;
-42;hvd-dv;Huvadhu Dhivehi;Dhivehi;Huvadhu Divehi,Huvadhu Bas
-43;Ins.Sc.,Insular Scots,sco-ins;Insular Scots;Scots;
-44;grc-ion;Ionic Greek;Ancient Greek;
-45;roa-jer;Jèrriais;Norman;
-46;sem-jar;Jewish Aramaic;Aramaic;
-47;tmr;Jewish Babylonian Aramaic;Aramaic;
-48;jpa;Jewish Palestinian Aramaic;Aramaic;Galilean Aramaic
-49;gu-kat;Kathiyawadi;Gujarati;Kathiyawadi Gujarati,Kathiawadi
-50;grc-koi,Koine;Koine Greek;Ancient Greek;
-51;Kölsch,ksh;Kölsch;Central Franconian;
-52;alv-kro;Kromanti;creole or pidgin;
-53;la-lat,Late Latin,LL,LL.;Late Latin;Latin;
-54;goh-lng,lng,Lombardic;Lombardic;Old High German;
-55;es-lun,Lunfardo;Lunfardo;Spanish;
-56;la-med,Medieval Latin,ML,ML.;Medieval Latin;Latin;
-57;si-med;Medieval Sinhalese;Sinhalese;Medieval Sinhala
-58;ang-mer;Mercian Old English;Old English;
-59;bn-mid;Middle Bengali;Bengali;
-60;gu-mid;Middle Gujarati;Gujarati;
-61;ira-mid,MIr.;Middle Iranian;Iranian;
-62;kn-mid;Middle Kannada;Kannada;
-63;kok-mid;Middle Konkani;Konkani;Medieval Konkani
-64;or-mid;Middle Oriya;Oriya;
-65;Middle Scots,Mid.Sc.,sco-smi;Middle Scots;Scots;
-66;ta-mid;Middle Tamil;Tamil;
-67;el-GR,ell;Modern Greek;Greek;
-68;he-IL;Modern Israeli Hebrew;Hebrew;
-69;mlk-dv;Mulaku Dhivehi;Dhivehi;Mulaku Divehi,Mulaku Bas
-70;la-new,New Latin,NL.;New Latin;Latin;Modern Latin
-71;Nor.Sc.,Northern Scots,sco-nor;Northern Scots;Scots;
-72;ang-nor;Northumbrian Old English;Old English;
-73;odr-prk;Odri;Sanskrit;Odri Prakrit
-74;bn-old;Old Bengali;Bengali;
-75;hi-old;Old Hindi;Hindi;
-76;ira-old,OIr.;Old Iranian;Iranian;
-77;roa-oit;Old Italian;Italian;
-78;kn-old;Old Kannada;Kannada;
-79;kok-old;Old Konkani;Konkani;Early Konkani
-80;fro-nor,Old Northern French,ONF.;Old Northern French;Old French;Old Norman,Old Norman French
-81;or-old;Old Oriya;Oriya;
-82;fro-pic;Old Picard;Old French;
-83;pa-old;Old Punjabi;Punjabi;
-84;tl-old;Old Tagalog;Tagalog;
-85;hsn-old;Old Xiang;Xiang;Lou-Shao
-86;loc-opu;Opuntian Locrian;Greek;
-87;loc-ozo;Ozolian Locrian;Greek;
-88;psc-prk;Paisaci;Sanskrit;Paisaci Prakrit
-89;pfl;Palatine German;Rhine Franconian;Pfälzisch,Pälzisch,Palatinate German
-90;grc-pam;Pamphylian Greek;Ancient Greek;
-91;el-pap;Paphian Greek;Greek;
-92;nan-phl;Philippine Hokkien;Hokkien;
-93;pinhua;Pinghua;Cantonese;
-94;prc-prk;Pracya;Sanskrit;Pracya Prakrit
-95;mkh-okm-P;Pre-Angkorian Old Khmer;Old Khmer;
-96;pregrc,qfa-sub-grc;Pre-Greek;substrate;
-97;bat-pro;Proto-Baltic;Proto-Balto-Slavic;
-98;sem-can-pro;Proto-Canaanite;Proto-Semitic;
-99;fiu-fpr-pro;Proto-Finno-Permic;Proto-Uralic;
-100;fiu-pro;Proto-Finno-Ugric;Proto-Uralic;
-101;prv;Provençal;Occitan;
-102;la-ren,Renaissance Latin,RL.;Renaissance Latin;Latin;
-103;sbr-prk;Sabari;Sanskrit;Sabari Prakrit
-104;skr-prk;Sakari;Sanskrit;Sakari Prakrit
-105;Sha.,wuu-sha;Shanghainese;Wu;
-106;Borders Scots,sco-sou,Sou.Sc.,Southern Scots;Southern Scots;Scots;
-107;gem-sue;Suevic;West Germanic;Suebian
-108;yue-tai;Taishanese;Cantonese;
-109;mul-tax,Tax.;taxonomic name;Translingual;
-110;nan-teo;Teochew;Min Nan;
-111;el-ths;Thessalian Greek;Greek;
-112;xtg;Transalpine Gaulish;Gaulish;
-113;und-tdt;Turdetani;Undetermined;
-114;und-tdl;Turduli;Undetermined;
-115;sco-uls,Uls.Sc.,Ulster Scots;Ulster Scots;Scots;
-116;de-AT-vie,VG.,Viennese German;Viennese German;Austrian German;
-117;la-vul,VL.,Vulgar Latin;Vulgar Latin;Latin;
-118;hak-wuh;Wuhua Chinese;Hakka;
+24;mn-cha;Chakhar Mongolian;Mongolian;
+25;sog-chr;Christian Sogdian;Sogdian;
+26;xcg;Cisalpine Gaulish;Gaulish;
+27;fa-cls;Classical Persian;Persian;
+28;tl-cls;Classical Tagalog;Tagalog;
+29;trk-cmn;Common Turkic;Proto-Turkic;
+30;el-crt;Cretan Greek;Greek;
+31;el-cyp;Cypriotic Greek;Greek;
+32;dks-prk;Daksinatya;Sanskrit;Daksinatya Prakrit
+33;grc-dor;Doric Greek;Ancient Greek;
+34;drm-prk;Dramili;Sanskrit;Dramili Prakrit
+35;Early Scots,O.Sc.,Old Scots,sco-osc;Early Scots;Scots;
+36;EL.,Ecclesiastical Latin,la-ecc;Ecclesiastical Latin;Latin;Church Latin
+37;grc-ela;Elean Greek;Ancient Greek;
+38;grc-epc;Epic Greek;Ancient Greek;
+39;el-grk;Griko;Greek;Grico
+40;roa-grn;Guernésiais;Norman;
+41;nan-hai;Hainanese;Min Nan;
+42;elu-prk;Helu;Sanskrit;Hela,Elu Prakrit,Helu Prakrit,Hela Prakrit
+43;xum-her;Hernician;Umbrian;
+44;nan-hok;Hokkien;Min Nan;
+45;grc-hmr;Homeric Greek;Ancient Greek;
+46;hvd-dv;Huvadhu Dhivehi;Dhivehi;Huvadhu Divehi,Huvadhu Bas
+47;Ins.Sc.,Insular Scots,sco-ins;Insular Scots;Scots;
+48;grc-ion;Ionic Greek;Ancient Greek;
+49;sem-jar;Jewish Aramaic;Aramaic;
+50;tmr;Jewish Babylonian Aramaic;Aramaic;
+51;jpa;Jewish Palestinian Aramaic;Aramaic;Galilean Aramaic
+52;roa-jer;Jèrriais;Norman;
+53;gu-kat;Kathiyawadi;Gujarati;Kathiyawadi Gujarati,Kathiawadi
+54;mn-kha;Khalkha Mongolian;Mongolian;
+55;mn-khr;Khorchin Mongolian;Mongolian;
+56;Koine,grc-koi;Koine Greek;Ancient Greek;
+57;alv-kro;Kromanti;creole or pidgin;
+58;Kölsch,ksh;Kölsch;Central Franconian;
+59;LL,LL.,Late Latin,la-lat;Late Latin;Latin;
+60;Lombardic,goh-lng,lng;Lombardic;Old High German;
+61;osc-luc;Lucanian;Oscan;
+62;Lunfardo,es-lun;Lunfardo;Spanish;
+63;mjg-min;Mangghuer;Monguor;Minhe Monguor
+64;sog-man;Manichean Sogdian;Sogdian;
+65;ML,ML.,Medieval Latin,la-med;Medieval Latin;Latin;
+66;si-med;Medieval Sinhalese;Sinhalese;Medieval Sinhala
+67;ang-mer;Mercian Old English;Old English;
+68;bn-mid;Middle Bengali;Bengali;
+69;gu-mid;Middle Gujarati;Gujarati;
+70;MIr.,ira-mid;Middle Iranian;Iranian;
+71;kn-mid;Middle Kannada;Kannada;
+72;kok-mid;Middle Konkani;Konkani;Medieval Konkani
+73;or-mid;Middle Oriya;Oriya;
+74;Mid.Sc.,Middle Scots,sco-smi;Middle Scots;Scots;
+75;ta-mid;Middle Tamil;Tamil;
+76;he-IL;Modern Israeli Hebrew;Hebrew;
+77;mjg-huz;Mongghul;Monguor;Huzhu Monguor
+78;mlk-dv;Mulaku Dhivehi;Dhivehi;Mulaku Divehi,Mulaku Bas
+79;NL.,New Latin,la-new;New Latin;Latin;Modern Latin
+80;Nor.Sc.,Northern Scots,sco-nor;Northern Scots;Scots;
+81;ang-nor;Northumbrian Old English;Old English;
+82;odr-prk;Odri;Sanskrit;Odri Prakrit
+83;zle-obe;Old Belarusian;Old East Slavic;
+84;bn-old;Old Bengali;Bengali;
+85;OIr.,ira-old;Old Iranian;Iranian;
+86;it-oit,roa-oit;Old Italian;Italian;
+87;kn-old;Old Kannada;Kannada;
+88;otk-kir;Old Kirghiz;Old Turkic;
+89;kok-old;Old Konkani;Konkani;Early Konkani
+90;ONF.,Old Northern French,fro-nor;Old Northern French;Old French;Old Norman,Old Norman French
+91;or-old;Old Oriya;Oriya;
+92;fro-pic;Old Picard;Old French;
+93;pa-old;Old Punjabi;Punjabi;
+94;zle-oru;Old Russian;Old East Slavic;
+95;tl-old;Old Tagalog;Tagalog;
+96;zle-ouk;Old Ukrainian;Old East Slavic;
+97;hsn-old;Old Xiang;Xiang;Lou-Shao
+98;loc-opu;Opuntian Locrian;Greek;
+99;mn-ord;Ordos Mongolian;Mongolian;
+100;loc-ozo;Ozolian Locrian;Greek;
+101;psc-prk;Paisaci;Sanskrit;Paisaci Prakrit
+102;pfl;Palatine German;Rhine Franconian;Pfälzisch,Pälzisch,Palatinate German
+103;grc-pam;Pamphylian Greek;Ancient Greek;
+104;el-pap;Paphian Greek;Greek;
+105;nan-phl;Philippine Hokkien;Hokkien;
+106;pinhua;Pinghua;Cantonese;
+107;prc-prk;Pracya;Sanskrit;Pracya Prakrit
+108;mkh-okm-P;Pre-Angkorian Old Khmer;Old Khmer;
+109;pregrc,qfa-sub-grc;Pre-Greek;substrate;
+110;bat-pro;Proto-Baltic;Proto-Balto-Slavic;
+111;sem-can-pro;Proto-Canaanite;Proto-Semitic;
+112;urj-fpr-pro;Proto-Finno-Permic;Proto-Uralic;
+113;fiu-pro;Proto-Finno-Ugric;Proto-Uralic;
+114;prv;Provençal;Occitan;
+115;RL.,Renaissance Latin,la-ren;Renaissance Latin;Latin;
+116;sbr-prk;Sabari;Sanskrit;Sabari Prakrit
+117;skr-prk;Sakari;Sanskrit;Sakari Prakrit
+118;osc-sam;Samnite;Oscan;
+119;Sha.,wuu-sha;Shanghainese;Wu;
+120;evn-sol;Solon;Evenki;
+121;Borders Scots,Sou.Sc.,Southern Scots,sco-sou;Southern Scots;Scots;
+122;gem-sue;Suevic;West Germanic;Suebian
+123;yue-tai;Taishanese;Cantonese;
+124;nan-teo;Teochew;Min Nan;
+125;el-ths;Thessalian Greek;Greek;
+126;xtg;Transalpine Gaulish;Gaulish;
+127;und-tdt;Turdetani;Undetermined;
+128;und-tdl;Turduli;Undetermined;
+129;Uls.Sc.,Ulster Scots,sco-uls;Ulster Scots;Scots;
+130;VG.,Viennese German,de-AT-vie;Viennese German;Austrian German;
+131;VL.,Vulgar Latin,la-vul;Vulgar Latin;Latin;
+132;woy;Weyto;Undetermined;
+133;hak-wuh;Wuhua Chinese;Hakka;
+134;qfa-sub-ibe;a pre-Roman substrate of Iberia;substrate;
+135;qfa-sub-bal;a pre-Roman substrate of the Balkans;substrate;
+136;pygmy,qfa-pyg;a substrate language originally spoken by the Pygmies;substrate;
+137;Tax.,mul-tax;taxonomic name;Translingual;
