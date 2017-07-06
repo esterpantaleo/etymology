@@ -2,6 +2,39 @@
 var ENDPOINT = "https://etytree-virtuoso.wmflabs.org/sparql";
 var MIME = "application/sparql-results+json";
 
+function get(url){ 
+    return Rx.Observable.create(observer => { 
+	const req = new XMLHttpRequest(); 
+	req.open('GET', url); 
+	req.overrideMimeType('application/sparql-results+json'); 
+	req.onload = () => {  
+	    if (req.status === 200) { 
+		observer.next(req.responseText); 
+		observer.complete(); 
+	    } else {  
+		observer.error(new Error(req.statusText)); 
+	    }
+	}
+	req.onerror = () => {  
+	    observer.error(new Error('An error occured')); 
+	}; 
+	req.setRequestHeader('Accept', 'application/json, text/javascript');
+	req.send();
+    });
+}
+
+function sort_unique(arr) {
+    if (arr.length === 0) return arr;
+    arr = arr.sort();
+    var ret = [arr[0]];
+    for (var i = 1; i < arr.length; i++) { // start loop at 1 as element 0 can never be a duplicate  
+        if (arr[i-1] !== arr[i]) {
+            ret.push(arr[i]);
+        }
+    }
+    return ret;
+}
+
 function transform(d) {
     return "translate(" + d.x + "," + d.y + ")";
 }
@@ -34,39 +67,42 @@ function logLinks(links){
     return toreturn.join(", ");
 }
 
-class Node {
+class Node {//eqIri is an array of iri-s of Node-s that are equivalent to the Node
     constructor(i){
 	this.iri = i;
 	var tmp = this.iri
-	    .replace("http://kaiko.getalp.org/dbnary/eng/", "")
+	    .replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
 	    .split("/");
 	
 	if (tmp.length > 1){
 	    this.iso = tmp[0];
-	    this.word = tmp[1];
+	    this.label = tmp[1];
 	} else {
 	    this.iso = "eng";
-	    this.word = tmp[0];
+	    this.label = tmp[0];
 	}
 	this.ety = 0;
-	if (this.word.match(/__ee_[0-9]+_/g) != null){
+	if (this.label.match(/__ee_[0-9]+_/g) != null){
 	    //ety is an integer specifying the etymology entry
-	    this.ety = this.word.match(/__ee_[0-9]+_/g)[0].match(/__ee_(.*?)_/)[1];
+	    this.ety = this.label.match(/__ee_[0-9]+_/g)[0].match(/__ee_(.*?)_/)[1];
 	    
 	}
 
-	this.word = this.word
+	this.label = this.label
 	    .replace(/__ee_[0-9]+_/g, "")
 	    .replace("__ee_", "");
 
-
-	this.word = this.word
+	this.label = this.label
 	    .replace("__", "'")
 	    .replace(/^_/g, "*")
 	    .replace(/_/g, " ")
 	    .replace("__", "'")
 	    .replace(/_/g, " ");
 	this.lang = langMap.get(this.iso);
+	this.shape = "rect";
+	this.style = "fill: #ffb380; stroke: lightBlue";
+	this.rx = this.ry = 7;
+	
     }
 
     disambiguate(){
@@ -76,7 +112,7 @@ class Node {
 		.attr("fill", "red")
 	});
 	d3.select("#myPopup").html("<b>" +
-				   this.word +
+				   this.label +
 				   "</b><br><br><i>" +
 				   "If you choose this word you will visualize the etymological tree of" +
 				   "either of the words highlighted in red, " +
@@ -85,16 +121,16 @@ class Node {
     }
 
     showTooltip(printLinks){
-        this.showTooltipPart(this.iri, this.word.split(",")[0], printLinks);
+        this.showTooltipPart(this.iri, this.label.split(",")[0], printLinks);
         if (this.eqIri != undefined){
             for (var i=0; i<this.eqIri.length; i++){
-                this.showTooltipPart(this.eqIri[i], this.eqWord[i], printLinks);
+                this.showTooltipPart(this.eqIri[i], this.eqLabel[i], printLinks);
             }
         }
     }
 
-    showTooltipPart(iri, word, printLinks){
-        var url = ENDPOINT + "?query=" + encodeURIComponent(this.sparql(iri, printLinks));
+    showTooltipPart(iri, label, printLinks){
+        var url = ENDPOINT + "?query=" + encodeURIComponent(sparql(iri, printLinks));
 
         if (debug){
             console.log(url);
@@ -107,71 +143,15 @@ class Node {
             if (text == ""){
                 text = "-";
             }
-            text = "<b>" + word + "</b><br><br><br>" + text;
+            text = "<b>" + label + "</b><br><br><br>" + text;
 	    d3.select("#myPopup").append("p").html(text) 
 		.style("left", (d3.event.pageX + 18) + "px")  
 		.style("top", (d3.event.pageY - 28) + "px");
         });
     }
-
-    //DEFINE QUERY TO GET LINKS, POS AND GLOSS           
-    sparql(iri, printLinks){
-	var select = "", option = "";
-	if (printLinks){
-	    select = "(group_concat(distinct ?also ; separator=\",\") as ?links)";
-	    option = "OPTIONAL {<" + iri.replace(/__ee_[0-9]+_/g,"__ee_") + "> rdfs:seeAlso ?also .}";
-	}
-	var query = [
-	    "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
-	    "PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>",
-	    "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
-	    "PREFIX lemon: <http://lemon-model.net/lemon#>",
-	    "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-	    "SELECT DISTINCT ?ee ?pos (group_concat(distinct ?def ; separator=\";;;;\") as ?gloss)" + select,
-	    "WHERE {",
-	    "    <" + iri + "> dbnary:refersTo ?ee ." + option,
-	    "    OPTIONAL {",
-	    "        ?ee rdf:type lemon:LexicalEntry .",
-	    "        ?ee dbnary:partOfSpeech ?pos .",
-	    "    }",
-	    "    OPTIONAL {",
-	    "        ?ee dbnary:refersTo ?nee .",
-	    "        ?nee rdf:type lemon:LexicalEntry .",
-	    "        ?nee dbnary:partOfSpeech ?pos .",
-	    "    }",
-	    "    OPTIONAL {",
-	    "        ?ee dbnary:refersTo ?cee .",
-	    "        ?cee dbnary:refersTo ?nee .",
-	    "        ?nee rdf:type lemon:LexicalEntry .",
-	    "        ?nee dbnary:partOfSpeech ?pos .",
-	    "    }",
-	    "    OPTIONAL {",
-	    "        ?ee lemon:sense ?sense .",
-	    "        ?sense lemon:definition ?val .",
-	    "        ?val lemon:value ?def .",
-	    "    }",
-	    "    OPTIONAL {",
-	    "        ?ee dbnary:refersTo ?nee .",
-	    "        ?nee rdf:type lemon:LexicalEntry .",
-	    "        ?nee lemon:sense ?sense .",
-	    "        ?sense lemon:definition ?val .",
-	    "        ?val lemon:value ?def .",
-	    "    }",
-	    "    OPTIONAL {",
-	    "        ?ee dbnary:refersTo ?cee .",
-	    "        ?cee dbnary:refersTo ?nee .",
-	    "        ?nee rdf:type lemon:LexicalEntry .",
-	    "        ?nee lemon:sense ?sense .",
-	    "        ?sense lemon:definition ?val .",
-	    "        ?val lemon:value ?def .",
-	    "    }",
-	    "}"
-	];
-	return query.join(" ");
-    }
 }
 
-//CONFIGURE - print debugging messages when debug == true         
+//CONFIGURE - print debugging messages when debug == true    
 var debug = true;
 
 //CONFIGURE - if excludeStarLikeStructures == true don't visualize node B if node B is the target of a node in the same language and if node B itself is not the source of a link  
