@@ -1,5 +1,5 @@
 function searchSparql(word){
-    var encodedWord = word; 
+    var encodedWord = word.replace(/'/g,"\\\\'"); 
     var query = [ 
 	"PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#>",
 	"PREFIX dbnary: <http://etytree-virtuoso.wmflabs.org/dbnary#>",
@@ -21,56 +21,54 @@ function searchSparql(word){
     return query.join(" "); 
 }
 
-//DEFINE QUERY TO GET LINKS, POS AND GLOSS                             
-function sparql(iri, printLinks){
-    var select = "", option = "";
-    if (printLinks){
-        select = "(group_concat(distinct ?also ; separator=\",\") as ?links)";
-        option = "OPTIONAL {<" + iri.replace(/__ee_[0-9]+_/g,"__ee_") + "> rdfs:seeAlso ?also .}";
-    }
+//DEFINE QUERY TO GET LINKS, POS AND GLOSS           
+function sparql(iri){
     var query = [
         "PREFIX dbnary: <http://etytree-virtuoso.wmflabs.org/dbnary#>",
         "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#>",
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
         "PREFIX lemon: <http://lemon-model.net/lemon#>",
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-        "SELECT DISTINCT ?ee ?pos (group_concat(distinct ?def ; separator=\";;;;\") as ?gloss)" + select,
+        "SELECT DISTINCT ?ee ?pos (group_concat(distinct ?def ; separator=\";;;;\") as ?gloss) (group_concat(distinct ?also ; separator=\",\") as ?links)",
         "WHERE {",
-        "    <" + iri + "> dbnary:refersTo ?ee ." + option,
+        "    <" + iri.replace(/__ee_[0-9]+_/g,"__ee_") + "> rdfs:seeAlso ?also .",
         "    OPTIONAL {",
-        "        ?ee rdf:type lemon:LexicalEntry .",
-        "        ?ee dbnary:partOfSpeech ?pos .",
-        "    }",
-        "    OPTIONAL {",
-        "        ?ee dbnary:refersTo ?nee .",
-        "        ?nee rdf:type lemon:LexicalEntry .",
-        "        ?nee dbnary:partOfSpeech ?pos .",
-        "    }",
-        "    OPTIONAL {",
-        "        ?ee dbnary:refersTo ?cee .",
-        "        ?cee dbnary:refersTo ?nee .",
-        "        ?nee rdf:type lemon:LexicalEntry .",
-        "        ?nee dbnary:partOfSpeech ?pos .",
-        "    }",
-        "    OPTIONAL {",
-        "        ?ee lemon:sense ?sense .",
-        "        ?sense lemon:definition ?val .",
-        "        ?val lemon:value ?def .",
-        "    }",
-        "    OPTIONAL {",
-        "        ?ee dbnary:refersTo ?nee .",
-        "        ?nee rdf:type lemon:LexicalEntry .",
-        "        ?nee lemon:sense ?sense .",
-        "        ?sense lemon:definition ?val .",
-        "        ?val lemon:value ?def .",
-        "    }",
-        "    OPTIONAL {",
-        "        ?ee dbnary:refersTo ?cee .",
-        "        ?cee dbnary:refersTo ?nee .",
-        "        ?nee rdf:type lemon:LexicalEntry .",
-        "        ?nee lemon:sense ?sense .",
-        "        ?sense lemon:definition ?val .",
-        "        ?val lemon:value ?def .",
+        "        <" + iri + "> dbnary:refersTo ?ee .",
+        "        OPTIONAL {",
+        "            ?ee rdf:type lemon:LexicalEntry .",
+        "            ?ee dbnary:partOfSpeech ?pos .",
+        "        }",
+        "        OPTIONAL {",
+        "            ?ee dbnary:refersTo ?nee .",
+        "            ?nee rdf:type lemon:LexicalEntry .",
+        "            ?nee dbnary:partOfSpeech ?pos .",
+        "        }",
+        "        OPTIONAL {",
+        "            ?ee dbnary:refersTo ?cee .",
+        "            ?cee dbnary:refersTo ?nee .",
+        "            ?nee rdf:type lemon:LexicalEntry .",
+        "            ?nee dbnary:partOfSpeech ?pos .",
+        "        }",
+        "        OPTIONAL {",
+        "            ?ee lemon:sense ?sense .",
+        "            ?sense lemon:definition ?val .",
+        "            ?val lemon:value ?def .",
+        "        }",
+        "        OPTIONAL {",
+        "            ?ee dbnary:refersTo ?nee .",
+        "            ?nee rdf:type lemon:LexicalEntry .",
+        "            ?nee lemon:sense ?sense .",
+        "            ?sense lemon:definition ?val .",
+        "            ?val lemon:value ?def .",
+        "        }",
+        "        OPTIONAL {",
+        "            ?ee dbnary:refersTo ?cee .",
+        "            ?cee dbnary:refersTo ?nee .",
+        "            ?nee rdf:type lemon:LexicalEntry .",
+        "            ?nee lemon:sense ?sense .",
+        "            ?sense lemon:definition ?val .",
+        "            ?val lemon:value ?def .",
+        "        }",
         "    }",
         "}"
     ];
@@ -78,15 +76,15 @@ function sparql(iri, printLinks){
 }
 
 //DEFINE QUERY TO PLOT GRAPH          
-function ancestorsSparql(id){
+function ancestorSparql(id){
     var query = [
         "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#> ",
         "SELECT DISTINCT ?ancestor1",// ?ancestor2",
         "{ ",
-        "   <" + id + "> dbetym:etymologicallyRelatedTo* ?ancestor1 .",
+        "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
      //   "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?ancestor1 .",
        // "   ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 .}",
-        "}"
+        "} "
     ];
     return query.join(" ");
 }
@@ -95,25 +93,25 @@ function descendantSparql(id){
     var query = [
         "SELECT DISTINCT ?descendant1",// ?descendant2",
         "{ ",
-        "   ?descendant1 dbetym:etymologicallyRelatedTo* <" + id + "> .",
+        "   ?descendant1 dbetym:etymologicallyRelatedTo{0,1} <" + id + "> .",
      //   "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?descendant1 .",
-    //     "   ?descendant2 dbetym:etymologicallyRelatedTo* ?eq .}",
-        "} LIMIT 100 "
+       //  "   ?descendant2 dbetym:etymologicallyRelatedTo* ?eq .}",
+        "} "
     ];
     return query.join(" ");
 }
 
 function dataSparql(id){
     var query = [
-        "SELECT DISTINCT ?s ?rel ?eq",// ?der ",
+        "SELECT DISTINCT ?s ?rel ?eq ?der ",
         "{           ",
         "   VALUES ?rel",
         "   {           ",
         "       <" + id + ">",
         "   }",
         "   ?s dbetym:etymologicallyRelatedTo ?rel .",
-	"   OPTIONAL { ?rel dbetym:etymologicallyEquivalentTo ?eq . }",
-      //  "   FILTER NOT EXISTS { ?s dbetym:etymologicallyDerivesFrom ?der . }",
+	"   OPTIONAL { ?rel dbetym:etymologicallyEquivalentTo{0,6} ?eq . }",
+        "   OPTIONAL { ?s dbetym:etymologicallyDerivesFrom ?der . }",
 //	"   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . }",
         "}"
     ];

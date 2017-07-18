@@ -13,6 +13,10 @@ $('document').ready(function(){
         .style("border-radius", "8px")
         .attr("width", 0)
         .attr("height", 0);
+    d3.select("#tree-container")
+	.append("p")
+        .attr("id", "message")
+        .attr("align", "center");
     $('#tags').on("keypress click", function(e){
 	if (e.which == 13 || e.type === 'click') {
             var word = $(this).val();//.replace("/", "!slash!");

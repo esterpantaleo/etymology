@@ -20,11 +20,11 @@ File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/is
 File list_of_languages.csv has been downloaded from [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format).
 
 ## The SPARQL ENDPOINT 
-This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - data was extracted on 12/20/2016).
+This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - data was extracted on 01/06/2017).
 
-I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyDerivesFrom, derivesFrom and descendsFrom (and also etymologicallyEquivalentTo) as subproperties of etymologicallyRelatedTo. All these properties are transitive, etymologicallyEquivalentTo is reflexive. 
+I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyRelatedTo, etymologicallyDerivesFrom and etymologicallyEquivalentTo.
 
-Besides etymological relationships data also contain POS-s, definitions, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/f120711cd96057f34880eab0b9abcae1f65dd49b/ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
+Besides etymological relationships data also contain POS-s, definitions, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
 
 An example query to the [sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) follows:
 
@@ -57,32 +57,29 @@ The RDF database of etymological relationships is periodically extracted when a 
     cd dbnary_etymology/extractor/
     mvn site
     mvn javadoc:jar
-#### UPDATE ONTOLOGY
-    cd dbnary_etymology/ontology
-    mvn install
 #### UPDATE PACKAGE
-    cd dbnary_etymology/extractor
+    cd dbnary_etymology
     mvn package
 #### FULL DATA EXTRACTION - FOREIGN WORDS
     VERSION=20170601
-    EXEC=~/dbnary_etymology/extractor/target/dbnary-1.3e-SNAPSHOT-jar-with-dependencies.jar
+    EXEC=~/dbnary_etymology/dbnary-extractor/target/dbnary-extractor-2.0e-SNAPSHOT-jar-with-dependencies.jar
     DUMP=/srv/datasets/dumps/$VERSION/enwiktionary-$VERSION-pages-articles.utf-16.xml
     FPAGE=0
     TPAGE=2000000
     LOG=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.ttl.log
     OUT=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.ttl
     ETY=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.etymology.ttl
+    PREFIX=http://etytree-virtuoso.wmflabs.org/dbnary
     rm ${OUT}
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.ExtractWiktionary -l en -x --frompage ${FPAGE} --topage ${TPAGE} -E ${ETY} -o ${OUT} ${DUMP} 3>&1 1>>${LOG} 2>&1
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology ${DUMP} door
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage ${FPAGE} --topage ${TPAGE} -E ${ETY} -o ${OUT} ${DUMP} 3>&1 1>>${LOG} 2>&1
 
 #### SINGLE ENTRY EXTRACTION - ENGLISH WORD
     WORD="door"
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -l en --etymology $DUMP $WORD
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -l en --prefix http://etytree-virtuoso.wmflabs.org/ --etymology $DUMP $WORD
 
 #### SINGLE ENTRY EXTRACTION - FOREIGN WORD
     WORD="door"
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology $DUMP $WORD
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology testfile $DUMP $WORD
 
 ## ETYTREE TO DO
 
