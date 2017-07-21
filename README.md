@@ -10,6 +10,10 @@ This project has been inspired by my interest in etymology, in  open source coll
 
 The code and the data are distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
 
+## Viewing the Site
+
+The site's html files are contained in [resources/html](https://github.com/esterpantaleo/etymology/tree/master/resources/html), and the [resources/html/index.html](https://github.com/esterpantaleo/etymology/tree/master/resources/html/index.html) file is the main page. To view the site, navigate to that directory.
+
 ## Language data
 Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated. 
 
