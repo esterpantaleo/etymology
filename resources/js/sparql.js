@@ -1,5 +1,5 @@
 function searchSparql(word){
-    var encodedWord = word.replace(/'/g,"\\\\'"); 
+    var encodedWord = word.replace(/'/g,"\\\\'").replace("·", "%C2%B7") ; 
     var query = [ 
 	"PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#>",
 	"PREFIX dbnary: <http://etytree-virtuoso.wmflabs.org/dbnary#>",

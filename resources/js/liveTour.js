@@ -10,7 +10,7 @@ var tour = {
             target: "aHelpPopup",
             placement: "right",
             title: "Help",
-            content: "Click on this icon to visualize an help page"
+            content: "Click on this icon to visualize a help page"
         },{
             target: "lan",
             placement: "left", 

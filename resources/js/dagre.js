@@ -79,7 +79,7 @@ function slicedQuery(myArray, mySparql, num){
     var i, j, tmpArray, url, chunk = num, sources = [];
     for (i=0, j=myArray.length; i<j; i+=chunk) {
         tmpArray = myArray.slice(i, i+chunk);
-	console.log(unionSparql(tmpArray, mySparql));
+	//console.log(unionSparql(tmpArray, mySparql));
         url = ENDPOINT + "?query=" + encodeURIComponent(unionSparql(tmpArray, mySparql));
         console.log(url);
         sources.push(get(url));
@@ -219,7 +219,6 @@ function drawDisambiguationDAGRE(response, width, height){
                     var iri = g.node(d).iri;
                     if((new Date().getTime())-touchtime < 800) {
                         //double click occurred
-			
 			var url = ENDPOINT + "?query=" + encodeURIComponent(ancestorSparql(iri));
 			if (debug) { 
 			    console.log(url); 
@@ -229,7 +228,6 @@ function drawDisambiguationDAGRE(response, width, height){
 			source.subscribe(response => drawDAGRE(response, width, height),
 					 error => console.error(error),
 					 () => console.log('done DAGRE'));
-
 			touchtime = 0;
                     } else {
 			refreshScreen4(this);
@@ -263,7 +261,8 @@ function drawDAGRE(response, width, height) {
     JSON.parse(response).results.bindings.forEach(function(element){
 	ancestorArray.push(element.ancestor1.value);
     });
-    
+    console.log("ANCESTORS");
+    console.log(ancestorArray);
     const subscribe = slicedQuery(ancestorArray, descendantSparql, 8).subscribe(function(val){//8 crashes sometimes
 	var dataArray = [];
 	val.forEach(function(element) {
@@ -286,7 +285,7 @@ function drawDAGRE(response, width, height) {
 	    if (graphArray.length == 0){
 		refreshScreen8();
 	    } else {
-		drawData(graphArray, width, height);
+		drawData(ancestorArray, graphArray, width, height);
 	    }
         });
         
@@ -295,7 +294,7 @@ function drawDAGRE(response, width, height) {
 										() => console.log('done DAGREZIP'));
 }
 
-function drawData(response, width, height){
+function drawData(ancestors, response, width, height){
     var nodes = {};
     var links = [];
     
@@ -323,7 +322,12 @@ function drawData(response, width, height){
 	    nodes[element.s.value].der = true;
 	}
     })
-  
+
+    //add property isAncestor
+    ancestors.forEach(function(element) { nodes[element].isAncestor = true; });
+	
+    console.log("nodes");
+    console.log(nodes);
     var graphNodes = {};
     var counter = 0;
     //push and merge nodes ee_door and ee_1_door into graphNodes
@@ -355,6 +359,7 @@ function drawData(response, width, height){
 		gg.iri.forEach(function(element) {
 		    nodes[element].graphNode.push(counter);
 		})
+		
 		//push to graphNodes
 		graphNodes[counter] = gg;
 		graphNodes[counter].iri = sort_unique(graphNodes[counter].iri);
@@ -365,6 +370,7 @@ function drawData(response, width, height){
 
     for (var n in nodes){
 	if (nodes[n].graphNode.length == 0){
+	    //add iri
 	    var gg = new GraphNode(counter);
 	    gg.iri = nodes[n].eqIri;
 	    gg.iri.push(n);
@@ -384,6 +390,7 @@ function drawData(response, width, height){
 	    var graphNode = nodes[n].graphNode[0];
 	    
 	    nodes[n].eqIri.forEach(function(element){
+		//add iri
 		nodes[element].graphNode.push(graphNode);
 		graphNodes[graphNode].iri.concat(nodes[element].eqIri);
 		graphNodes[graphNode].iri = sort_unique(graphNodes[graphNode].iri);
@@ -394,18 +401,25 @@ function drawData(response, width, height){
     for (var gg in graphNodes){
 	//define all
 	graphNodes[gg].all = graphNodes[gg].all.concat(graphNodes[gg].iri);
+	
+	//define isAncestor
+        if (graphNodes[gg].all.filter(function(element) { return nodes[element].isAncestor;}).length >0){
+	    graphNodes[gg].isAncestor = true;
+	}
+
 	//define der
 	var der = graphNodes[gg].all.filter(function(element) { 
 	    return nodes[element].der != undefined; });
 	if (der.length > 0){
 	    graphNodes[gg].der = true;
 	}
+	//define iso, label, lang
 	graphNodes[gg].iso = nodes[graphNodes[gg].all[0]].iso;
-	graphNodes[gg].label = graphNodes[gg].iri.map(function(i){ return nodes[i].label;}).join(",");
+	graphNodes[gg].label = graphNodes[gg].iri.map(function(i) { return nodes[i].label;}).join(",");
 	graphNodes[gg].lang = nodes[graphNodes[gg].all[0]].lang;
     }
 
-    //set linkedToTarget and linkedToSource
+    //define linkedToTarget and linkedToSource
     response.forEach(function(element){
 	if (element.rel != undefined && element.s != undefined){
 	    var source = nodes[element.rel.value].graphNode[0], target = nodes[element.s.value].graphNode[0];
@@ -429,8 +443,7 @@ function drawData(response, width, height){
 		console.log("derived node="); 
 		console.log(graphNodes[e]);
 		if (graphNodes[e].linkedToSource.length == 1) {
-		    
-//		    graphNodes[e].der = true; 
+		    graphNodes[e].der = true; 
 		}
 	    });  
 	    //    graphNodes[gg].linkedToTarget.map(function(e){  graphNodes[e].der = true; });
@@ -443,9 +456,10 @@ function drawData(response, width, height){
             var source = nodes[element.rel.value].graphNode[0], 
 	    target = nodes[element.s.value].graphNode[0];
             if (source != target){
-                if (!(graphNodes[source].der || graphNodes[target].der)){
+                if (graphNodes[target].isAncestor || !(graphNodes[source].der || graphNodes[target].der)){
                     var Link = {"source": source, "target": target};
                     if (graphNodes[target].linkedToSourceCopy.indexOf(source) == -1){
+			//define linked and linkedToSourceCopy
                         links.push(Link);
                         graphNodes[source].linked = true;
                         graphNodes[target].linkedToSourceCopy.push(source);
@@ -458,6 +472,7 @@ function drawData(response, width, height){
 
     var g = new dagreD3.graphlib.Graph().setGraph({rankdir: 'LR'});
     
+    //only draw nodes that are linked to other nodes
     for (var gg in graphNodes){
 	if (graphNodes[gg].linked){
             g.setNode(gg, graphNodes[gg]);

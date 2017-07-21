@@ -67,6 +67,7 @@ class GraphNode {
 	this.style = "fill: #F0E68C; stroke: lightBlue";
 	this.rx = this.ry = 7;
 	this.der = undefined;
+	this.isAncestor = false;
 	this.linked = undefined;
 	this.linkedToSource = [];
 	this.linkedToTarget = [];
@@ -91,6 +92,7 @@ class Node {//eqIri is an array of iri-s of Node-s that are equivalent to the No
 	this.graphNode = [];
 	this.eqIri = [];
 	this.der = undefined;
+	this.isAncestor = false;
 	this.ety = 0;
 	if (this.label.match(/__ee_[0-9]+_/g) != null){
 	    //ety is an integer specifying the etymology entry
@@ -106,7 +108,8 @@ class Node {//eqIri is an array of iri-s of Node-s that are equivalent to the No
 	    .replace(/^_/g, "*")
 	    .replace(/_/g, " ")
 	    .replace("__", "'")
-	    .replace(/_/g, " ");
+	    .replace(/_/g, " ")
+	    .replace("%C2%B7", "·");
 	this.lang = langMap.get(this.iso);
 	this.shape = "rect";
         this.style = "fill: sandyBrown; stroke: lightBlue";
