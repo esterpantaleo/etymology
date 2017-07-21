@@ -182,17 +182,17 @@ var mergeEquivalentNodes = true;
 if (debug) console.log("loading languages");
 var langMap = new Map();
 var ssv = d3.dsv(";", "text/plain");
-ssv("../data/etymology-only_languages.csv", function(data) {
+ssv("./resources/data/etymology-only_languages.csv", function(data) {
     data.forEach(function(entry){
         langMap.set(entry["code"], entry["canonical name"]);
     })
 });
-ssv("../data/list_of_languages.csv", function(data) {
+ssv("./resources/data/list_of_languages.csv", function(data) {
     data.forEach(function(entry){
         langMap.set(entry["code"], entry["canonical name"]);
     })
 });
-d3.text("../data/iso-639-3.tab", function(error, textString){
+d3.text("./resources/data/iso-639-3.tab", function(error, textString){
     var headers = ["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"].join("\t");
     var data = d3.tsv.parse(headers + textString);
     data.forEach(function(entry){

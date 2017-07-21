@@ -4183,7 +4183,7 @@ function dijkstraAll(g, weightFunc, edgeFunc) {
 
 },{"../lodash":77,"./dijkstra":63}],63:[function(require,module,exports){
 var _ = require("../lodash"),
-    PriorityQueue = require("../data/priority-queue");
+    PriorityQueue = require("./resources/data/priority-queue");
 
 module.exports = dijkstra;
 
@@ -4237,7 +4237,7 @@ function runDijkstra(g, source, weightFn, edgeFn) {
   return results;
 }
 
-},{"../data/priority-queue":73,"../lodash":77}],64:[function(require,module,exports){
+},{"./resources/data/priority-queue":73,"../lodash":77}],64:[function(require,module,exports){
 var _ = require("../lodash"),
     tarjan = require("./tarjan");
 
@@ -4354,7 +4354,7 @@ function preorder(g, vs) {
 },{"./dfs":61}],70:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graph"),
-    PriorityQueue = require("../data/priority-queue");
+    PriorityQueue = require("./resources/data/priority-queue");
 
 module.exports = prim;
 
@@ -4405,7 +4405,7 @@ function prim(g, weightFunc) {
   return result;
 }
 
-},{"../data/priority-queue":73,"../graph":74,"../lodash":77}],71:[function(require,module,exports){
+},{"./resources/data/priority-queue":73,"../graph":74,"../lodash":77}],71:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = tarjan;
