@@ -75,15 +75,26 @@ function sparql(iri){
     return query.join(" ");
 }
 
-//DEFINE QUERY TO PLOT GRAPH          
-function ancestorSparql(id){
+//DEFINE QUERIES TO PLOT GRAPH          
+function ancestor2Sparql(id){    
     var query = [
         "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#> ",
-        "SELECT DISTINCT ?ancestor1",// ?ancestor2",
+        "SELECT DISTINCT ?ancestor1 ?ancestor2",
         "{ ",
         "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
-     //   "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?ancestor1 .",
-       // "   ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 .}",
+        "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?ancestor1 .",
+        "   ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 .}",
+        "} "
+    ];
+    return query.join(" ");
+}
+
+function ancestor1Sparql(id){
+    var query = [
+        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#> ",
+        "SELECT DISTINCT ?ancestor1",
+        "{ ",
+        "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
         "} "
     ];
     return query.join(" ");
