@@ -1,3 +1,7 @@
+/*globals
+    d3, console, unionSparql, ENDPOINT, debug, dagreD3, GraphNode, sort_unique, ancestorSparql, descendantSparql, dataSparql, Node, Rx, get
+*/
+/*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 function refreshScreen1(){
     //clean screen
     d3.select("#tree-overlay").remove();
@@ -107,7 +111,7 @@ function appendTooltip(inner, g, nodes){
         })
         .on("mousedown", function() { 
 	    d3.event.stopPropagation(); 
-	})
+	});
 }
 
 function appendLanguageTagTextAndTooltip(inner, g){
@@ -142,29 +146,29 @@ function appendLanguageTagTextAndTooltip(inner, g){
                 .style("top", (d3.event.pageY - 28) + "px");
             d3.event.stopPropagation();
         })
-        .on("mousedown", function() { d3.event.stopPropagation(); })
+        .on("mousedown", function() { d3.event.stopPropagation(); });
 }
 
 function drawDisambiguationDAGRE(response, width, height){
-    if (response != null){
+    if (null !== response){
 	refreshScreen1();
        
 	var graph = JSON.parse(response).results.bindings;
-	if (graph.length == 0){
+	if (graph.length === 0){
             refreshScreen2();
         }
 	
         var nodes = {};
         graph.forEach(function(n){
             var iris = n.et.value.split(",");
-            if (iris == ""){
+            if (iris === ""){
                 nodes[n.iri.value] = new Node(n.iri.value);
             } else {
                 iris.forEach(function(element) {
                     nodes[element] = new Node(element);
                 });
             }
-        })
+        });
 	if (debug) {
             console.log(nodes);
 	}
@@ -174,8 +178,8 @@ function drawDisambiguationDAGRE(response, width, height){
         var m = null;
         for (var n in nodes){
             g.setNode(n, nodes[n]);
-            if (m != null){
-                g.setEdge(n, m, { label: "", style: "stroke-width: 0"})
+            if (null !== m){
+                g.setEdge(n, m, { label: "", style: "stroke-width: 0"});
             }
             m = n;
         }
@@ -211,7 +215,7 @@ function drawDisambiguationDAGRE(response, width, height){
         inner.selectAll("g.node")
             .on("mousedown", function() { d3.event.stopPropagation(); })
             .on('click', function(d) {
-                if(touchtime == 0) {
+                if(0 === touchtime) {
                     //set first click      
                     touchtime = new Date().getTime();
                 } else {
@@ -237,7 +241,7 @@ function drawDisambiguationDAGRE(response, width, height){
 			touchtime = new Date().getTime();
                     }
                 }
-            })
+            });
 	
         d3.selectAll(".edgePath").remove();
 	
@@ -252,7 +256,7 @@ function drawDisambiguationDAGRE(response, width, height){
 
 function drawDAGRE(response, width, height) {
     refreshScreen5();
-    if (response == null){
+    if (null === response){
         refreshScreen6();
 	return;
     } 
@@ -270,8 +274,8 @@ function drawDAGRE(response, width, height) {
 	    for (var t in tmp){
                 dataArray.push(tmp[t].descendant1.value);
             }
-        })
-	if (dataArray.length == 0){
+        });
+	if (dataArray.length === 0){
             refreshScreen8();
         }
 	const subscribe = slicedQuery(dataArray, dataSparql, 8).subscribe(function(val){
@@ -281,8 +285,8 @@ function drawDAGRE(response, width, height) {
                 for (var t in tmp){
 		    graphArray.push(tmp[t]);
                 }
-	    })
-	    if (graphArray.length == 0){
+	    });
+	    if (graphArray.length === 0){
 		refreshScreen8();
 	    } else {
 		drawData(ancestorArray, graphArray, width, height);
@@ -300,28 +304,28 @@ function drawData(ancestors, response, width, height){
     
     response.forEach(function(element){
         //save all nodes             
-        if (element.s != undefined && nodes[element.s.value] == null){
+        if (undefined !== element.s && null === nodes[element.s.value]){
             nodes[element.s.value] = new Node(element.s.value);
         }
-	if (element.rel != undefined && nodes[element.rel.value] == null) {
+	if (undefined !== element.rel && null === nodes[element.rel.value]) {
             nodes[element.rel.value] = new Node(element.rel.value);
         }
-        if (element.rel != undefined && element.eq != undefined){
-            if (nodes[element.eq.value] == null) {
+        if (undefined !== element.rel && undefined !== element.eq){
+            if (null === nodes[element.eq.value]) {
 		nodes[element.eq.value] = new Node(element.eq.value);
 	    }
 	    //push to eqIri
 	    nodes[element.rel.value].eqIri.push(element.eq.value);
 	    nodes[element.eq.value].eqIri.push(element.rel.value);
 	} 
-	if (element.der != undefined){
-	    if (nodes[element.der.value] == null) {
+	if (undefined !== element.der){
+	    if (null === nodes[element.der.value]) {
 		nodes[element.der.value] = new Node(element.der.value);
 	    }
             //add property der
 	    nodes[element.s.value].der = true;
 	}
-    })
+    });
 
     //add property isAncestor
     ancestors.forEach(function(element) { nodes[element].isAncestor = true; });
@@ -334,13 +338,13 @@ function drawData(ancestors, response, width, height){
     //if both ee_door and ee_1_door are nodes,           
     //and there is no other node (no ee_2_door or ee_3_door)
     for (var n in nodes){
-	if (nodes[n].ety == 0){
+	if (nodes[n].ety === 0){
 	    var tmp = [];
 	    var iso = nodes[n].iso; 
 	    var label = nodes[n].label;
 	    for (var m in nodes) {
-		if (nodes[m] != undefined) {
-		    if (nodes[m].iso == iso && nodes[m].label == label){
+		if (undefined !== nodes[m]) {
+		    if (nodes[m].iso === iso && nodes[m].label === label){
 			if (nodes[m].ety > 0){
 			    tmp.push(m);
 			}
@@ -348,7 +352,7 @@ function drawData(ancestors, response, width, height){
 		}
 	    } 
 	    tmp = sort_unique(tmp);
-	    if (tmp.length == 1){
+	    if (tmp.length === 1){
 		var gg = new GraphNode(counter);
 		//initialize all 
 		gg.all.push(n);
@@ -358,7 +362,7 @@ function drawData(ancestors, response, width, height){
 		nodes[n].graphNode.push(counter);
 		gg.iri.forEach(function(element) {
 		    nodes[element].graphNode.push(counter);
-		})
+		});
 		
 		//push to graphNodes
 		graphNodes[counter] = gg;
@@ -369,7 +373,7 @@ function drawData(ancestors, response, width, height){
     }
 
     for (var n in nodes){
-	if (nodes[n].graphNode.length == 0){
+	if (nodes[n].graphNode.length === 0){
 	    //add iri
 	    var gg = new GraphNode(counter);
 	    gg.iri = nodes[n].eqIri;
@@ -377,13 +381,13 @@ function drawData(ancestors, response, width, height){
 	    var tmp = [];
 	    gg.iri.forEach(function(element) {		
 		tmp.concat(element.eqIri);
-	    })
+	    });
 	    tmp = sort_unique(tmp);
 	    gg.iri.concat(tmp);
 	    gg.iri = sort_unique(gg.iri);
 	    gg.iri.forEach(function(element) {
                 nodes[element].graphNode.push(counter);
-            })
+            });
 	    graphNodes[counter] = gg;
 	    counter ++;
 	} else {
@@ -394,7 +398,7 @@ function drawData(ancestors, response, width, height){
 		nodes[element].graphNode.push(graphNode);
 		graphNodes[graphNode].iri.concat(nodes[element].eqIri);
 		graphNodes[graphNode].iri = sort_unique(graphNodes[graphNode].iri);
-	    })
+	    });
 	}
     }
 
@@ -409,7 +413,7 @@ function drawData(ancestors, response, width, height){
 
 	//define der
 	var der = graphNodes[gg].all.filter(function(element) { 
-	    return nodes[element].der != undefined; });
+	    return undefined !== nodes[element].der; });
 	if (der.length > 0){
 	    graphNodes[gg].der = true;
 	}
@@ -421,13 +425,13 @@ function drawData(ancestors, response, width, height){
 
     //define linkedToTarget and linkedToSource
     response.forEach(function(element){
-	if (element.rel != undefined && element.s != undefined){
+	if (undefined !== element.rel && undefined !== element.s){
 	    var source = nodes[element.rel.value].graphNode[0], target = nodes[element.s.value].graphNode[0];
-	    if (source != target){
+	    if (source !== target){
 		if (!(graphNodes[source].der || graphNodes[target].der)){
 		    graphNodes[source].linkedToTarget.push(target); 
 		} 
-		if (graphNodes[target].linkedToSource.indexOf(source) == -1){ 
+		if (graphNodes[target].linkedToSource.indexOf(source) === -1){ 
 		    graphNodes[target].linkedToSource.push(source);
 		}
 	    } 
@@ -442,7 +446,7 @@ function drawData(ancestors, response, width, height){
 	    graphNodes[gg].linkedToTarget.map(function(e){
 		console.log("derived node="); 
 		console.log(graphNodes[e]);
-		if (graphNodes[e].linkedToSource.length == 1) {
+		if (graphNodes[e].linkedToSource.length === 1) {
 		    graphNodes[e].der = true; 
 		}
 	    });  
@@ -452,13 +456,13 @@ function drawData(ancestors, response, width, height){
     }
 
     response.forEach(function(element){
-        if (element.rel != undefined && element.s != undefined){
+        if (undefined !== element.rel && undefined !== element.s){
             var source = nodes[element.rel.value].graphNode[0], 
 	    target = nodes[element.s.value].graphNode[0];
-            if (source != target){
+            if (source !== target){
                 if (graphNodes[target].isAncestor || !(graphNodes[source].der || graphNodes[target].der)){
                     var Link = {"source": source, "target": target};
-                    if (graphNodes[target].linkedToSourceCopy.indexOf(source) == -1){
+                    if (graphNodes[target].linkedToSourceCopy.indexOf(source) === -1){
 			//define linked and linkedToSourceCopy
                         links.push(Link);
                         graphNodes[source].linked = true;

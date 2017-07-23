@@ -15,9 +15,10 @@ module.exports = function(grunt) {
       },
       all: [
         'Gruntfile.js',
-        './resources/js/load.js',
+        './resources/js/dagre.js',
+        './resources/js/etytree.js',
         './resources/js/liveTour.js',
-        './resources/js/etytree.js'
+        './resources/js/load.js'
       ]
     }
   });
