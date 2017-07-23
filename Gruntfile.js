@@ -18,7 +18,8 @@ module.exports = function(grunt) {
         './resources/js/dagre.js',
         './resources/js/etytree.js',
         './resources/js/liveTour.js',
-        './resources/js/load.js'
+        './resources/js/load.js',
+        './resources/js/sparql.js'
       ]
     }
   });
