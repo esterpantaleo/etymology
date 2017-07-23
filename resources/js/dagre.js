@@ -1,5 +1,5 @@
 /*globals
-    d3, console, unionSparql, ENDPOINT, debug, dagreD3, GraphNode, sort_unique, ancestorSparql, descendantSparql, dataSparql, Node, Rx, get
+    d3, console, unionSparql, ENDPOINT, debug, dagreD3, GraphNode, sort_unique, ancestorSparql, ancestor1Sparql, ancestor2Sparql, descendantSparql, dataSparql, Node, Rx, get
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 function refreshScreen1(){
@@ -79,13 +79,18 @@ function refreshScreen8(){
         .html("Sorry, no etymology is available for this word!");
 }
 
+function refreshScreen9(){
+    d3.select("#message")
+        .html("This word is related to many words. Please wait a bit more.");
+}
+
 function slicedQuery(myArray, mySparql, num){
     var i, j, tmpArray, url, chunk = num, sources = [];
     for (i=0, j=myArray.length; i<j; i+=chunk) {
         tmpArray = myArray.slice(i, i+chunk);
 	//console.log(unionSparql(tmpArray, mySparql));
         url = ENDPOINT + "?query=" + encodeURIComponent(unionSparql(tmpArray, mySparql));
-        console.log(url);
+        //console.log(url);
         sources.push(get(url));
     }
     const query = Rx.Observable.zip.apply(this, sources)
@@ -223,15 +228,8 @@ function drawDisambiguationDAGRE(response, width, height){
                     var iri = g.node(d).iri;
                     if((new Date().getTime())-touchtime < 800) {
                         //double click occurred
-			var url = ENDPOINT + "?query=" + encodeURIComponent(ancestorSparql(iri));
-			if (debug) { 
-			    console.log(url); 
-			}
 			refreshScreen3();
-			const source = get(url);
-			source.subscribe(response => drawDAGRE(response, width, height),
-					 error => console.error(error),
-					 () => console.log('done DAGRE'));
+			queryAncestors(ENDPOINT, 2, iri, width, height);
 			touchtime = 0;
                     } else {
 			refreshScreen4(this);
@@ -253,6 +251,31 @@ function drawDisambiguationDAGRE(response, width, height){
     }
 }
 
+function queryAncestors(endpoint, ancestorSparql, iri, width, height){
+    var url = endpoint + "?query=";
+    if (ancestorSparql === 1){
+        url += encodeURIComponent(ancestor1Sparql(iri));
+    } else {
+	url += encodeURIComponent(ancestor2Sparql(iri));
+    }
+    if (debug) {
+        //console.log(url);
+    }
+    const source = get(url);
+    source.subscribe(response => drawDAGRE(response, width, height),
+                     error => reducedQueryAncestors(error, endpoint, ancestorSparql, iri, width, height),
+                     () => console.log('done DAGRE' + ancestorSparql)); 
+}
+
+
+function reducedQueryAncestors(error, endpoint, ancestorSparql, iri, width, height){
+    if (ancestorSparql === 1){
+        serverError(error);
+    } else {
+	refreshScreen9();
+	queryAncestors(endpoint, 1, iri, width, height);
+    }
+}
 
 function drawDAGRE(response, width, height) {
     refreshScreen5();
@@ -263,10 +286,14 @@ function drawDAGRE(response, width, height) {
     refreshScreen7();
     var ancestorArray = [];
     JSON.parse(response).results.bindings.forEach(function(element){
-	ancestorArray.push(element.ancestor1.value);
+	ancestorArray.push(element.ancestor1.value); 
+	if (undefined !== element.ancestor2){
+	    ancestorArray.push(element.ancestor2.value); 
+	    ancestorArray = sort_unique(ancestorArray);
+	}
     });
-    console.log("ANCESTORS");
-    console.log(ancestorArray);
+    //console.log("ANCESTORS");
+    //console.log(ancestorArray);
     const subscribe = slicedQuery(ancestorArray, descendantSparql, 8).subscribe(function(val){//8 crashes sometimes
 	var dataArray = [];
 	val.forEach(function(element) {
@@ -294,8 +321,13 @@ function drawDAGRE(response, width, height) {
         });
         
     },
-										error => console.log("Error DAGREZIP"),
+										error => serverError(error),
 										() => console.log('done DAGREZIP'));
+}
+
+function serverError(error){
+    refreshScreen6();
+    console.log(error);
 }
 
 function drawData(ancestors, response, width, height){
@@ -330,8 +362,8 @@ function drawData(ancestors, response, width, height){
     //add property isAncestor
     ancestors.forEach(function(element) { nodes[element].isAncestor = true; });
 	
-    console.log("nodes");
-    console.log(nodes);
+    //console.log("nodes");
+    //console.log(nodes);
     var graphNodes = {};
     var counter = 0;
     //push and merge nodes ee_door and ee_1_door into graphNodes
@@ -441,11 +473,11 @@ function drawData(ancestors, response, width, height){
     for (var gg in graphNodes){ 
 	//collapse nodes that have more than 10 descendants and color them differently
 	if (graphNodes[gg].linkedToTarget.length > 10){
-	    console.log("the following node has more than 10 targets: collapsing:");
-	    console.log(graphNodes[gg]);
+	    //console.log("the following node has more than 10 targets: collapsing:");
+	    //console.log(graphNodes[gg]);
 	    graphNodes[gg].linkedToTarget.map(function(e){
-		console.log("derived node="); 
-		console.log(graphNodes[e]);
+		//console.log("derived node="); 
+		//console.log(graphNodes[e]);
 		if (graphNodes[e].linkedToSource.length === 1) {
 		    graphNodes[e].der = true; 
 		}

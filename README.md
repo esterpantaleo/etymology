@@ -24,11 +24,11 @@ The site's html files are contained in [the repo root](https://github.com/esterp
 Then you can run a lint of the JS files by running `grunt js` in your command line, from the repo root.
 
 ## Language data
-Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated. 
+Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated (updated on 07/22/2017). 
 
 File etymology-only_languages.csv has been created from Wiktionary data with a lua module available [here](https://en.wiktionary.org/wiki/Wiktionary:Etymology-only_languages,_csv_format).
 
-File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/iso639-3/iso-639-3.tab) (the first line has been removed) and dates back to 02/17/2017.
+File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/iso639-3/iso-639-3.tab) (the first line has been removed).
 
 File list_of_languages.csv has been downloaded from [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format).
 
