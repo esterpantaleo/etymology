@@ -1,8 +1,19 @@
+/* global module */
 module.exports = function(grunt) {
 
   grunt.initConfig({
     jshint: {
-      all: ['Gruntfile.js']
+      options: {
+        'esversion': 6,
+        'eqeqeq': true,
+        'latedef': true, // 'nofunc' will ignore function calls
+        // 'nocomma': true,
+        // 'nonew': true, // worth trying?
+        // 'trailingcomma': true,
+        'undef': true,
+        // 'unused': 'vars'
+      },
+      all: ['Gruntfile.js', './resources/js/load.js']
     }
   });
 
