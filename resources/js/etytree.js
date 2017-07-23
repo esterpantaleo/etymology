@@ -1,4 +1,7 @@
-$('document').ready(function(){
+/*globals
+    jQuery, d3, debug, console, window, document, searchSparql, drawDisambiguationDAGRE, ENDPOINT, get
+*/
+jQuery('document').ready(function($){
     var div = d3.select("body").append("div")
         .attr("data-role", "popup")
         .attr("data-dismissible", "true")
@@ -18,13 +21,13 @@ $('document').ready(function(){
         .attr("id", "message")
         .attr("align", "center");
     $('#tags').on("keypress click", function(e){
-	if (e.which == 13 || e.type === 'click') {
+	if (e.which === 13 || e.type === 'click') {
             var word = $(this).val();//.replace("/", "!slash!");
 	    
             if (word){
 		if (debug) console.log("searching word in database");
 		var width = window.innerWidth, 
-		height = $(document).height() - $(header).height();
+		height = $(document).height() - $('#header').height();
 		var url = ENDPOINT + "?query=" + encodeURIComponent(searchSparql(word));
 		if (debug) {
 		    console.log(url); 
