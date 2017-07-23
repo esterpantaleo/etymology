@@ -3,28 +3,27 @@
 */
 var tour = {
     id: "etytree_tutorial",
-    steps: 
-        [{
-            target: "tags",
-            placement: "right",
-            title: "Search bar",
-            content: "<ul><li>Write a word then press enter: Some words will appear.</li><li><b>Click</b> on them to choose language and meaning.</li><li><b>Double click</b> on the word you are interested in."
-        },{
-            target: "aHelpPopup",
-            placement: "right",
-            title: "Help",
-            content: "Click on this icon to visualize a help page"
-        },{
-            target: "lan",
-            placement: "left", 
-            title: "Language",
-            content: "Choose language version (not available yet)."
-        }],
+    steps: [{
+        target: "tags",
+        placement: "right",
+        title: "Search bar",
+        content: "<ul><li>Write a word then press enter: Some words will appear.</li><li><b>Click</b> on them to choose language and meaning.</li><li><b>Double click</b> on the word you are interested in."
+    }, {
+        target: "aHelpPopup",
+        placement: "right",
+        title: "Help",
+        content: "Click on this icon to visualize a help page"
+    }, {
+        target: "lan",
+        placement: "left",
+        title: "Language",
+        content: "Choose language version (not available yet)."
+    }],
     onEnd: function() {
-	setCookie("toured", "toured");
+        setCookie("toured", "toured");
     },
     onClose: function() {
-	setCookie("toured", "toured");
+        setCookie("toured", "toured");
     }
 };
 
@@ -41,9 +40,9 @@ function getCookie(key) {
 
 console.log(screen.width);
 //Run tour only if screen is large enough
-if (screen.width > 800){
+if (screen.width > 800) {
     // Initialize tour if it's the user's first time
     if (!getCookie("toured")) {
-	hopscotch.startTour(tour);
+        hopscotch.startTour(tour);
     }
 }
