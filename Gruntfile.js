@@ -6,14 +6,18 @@ module.exports = function(grunt) {
       options: {
         'esversion': 6,
         'eqeqeq': true,
-        'latedef': true, // 'nofunc' will ignore function calls
+        'latedef': 'nofunc', // 'nofunc' will ignore function calls, true will include function calls
         // 'nocomma': true,
         // 'nonew': true, // worth trying?
         // 'trailingcomma': true,
         'undef': true,
         // 'unused': 'vars'
       },
-      all: ['Gruntfile.js', './resources/js/load.js']
+      all: [
+        'Gruntfile.js',
+        './resources/js/load.js',
+        './resources/js/liveTour.js'
+      ]
     }
   });
 

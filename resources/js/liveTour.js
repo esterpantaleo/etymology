@@ -1,3 +1,6 @@
+/*globals
+    document, console, screen, hopscotch
+*/
 var tour = {
     id: "etytree_tutorial",
     steps: 
@@ -29,14 +32,14 @@ function setCookie(key, value) {
     var expires = new Date();
     expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
     document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
-};
+}
 
 function getCookie(key) {
     var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
     return keyValue ? keyValue[2] : null;
-};
+}
 
-console.log(screen.width)
+console.log(screen.width);
 //Run tour only if screen is large enough
 if (screen.width > 800){
     // Initialize tour if it's the user's first time
