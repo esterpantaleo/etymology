@@ -61,10 +61,17 @@ function logDefinition(pos, gloss) {
 
 function logLinks(links) {
     var toreturn = [];
-    links.split(",").forEach(function(e) {
-        toreturn.push("<a href=\"" + e + "\" target=\"_blank\">" + e.split("/")
-            .pop().split("#").reverse().join(" ").replace(/_/g, " ") + "</a>");
-    });
+    links.split(",").forEach(function(e){
+	      var linkName;
+	      if (e.startsWith("https://en.wiktionary.org/wiki/Reconstruction")){
+	          linkName = e.replace(/https:\/\/en.wiktionary.org\/wiki\/Reconstruction:/g, "")
+		                    .split("/").join(" ");
+	      } else {
+	          linkName = e.split("/")
+                        .pop().split("#").reverse().join(" ").replace(/_/g, " ");
+	      }
+	      toreturn.push("<a href=\"" + e + "\" target=\"_blank\">" + linkName + "</a>");
+    })
     return toreturn.join(", ");
 }
 

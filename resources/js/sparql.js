@@ -1,73 +1,75 @@
-function searchSparql(word) {
-    var encodedWord = word.replace(/'/g, "\\\\'").replace("·", "%C2%B7");
-    var query = [
-        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#>",
-        "PREFIX dbnary: <http://etytree-virtuoso.wmflabs.org/dbnary#>",
-        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
-        "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ",
-        "WHERE {",
-        "    ?iri rdfs:label ?label . ?label bif:contains \"\'" + encodedWord + "\'\" .",
-        //exclude entries that contain the searched word but include other words
-        //(e.g.: search="door" label="doorbell", exclude "doorbell")
-        "    FILTER REGEX(?label, \"^" + encodedWord + "$\", 'i') .",
-        "    ?iri rdf:type <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#EtymologyEntry> .",
-        "    OPTIONAL {",
-        "        ?iri <http://etytree-virtuoso.wmflabs.org/dbnary#refersTo>  ?ee .",
-        "        ?ee rdf:type <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#EtymologyEntry> .",
-        "    }",
-        "}"
-    ];
+
+function searchSparql(word){
+    var encodedWord = word.replace(/'/g,"\\\\'").replace("·", "%C2%B7") ; 
+    var query = [ 
+	      "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#>",
+	      "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
+	      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", 
+	      "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>", 
+	      "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ",
+	      "WHERE {", 
+	      "    ?iri rdfs:label ?label . ?label bif:contains \"\'" + encodedWord + "\'\" .",
+	      //exclude entries that contain the searched word but include other words
+	      //(e.g.: search="door" label="doorbell", exclude "doorbell")
+	      "    FILTER REGEX(?label, \"^" + encodedWord + "$\", 'i') .",  
+	      "    ?iri rdf:type dbetym:EtymologyEntry .",
+	      "    OPTIONAL {",
+	      "        ?iri dbnary:describes  ?ee .",
+	      "        ?ee rdf:type dbetym:EtymologyEntry .",
+	      "    }",   
+	      "}" 
+    ]
     return query.join(" ");
 }
 
 //DEFINE QUERY TO GET LINKS, POS AND GLOSS           
 function sparql(iri) {
     var query = [
-        "PREFIX dbnary: <http://etytree-virtuoso.wmflabs.org/dbnary#>",
-        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#>",
+        "PREFIX dbnary: <http://http://kaiko.getalp.org/.org/dbnary#>",
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
-        "PREFIX lemon: <http://lemon-model.net/lemon#>",
+        "PREFIX lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#>",
+        "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>",
+        "PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>",
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
         "SELECT DISTINCT ?ee ?pos (group_concat(distinct ?def ; separator=\";;;;\") as ?gloss) (group_concat(distinct ?also ; separator=\",\") as ?links)",
         "WHERE {",
         "    <" + iri.replace(/__ee_[0-9]+_/g, "__ee_") + "> rdfs:seeAlso ?also .",
         "    OPTIONAL {",
-        "        <" + iri + "> dbnary:refersTo ?ee .",
+        "        <" + iri + "> dbnary:describes ?ee .",
         "        OPTIONAL {",
-        "            ?ee rdf:type lemon:LexicalEntry .",
+        "            ?ee rdf:type ontolex:LexicalEntry .",
         "            ?ee dbnary:partOfSpeech ?pos .",
         "        }",
         "        OPTIONAL {",
-        "            ?ee dbnary:refersTo ?nee .",
-        "            ?nee rdf:type lemon:LexicalEntry .",
+        "            ?ee dbnary:describes ?nee .",
+        "            ?nee rdf:type ontolex:LexicalEntry .",
         "            ?nee dbnary:partOfSpeech ?pos .",
         "        }",
         "        OPTIONAL {",
-        "            ?ee dbnary:refersTo ?cee .",
-        "            ?cee dbnary:refersTo ?nee .",
-        "            ?nee rdf:type lemon:LexicalEntry .",
+        "            ?ee dbnary:describes ?cee .",
+        "            ?cee dbnary:describes ?nee .",
+        "            ?nee rdf:type ontolex:LexicalEntry .",
         "            ?nee dbnary:partOfSpeech ?pos .",
         "        }",
         "        OPTIONAL {",
-        "            ?ee lemon:sense ?sense .",
-        "            ?sense lemon:definition ?val .",
-        "            ?val lemon:value ?def .",
+        "            ?ee ontolex:sense ?sense .",
+        "            ?sense skos:definition ?val .",
+        "            ?val rdf:value ?def .",
         "        }",
         "        OPTIONAL {",
-        "            ?ee dbnary:refersTo ?nee .",
-        "            ?nee rdf:type lemon:LexicalEntry .",
-        "            ?nee lemon:sense ?sense .",
-        "            ?sense lemon:definition ?val .",
-        "            ?val lemon:value ?def .",
+        "            ?ee dbnary:describes ?nee .",
+        "            ?nee rdf:type ontolex:LexicalEntry .",
+        "            ?nee ontolex:sense ?sense .",
+        "            ?sense skos:definition ?val .",
+        "            ?val rdf:value ?def .",
         "        }",
         "        OPTIONAL {",
-        "            ?ee dbnary:refersTo ?cee .",
-        "            ?cee dbnary:refersTo ?nee .",
-        "            ?nee rdf:type lemon:LexicalEntry .",
-        "            ?nee lemon:sense ?sense .",
-        "            ?sense lemon:definition ?val .",
-        "            ?val lemon:value ?def .",
+        "            ?ee dbnary:describes ?cee .",
+        "            ?cee dbnary:describes ?nee .",
+        "            ?nee rdf:type ontolex:LexicalEntry .",
+        "            ?nee skos:sense ?sense .",
+        "            ?sense skos:definition ?val .",
+        "            ?val rdf:value ?def .",
         "        }",
         "    }",
         "}"
@@ -78,7 +80,7 @@ function sparql(iri) {
 //DEFINE QUERIES TO PLOT GRAPH          
 function ancestor2Sparql(id) {
     var query = [
-        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#> ",
+        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
         "SELECT DISTINCT ?ancestor1 ?ancestor2",
         "{ ",
         "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
@@ -91,7 +93,7 @@ function ancestor2Sparql(id) {
 
 function ancestor1Sparql(id) {
     var query = [
-        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#> ",
+        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
         "SELECT DISTINCT ?ancestor1",
         "{ ",
         "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
@@ -131,7 +133,7 @@ function dataSparql(id) {
 
 function unionSparql(id_arr, sparql) {
     var query = [
-        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#>",
+        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#>",
         "SELECT * WHERE {{"
     ];
     for (var i in id_arr) {
