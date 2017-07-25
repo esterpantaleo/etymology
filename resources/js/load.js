@@ -1,5 +1,5 @@
 /*globals 
-	d3, Rx, sparql, console, XMLHttpRequest
+    d3, Rx, sparql, console, XMLHttpRequest
 */
 //SET PARAMETERS FOR FUNCTION d3.xhr() 
 var ENDPOINT = "https://etytree-virtuoso.wmflabs.org/sparql";
@@ -62,8 +62,17 @@ function logDefinition(pos, gloss) {
 function logLinks(links) {
     var toreturn = [];
     links.split(",").forEach(function(e) {
-        toreturn.push("<a href=\"" + e + "\" target=\"_blank\">" + e.split("/")
-            .pop().split("#").reverse().join(" ").replace(/_/g, " ") + "</a>");
+        var linkName;
+        console.log("link=" + e);
+        if (e.startsWith("https://en.wiktionary.org/wiki/Reconstruction")) {
+            console.log("st with");
+            linkName = e.replace(/https:\/\/en.wiktionary.org\/wiki\/Reconstruction:/g, "")
+                .split("/").join(" ");
+        } else {
+            linkName = e.split("/")
+                .pop().split("#").reverse().join(" ").replace(/_/g, " ");
+        }
+        toreturn.push("<a href=\"" + e + "\" target=\"_blank\">" + linkName + "</a>");
     });
     return toreturn.join(", ");
 }
