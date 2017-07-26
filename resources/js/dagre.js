@@ -337,14 +337,14 @@ function drawData(ancestors, response, width, height) {
 
     response.forEach(function(element) {
         //save all nodes             
-        if (undefined !== element.s && null === nodes[element.s.value]) {
+        if (undefined !== element.s && (undefined === nodes[element.s.value] || null === nodes[element.s.value])) {
             nodes[element.s.value] = new Node(element.s.value);
         }
-        if (undefined !== element.rel && null === nodes[element.rel.value]) {
+        if (undefined !== element.rel && (undefined === nodes[element.rel.value] || null === nodes[element.rel.value])) {
             nodes[element.rel.value] = new Node(element.rel.value);
         }
         if (undefined !== element.rel && undefined !== element.eq) {
-            if (null === nodes[element.eq.value]) {
+            if (undefined === nodes[element.eq.value] || null === nodes[element.eq.value]) {
                 nodes[element.eq.value] = new Node(element.eq.value);
             }
             //push to eqIri
@@ -352,7 +352,7 @@ function drawData(ancestors, response, width, height) {
             nodes[element.eq.value].eqIri.push(element.rel.value);
         }
         if (undefined !== element.der) {
-            if (null === nodes[element.der.value]) {
+            if (undefined === nodes[element.der.value] || null === nodes[element.der.value]) {
                 nodes[element.der.value] = new Node(element.der.value);
             }
             //add property der
