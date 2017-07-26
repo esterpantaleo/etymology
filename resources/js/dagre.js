@@ -167,7 +167,7 @@ function drawDisambiguationDAGRE(response, width, height) {
         var nodes = {};
         graph.forEach(function(n) {
             var iris = n.et.value.split(",");
-            if (iris === "") {
+            if (iris.keys.length === 0) {
                 nodes[n.iri.value] = new Node(n.iri.value);
             } else {
                 iris.forEach(function(element) {

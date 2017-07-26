@@ -1,8 +1,7 @@
 function searchSparql(word) {
     var encodedWord = word.replace(/'/g, "\\\\'").replace("·", "%C2%B7");
     var query = [
-        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#>",
-        // "PREFIX dbnary: <http://etytree-virtuoso.wmflabs.org/dbnary#>",
+        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#>",
         "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
@@ -17,11 +16,6 @@ function searchSparql(word) {
         "        ?iri dbnary:describes  ?ee .",
         "        ?ee rdf:type dbetym:EtymologyEntry .",
         "    }",
-        // "    ?iri rdf:type <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#EtymologyEntry> .",
-        // "    OPTIONAL {",
-        // "        ?iri <http://etytree-virtuoso.wmflabs.org/dbnary#refersTo>  ?ee .",
-        // "        ?ee rdf:type <http://etytree-virtuoso.wmflabs.org//dbnaryetymology#EtymologyEntry> .",
-        // "    }",
         "}"
     ];
     return query.join(" ");
