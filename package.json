@@ -1,0 +1,29 @@
+{
+  "name": "etytree",
+  "version": "0.1.0",
+  "description": "This is a first version of the Wikimedia project etytree. The aim of the project is to visualize in an interactive web page the etymological tree (i.e., the etymology of a word in the form of a tree, with ancestors, cognate words, derived words, etc.) of any word in any language using data extracted from Wiktionary.",
+  "main": "index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.1.0"
+  },
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/esterpantaleo/etymology.git"
+  },
+  "keywords": [
+    "wiktionary",
+    "etymological-relationships",
+    "d3js",
+    "ancestors",
+    "english-wiktionary",
+    "rdf",
+    "ontology"
+  ],
+  "author": "Ester Pantaleo",
+  "license": "Creative Commons Attribution-ShareAlike 3.0"
+}
