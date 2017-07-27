@@ -31,7 +31,7 @@ $('document').ready(function(){
 		}
 		
 		const source = get(url); 
-		source.subscribe(response => drawDisambiguationDAGRE(response, width, height),
+		source.subscribe(response => drawDisambiguation(response, width, height),
 				 error => console.error(error), 
 				 () => console.log('done disambiguation')); 
 	    }

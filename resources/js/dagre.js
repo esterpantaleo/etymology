@@ -80,13 +80,14 @@ function refreshScreen9(){
         .html("This word is related to many words. Please wait a bit more.");
 }
 
-function slicedQuery(myArray, mySparql, num){
-    var i, j, tmpArray, url, chunk = num, sources = [];
+//function to slice up a big sparql query that cannot be processed by virtuoso into a bunch of smaller queries in chunks of "chunk"
+function slicedQuery(myArray, mySparql, chunk){
+    var i, j, tmpArray, url, sources = [];
     for (i=0, j=myArray.length; i<j; i+=chunk) {
         tmpArray = myArray.slice(i, i+chunk);
 	//console.log(unionSparql(tmpArray, mySparql));
         url = ENDPOINT + "?query=" + encodeURIComponent(unionSparql(tmpArray, mySparql));
-        //console.log(url);
+        console.log(url);
         sources.push(get(url));
     }
     const query = Rx.Observable.zip.apply(this, sources)
@@ -98,7 +99,7 @@ function slicedQuery(myArray, mySparql, num){
     return query;
 }
 
-function appendTooltip(inner, g, nodes){
+function appendDefinitionTooltip(inner, g, nodes){
     //show tooltip on click on nodes                    
     inner.selectAll("g.node")
         .on("click", function(d) {
@@ -150,7 +151,34 @@ function appendLanguageTagTextAndTooltip(inner, g){
         .on("mousedown", function() { d3.event.stopPropagation(); })
 }
 
-function drawDisambiguationDAGRE(response, width, height){
+function appendDefinitionTooltipOrDrawDAGRE(inner, g, nodes, width, height){
+    var touchtime = 0;
+    inner.selectAll("g.node")
+        .on('click', function(d) {
+            if (touchtime == 0) {
+		//set first click 
+		touchtime = new Date().getTime();
+	    } else {
+		var iri = g.node(d).iri;
+		if ((new Date().getTime())-touchtime < 800) { 
+		    //double click occurred  
+		    refreshScreen3();
+		    queryAncestors(ENDPOINT, 2, iri, width, height);
+		    touchtime = 0
+		} else {
+		    refreshScreen4(this);   
+		    nodes[iri].showTooltip(d3.event.pageX, d3.event.pageY);
+		    d3.event.stopPropagation();
+		    touchtime = new Date().getTime(); 
+		}
+	    }
+	})
+	.on("mousedown", function() { 
+	    d3.event.stopPropagation(); 
+	}) 
+    }
+
+function drawDisambiguation(response, width, height){
     if (response != null){
 	refreshScreen1();
        
@@ -210,32 +238,7 @@ function drawDisambiguationDAGRE(response, width, height){
         render(inner, g);
 	
 	appendLanguageTagTextAndTooltip(inner, g);
-	
-        //show tooltip on click on nodes          
-        var touchtime = 0;
-        inner.selectAll("g.node")
-            .on("mousedown", function() { d3.event.stopPropagation(); })
-            .on('click', function(d) {
-                if(touchtime == 0) {
-                    //set first click      
-                    touchtime = new Date().getTime();
-                } else {
-                    //compare first click to this click and see if they occurred within double click threshold     
-                    var iri = g.node(d).iri;
-                    if((new Date().getTime())-touchtime < 800) {
-                        //double click occurred
-			refreshScreen3();
-			queryAncestors(ENDPOINT, 2, iri, width, height);
-			touchtime = 0;
-                    } else {
-			refreshScreen4(this);
-                        nodes[iri].showTooltip(d3.event.pageX, d3.event.pageY); 
-			d3.event.stopPropagation(); 
-			//not a double click so set as a new first click
-			touchtime = new Date().getTime();
-                    }
-                }
-            })
+	appendDefinitionTooltipOrDrawDAGRE(inner, g, nodes, width, height);
 	
         d3.selectAll(".edgePath").remove();
 	
@@ -247,33 +250,29 @@ function drawDisambiguationDAGRE(response, width, height){
     }
 }
 
-function queryAncestors(endpoint, ancestorSparql, iri, width, height){
-    var url = endpoint + "?query=";
-    if (ancestorSparql == 1){
-        url += encodeURIComponent(ancestor1Sparql(iri));
-    } else {
-	url += encodeURIComponent(ancestor2Sparql(iri));
-    }
+function queryAncestors(endpoint, parameter, iri, width, height){
+    //if ancestorSparql == 1 submit a short (but less detailed) query
+    //if ancestorSparql == 2 submit a longer (but more detailed) query
+    var url = endpoint + "?query=" + encodeURIComponent(ancestorSparql(iri, parameter));
     if (debug) {
-        //console.log(url);
+        console.log(url);
     }
     const source = get(url);
-    source.subscribe(response => drawDAGRE(response, width, height),
-                     error => reducedQueryAncestors(error, endpoint, ancestorSparql, iri, width, height),
-                     () => console.log('done DAGRE' + ancestorSparql)); 
+    source.subscribe(function(x) { drawTree(x, width, height); },
+                     function(error) {
+			 if (parameter == 1){ 
+			     serverError(error);
+			 } else {
+			     refreshScreen9(); 
+			     queryAncestors(endpoint, 1, iri, width, height);
+			 }
+		     },
+                     function() {
+			 console.log('done DAGRE' + parameter);
+		     });
 }
 
-
-function reducedQueryAncestors(error, endpoint, ancestorSparql, iri, width, height){
-    if (ancestorSparql == 1){
-        serverError(error);
-    } else {
-	refreshScreen9();
-	queryAncestors(endpoint, 1, iri, width, height);
-    }
-}
-
-function drawDAGRE(response, width, height) {
+function drawTree(response, width, height) {
     refreshScreen5();
     if (response == null){
         refreshScreen6();
@@ -288,8 +287,8 @@ function drawDAGRE(response, width, height) {
 	    ancestorArray = sort_unique(ancestorArray);
 	}
     });
-    //console.log("ANCESTORS");
-    //console.log(ancestorArray);
+    console.log("ANCESTORS");
+    console.log(ancestorArray);
     const subscribe = slicedQuery(ancestorArray, descendantSparql, 8).subscribe(function(val){//8 crashes sometimes
 	var dataArray = [];
 	val.forEach(function(element) {
@@ -440,21 +439,24 @@ function drawData(ancestors, response, width, height){
 	}
 
 	//define der
-	var der = graphNodes[gg].all.filter(function(element) { 
-	    return nodes[element].der != undefined; });
-	if (der.length > 0){
-	    graphNodes[gg].der = true;
+	if (ancestors.length > 2){
+	    var der = graphNodes[gg].all.filter(function(element) { 
+		return nodes[element].der != undefined; });
+	    if (der.length > 0){
+		graphNodes[gg].der = true;
+	    }
 	}
 	//define iso, label, lang
 	graphNodes[gg].iso = nodes[graphNodes[gg].all[0]].iso;
 	graphNodes[gg].label = graphNodes[gg].iri.map(function(i) { return nodes[i].label;}).join(",");
 	graphNodes[gg].lang = nodes[graphNodes[gg].all[0]].lang;
     }
-
+     console.log(graphNodes);    
     //define linkedToTarget and linkedToSource
     response.forEach(function(element){
 	if (element.rel != undefined && element.s != undefined){
 	    var source = nodes[element.rel.value].graphNode[0], target = nodes[element.s.value].graphNode[0];
+
 	    if (source != target){
 		if (!(graphNodes[source].der || graphNodes[target].der)){
 		    graphNodes[source].linkedToTarget.push(target); 
@@ -543,7 +545,7 @@ function drawData(ancestors, response, width, height){
 
     appendLanguageTagTextAndTooltip(inner, g);
         
-    appendTooltip(inner, g, nodes);
+    appendDefinitionTooltip(inner, g, nodes);
     
     // Center the graph       
     var initialScale = 0.75;

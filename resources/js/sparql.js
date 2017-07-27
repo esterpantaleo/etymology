@@ -24,7 +24,7 @@ function searchSparql(word){
 //DEFINE QUERY TO GET LINKS, POS AND GLOSS           
 function sparql(iri){
     var query = [
-        "PREFIX dbnary: <http://http://kaiko.getalp.org/.org/dbnary#>",
+        "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
         "PREFIX lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#>",
         "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>",
@@ -77,28 +77,28 @@ function sparql(iri){
 }
 
 //DEFINE QUERIES TO PLOT GRAPH          
-function ancestor2Sparql(id){    
-    var query = [
-        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
-        "SELECT DISTINCT ?ancestor1 ?ancestor2",
-        "{ ",
-        "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
-        "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?ancestor1 .",
-        "   ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 .}",
-        "} "
-    ];
-    return query.join(" ");
-}
-
-function ancestor1Sparql(id){
-    var query = [
-        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
-        "SELECT DISTINCT ?ancestor1",
-        "{ ",
-        "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
-        "} "
-    ];
-    return query.join(" ");
+function ancestorSparql(id, parameter){
+    if (parameter === 1){
+	var query = [
+            "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
+            "SELECT DISTINCT ?ancestor1 ?ancestor2",
+            "{ ",
+            "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
+            "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?ancestor1 .",
+            "   ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 .}",
+            "} "
+	];
+	return query.join(" ");
+    } else if (parameter === 2){
+	var query = [
+            "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
+            "SELECT DISTINCT ?ancestor1",
+            "{ ",
+            "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
+            "} "
+	];
+	return query.join(" ");
+    }
 }
 
 function descendantSparql(id){

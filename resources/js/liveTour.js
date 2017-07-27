@@ -36,7 +36,6 @@ function getCookie(key) {
     return keyValue ? keyValue[2] : null;
 };
 
-console.log(screen.width)
 //Run tour only if screen is large enough
 if (screen.width > 800){
     // Initialize tour if it's the user's first time
