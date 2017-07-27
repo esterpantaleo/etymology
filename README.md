@@ -14,6 +14,15 @@ The code and the data are distributed under [Creative Commons Attribution-ShareA
 
 The site's html files are contained in [the repo root](https://github.com/esterpantaleo/etymology/tree/master/). The main page is [index.html](https://github.com/esterpantaleo/etymology/tree/master/index.html). To view the site you just need to navigate to the root of the repo.
 
+## Setting up the Dev Tools
+
+[GruntJS](https://gruntjs.com/) is currently being used as the task manager. It runs [JSLint](http://jshint.com/docs/) on the JavaScript files under [resources/js](https://github.com/esterpantaleo/etymology/tree/master/resources/js). In order to use these tools you will need to take the following steps:
+
+1. Install [Node](https://nodejs.org/)
+2. Run `npm install` from your the repo root.
+
+Then you can run a lint of the JS files by running `grunt js` in your command line, from the repo root.
+
 ## Language data
 Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated (updated on 07/22/2017). 
 

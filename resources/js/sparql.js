@@ -1,28 +1,28 @@
-function searchSparql(word){
-    var encodedWord = word.replace(/'/g,"\\\\'").replace("·", "%C2%B7") ; 
-    var query = [ 
-	"PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#>",
-	"PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
-	"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", 
-	"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>", 
-	"SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ",
-	"WHERE {", 
-	"    ?iri rdfs:label ?label . ?label bif:contains \"\'" + encodedWord + "\'\" .",
-	//exclude entries that contain the searched word but include other words
-	//(e.g.: search="door" label="doorbell", exclude "doorbell")
-	"    FILTER REGEX(?label, \"^" + encodedWord + "$\", 'i') .",  
-	"    ?iri rdf:type dbetym:EtymologyEntry .",
-	"    OPTIONAL {",
-	"        ?iri dbnary:describes  ?ee .",
-	"        ?ee rdf:type dbetym:EtymologyEntry .",
-	"    }",   
-	"}" 
+function searchSparql(word) {
+    var encodedWord = word.replace(/'/g, "\\\\'").replace("·", "%C2%B7");
+    var query = [
+        "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#>",
+        "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ",
+        "WHERE {",
+        "    ?iri rdfs:label ?label . ?label bif:contains \"\'" + encodedWord + "\'\" .",
+        //exclude entries that contain the searched word but include other words
+        //(e.g.: search="door" label="doorbell", exclude "doorbell")
+        "    FILTER REGEX(?label, \"^" + encodedWord + "$\", 'i') .",
+        "    ?iri rdf:type dbetym:EtymologyEntry .",
+        "    OPTIONAL {",
+        "        ?iri dbnary:describes  ?ee .",
+        "        ?ee rdf:type dbetym:EtymologyEntry .",
+        "    }",
+        "}"
     ];
-    return query.join(" "); 
+    return query.join(" ");
 }
 
 //DEFINE QUERY TO GET LINKS, POS AND GLOSS           
-function sparql(iri){
+function sparql(iri) {
     var query = [
         "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#>",
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
@@ -32,7 +32,7 @@ function sparql(iri){
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
         "SELECT DISTINCT ?ee ?pos (group_concat(distinct ?def ; separator=\";;;;\") as ?gloss) (group_concat(distinct ?also ; separator=\",\") as ?links)",
         "WHERE {",
-        "    <" + iri.replace(/__ee_[0-9]+_/g,"__ee_") + "> rdfs:seeAlso ?also .",
+        "    <" + iri.replace(/__ee_[0-9]+_/g, "__ee_") + "> rdfs:seeAlso ?also .",
         "    OPTIONAL {",
         "        <" + iri + "> dbnary:describes ?ee .",
         "        OPTIONAL {",
@@ -101,19 +101,19 @@ function ancestorSparql(id, parameter){
     }
 }
 
-function descendantSparql(id){
+function descendantSparql(id) {
     var query = [
-        "SELECT DISTINCT ?descendant1",// ?descendant2",
+        "SELECT DISTINCT ?descendant1", // ?descendant2",
         "{ ",
         "   ?descendant1 dbetym:etymologicallyRelatedTo{0,1} <" + id + "> .",
-     //   "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?descendant1 .",
-       //  "   ?descendant2 dbetym:etymologicallyRelatedTo* ?eq .}",
+        //   "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?descendant1 .",
+        //  "   ?descendant2 dbetym:etymologicallyRelatedTo* ?eq .}",
         "} "
     ];
     return query.join(" ");
 }
 
-function dataSparql(id){
+function dataSparql(id) {
     var query = [
         "SELECT DISTINCT ?s ?rel ?eq ?der ",
         "{           ",
@@ -122,23 +122,23 @@ function dataSparql(id){
         "       <" + id + ">",
         "   }",
         "   ?s dbetym:etymologicallyRelatedTo ?rel .",
-	"   OPTIONAL { ?rel dbetym:etymologicallyEquivalentTo{0,6} ?eq . }",
+        "   OPTIONAL { ?rel dbetym:etymologicallyEquivalentTo{0,6} ?eq . }",
         "   OPTIONAL { ?s dbetym:etymologicallyDerivesFrom ?der . }",
-//	"   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . }",
+        //  "   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . }",
         "}"
     ];
     return query.join(" ");
 }
 
-function unionSparql(id_arr, sparql){
+function unionSparql(id_arr, sparql) {
     var query = [
         "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#>",
         "SELECT * WHERE {{"
     ];
     for (var i in id_arr) {
         query.push(sparql(id_arr[i]));
-        if (i < id_arr.length - 1){
-           query.push("} UNION {");
+        if (i < id_arr.length - 1) {
+            query.push("} UNION {");
         }
     }
     query.push("}}");
