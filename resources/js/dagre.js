@@ -84,7 +84,6 @@ function refreshScreen9() {
         .html("This word is related to many words. Please wait a bit more.");
 }
 
-<<<<<<< HEAD
 //function to slice up a big sparql query that cannot be processed by virtuoso into a bunch of smaller queries in chunks of "chunk"
 function slicedQuery(myArray, mySparql, num) {
     var i, j, tmpArray, url, chunk = num,
