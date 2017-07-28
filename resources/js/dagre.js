@@ -297,31 +297,36 @@ function drawTree(response, width, height) {
 
     console.log("ANCESTORS");
     console.log(ancestorArray);
-    const subscribe = slicedQuery(ancestorArray, descendantSparql, 8).subscribe(function(val){//8 crashes sometimes
-	var dataArray = [];
-	val.forEach(function(element) {
-	    var tmp = JSON.parse(element).results.bindings;
-	    for (var t in tmp){
-                dataArray.push(tmp[t].descendant1.value);
-            }
-            const subscribe = slicedQuery(dataArray, dataSparql, 8).subscribe(function(val) {
-                var graphArray = [];
-                val.forEach(function(element) {
-                    var tmp = JSON.parse(element).results.bindings;
-                    for (var t in tmp) {
-                        graphArray.push(tmp[t]);
-                    }
-                });
-                if (graphArray.length === 0) {
-                    refreshScreen8();
-                } else {
-                    drawData(ancestorArray, graphArray, width, height);
-                }
-            });
+    const subscribe = slicedQuery(ancestorArray, descendantSparql, 8)
+	.subscribe(
+	    function(val){//val = 8 crashes sometimes
+		var dataArray = [];
+		val.forEach(function(element) {
+		    var tmp = JSON.parse(element).results.bindings;
+		    for (var t in tmp){
+			dataArray.push(tmp[t].descendant1.value);
+		    }
+		    const subscribe = slicedQuery(dataArray, dataSparql, 8)
+			.subscribe(function(val) {
+			    var graphArray = [];
+			    val.forEach(function(element) {
+				var tmp = JSON.parse(element).results.bindings;
+				for (var t in tmp) {
+				    graphArray.push(tmp[t]);
+				}
+			    });
+			    if (graphArray.length === 0) {
+			    refreshScreen8();
+			} else {
+			    drawData(ancestorArray, graphArray, width, height);
+			}
+		    });
+		
+		})
+	    },
+	    error => serverError(error),
 
-        },
-        error => serverError(error),
-        () => console.log('done DAGREZIP'));
+	    () => console.log('done DAGREZIP'));
 }
 
 function serverError(error) {
