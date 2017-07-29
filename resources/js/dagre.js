@@ -1,5 +1,5 @@
 /*globals
-    d3, console, unionSparql, ENDPOINT, debug, dagreD3, GraphNode, sort_unique, ancestorSparql, ancestor1Sparql, ancestor2Sparql, descendantSparql, dataSparql, Node, Rx, get
+    d3, console, unionSparql, ENDPOINT, debug, dagreD3, GraphNode, sortUnique, ancestorSparql, descendantSparql, dataSparql, Node, Rx, getXMLHttpRequest
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 function refreshScreen1() {
@@ -84,16 +84,21 @@ function refreshScreen9() {
         .html("This word is related to many words. Please wait a bit more.");
 }
 
-//function to slice up a big sparql query that cannot be processed by virtuoso into a bunch of smaller queries in chunks of "chunk"
-function slicedQuery(myArray, mySparql, num) {
-    var i, j, tmpArray, url, chunk = num,
-        sources = [];
+function serverError(error) {
+    refreshScreen6();
+    console.log(error);
+}
+
+//function to slice up a big sparql query (that cannot be processed by virtuoso)
+// into a bunch of smaller queries in chunks of "chunk"
+function slicedQuery(myArray, mySparql, chunk) {
+    var i, j, tmpArray, url, sources = [];
     for (i = 0, j = myArray.length; i < j; i += chunk) {
         tmpArray = myArray.slice(i, i + chunk);
         //console.log(unionSparql(tmpArray, mySparql));
         url = ENDPOINT + "?query=" + encodeURIComponent(unionSparql(tmpArray, mySparql));
         console.log(url);
-        sources.push(get(url));
+        sources.push(getXMLHttpRequest(url));
     }
     const query = Rx.Observable.zip.apply(this, sources)
         .catch((err) => {
@@ -104,7 +109,7 @@ function slicedQuery(myArray, mySparql, num) {
     return query;
 }
 
-function appendDefinitionTooltip(inner, g, nodes){
+function appendDefinitionTooltip(inner, g){
     //show tooltip on click on nodes                    
     inner.selectAll("g.node")
         .on("click", function(d) {
@@ -112,7 +117,7 @@ function appendDefinitionTooltip(inner, g, nodes){
             var iri = g.node(d).iri;
             console.log(iri[0]);
             for (var i in iri) {
-                nodes[iri[i]].showTooltip(d3.event.pageX, d3.event.pageY);
+                g.nodess[iri[i]].showTooltip(d3.event.pageX, d3.event.pageY);
             }
             d3.event.stopPropagation();
         })
@@ -131,7 +136,7 @@ function appendLanguageTagTextAndTooltip(inner, g) {
         .style("display", "inline")
         .attr("y", "2em")
         .html(function(v) { return g.node(v).iso; });
-
+    //show tooltip on click on laguage tag
     inner.selectAll("g.node")
         .append("rect")
         .attr("y", "1.1em")
@@ -156,7 +161,7 @@ function appendLanguageTagTextAndTooltip(inner, g) {
         .on("mousedown", function() { d3.event.stopPropagation(); });
 }
 
-function appendDefinitionTooltipOrDrawDAGRE(inner, g, nodes, width, height){
+function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height){
     var touchtime = 0;
     inner.selectAll("g.node")
         .on('click', function(d) {
@@ -165,14 +170,15 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, nodes, width, height){
 		touchtime = new Date().getTime();
 	    } else {
 		var iri = g.node(d).iri;
-		if ((new Date().getTime())-touchtime < 800) { 
+		if ((new Date().getTime()) - touchtime < 800) { 
 		    //double click occurred  
 		    refreshScreen3();
-		    queryAncestors(ENDPOINT, 2, iri, width, height);
-		    touchtime = 0
+		    
+		    drawDAGRE(iri, 2, width, height);
+		    touchtime = 0;
 		} else {
 		    refreshScreen4(this);   
-		    nodes[iri].showTooltip(d3.event.pageX, d3.event.pageY);
+		    g.nodess[iri].showTooltip(d3.event.pageX, d3.event.pageY);
 		    d3.event.stopPropagation();
 		    touchtime = new Date().getTime(); 
 		}
@@ -181,7 +187,7 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, nodes, width, height){
 	.on("mousedown", function() { 
 	    d3.event.stopPropagation(); 
 	}) 
-    }
+}
 
 function drawDisambiguation(response, width, height){
     if (response != null){
@@ -192,26 +198,26 @@ function drawDisambiguation(response, width, height){
             refreshScreen2();
         }
 
-        var nodes = {};
+	var g = new dagreD3.graphlib.Graph().setGraph({});
+        g.nodess = {};
         graph.forEach(function(n) {
             var iris = n.et.value.split(",");
             if (iris.keys.length === 0) {
-                nodes[n.iri.value] = new Node(n.iri.value);
+                g.nodess[n.iri.value] = new Node(n.iri.value);
             } else {
                 iris.forEach(function(element) {
-                    nodes[element] = new Node(element);
+                    g.nodess[element] = new Node(element);
                 });
             }
         });
         if (debug) {
-            console.log(nodes);
+            console.log(g.nodess);
         }
 
-        // Create a dagre    
-        var g = new dagreD3.graphlib.Graph().setGraph({});
+        
         var m = null;
-        for (var n in nodes) {
-            g.setNode(n, nodes[n]);
+        for (var n in g.nodess) {
+            g.setNode(n, g.nodess[n]);
             if (null !== m) {
                 g.setEdge(n, m, { label: "", style: "stroke-width: 0" });
             }
@@ -243,7 +249,7 @@ function drawDisambiguation(response, width, height){
         render(inner, g);
 	
 	appendLanguageTagTextAndTooltip(inner, g);
-	appendDefinitionTooltipOrDrawDAGRE(inner, g, nodes, width, height);
+	appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
 	
         d3.selectAll(".edgePath").remove();
 
@@ -256,277 +262,299 @@ function drawDisambiguation(response, width, height){
 }
 
 
-function queryAncestors(endpoint, parameter, iri, width, height){
-    //if ancestorSparql == 1 submit a short (but less detailed) query
-    //if ancestorSparql == 2 submit a longer (but more detailed) query
-    var url = endpoint + "?query=" + encodeURIComponent(ancestorSparql(iri, parameter));
+function drawDAGRE(iri, parameter, width, height){
+    //if parameter == 1 submit a short (but less detailed) query
+    //if parameter == 2 submit a longer (but more detailed) query
+    var url = ENDPOINT + "?query=" + encodeURIComponent(ancestorSparql(iri, parameter));
     if (debug) {
         console.log(url);
     }
-    const source = get(url);
+    const source = getXMLHttpRequest(url);
 
-    source.subscribe(function(x) { drawTree(x, width, height); },
-                     function(error) {
-			 if (parameter == 1){ 
-			     serverError(error);
-			 } else {
-			     refreshScreen9(); 
-			     queryAncestors(endpoint, 1, iri, width, height);
-			 }
-		     },
-                     function() {
-			 console.log('done DAGRE' + parameter);
-		     });
-}
-
-function drawTree(response, width, height) {
-    refreshScreen5();
-    if (null === response) {
-        refreshScreen6();
-        return;
-    }
-    refreshScreen7();
-    var ancestorArray = [];
-    JSON.parse(response).results.bindings.forEach(function(element) {
-        ancestorArray.push(element.ancestor1.value);
-        if (undefined !== element.ancestor2) {
-            ancestorArray.push(element.ancestor2.value);
-            ancestorArray = sort_unique(ancestorArray);
-        }
-    });
-
-    console.log("ANCESTORS");
-    console.log(ancestorArray);
-    const subscribe = slicedQuery(ancestorArray, descendantSparql, 8)
-	.subscribe(
-	    function(val){//val = 8 crashes sometimes
-		var dataArray = [];
-		val.forEach(function(element) {
-		    var tmp = JSON.parse(element).results.bindings;
-		    for (var t in tmp){
-			dataArray.push(tmp[t].descendant1.value);
-		    }
-		    const subscribe = slicedQuery(dataArray, dataSparql, 8)
-			.subscribe(function(val) {
-			    var graphArray = [];
-			    val.forEach(function(element) {
-				var tmp = JSON.parse(element).results.bindings;
-				for (var t in tmp) {
-				    graphArray.push(tmp[t]);
+    source.subscribe(
+	function(response) {
+	    refreshScreen5();
+	    if (null === response) {
+		refreshScreen6();
+		return;
+	    }
+	    refreshScreen7();
+	    var ancestorArray = [];
+	    JSON.parse(response).results.bindings.forEach(function(element) {
+		ancestorArray.push(element.ancestor1.value);
+		if (undefined !== element.ancestor2) {
+		    ancestorArray.push(element.ancestor2.value);
+		    ancestorArray = sortUnique(ancestorArray);
+		}
+	    });
+	    
+	    console.log("ANCESTORS");
+	    console.log(ancestorArray);
+	    const subscribe = slicedQuery(ancestorArray, descendantSparql, 8)
+		.subscribe(
+		    function(val){//val = 8 crashes sometimes                       
+			var descendantArray = [];
+			val.forEach(function(element) {
+			    var tmp = JSON.parse(element).results.bindings;
+			    for (var t in tmp){
+				descendantArray.push(tmp[t].descendant1.value);
+			    }
+			})
+			const subscribe = slicedQuery(descendantArray, dataSparql, 8)
+			    .subscribe(function(val) {
+				var graphArray = [];
+				val.forEach(function(element) {
+				    var tmp = JSON.parse(element).results.bindings;
+				    for (var t in tmp) {
+					graphArray.push(tmp[t]);
+				    }
+				});
+				if (graphArray.length === 0) {
+				    refreshScreen8();
+				} else {
+				    var g = defineGraph(ancestorArray, graphArray);
+				    renderGraph(g, width, height);
 				}
 			    });
-			    if (graphArray.length === 0) {
-			    refreshScreen8();
-			} else {
-			    drawData(ancestorArray, graphArray, width, height);
-			}
-		    });
-		
-		})
-	    },
-	    error => serverError(error),
-
-	    () => console.log('done DAGREZIP'));
+		    },
+		    error => serverError(error),
+		    () => console.log('done DAGREZIP'));
+	},
+        function(error) {
+	    if (parameter === 1){ 
+		serverError(error);
+	    } else {
+		refreshScreen9();
+		drawDAGRE(iri, 1, width, height);
+	    }
+	},
+        function() {
+	    console.log('done DAGRE' + parameter);
+	});
 }
 
-function serverError(error) {
-    refreshScreen6();
-    console.log(error);
-}
+function defineGraph(ancestors, response) {
+    var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
 
-function drawData(ancestors, response, width, height) {
-    var nodes = {};
-    var links = [];
-
+    
+    //CONSTRUCTING NODES
+    g.nodess = {};
     response.forEach(function(element) {
-        //save all nodes             
-        if (undefined !== element.s && (undefined === nodes[element.s.value] || null === nodes[element.s.value])) {
-            nodes[element.s.value] = new Node(element.s.value);
+        //save all nodes        
+	//define isAncestor
+        if (undefined !== element.s && (undefined === g.nodess[element.s.value] || null === g.nodess[element.s.value])) {
+            g.nodess[element.s.value] = new Node(element.s.value);
+	    if (ancestors.indexOf(element.s.value) > -1) {
+		g.nodess[element.s.value].isAncestor = true;
+	    }
         }
-        if (undefined !== element.rel && (undefined === nodes[element.rel.value] || null === nodes[element.rel.value])) {
-            nodes[element.rel.value] = new Node(element.rel.value);
+        if (undefined !== element.rel && (undefined === g.nodess[element.rel.value] || null === g.nodess[element.rel.value])) {
+            g.nodess[element.rel.value] = new Node(element.rel.value);
+	    if (ancestors.indexOf(element.rel.value) > -1) {
+		g.nodess[element.s.value].isAncestor = true;
+	    }
         }
         if (undefined !== element.rel && undefined !== element.eq) {
-            if (undefined === nodes[element.eq.value] || null === nodes[element.eq.value]) {
-                nodes[element.eq.value] = new Node(element.eq.value);
+            if (undefined === g.nodess[element.eq.value] || null === g.nodess[element.eq.value]) {
+                g.nodess[element.eq.value] = new Node(element.eq.value);
+            }
+	    if (ancestors.indexOf(element.eq.value) > -1) {
+                g.nodess[element.eq.value].isAncestor = true;
             }
             //push to eqIri
-            nodes[element.rel.value].eqIri.push(element.eq.value);
-            nodes[element.eq.value].eqIri.push(element.rel.value);
+            g.nodess[element.rel.value].eqIri.push(element.eq.value);
+            g.nodess[element.eq.value].eqIri.push(element.rel.value);
         }
         if (undefined !== element.der) {
-            if (undefined === nodes[element.der.value] || null === nodes[element.der.value]) {
-                nodes[element.der.value] = new Node(element.der.value);
+            if (undefined === g.nodess[element.der.value] || null === g.nodess[element.der.value]) {
+                g.nodess[element.der.value] = new Node(element.der.value);
             }
             //add property der
-            nodes[element.s.value].der = true;
+            g.nodess[element.s.value].der = true;
         }
     });
 
-    //add property isAncestor
-    ancestors.forEach(function(element) { nodes[element].isAncestor = true; });
-
-    //console.log("nodes");
-    //console.log(nodes);
-    var graphNodes = {};
-    var counter = 0;
-    //push and merge nodes ee_door and ee_1_door into graphNodes
-    //if both ee_door and ee_1_door are nodes,           
-    //and there is no other node (no ee_2_door or ee_3_door)
-    for (var n in nodes) {
-        if (nodes[n].ety === 0) {
+    //CONSTRUCTING GRAPHNODES
+    //a graphNode is some kind of super node that merges Nodes that are etymologically equivalent
+    //or that refer to the same word - also called here identical Nodes 
+    //(e.g.: if only ee_word and ee_n_word with n an integer belong to                                                                          
+    //the set of ancestors and descendants                                                                                                
+    //then merge them into one graphNode) 
+    //the final graph will use these super nodes (graphNodes)  
+    g.graphNodes = {};
+    var counter = 0;//counts how many graphNodes have been created so far
+    for (var n in g.nodess) {
+        if (g.nodess[n].ety === 0) {
             var tmp = [];
-            var iso = nodes[n].iso;
-            var label = nodes[n].label;
-            for (var m in nodes) {
-                if (undefined !== nodes[m]) {
-                    if (nodes[m].iso === iso && nodes[m].label === label) {
-                        if (nodes[m].ety > 0) {
+            var iso = g.nodess[n].iso;
+            var label = g.nodess[n].label;
+            for (var m in g.nodess) {
+                if (undefined !== g.nodess[m]) {
+                    if (g.nodess[m].iso === iso && g.nodess[m].label === label) {
+                        if (g.nodess[m].ety > 0) {
                             tmp.push(m);
                         }
                     }
                 }
             }
-            tmp = sort_unique(tmp);
+            tmp = sortUnique(tmp);
+	    //if only ee_word and ee_n_word with n an integer belong to
+	    //the set of ancestors and descendants
+	    //then merge them in one graphNode
             if (tmp.length === 1) {
                 var gg = new GraphNode(counter);
-                //initialize all 
+                //initialize graphNode.all 
                 gg.all.push(n);
-                //define iri 
-                gg.iri = nodes[tmp[0]].eqIri;
+                //define graphNode.iri 
+                gg.iri = g.nodess[tmp[0]].eqIri;
                 gg.iri.push(tmp[0]);
-                nodes[n].graphNode.push(counter);
+		//define node.graphNode
+                g.nodess[n].graphNode.push(counter);
+		g.nodess[tmp[0]].graphNode.push(counter);
                 gg.iri.forEach(function(element) {
-                    nodes[element].graphNode.push(counter);
+                    g.nodess[element].graphNode.push(counter);
                 });
 
                 //push to graphNodes
-                graphNodes[counter] = gg;
-                graphNodes[counter].iri = sort_unique(graphNodes[counter].iri);
+                g.graphNodes[counter] = gg;
+                g.graphNodes[counter].iri = sortUnique(g.graphNodes[counter].iri);
                 counter++;
             }
         }
     }
 
-    for (var n in nodes) {
-        if (nodes[n].graphNode.length === 0) {
+    for (var n in g.nodess) {
+        if (g.nodess[n].graphNode.length === 0) {
             //add iri
             var gg = new GraphNode(counter);
-            gg.iri = nodes[n].eqIri;
+            gg.iri = g.nodess[n].eqIri;
             gg.iri.push(n);
             var tmp = [];
             gg.iri.forEach(function(element) {
                 tmp.concat(element.eqIri);
             });
-            tmp = sort_unique(tmp);
             gg.iri.concat(tmp);
-            gg.iri = sort_unique(gg.iri);
+            gg.iri = sortUnique(gg.iri);
             gg.iri.forEach(function(element) {
-                nodes[element].graphNode.push(counter);
+                g.nodess[element].graphNode.push(counter);
             });
-            graphNodes[counter] = gg;
+            g.graphNodes[counter] = gg;
             counter++;
         } else {
-            var graphNode = nodes[n].graphNode[0];
+            var graphNode = g.nodess[n].graphNode[0];
 
-            nodes[n].eqIri.forEach(function(element) {
+            g.nodess[n].eqIri.forEach(function(element) {
                 //add iri
-                nodes[element].graphNode.push(graphNode);
-                graphNodes[graphNode].iri.concat(nodes[element].eqIri);
-                graphNodes[graphNode].iri = sort_unique(graphNodes[graphNode].iri);
+                g.nodess[element].graphNode.push(graphNode);
+                g.graphNodes[graphNode].iri.concat(g.nodess[element].eqIri);
+                g.graphNodes[graphNode].iri = sortUnique(g.graphNodes[graphNode].iri);
             });
         }
     }
 
-    for (var gg in graphNodes){
+    var showDerivedNodes = false;
+    if (ancestors.length < 3) showDerivedNodes = true;
+
+    for (var gg in g.graphNodes){
 	//define all
-	graphNodes[gg].all = graphNodes[gg].all.concat(graphNodes[gg].iri);
+	g.graphNodes[gg].all = g.graphNodes[gg].all.concat(g.graphNodes[gg].iri);
 	
 	//define isAncestor
-        if (graphNodes[gg].all.filter(function(element) { return nodes[element].isAncestor;}).length >0){
-	    graphNodes[gg].isAncestor = true;
+        if (g.graphNodes[gg].all.filter(function(element) { return g.nodess[element].isAncestor; }).length > 0){
+	    g.graphNodes[gg].isAncestor = true;
 	}
 
 	//define der
-	if (ancestors.length > 2){
-	    var der = graphNodes[gg].all.filter(function(element) { 
-		return nodes[element].der != undefined; });
-	    if (der.length > 0){
-		graphNodes[gg].der = true;
-	    }
+	var der = g.graphNodes[gg].all.filter(function(element) { 
+	    return g.nodess[element].der != undefined; 
+	});
+	if (der.length > 0){
+	    g.graphNodes[gg].der = true;
 	}
+	
 	//define iso, label, lang
-	graphNodes[gg].iso = nodes[graphNodes[gg].all[0]].iso;
-	graphNodes[gg].label = graphNodes[gg].iri.map(function(i) { return nodes[i].label;}).join(",");
-	graphNodes[gg].lang = nodes[graphNodes[gg].all[0]].lang;
+	g.graphNodes[gg].iso = g.nodess[g.graphNodes[gg].all[0]].iso;
+	g.graphNodes[gg].label = g.graphNodes[gg].iri.map(function(i) { return g.nodess[i].label;}).join(",");
+	g.graphNodes[gg].lang = g.nodess[g.graphNodes[gg].all[0]].lang;
     }
-     console.log(graphNodes);    
+
     //define linkedToTarget and linkedToSource
     response.forEach(function(element){
 	if (element.rel != undefined && element.s != undefined){
-	    var source = nodes[element.rel.value].graphNode[0], target = nodes[element.s.value].graphNode[0];
+	    var source = g.nodess[element.rel.value].graphNode[0], target = g.nodess[element.s.value].graphNode[0];
 
 	    if (source != target){
-		if (!(graphNodes[source].der || graphNodes[target].der)){
-		    graphNodes[source].linkedToTarget.push(target); 
+		if (showDerivedNodes){
+		    g.graphNodes[source].linkedToTarget.push(target);
+		} else {
+		    //linkedToTarget only counts the number of descendants that are not derived words
+		    if (!(g.graphNodes[source].der || g.graphNodes[target].der)){
+			g.graphNodes[source].linkedToTarget.push(target);
+		    }
 		} 
-		if (graphNodes[target].linkedToSource.indexOf(source) == -1){ 
-		    graphNodes[target].linkedToSource.push(source);
+		if (g.graphNodes[target].linkedToSource.indexOf(source) == -1){ 
+		    g.graphNodes[target].linkedToSource.push(source);
 		}
 	    } 
 	}
     });
 
-    for (var gg in graphNodes) {
-        //collapse nodes that have more than 10 descendants and color them differently
-        if (graphNodes[gg].linkedToTarget.length > 10) {
-            //console.log("the following node has more than 10 targets: collapsing:");
-            //console.log(graphNodes[gg]);
-            graphNodes[gg].linkedToTarget.map(function(e) {
-                //console.log("derived node="); 
-                //console.log(graphNodes[e]);
-                if (graphNodes[e].linkedToSource.length === 1) {
-                    graphNodes[e].der = true;
+    for (var gg in g.graphNodes) {
+        //collapse nodes that have more than 10 descendants and color them differently	    
+        if (!showDerivedNodes && g.graphNodes[gg].linkedToTarget.length > 10) {
+            console.log("the following node has more than 10 targets: collapsing");
+            console.log(g.graphNodes[gg]);
+            g.graphNodes[gg].linkedToTarget.map(function(e) {
+                if (g.graphNodes[e].linkedToSource.length === 1) {
+                    g.graphNodes[e].der = true;
                 }
             });
+	    
             //    graphNodes[gg].linkedToTarget.map(function(e){  graphNodes[e].der = true; });
-            graphNodes[gg].style = "fill: sandyBrown; stroke: lightBlue";
+            g.graphNodes[gg].style = "fill: sandyBrown; stroke: lightBlue";
         }
     }
 
+    //CONSTRUCTING LINKS
+    var links = [];
     response.forEach(function(element) {
         if (undefined !== element.rel && undefined !== element.s) {
-            var source = nodes[element.rel.value].graphNode[0],
-                target = nodes[element.s.value].graphNode[0];
-            if (source !== target) {
-                if (graphNodes[target].isAncestor || !(graphNodes[source].der || graphNodes[target].der)) {
+            var source = g.nodess[element.rel.value].graphNode[0],
+                target = g.nodess[element.s.value].graphNode[0];
+            if (source !== target) {		    
+                if (showDerivedNodes || g.graphNodes[target].isAncestor || !(g.graphNodes[source].der || g.graphNodes[target].der)) {
                     var Link = { "source": source, "target": target };
-                    if (graphNodes[target].linkedToSourceCopy.indexOf(source) === -1) {
+                    if (g.graphNodes[target].linkedToSourceCopy.indexOf(source) === -1) {
                         //define linked and linkedToSourceCopy
                         links.push(Link);
-                        graphNodes[source].linked = true;
-                        graphNodes[target].linkedToSourceCopy.push(source);
-                        graphNodes[target].linked = true;
+                        g.graphNodes[source].linked = true;
+                        g.graphNodes[target].linkedToSourceCopy.push(source);
+                        g.graphNodes[target].linked = true;
                     }
                 }
             }
         }
     });
 
-    var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
-
+    //INITIALIZING NODES IN GRAPH
     //only draw nodes that are linked to other nodes
-    for (var gg in graphNodes) {
-        if (graphNodes[gg].linked) {
-            g.setNode(gg, graphNodes[gg]);
+    //always show ancestors
+    for (var gg in g.graphNodes) {
+        if (g.graphNodes[gg].linked || g.graphNodes[gg].isAncestor) {
+            g.setNode(gg, g.graphNodes[gg]);
         }
     }
 
+    //INITIALIZING LINKS IN GRAPH
     links.forEach(function(element) {
         g.setEdge(element.source,
             element.target, { label: "", lineInterpolate: "basis" });
     });
 
+    return g;
+}
+
+function renderGraph(g, width, height){
     var svg = d3.select("#tree-container").append("svg")
         .attr("id", "tree-overlay")
         .attr("width", width)
@@ -551,15 +579,18 @@ function drawData(ancestors, response, width, height) {
     // Run the renderer. This is what draws the final graph.  
     render(inner, g);
 
+for (var i in g.nodess){
+console.log(g.nodess[i]);}
+
     appendLanguageTagTextAndTooltip(inner, g);
         
-    appendDefinitionTooltip(inner, g, nodes);
+    appendDefinitionTooltip(inner, g);
     
     // Center the graph       
     var initialScale = 0.75;
     zoom.translate([(width - g.graph().width * initialScale) / 2, 20])
         .scale(initialScale)
         .event(svg);
-
+    
     //svg.attr("height", g.graph().height * initialScale + 40);}}
 }

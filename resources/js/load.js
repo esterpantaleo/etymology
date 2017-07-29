@@ -3,16 +3,13 @@
 */
 //SET PARAMETERS FOR FUNCTION d3.xhr() 
 var ENDPOINT = "https://etytree-virtuoso.wmflabs.org/sparql";
-var MIME = "application/sparql-results+json";
 
 //ADD CONFIGURATION VARIABLE DEFINITIONS
 var debug,
-    excludeStarLikeStructures,
-    mergeEquivalentNodes,
     langMap,
     ssv;
 
-function get(url) {
+function getXMLHttpRequest(url) {
     return Rx.Observable.create(observer => {
         const req = new XMLHttpRequest();
         req.open('GET', url);
@@ -33,7 +30,7 @@ function get(url) {
     });
 }
 
-function sort_unique(arr) {
+function sortUnique(arr) {
     if (arr.length === 0) return arr;
     arr = arr.sort();
     var ret = [arr[0]];
@@ -63,9 +60,7 @@ function logLinks(links) {
     var toreturn = [];
     links.split(",").forEach(function(e) {
         var linkName;
-        console.log("link=" + e);
         if (e.startsWith("https://en.wiktionary.org/wiki/Reconstruction")) {
-            console.log("st with");
             linkName = e.replace(/https:\/\/en.wiktionary.org\/wiki\/Reconstruction:/g, "")
                 .split("/").join(" ");
         } else {
@@ -81,6 +76,9 @@ class GraphNode {
     constructor(i) {
         this.counter = i;
         this.iri = [];
+	//this.all contains this.iri (i.e. equivalent nodes) 
+	//and also identical nodes in the tree
+	//e.g. ee_1_door and ee_door
         this.all = [];
         this.shape = "rect";
         this.style = "fill: #F0E68C; stroke: lightBlue";
@@ -108,10 +106,16 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
             this.iso = "eng";
             this.label = tmp[0];
         }
+	//graphNode specifies the graphnoce corresponding to the node
         this.graphNode = [];
         this.eqIri = [];
         this.der = undefined;
         this.isAncestor = false;
+	//ety is an integer
+	//and represents the etymology number encoded in the iri; 
+	//if ety === 0 the iri is __ee_word
+	//if ety === 1 the iri is __ee_1_word
+	//etc
         this.ety = 0;
         if (null !== this.label.match(/__ee_[0-9]+_/g)) {
             //ety is an integer specifying the etymology entry
@@ -134,7 +138,7 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
         this.style = "fill: sandyBrown; stroke: lightBlue";
         this.rx = this.ry = 7;
     }
-
+/* commented for now
     disambiguate() {
         this.refersTo.forEach(function(iri) {
             d3.selectAll("rect")
@@ -148,28 +152,36 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
             "either of the words highlighted in red, " +
             "because word sense was not specified in the corresponding Wiktionary Etymology Section." +
             "</i>");
-    }
-
+    }*/
     showTooltip(x, y) {
         var url = ENDPOINT + "?query=" + encodeURIComponent(sparql(this.iri));
 
         if (debug) {
             console.log(url);
         }
-        const source = get(url);
-        source.subscribe(response => this.popTooltip(response, x, y),
+        const source = getXMLHttpRequest(url);
+        source.subscribe(
+	    response => this.popTooltip(response, x, y),
             error => console.error(error),
             () => console.log('done DAGRE'));
     }
 
     printTooltip(resp) {
+	//print label
         var text = "<b>" + this.label + "</b><br><br><br>";
-        if (null !== resp) {
+        
+	if (null !== resp) {
+	    //print definition
             var dataJson = JSON.parse(resp).results.bindings;
             dataJson.forEach(function(element) {
                 text += logDefinition(element.pos, element.gloss);
             });
-            text += "der=" + this.dero + "<br><br>as extracted from: " + logLinks(dataJson[0].links.value);
+
+	    //this is print for debugging purposes only
+            text += "der=" + this.dero;
+		
+	    //print links
+	    text += "<br><br>as extracted from: " + logLinks(dataJson[0].links.value);
         } else {
             text += "-";
         }
@@ -187,14 +199,6 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
 
 //CONFIGURE - print debugging messages when debug == true    
 debug = true;
-
-//CONFIGURE - if excludeStarLikeStructures == true don't visualize node B if node B is the target of a node in the same language and if node B itself is not the source of a link  
-//when set to true this removes many links that show up as stars in the graph (nodes with many links departing from it)       
-excludeStarLikeStructures = false;
-
-//CONFIGURE - if mergeEquivalentnodes == true, if node A is etymologically equivalent to node B merge A and B into one node and merge their links too   
-//otherwise equivalent nodes are linked by links with no arrow   
-mergeEquivalentNodes = true;
 
 //LOAD LANGUAGES                            
 //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English") 

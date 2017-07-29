@@ -1,5 +1,5 @@
 /*globals
-    jQuery, d3, debug, console, window, document, searchSparql, drawDisambiguationDAGRE, ENDPOINT, get
+    jQuery, d3, debug, console, window, document, searchSparql, drawDisambiguation, ENDPOINT, getXMLHttpRequest
 */
 jQuery('document').ready(function($) {
     var div = d3.select("body").append("div")
@@ -33,7 +33,7 @@ jQuery('document').ready(function($) {
                     console.log(url);
                 }
 
-                const source = get(url);
+                const source = getXMLHttpRequest(url);
                 source.subscribe(response => drawDisambiguation(response, width, height),
                     error => console.error(error),
                     () => console.log('done disambiguation'));
