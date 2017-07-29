@@ -199,7 +199,9 @@ function drawDisambiguation(response, width, height){
         }
 
 	var g = new dagreD3.graphlib.Graph().setGraph({});
-        g.nodess = {};
+
+        //define nodes
+	g.nodess = {};
         graph.forEach(function(n) {
             var iris = n.et.value.split(",");
             if (iris.keys.length === 0) {
@@ -224,40 +226,11 @@ function drawDisambiguation(response, width, height){
             m = n;
         }
 
-        var svg = d3.select("#tree-container").append("svg")
-            .attr("id", "tree-overlay")
-            .attr("width", width)
-            .attr("height", height)
-            .on("click", function() {
-                d3.select("#myPopup")
-                    .style("display", "none");
-            });
-
-        var inner = svg.append("g");
-
-        // Set up zoom support
-        var zoom = d3.behavior.zoom().on("zoom", function() {
-            inner.attr("transform", "translate(" + d3.event.translate + ")" +
-                "scale(" + d3.event.scale + ")");
-        });
-        svg.call(zoom);
-
-        // Create the renderer     
-        var render = new dagreD3.render();
-
-        // Run the renderer. This is what draws the final graph.
-        render(inner, g);
-	
+	var inner = renderGraph(g, width, height);
 	appendLanguageTagTextAndTooltip(inner, g);
 	appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
 	
         d3.selectAll(".edgePath").remove();
-
-        var initialScale = 0.75;
-        d3.select("svg").on("dblclick.zoom", null);
-        zoom.translate([(width - g.graph().width * initialScale) / 2, 20])
-            .scale(initialScale)
-            .event(svg);
     }
 }
 
@@ -313,7 +286,9 @@ function drawDAGRE(iri, parameter, width, height){
 				    refreshScreen8();
 				} else {
 				    var g = defineGraph(ancestorArray, graphArray);
-				    renderGraph(g, width, height);
+				    var inner = renderGraph(g, width, height);
+				    appendLanguageTagTextAndTooltip(inner, g);
+				    appendDefinitionTooltip(inner, g);
 				}
 			    });
 		    },
@@ -452,7 +427,7 @@ function defineGraph(ancestors, response) {
         }
     }
 
-    var showDerivedNodes = false;
+    var showDerivedNodes = true;
     if (ancestors.length < 3) showDerivedNodes = true;
 
     for (var gg in g.graphNodes){
@@ -578,13 +553,6 @@ function renderGraph(g, width, height){
 
     // Run the renderer. This is what draws the final graph.  
     render(inner, g);
-
-for (var i in g.nodess){
-console.log(g.nodess[i]);}
-
-    appendLanguageTagTextAndTooltip(inner, g);
-        
-    appendDefinitionTooltip(inner, g);
     
     // Center the graph       
     var initialScale = 0.75;
@@ -593,4 +561,5 @@ console.log(g.nodess[i]);}
         .event(svg);
     
     //svg.attr("height", g.graph().height * initialScale + 40);}}
+    return inner;
 }
