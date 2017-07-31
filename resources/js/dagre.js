@@ -204,13 +204,13 @@ function drawDisambiguation(response, width, height){
 	g.nodess = {};
         graph.forEach(function(n) {
             var iris = n.et.value.split(",");
-            if (iris.keys.length === 0) {
-                g.nodess[n.iri.value] = new Node(n.iri.value);
-            } else {
-                iris.forEach(function(element) {
-                    g.nodess[element] = new Node(element);
-                });
-            }
+	    iris.forEach(function(element) {
+		if (element != ""){
+		    g.nodess[element] = new Node(element);
+		} else {
+		    g.nodess[n.iri.value] = new Node(n.iri.value);
+		}
+	    });
         });
         if (debug) {
             console.log(g.nodess);
