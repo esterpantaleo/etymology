@@ -77,9 +77,10 @@ function sparql(iri) {
 }
 
 //DEFINE QUERIES TO PLOT GRAPH          
-function ancestorSparql(id, parameter){
-    if (parameter === 1){
-	var query = [
+function ancestorSparql(id, parameter) {
+    var query;
+    if (parameter === 1) {
+        query = [
             "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
             "SELECT DISTINCT ?ancestor1 ?ancestor2",
             "{ ",
@@ -87,17 +88,19 @@ function ancestorSparql(id, parameter){
             "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?ancestor1 .",
             "   ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 .}",
             "} "
-	];
-	return query.join(" ");
-    } else if (parameter === 2){
-	var query = [
-            "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
-            "SELECT DISTINCT ?ancestor1",
-            "{ ",
-            "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
-            "} "
-	];
-	return query.join(" ");
+        ];
+        return query.join(" ");
+    } else {
+        if (parameter === 2) {
+            query = [
+                "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
+                "SELECT DISTINCT ?ancestor1",
+                "{ ",
+                "   <" + id + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 .",
+                "} "
+            ];
+            return query.join(" ");
+        }
     }
 }
 
