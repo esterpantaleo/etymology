@@ -165,7 +165,7 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height){
     var touchtime = 0;
     inner.selectAll("g.node")
         .on('click', function(d) {
-            if (touchtime == 0) {
+            if (touchtime === 0) {
 		//set first click 
 		touchtime = new Date().getTime();
 	    } else {
@@ -186,15 +186,15 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height){
 	})
 	.on("mousedown", function() { 
 	    d3.event.stopPropagation(); 
-	}) 
+	});
 }
 
 function drawDisambiguation(response, width, height){
-    if (response != null){
+    if (response !== undefined && response !== null){
 	refreshScreen1();
        
 	var graph = JSON.parse(response).results.bindings;
-	if (graph.length == 0){
+	if (graph.length === 0){
             refreshScreen2();
         }
 
@@ -205,7 +205,7 @@ function drawDisambiguation(response, width, height){
         graph.forEach(function(n) {
             var iris = n.et.value.split(",");
 	    iris.forEach(function(element) {
-		if (element != ""){
+		if (element !== ""){
 		    g.nodess[element] = new Node(element);
 		} else {
 		    g.nodess[n.iri.value] = new Node(n.iri.value);
@@ -272,7 +272,7 @@ function drawDAGRE(iri, parameter, width, height){
 			    for (var t in tmp){
 				descendantArray.push(tmp[t].descendant1.value);
 			    }
-			})
+			});
 			const subscribe = slicedQuery(descendantArray, dataSparql, 8)
 			    .subscribe(function(val) {
 				var graphArray = [];
@@ -441,7 +441,7 @@ function defineGraph(ancestors, response) {
 
 	//define der
 	var der = g.graphNodes[gg].all.filter(function(element) { 
-	    return g.nodess[element].der != undefined; 
+	    return g.nodess[element].der !== undefined; 
 	});
 	if (der.length > 0){
 	    g.graphNodes[gg].der = true;
@@ -455,10 +455,10 @@ function defineGraph(ancestors, response) {
 
     //define linkedToTarget and linkedToSource
     response.forEach(function(element){
-	if (element.rel != undefined && element.s != undefined){
+	if (element.rel !== undefined && element.s !== undefined){
 	    var source = g.nodess[element.rel.value].graphNode[0], target = g.nodess[element.s.value].graphNode[0];
 
-	    if (source != target){
+	    if (source !== target){
 		if (showDerivedNodes){
 		    g.graphNodes[source].linkedToTarget.push(target);
 		} else {
@@ -467,7 +467,7 @@ function defineGraph(ancestors, response) {
 			g.graphNodes[source].linkedToTarget.push(target);
 		    }
 		} 
-		if (g.graphNodes[target].linkedToSource.indexOf(source) == -1){ 
+		if (g.graphNodes[target].linkedToSource.indexOf(source) === -1){ 
 		    g.graphNodes[target].linkedToSource.push(source);
 		}
 	    } 

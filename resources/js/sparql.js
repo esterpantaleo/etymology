@@ -78,8 +78,9 @@ function sparql(iri) {
 
 //DEFINE QUERIES TO PLOT GRAPH          
 function ancestorSparql(id, parameter){
+    var query;
     if (parameter === 1){
-	var query = [
+	query = [
             "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
             "SELECT DISTINCT ?ancestor1 ?ancestor2",
             "{ ",
@@ -90,7 +91,7 @@ function ancestorSparql(id, parameter){
 	];
 	return query.join(" ");
     } else if (parameter === 2){
-	var query = [
+	query = [
             "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ",
             "SELECT DISTINCT ?ancestor1",
             "{ ",
