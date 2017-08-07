@@ -178,7 +178,7 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
             });
 
 	    //this is print for debugging purposes only
-            text += "der=" + this.dero;
+            //text += "der=" + this.dero;
 		
 	    //print links
 	    text += "<br><br>as extracted from: " + logLinks(dataJson[0].links.value);
