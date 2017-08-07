@@ -1,0 +1,203 @@
+[{
+	"name": ["Old French", "Judeo-French", "Zarphatic"],
+	"iso": "fro",
+	"start_year": 842,
+	"end_year": 1400,
+	"quote_year": "Old French (842-ca. 1400)",
+        "source_year": "iso-639-3.tab"
+},{
+	"name":[Norman, Cauchois, Jèrriais, Jersey French, Jersey Norman, Jersey Norman French, Guernésiais, Dgèrnésiais, Guernsey French, Guernsey Norman French, Augeron, Sercquiais, Auregnais].
+	"iso": "nrf",
+	"start_year": 1000,
+	"quote_year": "the people who in the 10th and 11th centuries gave their name to Normandy",
+	"source_year": "https://en.wikipedia.org/wiki/Normans",
+	"spoken": true
+},{
+	"name": ["Old English", "Anglo-Saxon"],
+	"iso": "ang",
+	"start_year": 450,
+	"end_year": 1100,
+	"source_year": "iso-639-3.tab"
+},{
+	"name": ["Arabic", "Modern Standard Arabic", "Standard Arabic", "Literary Arabic", "Classical Arabic"],
+	"iso": ["ara", "ar"],
+	"start_year": 500,
+	"quote_year": "the Classical Arabic language of the 6th century",
+	"source_year": "https://en.wikipedia.org/wiki/Arabic",
+	"spoken": true
+},{
+"name": ["PIE","Proto-Indo-European"],
+"start_year":-4500,
+"quote_year": "~4200 BC"
+},{
+"name": "Indo-European",
+"start_year":-4200,
+"quote_year": "~4200 BC"
+},{
+"name": "Sanskrit",
+"year": -1200,
+"quote_year": "from the mid-to-late second millennium BCE"
+},{
+"name": "Old Prussian",
+"year":1200,
+"quote_year": "in about the 13th century"
+},{
+"name": "Old Persian",
+"year":-600,
+"quote_year": "c. 600 BCE to 300 BCE"
+},{
+"name": "Ancient Greek",
+"year":-800,
+"quote_year": "from around the 9th century BC to the 6th century AD"
+},{
+"name": "Greek",
+"year":500
+},{
+"name": "Proto-Germanic",
+"year":-500
+"quote_year": "about 500 BC"
+},{
+"name": "West Germanic",
+"year":200,
+"quote_year": "~200 AD"
+},{
+"name": "Old Dutch",
+"year":400,
+"quote_year": "from around the 5th to the 12th century"
+},{
+"name": "Middle Dutch",
+"year":1150,
+"quote_year": "between 1150 and 1500"
+},{
+"name": "Dutch",
+"year":1500,
+"quote_year": "1500–present"
+},{
+"name": "Old High German",
+"year":700,
+"quote_year": "from around 700 to 1050 AD"
+},{
+"name": "German",
+"year":1500
+},{
+"name": "Old Saxon",
+"year":750,
+"quote_year": "It is documented from the 8th century until the 12th century"
+},{
+"name": "Old Frisian",
+"year":700,
+"quote_year": "between the 8th and 16th centuries"
+},{
+"name": "Middle English",
+"year":1066,
+"quote_year": "(1066) until the late 15th century"
+},{
+"name": "English",
+"year":1500,
+},{
+"name": "North Germanic",
+"year":200,
+"quote_year": "At last around the year 200 AD"
+},{
+"name": "Old Norse",
+"year":800,
+"quote_year": "during about the 9th to 13th centuries"
+},{
+"name": "Danish",
+"year":1650
+},{
+"name": "East Germanic",
+"year":100
+},{
+"name": "Gothic",
+"year":400,
+"quote_year": "4th century"
+},{
+"name": "Old Latin",
+"year":-200,
+"quote_year": "Old Latin authored works began in the 3rd century BC"
+},{
+"name": "Latin",
+"year":-75,
+"quote_year": "from 75 BC to 3rd century AD"
+},{
+"name": "Italian",
+"year":900
+},{
+"name": "Romanian",
+"year":1500
+},{
+"name": "Catalan",
+"year":800,
+"quote_year": "By the 9th century"
+},{
+"name": "Old Portuguese",
+"year":400,
+"quote_year": "in the 5th century"
+},{
+"name": "Portuguese",
+"year":1100,
+},{
+"name": "Galician",
+"year":1100
+"quote_year": "until the 12th century"
+},{
+"name":"Spanish",
+"year":800,
+"quote_year": "from the 9th century"
+},{
+"name":"French",
+"year":1300
+},{
+"name":"Gaulish",
+"year":-500,
+"quote_year": "from the 6th century BC to the 6th century AD"
+},{
+"name":"Russian",
+"year":1850
+},{
+"name":"Finnish",
+"year":-1500,
+"quote_year": "around 1500–1000 BCE"
+},{
+"name":"Esperanto",
+"year":1870
+},{
+"name":"Austronesian",
+"year":-4000,
+"quote_year": "6000 years ago"
+},{
+"name":"Hawaiian",
+"year":500,
+"quote_year": "in roughly 300 AD"
+},{
+"name":["Old Provençal","Old Occitan","Old Provençal"],
+"year":700,
+"quote_year": "as attested in writings dating from the eighth through the fourteenth centuries."
+},{
+"name":["Occitan","lenga d'òc"],
+"year":960,
+"quote_year": "One of the oldest written fragments of the language ever found dates back to the year 960"
+},{
+"name":"Provençal",
+"year":1000
+},{
+"name":"Auvergnat",
+"year":1000
+},{
+"name":"Limousin",
+"year":1000
+},{
+"name":"Languedocien",
+"year":1000
+},{
+"name":"Gascon",
+"year":1000
+},{
+"name":"Vivaro-Alpine",
+"year":1000
+},{
+"name":"Asturian",
+"year":700,
+"quote_year": "Asturian became closely linked with the ancient Kingdom of Asturias (718–910)"
+}]

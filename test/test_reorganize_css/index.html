@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="./resources/css/etytree.css">
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.7/css/hopscotch.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.7/js/hopscotch.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.1/Rx.min.js"></script>
+<script src="./vendors/dagre-d3/dagre-d3.js"></script>
+<script src="./resources/js/liveTour.js"></script>
+<script src="./resources/js/load.js"></script>
+<script src="./resources/js/sparql.js"></script>   
+<script src="./resources/js/dagre.js"></script>
+<script src="./resources/js/etytree.js"></script>  
+<body> 
+
+<!--<div data-role="page">-->
+    <div data-role="header" id="header">
+        <table class="table">
+            <br>
+	    <tr>
+	        <td colspan="2">
+	        <span class="bigSpan">etytree</span> - <span class="mediumSpan"> a graphical etymology dictionary</span> 
+		</td>
+	    </tr>
+	    <br>
+	    <tr>
+                <td> 
+                    <input type="text" data-type="search" placeholder="search word" id="tags"></input>
+                </td>
+            <!--    <td>
+                    <a id="searchButton" data-rel="popup" style="font-size:12px;border:0" data-inline="true" class="ui-btn ui-corner-all ui-icon-search ui-btn-icon-center ui-btn-icon-notext"> </a>
+                </td> -->
+                <td>
+                    <a href="#helpPopup" data-rel="popup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true">help</a>
+                    <div data-role="popup" class="ui-content help">
+                        <p id="helpPopup">
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div data-role="content" class="ui-content" id="tree-container">
+        <p id="message" align="center">
+        </p>
+        <a href="#tooltipPopup" data-rel="popup" data-transition="pop" class="tooltip">
+	</a>
+        <div id="tree-overlay" class="overlay">
+        </div>
+    </div>
+</body>
+</html>
+

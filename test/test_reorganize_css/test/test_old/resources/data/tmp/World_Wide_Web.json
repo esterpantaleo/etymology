@@ -1,0 +1,31 @@
+{
+    "name": "World Wide Web",
+    "language": "English",
+    "year":1990,
+    "type": "proper noun",
+    "long_definition_english": ["Collectively, all of the web pages on the Internet which hyperlink to each other and to other kinds of documents and media","(computing) Internet resources that are retrieved by Hypertext Transfer Protocol (HTTP)."],
+    "children": [{
+        "name": ["worldwide","world-wide"],
+        "position": "left",
+        "language": "English",
+        "order":0,
+        "type":["noun","adverb"],
+        "long_definition_english":["Spanning the world.","Throughout the world."],
+        "definition_english":["global","globally"]
+    },{
+        "language": "English",
+        "name": "web",
+        "type": ["noun","verb"],
+        "long_definition_english": ["The silken structure a spider builds using silk secreted from the spinnerets at the caudal tip of its abdomen; a spiderweb.", "Any interconnected set of persons, places, or things, which when diagrammed resembles a spider's web.", "(baseball) The part of a baseball mitt between the forefinger and thumb, the webbing.", "A latticed or woven structure.", "The interconnection between flanges in structural members, increasing the effective lever arm and so the load capacity of the member.", "(rail transport) The thinner vertical section of a railway rail between the top (head) and bottom (foot) of the rail.", "A fold of tissue connecting the toes of certain birds, or of other animals.", "The series of barbs implanted on each side of the shaft of a feather, whether stiff and united together by barbules, as in ordinary feathers, or soft and separate, as in downy feathers.", "(manufacturing) A continuous strip of material carried by rollers during processing.", "(lithography) A long sheet of paper which is fed from a roll into a printing press, as opposed to individual sheets of paper.", "(dated) A band of webbing used to regulate the extension of the hood of a carriage.","A thin metal sheet, plate, or strip, as of lead.","(intransitive) to construct or form a web", "(transitive) to cover with a web or network", "(transitive) to ensnare or entangle", "(transitive) to provide with a web"],
+        "duplicate":true,
+        "position": "left",
+        "order":1
+    },{
+        "language": "English",
+        "name": ["web","Web"],
+      	"type": "proper noun",
+        "long_definition_english": "the World Wide Web",
+        "link": "abbreviation",
+        "position": "right"
+    }]
+}
