@@ -1,5 +1,5 @@
 /*globals 
-    d3, Rx, sparql, console, XMLHttpRequest
+    d3, Rx, SPARQL, console, XMLHttpRequest
 */
 //SET PARAMETERS FOR FUNCTION d3.xhr() 
 var ENDPOINT = "https://etytree-virtuoso.wmflabs.org/sparql";
@@ -76,9 +76,9 @@ class GraphNode {
     constructor(i) {
         this.counter = i;
         this.iri = [];
-	//this.all contains this.iri (i.e. equivalent nodes) 
-	//and also identical nodes in the tree
-	//e.g. ee_1_door and ee_door
+        //this.all contains this.iri (i.e. equivalent nodes) 
+        //and also identical nodes in the tree
+        //e.g. ee_1_door and ee_door
         this.all = [];
         this.shape = "rect";
         this.style = "fill: #F0E68C; stroke: lightBlue";
@@ -106,16 +106,16 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
             this.iso = "eng";
             this.label = tmp[0];
         }
-	//graphNode specifies the graphnoce corresponding to the node
+        //graphNode specifies the graphnoce corresponding to the node
         this.graphNode = [];
         this.eqIri = [];
         this.der = undefined;
         this.isAncestor = false;
-	//ety is an integer
-	//and represents the etymology number encoded in the iri; 
-	//if ety === 0 the iri is __ee_word
-	//if ety === 1 the iri is __ee_1_word
-	//etc
+        //ety is an integer
+        //and represents the etymology number encoded in the iri; 
+        //if ety === 0 the iri is __ee_word
+        //if ety === 1 the iri is __ee_1_word
+        //etc
         this.ety = 0;
         if (null !== this.label.match(/__ee_[0-9]+_/g)) {
             //ety is an integer specifying the etymology entry
@@ -138,50 +138,50 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
         this.style = "fill: sandyBrown; stroke: lightBlue";
         this.rx = this.ry = 7;
     }
-/* commented for now
-    disambiguate() {
-        this.refersTo.forEach(function(iri) {
-            d3.selectAll("rect")
-                .filter(function(f) { return (!f.classed("iso") && f.iri === iri); })
-                .attr("fill", "red");
-        });
-        d3.select("#myPopup").html("<b>" +
-            this.label +
-            "</b><br><br><i>" +
-            "If you choose this word you will visualize the etymological tree of" +
-            "either of the words highlighted in red, " +
-            "because word sense was not specified in the corresponding Wiktionary Etymology Section." +
-            "</i>");
-    }*/
+    /* commented for now
+        disambiguate() {
+            this.refersTo.forEach(function(iri) {
+                d3.selectAll("rect")
+                    .filter(function(f) { return (!f.classed("iso") && f.iri === iri); })
+                    .attr("fill", "red");
+            });
+            d3.select("#myPopup").html("<b>" +
+                this.label +
+                "</b><br><br><i>" +
+                "If you choose this word you will visualize the etymological tree of" +
+                "either of the words highlighted in red, " +
+                "because word sense was not specified in the corresponding Wiktionary Etymology Section." +
+                "</i>");
+        }*/
     showTooltip(x, y) {
-        var url = ENDPOINT + "?query=" + encodeURIComponent(sparql(this.iri));
+        var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.sparql(this.iri));
 
         if (debug) {
             console.log(url);
         }
         const source = getXMLHttpRequest(url);
         source.subscribe(
-	    response => this.popTooltip(response, x, y),
+            response => this.popTooltip(response, x, y),
             error => console.error(error),
             () => console.log('done DAGRE'));
     }
 
     printTooltip(resp) {
-	//print label
+        //print label
         var text = "<b>" + this.label + "</b><br><br><br>";
-        
-	if (null !== resp) {
-	    //print definition
+
+        if (null !== resp) {
+            //print definition
             var dataJson = JSON.parse(resp).results.bindings;
             dataJson.forEach(function(element) {
                 text += logDefinition(element.pos, element.gloss);
             });
 
-	    //this is print for debugging purposes only
+            //this is print for debugging purposes only
             //text += "der=" + this.dero;
-		
-	    //print links
-	    text += "<br><br>as extracted from: " + logLinks(dataJson[0].links.value);
+
+            //print links
+            text += "<br><br>as extracted from: " + logLinks(dataJson[0].links.value);
         } else {
             text += "-";
         }

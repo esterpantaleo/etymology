@@ -1,5 +1,5 @@
 /*globals
-    jQuery, d3, debug, console, window, document, searchSparql, drawDisambiguation, ENDPOINT, getXMLHttpRequest
+    jQuery, d3, debug, console, window, document, SPARQL, drawDisambiguation, ENDPOINT, getXMLHttpRequest
 */
 jQuery('document').ready(function($) {
     var div = d3.select("body").append("div")
@@ -28,7 +28,7 @@ jQuery('document').ready(function($) {
                 if (debug) console.log("searching word in database");
                 var width = window.innerWidth,
                     height = $(document).height() - $('#header').height();
-                var url = ENDPOINT + "?query=" + encodeURIComponent(searchSparql(word));
+                var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.searchSparql(word));
                 if (debug) {
                     console.log(url);
                 }
