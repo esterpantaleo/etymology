@@ -22,13 +22,13 @@ jQuery('document').ready(function($) {
         .attr("align", "center");
     $('#tags').on("keypress click", function(e) {
         if (e.which === 13 || e.type === 'click') {
-            var word = $(this).val(); //.replace("/", "!slash!");
+            var lemma = $(this).val(); //.replace("/", "!slash!");
 
-            if (word) {
-                if (debug) console.log("searching word in database");
+            if (lemma) {
+                if (debug) console.log("searching lemma in database");
                 var width = window.innerWidth,
                     height = $(document).height() - $('#header').height();
-                var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.searchSparql(word));
+                var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.disambiguationQuery(lemma));
                 if (debug) {
                     console.log(url);
                 }

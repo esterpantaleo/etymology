@@ -91,22 +91,22 @@ function serverError(error) {
 
 //function to slice up a big sparql query (that cannot be processed by virtuoso)
 // into a bunch of smaller queries in chunks of "chunk"
-function slicedQuery(myArray, mySparql, chunk) {
+function slicedQuery(myArray, query, chunk) {
     var i, j, tmpArray, url, sources = [];
     for (i = 0, j = myArray.length; i < j; i += chunk) {
         tmpArray = myArray.slice(i, i + chunk);
-        //console.log(SPARQL.unionSparql(tmpArray, mySparql));
-        url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.unionSparql(tmpArray, mySparql));
+        //console.log(SPARQL.unionQuery(tmpArray, query));
+        url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.unionQuery(tmpArray, query));
         console.log(url);
         sources.push(getXMLHttpRequest(url));
     }
-    const query = Rx.Observable.zip.apply(this, sources)
+    const queryObservable = Rx.Observable.zip.apply(this, sources)
         .catch((err) => {
             refreshScreen6();
             //Return an empty Observable which gets collapsed in the output
             return Rx.Observable.empty();
         });
-    return query;
+    return queryObservable;
 }
 
 function appendDefinitionTooltip(inner, g) {
@@ -238,7 +238,7 @@ function drawDisambiguation(response, width, height) {
 function drawDAGRE(iri, parameter, width, height) {
     //if parameter == 1 submit a short (but less detailed) query
     //if parameter == 2 submit a longer (but more detailed) query
-    var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.ancestorSparql(iri, parameter));
+    var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.ancestorQuery(iri, parameter));
     if (debug) {
         console.log(url);
     }
@@ -263,7 +263,7 @@ function drawDAGRE(iri, parameter, width, height) {
 
             console.log("ANCESTORS");
             console.log(ancestorArray);
-            const subscribe = slicedQuery(ancestorArray, SPARQL.descendantSparql, 8)
+            const subscribe = slicedQuery(ancestorArray, SPARQL.descendantQuery, 8)
                 .subscribe(
                     function(val) { //val = 8 crashes sometimes                       
                         var descendantArray = [];
@@ -273,7 +273,7 @@ function drawDAGRE(iri, parameter, width, height) {
                                 descendantArray.push(tmp[t].descendant1.value);
                             }
                         });
-                        const subscribe = slicedQuery(descendantArray, SPARQL.dataSparql, 8)
+                        const subscribe = slicedQuery(descendantArray, SPARQL.propertyQuery, 8)
                             .subscribe(function(val) {
                                 var graphArray = [];
                                 val.forEach(function(element) {

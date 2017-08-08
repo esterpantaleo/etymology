@@ -154,7 +154,7 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
                 "</i>");
         }*/
     showTooltip(x, y) {
-        var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.sparql(this.iri));
+        var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.lemmaQuery(this.iri));
 
         if (debug) {
             console.log(url);
