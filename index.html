@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="./resources/css/etytree.css">
 <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
 <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -38,10 +38,9 @@
                     <a id="searchButton" data-rel="popup" style="font-size:12px;border:0" data-inline="true" class="ui-btn ui-corner-all ui-icon-search ui-btn-icon-center ui-btn-icon-notext"> </a>
                 </td> -->
                 <td>
-                    <a href="#helpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true">help</a>
-                    <div data-role="popup" id="helpPopup" class="ui-content help">
-                        <p id="p-helpPopup">
-                            Enter a word in the search bar, then press enter or click.
+                    <a href="#divHelpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true">help</a>
+                    <div data-role="popup" id="divHelpPopup" class="ui-content help">
+                        <p id="helpPopup" class="help">
                         </p>
                     </div>
                 </td>
@@ -49,6 +48,7 @@
         </table>
     </div>
     <div data-role="content" class="ui-content" id="tree-container">
+        <p id="message" aligh="center"/>
         <div id="tree-overlay" style="text-align:center;">
             <div>
                 <br><br><br><br><br>
@@ -87,7 +87,13 @@
             </div>
         </div>
     </div>
-
+    <!--
+    <div id="tooltipPopup-popup" class="ui-popup-container ui-popup-hidden ui-popup-truncate">
+        <div data-role="popup" data-dismissible="true" id="tooltipPopup" style="position:absolute;background=lightBlue;text-align:left;padding:2px;font:12px sans-serif;border:0px;border-radius:8px;width:auto;height:auto;">
+            <a href="#tooltipPopup" data-rel="popup" data-transition="pop">
+	    </a>
+        </div>
+    </div>--> 
 </body>
 </html>
 

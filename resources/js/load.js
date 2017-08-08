@@ -9,6 +9,29 @@ var debug,
     langMap,
     ssv;
 
+var HELP = {
+    intro: "Enter a word in the search bar, then press enter or click.",
+    disambiguation: "<b>Disambiguation page</b>" +
+    "<br>Pick the word you are interested in." +
+    "<ul>" +
+    "<li>Click on a node to display lexical information</li>" +
+    "<li>Click on the language tag under the node to display the language</li>" + 
+    "<li>Double click on a node to choose a word</li>" +
+    "</ul>",
+    dagre: "Arrows go from ancestor to descendant.<ul>" + 
+    "<li>Click on a node to display lexical information</li>" +
+    "<li>Click on the language tag under the node to display the language</li>" +
+    "</ul>"
+};
+
+var MESSAGE = {
+    notAvailable: "This word is not available in the database",
+    loading: "Loading, please wait...",
+    serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
+    noEtymology: "Sorry, it seems like no etymology is available in the English Wiktionary for this word.",
+    loadingMore: "This word is related to many words. Please wait a bit more."
+};
+
 function getXMLHttpRequest(url) {
     return Rx.Observable.create(observer => {
         const req = new XMLHttpRequest();
@@ -145,7 +168,7 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
                     .filter(function(f) { return (!f.classed("iso") && f.iri === iri); })
                     .attr("fill", "red");
             });
-            d3.select("#myPopup").html("<b>" +
+            d3.select("#tooltipPopup").html("<b>" +
                 this.label +
                 "</b><br><br><i>" +
                 "If you choose this word you will visualize the etymological tree of" +
@@ -154,6 +177,8 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
                 "</i>");
         }*/
     showTooltip(x, y) {
+	var text = "<b>" + this.label + "</b><br><br><br>";
+
         var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.lemmaQuery(this.iri));
 
         if (debug) {
@@ -161,39 +186,34 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
         }
         const source = getXMLHttpRequest(url);
         source.subscribe(
-            response => this.popTooltip(response, x, y),
-            error => console.error(error),
-            () => console.log('done DAGRE'));
-    }
-
-    printTooltip(resp) {
-        //print label
-        var text = "<b>" + this.label + "</b><br><br><br>";
-
-        if (null !== resp) {
-            //print definition
-            var dataJson = JSON.parse(resp).results.bindings;
-            dataJson.forEach(function(element) {
-                text += logDefinition(element.pos, element.gloss);
-            });
-
-            //this is print for debugging purposes only
-            //text += "der=" + this.dero;
-
-            //print links
-            text += "<br><br>as extracted from: " + logLinks(dataJson[0].links.value);
-        } else {
-            text += "-";
-        }
-        return text;
-    }
-
-    popTooltip(resp, x, y) {
-        var text = this.printTooltip(resp);
-        d3.select("#myPopup")
-            .style("left", (x + 38) + "px")
-            .style("top", (y - 28) + "px")
-            .append("p").html(text);
+			 function(response){
+			     if (null !== response) {
+				 //print definition                                                      
+				 var dataJson = JSON.parse(response).results.bindings;
+				 dataJson.forEach(function(element) {
+					 text += logDefinition(element.pos, element.gloss);
+				     });
+				 //print links 
+				 text += "<br><br>as extracted from: " + logLinks(dataJson[0].links.value);
+			     } else {
+				 text += "-";
+			     }
+			 },
+			 function(error) {
+			     console.error(error);
+			     text += "-";
+			     d3.select("#tooltipPopup")
+				 .html(text)
+				 .style("left", (x + 38) + "px")
+				 .style("top", (y - 28) + "px");
+			 },
+			 function(){
+			     d3.select("#tooltipPopup")
+                                 .html(text)
+                                 .style("left", (x + 38) + "px")
+                                 .style("top", (y - 28) + "px");
+			     console.log('tooltip shown');
+			 });
     }
 }
 

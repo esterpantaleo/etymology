@@ -2,92 +2,7 @@
     d3, console, ENDPOINT, debug, dagreD3, GraphNode, sortUnique, SPARQL, Node, Rx, getXMLHttpRequest
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
-function refreshScreen1() {
-    //clean screen
-    d3.select("#tree-overlay").remove();
-    d3.select("#message").html("");
-    d3.select("#p-helpPopup").remove();
-    d3.select("#myPopup").style("display", "none");
-
-    //change help message     
-    d3.select("#helpPopup")
-        .append("p")
-        .attr("id", "p-helpPopup")
-        .attr("class", "help")
-        .html("<b>Disambiguation page</b>" +
-            "<br>Pick the word you are interested in." +
-            "<ul>" +
-            "<li>Click on a circle to display the language</li>" +
-            "<li>Click on a word to display lexical information</li>" +
-            "<li>Double click on a circle to choose a word</li>" +
-            "</ul>");
-}
-
-function refreshScreen2() {
-    d3.select("#message")
-        .html("This word is not available in the database");
-}
-
 //TODO: use wheel 
-function refreshScreen3() {
-    d3.select("#tree-overlay").remove();
-    d3.select("#myPopup")
-        .style("display", "none");
-    d3.select("#message")
-        .html("Loading, please wait...");
-}
-
-function refreshScreen4(s) {
-    d3.select("#myPopup").html("");
-    d3.select(s)
-        .append("a")
-        .attr("href", "#myPopup")
-        .attr("data-rel", "popup")
-        .attr("data-transition", "pop");
-    d3.select("#myPopup")
-        .style("width", "auto")
-        .style("height", "auto")
-        .style("display", "inline");
-}
-
-function refreshScreen5() {
-    d3.select("#tree-overlay").remove();
-    d3.select("#myPopup")
-        .style("display", "none");
-    d3.select("#message").html("");
-}
-
-function refreshScreen6() {
-    d3.select("#message")
-        .html("Sorry, the server cannot extract etymological relationships correctly for this word.");
-}
-
-function refreshScreen7() {
-    d3.select("#p-helpPopup").remove();
-    d3.select("#helpPopup")
-        .append("p")
-        .attr("id", "p-helpPopup")
-        .attr("class", "help")
-        .html("Arrows go from ancestor to descendant.<ul>" +
-            "<li>Click on a circle to display the language</li>" +
-            "<li>Click on a word to display lexical information.</li>" +
-            "</ul>");
-}
-
-function refreshScreen8() {
-    d3.select("#message")
-        .html("Sorry, no etymology is available for this word!");
-}
-
-function refreshScreen9() {
-    d3.select("#message")
-        .html("This word is related to many words. Please wait a bit more.");
-}
-
-function serverError(error) {
-    refreshScreen6();
-    console.log(error);
-}
 
 //function to slice up a big sparql query (that cannot be processed by virtuoso)
 // into a bunch of smaller queries in chunks of "chunk"
@@ -102,28 +17,12 @@ function slicedQuery(myArray, query, chunk) {
     }
     const queryObservable = Rx.Observable.zip.apply(this, sources)
         .catch((err) => {
-            refreshScreen6();
+	    d3.select("#message").html(MESSAGE.serverError);
+
             //Return an empty Observable which gets collapsed in the output
             return Rx.Observable.empty();
         });
     return queryObservable;
-}
-
-function appendDefinitionTooltip(inner, g) {
-    //show tooltip on click on nodes                    
-    inner.selectAll("g.node")
-        .on("click", function(d) {
-            refreshScreen4(this);
-            var iri = g.node(d).iri;
-            console.log(iri[0]);
-            for (var i in iri) {
-                g.nodess[iri[i]].showTooltip(d3.event.pageX, d3.event.pageY);
-            }
-            d3.event.stopPropagation();
-        })
-        .on("mousedown", function() {
-            d3.event.stopPropagation();
-        });
 }
 
 function appendLanguageTagTextAndTooltip(inner, g) {
@@ -148,42 +47,61 @@ function appendLanguageTagTextAndTooltip(inner, g) {
             d3.select(this).style("cursor", "pointer");
         })
         .on("click", function(d) {
-            d3.select("#myPopup")
-                .style("display", "none");
-            refreshScreen4(this);
-            d3.select("#myPopup").html(function() {
+	    d3.select("#tooltipPopup").style("display", "none");
+            d3.select("#tooltipPopup").style("display", "inline").html("");
+            d3.select("#tooltipPopup")
+		.html(function() {
                     return g.node(d).lang;
                 })
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
             d3.event.stopPropagation();
         })
-        .on("mousedown", function() { d3.event.stopPropagation(); });
+        .on("mousedown", function() { 
+		d3.event.stopPropagation(); 
+	    });
+}
+
+function appendDefinitionTooltip(inner, g) {
+    //show tooltip on click on nodes                  
+    inner.selectAll("g.node")
+	.on("mouseover", function(d) {
+                d3.select(this).style("cursor", "pointer");
+            })
+        .on("click", function(d) {
+		d3.select("#tooltipPopup").style("display", "inline").html("");
+		var iri = g.node(d).iri;
+		console.log(iri[0]);
+		for (var i in iri) {
+		    g.nodess[iri[i]].showTooltip(d3.event.pageX, d3.event.pageY);
+		}
+		d3.event.stopPropagation();
+	    })
+        .on("mousedown", function() {
+		d3.event.stopPropagation();
+	    });
 }
 
 function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
     var touchtime = 0;
     inner.selectAll("g.node")
-        .on('click', function(d) {
-            if (touchtime === 0) {
-                //set first click 
-                touchtime = new Date().getTime();
-            } else {
+	.on("mouseover", function(d) { 
+		d3.select(this).style("cursor", "pointer"); 
+	    })
+	.on('dblclick', function(d){
                 var iri = g.node(d).iri;
-                if ((new Date().getTime()) - touchtime < 800) {
-                    //double click occurred  
-                    refreshScreen3();
-
-                    drawDAGRE(iri, 2, width, height);
-                    touchtime = 0;
-                } else {
-                    refreshScreen4(this);
-                    g.nodess[iri].showTooltip(d3.event.pageX, d3.event.pageY);
-                    d3.event.stopPropagation();
-                    touchtime = new Date().getTime();
-                }
-            }
-        })
+		d3.select("#message").html(MESSAGE.loading);
+		d3.select("#tree-overlay").remove();
+		d3.select("#tooltipPopup").style("display", "none");
+                drawDAGRE(iri, 2, width, height);
+                d3.event.stopPropagation();
+            })
+        .on('click', function(d) {
+		var iri = g.node(d).iri;
+		d3.select("#tooltipPopup").style("display", "inline").html("");
+		g.nodess[iri].showTooltip(d3.event.pageX, d3.event.pageY);
+		d3.event.stopPropagation();
+	    })
         .on("mousedown", function() {
             d3.event.stopPropagation();
         });
@@ -191,11 +109,14 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
 
 function drawDisambiguation(response, width, height) {
     if (response !== undefined && response !== null) {
-        refreshScreen1();
+        d3.select("#helpPopup").html(HELP.disambiguation);
+	d3.select("#message").html("");
+	d3.select("#tree-overlay").remove();
+	d3.select("#tooltipPopup").style("display", "none");
 
         var graph = JSON.parse(response).results.bindings;
         if (graph.length === 0) {
-            refreshScreen2();
+            d3.select("#message").html(MESSAGE.notAvailable);
         }
 
         var g = new dagreD3.graphlib.Graph().setGraph({});
@@ -246,12 +167,15 @@ function drawDAGRE(iri, parameter, width, height) {
 
     source.subscribe(
         function(response) {
-            refreshScreen5();
+	    d3.select("#message").html("");
+	    d3.select("#tree-overlay").remove();
+	    d3.select("#tooltipPopup").style("display", "none");
+
             if (null === response) {
-                refreshScreen6();
+		d3.select("#message").html(MESSAGE.serverError);
                 return;
             }
-            refreshScreen7();
+	    d3.select("#helpPopup").html(HELP.dagre);   
             var ancestorArray = [];
             JSON.parse(response).results.bindings.forEach(function(element) {
                 ancestorArray.push(element.ancestor1.value);
@@ -283,7 +207,7 @@ function drawDAGRE(iri, parameter, width, height) {
                                     }
                                 });
                                 if (graphArray.length === 0) {
-                                    refreshScreen8();
+				    d3.select("#message").html(MESSAGE.noEtymology);
                                 } else {
                                     var g = defineGraph(ancestorArray, graphArray);
                                     var inner = renderGraph(g, width, height);
@@ -292,14 +216,18 @@ function drawDAGRE(iri, parameter, width, height) {
                                 }
                             });
                     },
-                    error => serverError(error),
+                    function(error) {
+			d3.select("#message").html(MESSAGE.serverError);
+			console.log(error);
+		    },
                     () => console.log('done DAGREZIP'));
         },
         function(error) {
             if (parameter === 1) {
-                serverError(error);
+		d3.select("#message").html(MESSAGE.serverError);
+		console.log(error);
             } else {
-                refreshScreen9();
+		d3.select("#message").html(MESSAGE.ladingMore);
                 drawDAGRE(iri, 1, width, height);
             }
         },
@@ -536,7 +464,7 @@ function renderGraph(g, width, height) {
         .attr("width", width)
         .attr("height", height)
         .on("click", function() {
-            d3.select("#myPopup")
+            d3.select("#tooltipPopup")
                 .style("display", "none");
         });
 
@@ -547,7 +475,7 @@ function renderGraph(g, width, height) {
         inner.attr("transform", "translate(" + d3.event.translate + ")" +
             "scale(" + d3.event.scale + ")");
     });
-    svg.call(zoom);
+    svg.call(zoom).on("dblclick.zoom", null);
 
     // Create the renderer          
     var render = new dagreD3.render();
