@@ -89,8 +89,7 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
 	    })
 	.on('dblclick', function(d){
 		d3.select("#message").html(MESSAGE.loading);
-		d3.select("#tree-overlay").remove();
-		d3.select("#tooltipPopup").style("display", "none");
+		d3.event.stopPropagation();
 		var iri = g.node(d).iri;
                 drawDAGRE(iri, 2, width, height);
                 d3.event.stopPropagation();
@@ -143,7 +142,8 @@ function drawDisambiguation(response, width, height) {
             }
             m = n;
         }
-
+        
+	d3.select("#message").html("");
         var inner = renderGraph(g, width, height);
         appendLanguageTagTextAndTooltip(inner, g);
         appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
@@ -161,17 +161,17 @@ function drawDAGRE(iri, parameter, width, height) {
         console.log(url);
     }
     const source = getXMLHttpRequest(url);
-
+    d3.select("#tree-overlay").remove();
+    d3.select("#tooltipPopup").attr("display", "none");
+    
     source.subscribe(
         function(response) {
-	    d3.select("#message").html("");
-	    d3.select("#tree-overlay").remove();
-	    d3.select("#tooltipPopup").style("display", "none");
 
             if (null === response) {
 		d3.select("#message").html(MESSAGE.serverError);
                 return;
             }
+
 	    d3.select("#helpPopup").html(HELP.dagre);   
             
             var ancestorArray = JSON.parse(response).results.bindings
@@ -203,6 +203,7 @@ function drawDAGRE(iri, parameter, width, height) {
 				    d3.select("#message").html(MESSAGE.noEtymology);
                                 } else {
                                     var g = defineGraph(ancestorArray, allArray);
+				    d3.select("#message").html("");
                                     var inner = renderGraph(g, width, height);
                                     appendLanguageTagTextAndTooltip(inner, g);
                                     appendDefinitionTooltip(inner, g);

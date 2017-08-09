@@ -186,7 +186,7 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
 					 text += logDefinition(element.pos, element.gloss);
 				     });
 				 //print links 
-				 text += "<br><br>as extracted from: " + logLinks(dataJson[0].links.value);
+				 text += "<br><br>data is under CC BY-SA and has been extracted from: " + logLinks(dataJson[0].links.value);
 			     } else {
 				 text += "-";
 			     }

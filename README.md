@@ -8,7 +8,7 @@ This project has been inspired by my interest in etymology, in  open source coll
 
 ## Licence
 
-The code and the data are distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
+The code is distributed under [MIT licence](https://opensource.org/licenses/MIT) and the data is distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
 
 ## Viewing the Site
 
