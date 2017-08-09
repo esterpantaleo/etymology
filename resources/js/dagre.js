@@ -12,7 +12,9 @@ function slicedQuery(myArray, query, chunk) {
         tmpArray = myArray.slice(i, i + chunk);
         //console.log(SPARQL.unionQuery(tmpArray, query));
         url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.unionQuery(tmpArray, query));
-        console.log(url);
+        if (debug) {
+	    console.log(url);
+	}
         sources.push(getXMLHttpRequest(url));
     }
     const queryObservable = Rx.Observable.zip.apply(this, sources)
@@ -29,12 +31,13 @@ function appendLanguageTagTextAndTooltip(inner, g) {
     //append language tag to nodes        
     inner.selectAll("g.node")
         .append("text")
-        .attr("id", "isotext")
         .style("width", "auto")
         .style("height", "auto")
         .style("display", "inline")
         .attr("y", "2em")
-        .html(function(v) { return g.node(v).iso; });
+        .html(function(v) { 
+		return g.node(v).iso; 
+	    });
     //show tooltip on click on laguage tag
     inner.selectAll("g.node")
         .append("rect")
@@ -47,12 +50,11 @@ function appendLanguageTagTextAndTooltip(inner, g) {
             d3.select(this).style("cursor", "pointer");
         })
         .on("click", function(d) {
-	    d3.select("#tooltipPopup").style("display", "none");
-            d3.select("#tooltipPopup").style("display", "inline").html("");
             d3.select("#tooltipPopup")
 		.html(function() {
                     return g.node(d).lang;
-                })
+		    })
+		.style("display", "inline")
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
             d3.event.stopPropagation();
@@ -69,12 +71,10 @@ function appendDefinitionTooltip(inner, g) {
                 d3.select(this).style("cursor", "pointer");
             })
         .on("click", function(d) {
-		d3.select("#tooltipPopup").style("display", "inline").html("");
-		var iri = g.node(d).iri;
-		console.log(iri[0]);
-		for (var i in iri) {
-		    g.nodess[iri[i]].showTooltip(d3.event.pageX, d3.event.pageY);
-		}
+                g.node(d).iri.forEach(
+	            function(iri){ 
+                        g.nodess[iri].showTooltip(d3.event.pageX, d3.event.pageY); 
+                    });
 		d3.event.stopPropagation();
 	    })
         .on("mousedown", function() {
@@ -83,22 +83,20 @@ function appendDefinitionTooltip(inner, g) {
 }
 
 function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
-    var touchtime = 0;
     inner.selectAll("g.node")
 	.on("mouseover", function(d) { 
 		d3.select(this).style("cursor", "pointer"); 
 	    })
 	.on('dblclick', function(d){
-                var iri = g.node(d).iri;
 		d3.select("#message").html(MESSAGE.loading);
 		d3.select("#tree-overlay").remove();
 		d3.select("#tooltipPopup").style("display", "none");
+		var iri = g.node(d).iri;
                 drawDAGRE(iri, 2, width, height);
                 d3.event.stopPropagation();
             })
         .on('click', function(d) {
 		var iri = g.node(d).iri;
-		d3.select("#tooltipPopup").style("display", "inline").html("");
 		g.nodess[iri].showTooltip(d3.event.pageX, d3.event.pageY);
 		d3.event.stopPropagation();
 	    })
@@ -136,7 +134,6 @@ function drawDisambiguation(response, width, height) {
         if (debug) {
             console.log(g.nodess);
         }
-
 
         var m = null;
         for (var n in g.nodess) {
@@ -176,40 +173,36 @@ function drawDAGRE(iri, parameter, width, height) {
                 return;
             }
 	    d3.select("#helpPopup").html(HELP.dagre);   
-            var ancestorArray = [];
-            JSON.parse(response).results.bindings.forEach(function(element) {
-                ancestorArray.push(element.ancestor1.value);
-                if (undefined !== element.ancestor2) {
-                    ancestorArray.push(element.ancestor2.value);
-                    ancestorArray = sortUnique(ancestorArray);
-                }
-            });
+            
+            var ancestorArray = JSON.parse(response).results.bindings
+		.reduce((ancestors, a) => { 
+			ancestors.push(a.ancestor1.value); 
+			if (undefined !== a.ancestor2) {
+			    ancestors.push(a.ancestor2.value); 
+			}
+			return ancestors; 
+		    }, 
+		    []).filter(onlyUnique);
 
             console.log("ANCESTORS");
             console.log(ancestorArray);
             const subscribe = slicedQuery(ancestorArray, SPARQL.descendantQuery, 8)
                 .subscribe(
-                    function(val) { //val = 8 crashes sometimes                       
-                        var descendantArray = [];
-                        val.forEach(function(element) {
-                            var tmp = JSON.parse(element).results.bindings;
-                            for (var t in tmp) {
-                                descendantArray.push(tmp[t].descendant1.value);
-                            }
-                        });
+                    function(val) {
+			var descendantArray = val.reduce((descendants, d) => {
+				return descendants.concat(JSON.parse(d).results.bindings.map(function(t){ return t.descendant1.value; }));
+			    },
+			    []);
                         const subscribe = slicedQuery(descendantArray, SPARQL.propertyQuery, 8)
                             .subscribe(function(val) {
-                                var graphArray = [];
-                                val.forEach(function(element) {
-                                    var tmp = JSON.parse(element).results.bindings;
-                                    for (var t in tmp) {
-                                        graphArray.push(tmp[t]);
-                                    }
-                                });
-                                if (graphArray.length === 0) {
+                                var allArray = val.reduce((all, a) => {
+					return all.concat(JSON.parse(a).results.bindings);
+				    },
+				    []);
+                                if (allArray.length === 0) {
 				    d3.select("#message").html(MESSAGE.noEtymology);
                                 } else {
-                                    var g = defineGraph(ancestorArray, graphArray);
+                                    var g = defineGraph(ancestorArray, allArray);
                                     var inner = renderGraph(g, width, height);
                                     appendLanguageTagTextAndTooltip(inner, g);
                                     appendDefinitionTooltip(inner, g);
@@ -220,14 +213,14 @@ function drawDAGRE(iri, parameter, width, height) {
 			d3.select("#message").html(MESSAGE.serverError);
 			console.log(error);
 		    },
-                    () => console.log('done DAGREZIP'));
+                    () => console.log('done descendants query'));
         },
         function(error) {
             if (parameter === 1) {
 		d3.select("#message").html(MESSAGE.serverError);
 		console.log(error);
             } else {
-		d3.select("#message").html(MESSAGE.ladingMore);
+		d3.select("#message").html(MESSAGE.loadingMore);
                 drawDAGRE(iri, 1, width, height);
             }
         },
@@ -238,7 +231,6 @@ function drawDAGRE(iri, parameter, width, height) {
 
 function defineGraph(ancestors, response) {
     var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
-
 
     //CONSTRUCTING NODES
     g.nodess = {};
@@ -300,7 +292,7 @@ function defineGraph(ancestors, response) {
                     }
                 }
             }
-            tmp = sortUnique(tmp);
+            tmp = tmp.filter(onlyUnique);
             //if only ee_word and ee_n_word with n an integer belong to
             //the set of ancestors and descendants
             //then merge them in one graphNode
@@ -320,7 +312,7 @@ function defineGraph(ancestors, response) {
 
                 //push to graphNodes
                 g.graphNodes[counter] = gg;
-                g.graphNodes[counter].iri = sortUnique(g.graphNodes[counter].iri);
+                g.graphNodes[counter].iri = g.graphNodes[counter].iri.filter(onlyUnique);
                 counter++;
             }
         }
@@ -337,7 +329,7 @@ function defineGraph(ancestors, response) {
                 tmp.concat(element.eqIri);
             });
             gg.iri.concat(tmp);
-            gg.iri = sortUnique(gg.iri);
+            gg.iri = gg.iri.filter(onlyUnique);
             gg.iri.forEach(function(element) {
                 g.nodess[element].graphNode.push(counter);
             });
@@ -350,7 +342,7 @@ function defineGraph(ancestors, response) {
                 //add iri
                 g.nodess[element].graphNode.push(graphNode);
                 g.graphNodes[graphNode].iri.concat(g.nodess[element].eqIri);
-                g.graphNodes[graphNode].iri = sortUnique(g.graphNodes[graphNode].iri);
+                g.graphNodes[graphNode].iri = g.graphNodes[graphNode].iri.filter(onlyUnique);
             });
         }
     }
@@ -464,8 +456,7 @@ function renderGraph(g, width, height) {
         .attr("width", width)
         .attr("height", height)
         .on("click", function() {
-            d3.select("#tooltipPopup")
-                .style("display", "none");
+            d3.select("#tooltipPopup").style("display", "none");
         });
 
     var inner = svg.append("g");

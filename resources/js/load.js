@@ -53,16 +53,8 @@ function getXMLHttpRequest(url) {
     });
 }
 
-function sortUnique(arr) {
-    if (arr.length === 0) return arr;
-    arr = arr.sort();
-    var ret = [arr[0]];
-    for (var i = 1; i < arr.length; i++) { // start loop at 1 as element 0 can never be a duplicate  
-        if (arr[i - 1] !== arr[i]) {
-            ret.push(arr[i]);
-        }
-    }
-    return ret;
+function onlyUnique(value, index, self){
+    return self.indexOf(value) === index;
 }
 
 function transform(d) {
@@ -204,21 +196,23 @@ class Node { //eqIri is an array of iri-s of Node-s that are equivalent to the N
 			     text += "-";
 			     d3.select("#tooltipPopup")
 				 .html(text)
+				 .style("display", "inline")
 				 .style("left", (x + 38) + "px")
 				 .style("top", (y - 28) + "px");
 			 },
 			 function(){
 			     d3.select("#tooltipPopup")
                                  .html(text)
+				 .style("display", "inline")
                                  .style("left", (x + 38) + "px")
                                  .style("top", (y - 28) + "px");
-			     console.log('tooltip shown');
+
 			 });
     }
 }
 
 //CONFIGURE - print debugging messages when debug == true    
-debug = true;
+debug = false;
 
 //LOAD LANGUAGES                            
 //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English") 
