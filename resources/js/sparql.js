@@ -125,11 +125,11 @@ var SPARQL = (function(module) {
         return query;
     };
 
-    module.unionQuery = function(iriArray, query) {
+    module.unionQuery = function(iriArray, queryFunction) {
         var query = 
             "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
 	    "SELECT * WHERE {{ " +
-             iriArray.map(function(iri) { return query(iri); }).join("} UNION {") +
+             iriArray.map(function(iri) { return queryFunction(iri); }).join("} UNION {") +
             "}}";
         return query;
     };
