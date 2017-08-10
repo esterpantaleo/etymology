@@ -47,15 +47,20 @@ function appendDefinitionTooltip(inner, g) {
                 d3.select(this).style("cursor", "pointer");
             })
         .on("click", function(d) {
-                g.node(d).iri.forEach(
-	            function(iri){ 
-                        g.nodess[iri].showTooltip(d3.event.pageX, d3.event.pageY); 
-                    });
-		d3.event.stopPropagation();
-	    })
+	     d3.select("#tooltipPopup")
+                .style("display", "inline")
+                .style("left", (d3.event.pageX + 38) + "px")
+                .style("top", (d3.event.pageY - 28) + "px")
+	        .html("");
+            g.node(d).iri.forEach(
+	        function(iri){ 
+                    g.nodess[iri].logTooltip(); 
+                });
+	    d3.event.stopPropagation();
+	})
         .on("mousedown", function() {
-		d3.event.stopPropagation();
-	    });
+	    d3.event.stopPropagation();
+	});
 }
 
 function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
@@ -71,10 +76,15 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
                 d3.event.stopPropagation();
             })
         .on('click', function(d) {
-		var iri = g.node(d).iri;
-		g.nodess[iri].showTooltip(d3.event.pageX, d3.event.pageY);
-		d3.event.stopPropagation();
-	    })
+	    d3.select("#tooltipPopup")
+		.style("display", "inline") 
+		.style("left", (d3.event.pageX + 38) + "px")
+		.style("top", (d3.event.pageY - 28) + "px")
+		.html("");
+	    var iri = g.node(d).iri;
+	    g.nodess[iri].logTooltip();
+	    d3.event.stopPropagation();
+	})
         .on("mousedown", function() {
             d3.event.stopPropagation();
         });
@@ -90,6 +100,7 @@ function drawDisambiguation(response, width, height) {
         var graph = JSON.parse(response).results.bindings;
         if (graph.length === 0) {
             d3.select("#message").html(MESSAGE.notAvailable);
+	    return;
         }
 
         var g = new dagreD3.graphlib.Graph().setGraph({});

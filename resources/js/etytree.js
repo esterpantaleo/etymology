@@ -36,7 +36,10 @@ jQuery('document').ready(function($) {
 
                 const source = SPARQL.getXMLHttpRequest(url);
                 source.subscribe(response => drawDisambiguation(response, width, height),
-                    error => console.error(error),
+                    function(error){ 
+			console.error(error);
+			d3.select("#message").html(MESSAGE.notAvailable);
+		    },
                     () => console.log('done disambiguation'));
             }
         }

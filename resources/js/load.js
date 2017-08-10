@@ -108,7 +108,7 @@ class Node {
         this.rx = this.ry = 7;
     }
 
-    showTooltip(x, y) {
+    logTooltip() {
 	var query = SPARQL.lemmaQuery(this.iri);
         var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(query);
 
@@ -138,25 +138,22 @@ class Node {
 				 text += "-";
 			     }
 			     d3.select("#tooltipPopup")
-                                 .html(text)
-                                 .style("display", "inline")
-                                 .style("left", (x + 38) + "px")
-                                 .style("top", (y - 28) + "px");
+				 .append("p")
+                                 .html(text);
 			 },
 			 function(error) {
 			     console.error(error);
 			     var text = "<b>" + that.label + "</b><br><br><br>";  
 			     text += "-";
 			     d3.select("#tooltipPopup")
-				 .html(text)
-				 .style("display", "inline")
-				 .style("left", (x + 38) + "px")
-				 .style("top", (y - 28) + "px");
+			         .append("p")
+				 .html(text);
 			 });
     }
 
     parseIri(iri){
-	var iso, label, ety, tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
+	var iso, label, ety, 
+	tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
             .split("/");
 	
 	if (tmp.length > 1) {
