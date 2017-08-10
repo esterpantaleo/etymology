@@ -1,5 +1,5 @@
 /*globals
-    jQuery, d3, debug, console, window, document, SPARQL, drawDisambiguation, ENDPOINT, getXMLHttpRequest
+    jQuery, d3, debug, console, window, document, SPARQL, drawDisambiguation
 */
 jQuery('document').ready(function($) {
     d3.select("#helpPopup").html(HELP.intro);
@@ -19,22 +19,22 @@ jQuery('document').ready(function($) {
 	.style("width", "auto")
 	.style("height","auto");
 
-
-
     $('#tags').on("keypress click", function(e) {
-        if (e.which === 13 || e.type === 'clicOAk') {
+        if (e.which === 13 || e.type === 'click') {
             var lemma = $(this).val(); //.replace("/", "!slash!");
 
             if (lemma) {
-                if (debug) console.log("searching lemma in database");
+                if (debug) {
+		    console.log("searching lemma in database");
+		}
                 var width = window.innerWidth,
                     height = $(document).height() - $('#header').height();
-                var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.disambiguationQuery(lemma));
+                var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(SPARQL.disambiguationQuery(lemma));
                 if (debug) {
                     console.log(url);
                 }
 
-                const source = getXMLHttpRequest(url);
+                const source = SPARQL.getXMLHttpRequest(url);
                 source.subscribe(response => drawDisambiguation(response, width, height),
                     error => console.error(error),
                     () => console.log('done disambiguation'));

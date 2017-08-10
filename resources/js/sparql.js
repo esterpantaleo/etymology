@@ -1,6 +1,53 @@
 var SPARQL = (function(module) {
 
-	module.disambiguationQuery = function(lemma) {
+    module.ENDPOINT = "https://etytree-virtuoso.wmflabs.org/sparql";
+
+    module.getXMLHttpRequest = function(url) {
+	return Rx.Observable.create(observer => {
+            const req = new XMLHttpRequest();
+            req.open('GET', url);
+            req.overrideMimeType('application/sparql-results+json');
+            req.onload = () => {
+		if (req.status === 200) {
+                    observer.next(req.responseText);
+                    observer.complete();
+		} else {
+                    observer.error(new Error(req.statusText));
+		}
+            };
+            req.onerror = () => {
+		observer.error(new Error('An error occured'));
+            };
+            req.setRequestHeader('Accept', 'application/json, text/javascript');
+            req.send();
+	});
+    }
+
+    //function to slice up a big sparql query (that cannot be processed by virtuoso)                     
+    // into a bunch of smaller queries in chunks of "chunk"                                             
+    module.slicedQuery = function(myArray, queryFunction, chunk) {
+	var i, j, tmpArray, url, sources = [];
+	for (i = 0, j = myArray.length; i < j; i += chunk) {
+            tmpArray = myArray.slice(i, i + chunk);
+	    //console.log(SPARQL.unionQuery(tmpArray, query));                   
+            url = this.ENDPOINT + "?query=" + encodeURIComponent(this.unionQuery(tmpArray, queryFunction));
+            if (debug) {
+		console.log(url);
+            }
+	    sources.push(this.getXMLHttpRequest(url));
+	}
+	const queryObservable = Rx.Observable.zip.apply(this, sources)
+            .catch((err) => {
+		d3.select("#message").html(MESSAGE.serverError);
+		
+		//Return an empty Observable which gets collapsed in the output             
+		return Rx.Observable.empty();
+            });
+	return queryObservable;
+    }
+
+
+    module.disambiguationQuery = function(lemma) {
         var encodedWord = lemma.replace(/'/g, "\\\\'").replace("·", "%C2%B7");
         var query = 
             "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +

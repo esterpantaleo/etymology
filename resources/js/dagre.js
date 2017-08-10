@@ -1,31 +1,7 @@
 /*globals
-    d3, console, ENDPOINT, debug, dagreD3, GraphNode, sortUnique, SPARQL, Node, Rx, getXMLHttpRequest
+    d3, console, debug, dagreD3, GraphNode, sortUnique, SPARQL, Node, Rx
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
-//TODO: use wheel 
-
-//function to slice up a big sparql query (that cannot be processed by virtuoso)
-// into a bunch of smaller queries in chunks of "chunk"
-function slicedQuery(myArray, query, chunk) {
-    var i, j, tmpArray, url, sources = [];
-    for (i = 0, j = myArray.length; i < j; i += chunk) {
-        tmpArray = myArray.slice(i, i + chunk);
-        //console.log(SPARQL.unionQuery(tmpArray, query));
-        url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.unionQuery(tmpArray, query));
-        if (debug) {
-	    console.log(url);
-	}
-        sources.push(getXMLHttpRequest(url));
-    }
-    const queryObservable = Rx.Observable.zip.apply(this, sources)
-        .catch((err) => {
-	    d3.select("#message").html(MESSAGE.serverError);
-
-            //Return an empty Observable which gets collapsed in the output
-            return Rx.Observable.empty();
-        });
-    return queryObservable;
-}
 
 function appendLanguageTagTextAndTooltip(inner, g) {
     //append language tag to nodes        
@@ -156,11 +132,11 @@ function drawDisambiguation(response, width, height) {
 function drawDAGRE(iri, parameter, width, height) {
     //if parameter == 1 submit a short (but less detailed) query
     //if parameter == 2 submit a longer (but more detailed) query
-    var url = ENDPOINT + "?query=" + encodeURIComponent(SPARQL.ancestorQuery(iri, parameter));
+    var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(SPARQL.ancestorQuery(iri, parameter));
     if (debug) {
         console.log(url);
     }
-    const source = getXMLHttpRequest(url);
+    const source = SPARQL.getXMLHttpRequest(url);
     d3.select("#tree-overlay").remove();
     d3.select("#tooltipPopup").attr("display", "none");
     
@@ -186,14 +162,14 @@ function drawDAGRE(iri, parameter, width, height) {
 
             console.log("ANCESTORS");
             console.log(ancestorArray);
-            const subscribe = slicedQuery(ancestorArray, SPARQL.descendantQuery, 8)
+            const subscribe = SPARQL.slicedQuery(ancestorArray, SPARQL.descendantQuery, 8)
                 .subscribe(
                     function(val) {
 			var descendantArray = val.reduce((descendants, d) => {
 				return descendants.concat(JSON.parse(d).results.bindings.map(function(t){ return t.descendant1.value; }));
 			    },
 			    []);
-                        const subscribe = slicedQuery(descendantArray, SPARQL.propertyQuery, 8)
+                        const subscribe = SPARQL.slicedQuery(descendantArray, SPARQL.propertyQuery, 8)
                             .subscribe(function(val) {
                                 var allArray = val.reduce((all, a) => {
 					return all.concat(JSON.parse(a).results.bindings);
