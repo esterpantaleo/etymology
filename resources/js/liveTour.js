@@ -7,7 +7,7 @@ var tour = {
         target: "tags",
         placement: "right",
         title: "Search bar",
-        content: "<ul><li>Write a word then press enter: Some words will appear.</li><li><b>Click</b> on them to choose language and meaning.</li><li><b>Double click</b> on the word you are interested in."
+        content: "<ul><li>Write a word then press enter: Some words will appear.</li><li><b>Mouse over</b> them to choose language and meaning.</li><li><b>Click</b> on the word you are interested in."
     }, {
         target: "aHelpPopup",
         placement: "right",

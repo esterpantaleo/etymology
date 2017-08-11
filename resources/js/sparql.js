@@ -150,7 +150,7 @@ var SPARQL = (function(module) {
         var query = 
             "SELECT DISTINCT ?descendant1 " + // ?descendant2",
             "{ " +
-            "   ?descendant1 dbetym:etymologicallyRelatedTo{0,1} <" + iri + "> . " +
+            "   ?descendant1 dbetym:etymologicallyRelatedTo{0,2} <" + iri + "> . " +
             //   "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?descendant1 . " +
             //  "   ?descendant2 dbetym:etymologicallyRelatedTo* ?eq .} " +
 	    "} ";

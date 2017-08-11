@@ -38,15 +38,7 @@ function appendLanguageTagTextAndTooltip(inner, g) {
 		.style("display", "inline")
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
-            d3.event.stopPropagation();
-        })
-	.on('mouseout', function(d) {      
-		d3.select("#tooltipPopup") 
-		    .style("display", "none");
-	    }) 
-        .on("mousedown", function() { 
-		d3.event.stopPropagation(); 
-	    });
+        });
 }
 
 function appendDefinitionTooltip(inner, g) {
@@ -65,15 +57,7 @@ function appendDefinitionTooltip(inner, g) {
 	        function(iri){ 
                     g.nodess[iri].logTooltip(); 
                 });
-	    d3.event.stopPropagation();
 	})
-	.on('mouseout', function(d) {
-		d3.select("#tooltipPopup")
-		    .style("display", "none"); 
-	    }) 
-        .on("mousedown", function() {
-	    d3.event.stopPropagation();
-	});
 }
 
 function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
@@ -82,12 +66,12 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
 	//d3.select(this).style("cursor", "pointer"); 
 	//  })
 	.on('click', function(d){
-		d3.select("#message").html(MESSAGE.loading);
-		d3.event.stopPropagation();
-		var iri = g.node(d).iri;
-                drawDAGRE(iri, 2, width, height);
-                d3.event.stopPropagation();
-            })
+	    d3.select("#message").html(MESSAGE.loading);
+	    var iri = g.node(d).iri;
+            drawDAGRE(iri, 2, width, height);
+	    d3.select("#tooltipPopup")
+                .style("display", "none");
+        })
         .on('mouseover', function(d) {
 	    d3.select("#tooltipPopup")
 		.style("display", "inline") 
@@ -96,15 +80,7 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
 		.html("");
 	    var iri = g.node(d).iri;
 	    g.nodess[iri].logTooltip();
-	    d3.event.stopPropagation();
-	})
-        .on('mouseout', function(d) {
-	    d3.select("#tooltipPopup") 
-		.style("display", "none");
-	}) 
-        .on("mousedown", function() {
-            d3.event.stopPropagation();
-        });
+	});
 }
 
 function buildDisambiguationDAGRE(response) {
@@ -465,7 +441,7 @@ function renderGraph(g, width, height) {
         inner.attr("transform", "translate(" + d3.event.translate + ")" +
             "scale(" + d3.event.scale + ")");
     });
-    //    svg.call(zoom).on("dblclick.zoom", null);
+    svg.call(zoom);//.on("dblclick.zoom", null);
 
     // Create the renderer          
     var render = new dagreD3.render();

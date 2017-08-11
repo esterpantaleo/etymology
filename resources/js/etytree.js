@@ -11,6 +11,16 @@ jQuery('document').ready(function($) {
 	.style("display", "none")
 	.attr("class", "ui-content tooltipDiv");
     
+    $(window).click(function() {
+	console.log("clicking on container");
+	d3.select("#tooltipPopup")
+            .style("display", "none");
+    });
+    
+    $('#tooltipPopup').click(function(event){
+	event.stopPropagation();
+    });
+				 
     $('#tags').on("keypress click", function(e) {
         if (e.which === 13 || e.type === 'click') {
             var lemma = $(this).val(); //.replace("/", "!slash!");
