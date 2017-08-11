@@ -22,7 +22,7 @@ var SPARQL = (function(module) {
             req.send();
 	});
     }
-
+    
     //function to slice up a big sparql query (that cannot be processed by virtuoso)                     
     // into a bunch of smaller queries in chunks of "chunk"                                             
     module.slicedQuery = function(myArray, queryFunction, chunk) {
@@ -124,6 +124,7 @@ var SPARQL = (function(module) {
         return query;
     };
 
+	//(related|equivalent){0,5}
     //DEFINE QUERIES TO PLOT GRAPH          
     module.ancestorQuery = function(iri, queryDepth) {     
         var query = "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ";

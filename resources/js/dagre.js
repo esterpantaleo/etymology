@@ -10,22 +10,27 @@ function appendLanguageTagTextAndTooltip(inner, g) {
         .style("width", "auto")
         .style("height", "auto")
         .style("display", "inline")
-        .attr("y", "2em")
-        .html(function(v) { 
-		return g.node(v).iso; 
+	.attr("class", "isoText")
+        .attr("y", "3em")
+	.attr("x", "1em")
+        .html(function(d) { 
+		return g.node(d).iso; 
 	    });
     //show tooltip on click on laguage tag
     inner.selectAll("g.node")
         .append("rect")
-        .attr("y", "1.1em")
-        .attr("width", function(v) { return g.node(v).iso.length / 1.7 + "em"; })
+        .attr("y", "2.2em")
+	.attr("x", "0.8em")
+        .attr("width", function(d) { 
+		return g.node(d).iso.length / 1.7 + "em"; 
+	    })
         .attr("height", "1em")
         .attr("fill", "red")
         .attr("fill-opacity", 0)
+	// .on("mouseover", function(d) {
+	//  d3.select(this).style("cursor", "pointer");
+        //})
         .on("mouseover", function(d) {
-            d3.select(this).style("cursor", "pointer");
-        })
-        .on("click", function(d) {
             d3.select("#tooltipPopup")
 		.html(function() {
                     return g.node(d).lang;
@@ -35,6 +40,10 @@ function appendLanguageTagTextAndTooltip(inner, g) {
                 .style("top", (d3.event.pageY - 28) + "px");
             d3.event.stopPropagation();
         })
+	.on('mouseout', function(d) {      
+		d3.select("#tooltipPopup") 
+		    .style("display", "none");
+	    }) 
         .on("mousedown", function() { 
 		d3.event.stopPropagation(); 
 	    });
@@ -43,10 +52,10 @@ function appendLanguageTagTextAndTooltip(inner, g) {
 function appendDefinitionTooltip(inner, g) {
     //show tooltip on click on nodes                  
     inner.selectAll("g.node")
-	.on("mouseover", function(d) {
-                d3.select(this).style("cursor", "pointer");
-            })
-        .on("click", function(d) {
+	//.on("mouseover", function(d) {
+	//      d3.select(this).style("cursor", "pointer");
+	//  })
+        .on("mouseover", function(d) {
 	     d3.select("#tooltipPopup")
                 .style("display", "inline")
                 .style("left", (d3.event.pageX + 38) + "px")
@@ -58,6 +67,10 @@ function appendDefinitionTooltip(inner, g) {
                 });
 	    d3.event.stopPropagation();
 	})
+	.on('mouseout', function(d) {
+		d3.select("#tooltipPopup")
+		    .style("display", "none"); 
+	    }) 
         .on("mousedown", function() {
 	    d3.event.stopPropagation();
 	});
@@ -65,17 +78,17 @@ function appendDefinitionTooltip(inner, g) {
 
 function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
     inner.selectAll("g.node")
-	.on("mouseover", function(d) { 
-		d3.select(this).style("cursor", "pointer"); 
-	    })
-	.on('dblclick', function(d){
+	//.on("mouseover", function(d) { 
+	//d3.select(this).style("cursor", "pointer"); 
+	//  })
+	.on('click', function(d){
 		d3.select("#message").html(MESSAGE.loading);
 		d3.event.stopPropagation();
 		var iri = g.node(d).iri;
                 drawDAGRE(iri, 2, width, height);
                 d3.event.stopPropagation();
             })
-        .on('click', function(d) {
+        .on('mouseover', function(d) {
 	    d3.select("#tooltipPopup")
 		.style("display", "inline") 
 		.style("left", (d3.event.pageX + 38) + "px")
@@ -85,60 +98,58 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
 	    g.nodess[iri].logTooltip();
 	    d3.event.stopPropagation();
 	})
+        .on('mouseout', function(d) {
+	    d3.select("#tooltipPopup") 
+		.style("display", "none");
+	}) 
         .on("mousedown", function() {
             d3.event.stopPropagation();
         });
 }
 
-function drawDisambiguation(response, width, height) {
-    if (response !== undefined && response !== null) {
-        d3.select("#helpPopup").html(HELP.disambiguation);
-	d3.select("#message").html("");
-	d3.select("#tree-overlay").remove();
-	d3.select("#tooltipPopup").style("display", "none");
+function buildDisambiguationDAGRE(response) {
+    d3.select("#tree-overlay").remove();
+    d3.select("#tooltipPopup").style("display", "none");
 
-        var graph = JSON.parse(response).results.bindings;
-        if (graph.length === 0) {
-            d3.select("#message").html(MESSAGE.notAvailable);
-	    return;
-        }
-
-        var g = new dagreD3.graphlib.Graph().setGraph({});
-
-        //define nodes
-        g.nodess = {};
-        graph.forEach(function(n) {
-            var iris = n.et.value.split(",");
-            iris.forEach(function(element) {
-                if (element !== "") {
-                    g.nodess[element] = new Node(element);
-                } else {
-                    g.nodess[n.iri.value] = new Node(n.iri.value);
-                }
-            });
-        });
-        if (debug) {
-            console.log(g.nodess);
-        }
-
-        var m = null;
-        for (var n in g.nodess) {
-            g.setNode(n, g.nodess[n]);
-            if (null !== m) {
-                g.setEdge(n, m, { label: "", style: "stroke-width: 0" });
-            }
-            m = n;
-        }
-        
-	d3.select("#message").html("");
-        var inner = renderGraph(g, width, height);
-        appendLanguageTagTextAndTooltip(inner, g);
-        appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
-
-        d3.selectAll(".edgePath").remove();
+    var disambiguationArray = JSON.parse(response).results.bindings;
+    if (disambiguationArray.length === 0) {
+	d3.select("#message").html(MESSAGE.notAvailable);
+	return null;
     }
-}
+    
+    d3.select("#helpPopup").html(HELP.disambiguation);
+    d3.select("#message").html("There are multiple words in the database. <br>Which word are you interested in?");
+    
+    var g = new dagreD3.graphlib.Graph().setGraph({});
+    
+    //define nodes 
+    g.nodess = {};
+    disambiguationArray.forEach(function(n) {
+            n.et.value.split(",")
+                .forEach(function(element) {
+                        if (element !== "") {
+                            g.nodess[element] = new Node(element);
+                        } else {
+                            g.nodess[n.iri.value] = new Node(n.iri.value);
+                        }
+                    });
+	});
+    if (debug) {
+	console.log(g.nodess);
+    }
 
+    //add nodes and links to the graph                                                                                                                                                        
+    var m = null;
+    for (var n in g.nodess) {
+	g.setNode(n, g.nodess[n], { labelStyle: "font-size: 3em" } );
+	if (null !== m) {
+	    g.setEdge(n, m, { label: "", style: "stroke-width: 0" });
+	}
+	m = n;
+    }
+    
+    return g;
+}
 
 function drawDAGRE(iri, parameter, width, height) {
     //if parameter == 1 submit a short (but less detailed) query
@@ -442,10 +453,10 @@ function renderGraph(g, width, height) {
     var svg = d3.select("#tree-container").append("svg")
         .attr("id", "tree-overlay")
         .attr("width", width)
-        .attr("height", height)
-        .on("click", function() {
-            d3.select("#tooltipPopup").style("display", "none");
-        });
+        .attr("height", height);
+	// .on("click", function() {
+	//  d3.select("#tooltipPopup").style("display", "none");
+        //});
 
     var inner = svg.append("g");
 
@@ -454,7 +465,7 @@ function renderGraph(g, width, height) {
         inner.attr("transform", "translate(" + d3.event.translate + ")" +
             "scale(" + d3.event.scale + ")");
     });
-    svg.call(zoom).on("dblclick.zoom", null);
+    //    svg.call(zoom).on("dblclick.zoom", null);
 
     // Create the renderer          
     var render = new dagreD3.render();

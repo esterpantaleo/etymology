@@ -35,13 +35,13 @@ var HELP = {
     disambiguation: "<b>Disambiguation page</b>" +
     "<br>Pick the word you are interested in." +
     "<ul>" +
-    "<li>Click on a node to display lexical information</li>" +
-    "<li>Click on the language tag under the node to display the language</li>" + 
-    "<li>Double click on a node to choose a word</li>" +
+    "<li>Mouse over a node to display lexical information</li>" +
+    "<li>Mouse over the language tag under the node to display the language</li>" + 
+    "<li>Click on a node to choose a word</li>" +
     "</ul>",
     dagre: "Arrows go from ancestor to descendant.<ul>" + 
-    "<li>Click on a node to display lexical information</li>" +
-    "<li>Click on the language tag under the node to display the language</li>" +
+    "<li>Mouse over a node to display lexical information</li>" +
+    "<li>Mouse over the language tag under the node to display the language</li>" +
     "</ul>"
 };
 
@@ -80,7 +80,7 @@ class GraphNode {
         this.isAncestor = false;
 
 	this.shape = "rect";
-        this.style = "fill: #F0E68C; stroke: lightBlue";
+        this.style = "fill: lightBlue; stroke: black";
         this.rx = this.ry = 7;
     }
 }
@@ -104,7 +104,7 @@ class Node {
         this.isAncestor = false;
 
 	this.shape = "rect";
-	this.style = "fill: #F0E68C; stroke: lightBlue";
+	this.style = "fill: lightBlue; stroke: black";
         this.rx = this.ry = 7;
     }
 

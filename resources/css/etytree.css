@@ -6,8 +6,13 @@ html * {
 
 text {
     pointer-events: none;
+    font-size: 2em;
 }
 
+.isoText {
+    font-size: 1em;
+}
+ 
 .iso {
     text-anchor: middle;
     font-size: 0.5em;
@@ -19,12 +24,12 @@ text {
 }
 
 .helpButton {
-   border:0;
+   border: 0;
    background-color:lightBlue !important;
 }
 
 .ui-page .ui-header {    
-    background: sandyBrown !important;
+    background: #b6b8b7 !important;
     border-radius: 1em;
     border-width: thick;
     border-color: #f9f9f9 !important;
@@ -33,25 +38,37 @@ text {
 }
 
 .blueSpan {
-    color:DarkCyan;
-    font-size:1em;
+    color: DarkCyan;
+    font-size: 1em;
 }
 
 .redSpan {
-    color:red;
-    font-size:0.7em;
+    color: red;
+    font-size: 0.7em;
 }
 
 .smallSpan {
-    font-size:0.7em;
+    font-size: 0.7em;
 }
 
 .bigSpan {
-    font-size:1.9em;
+    font-size: 2em;
 }
 
 .mediumSpan {
-    font-size:1.5em;
+    font-size: 1.5em;
+}
+
+.tooltipDiv {
+    position: absolute;
+    background: lightblue;
+    text-align: left;
+    padding: 0.1em;
+    font: 1em sans-serif;
+    border: solid 0.3em red;
+    border-radius: 0.5em;
+    width: auto;
+    height: auto;
 }
 
 input:focus::-webkit-input-placeholder { color:transparent; }
@@ -99,7 +116,7 @@ input:focus:-ms-input-placeholder { color:transparent; }
 }
 
 .edgePath path {
-  stroke: lightBlue;
-  fill: lightBlue;
-  stroke-width: 0.1em;
+    stroke: lightBlue;
+    fill: lightBlue;
+    stroke-width: 0.1em;
 }
