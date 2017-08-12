@@ -27,28 +27,22 @@ function appendLanguageTagTextAndTooltip(inner, g) {
         .attr("height", "1em")
         .attr("fill", "red")
         .attr("fill-opacity", 0)
-	// .on("mouseover", function(d) {
-	//  d3.select(this).style("cursor", "pointer");
-        //})
         .on("mouseover", function(d) {
             d3.select("#tooltipPopup")
-		.html(function() {
-                    return g.node(d).lang;
-		    })
 		.style("display", "inline")
                 .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+                .style("top", (d3.event.pageY - 28) + "px")
+		.html(g.node(d).lang);
+	    console.log(g.node(d).lang);
+	    d3.event.stopPropagation();
         });
 }
 
 function appendDefinitionTooltip(inner, g) {
     //show tooltip on click on nodes                  
     inner.selectAll("g.node")
-	//.on("mouseover", function(d) {
-	//      d3.select(this).style("cursor", "pointer");
-	//  })
         .on("mouseover", function(d) {
-	     d3.select("#tooltipPopup")
+	    d3.select("#tooltipPopup")
                 .style("display", "inline")
                 .style("left", (d3.event.pageX + 38) + "px")
                 .style("top", (d3.event.pageY - 28) + "px")
@@ -57,16 +51,13 @@ function appendDefinitionTooltip(inner, g) {
 	        function(iri){ 
                     g.nodess[iri].logTooltip(); 
                 });
+	    d3.event.stopPropagation();
 	})
 }
 
 function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
     inner.selectAll("g.node")
-	//.on("mouseover", function(d) { 
-	//d3.select(this).style("cursor", "pointer"); 
-	//  })
 	.on('click', function(d){
-	    d3.select("#message").html(MESSAGE.loading);
 	    var iri = g.node(d).iri;
             drawDAGRE(iri, 2, width, height);
 	    d3.select("#tooltipPopup")
@@ -84,18 +75,10 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
 }
 
 function buildDisambiguationDAGRE(response) {
-    d3.select("#tree-overlay").remove();
-    d3.select("#tooltipPopup").style("display", "none");
-
     var disambiguationArray = JSON.parse(response).results.bindings;
     if (disambiguationArray.length === 0) {
-	d3.select("#message").html(MESSAGE.notAvailable);
 	return null;
-    }
-    
-    d3.select("#helpPopup").html(HELP.disambiguation);
-    d3.select("#message").html("There are multiple words in the database. <br>Which word are you interested in?");
-    
+    }         
     var g = new dagreD3.graphlib.Graph().setGraph({});
     
     //define nodes 
@@ -114,7 +97,7 @@ function buildDisambiguationDAGRE(response) {
 	console.log(g.nodess);
     }
 
-    //add nodes and links to the graph                                                                                                                                                        
+    //add nodes and links to the graph
     var m = null;
     for (var n in g.nodess) {
 	g.setNode(n, g.nodess[n], { labelStyle: "font-size: 3em" } );
@@ -134,10 +117,12 @@ function drawDAGRE(iri, parameter, width, height) {
     if (debug) {
         console.log(url);
     }
-    const source = SPARQL.getXMLHttpRequest(url);
-    d3.select("#tree-overlay").remove();
+    d3.select("#message").html(MESSAGE.loadingMore);
     d3.select("#tooltipPopup").attr("display", "none");
-    
+    d3.select("#tree-overlay").remove();
+
+    source = SPARQL.getXMLHttpRequest(url);
+        
     source.subscribe(
         function(response) {
 
@@ -195,7 +180,6 @@ function drawDAGRE(iri, parameter, width, height) {
 		d3.select("#message").html(MESSAGE.serverError);
 		console.log(error);
             } else {
-		d3.select("#message").html(MESSAGE.loadingMore);
                 drawDAGRE(iri, 1, width, height);
             }
         },
@@ -430,9 +414,6 @@ function renderGraph(g, width, height) {
         .attr("id", "tree-overlay")
         .attr("width", width)
         .attr("height", height);
-	// .on("click", function() {
-	//  d3.select("#tooltipPopup").style("display", "none");
-        //});
 
     var inner = svg.append("g");
 

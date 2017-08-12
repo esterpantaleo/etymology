@@ -12,7 +12,6 @@ jQuery('document').ready(function($) {
 	.attr("class", "ui-content tooltipDiv");
     
     $(window).click(function() {
-	console.log("clicking on container");
 	d3.select("#tooltipPopup")
             .style("display", "none");
     });
@@ -40,13 +39,25 @@ jQuery('document').ready(function($) {
                 source.subscribe(
 				 function(response) {
 				     if (response !== undefined && response !== null) { 
+					 d3.select("#tree-overlay").remove();
+					 d3.select("#tooltipPopup").style("display", "none");
+					 
 					 var g = buildDisambiguationDAGRE(response);
-					 if (null !== g) { 
-					     var inner = renderGraph(g, width, height);
-					     appendLanguageTagTextAndTooltip(inner, g);
-					     appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
-					     
-					     d3.selectAll(".edgePath").remove();
+					 if (null === g) { 
+					     d3.select("#message").html(MESSAGE.notAvailable);
+					 } else {
+					     if (Object.keys(g.nodess).length > 1) {
+						 d3.select("#helpPopup").html(HELP.disambiguation);  
+						 d3.select("#message").html("There are multiple words in the database. <br>Which word are you interested in?");
+						 var inner = renderGraph(g, width, height);
+						 appendLanguageTagTextAndTooltip(inner, g);
+						 appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
+						 
+						 d3.selectAll(".edgePath").remove();
+					     } else {    
+						 var iri = Object.keys(g.nodess)[0];
+						 drawDAGRE(iri, 2, width, height);   
+					     }
 					 }
 				     }
 				 },

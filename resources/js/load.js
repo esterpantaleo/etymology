@@ -46,11 +46,11 @@ var HELP = {
 };
 
 var MESSAGE = {
-    notAvailable: "This word is not available in the database",
+    notAvailable: "This word is not available in the database.",
     loading: "Loading, please wait...",
     serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
     noEtymology: "Sorry, it seems like no etymology is available in the English Wiktionary for this word.",
-    loadingMore: "This word is related to many words. Please wait a bit more."
+    loadingMore: "Loading, please wait... This word is etymologically related to many words."
 };
 
 

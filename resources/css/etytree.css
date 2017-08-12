@@ -23,6 +23,9 @@ text {
     max-width: 15em;
 }
 
+.message {
+    font-size: 1.5em;
+}
 .helpButton {
     border: 0.3em !important; 
     font-size: 1.3em !important;
