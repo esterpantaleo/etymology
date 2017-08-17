@@ -121,7 +121,7 @@ function drawDAGRE(iri, parameter, width, height) {
     if (LOAD.settings.debug) {
         console.log(url);
     }
-    d3.select("#message").style("display", "inline").html(MESSAGE.loadingMore);
+    d3.select("#message").style("display", "inline").html(LOAD.MESSAGE.loadingMore);
     d3.select("#tooltipPopup").attr("display", "none");
     d3.select("#tree-overlay").remove();
 
@@ -131,7 +131,7 @@ function drawDAGRE(iri, parameter, width, height) {
         function(response) {
 
             if (null === response) {
-		            d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
+		            d3.select("#message").style("display", "inline").html(LOAD.MESSAGE.serverError);
                 return;
             }
 
@@ -160,7 +160,7 @@ function drawDAGRE(iri, parameter, width, height) {
                                     return all.concat(JSON.parse(a).results.bindings);
                                 }, []);
                                 if (allArray.length === 0) {
-                                    d3.select("#message").style("display", "inline").html(MESSAGE.noEtymology);
+                                    d3.select("#message").style("display", "inline").html(LOAD.MESSAGE.noEtymology);
                                 } else {
                                     var g = defineGraph(ancestorArray, allArray);
 				                            d3.select("#message").style("display", "none");
@@ -172,14 +172,14 @@ function drawDAGRE(iri, parameter, width, height) {
                             });
                     },
                     function(error) {
-			                  d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
+			                  d3.select("#message").style("display", "inline").html(LOAD.MESSAGE.serverError);
 			                  console.log(error);
 		                },
                     () => console.log('done descendants query'));
         },
         function(error) {
             if (parameter === 1) {
-		            d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
+		            d3.select("#message").style("display", "inline").html(LOAD.MESSAGE.serverError);
 		            console.log(error);
             } else {
                 drawDAGRE(iri, 1, width, height);

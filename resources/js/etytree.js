@@ -47,7 +47,7 @@ jQuery('document').ready(function($) {
 					                      d3.select("#message").style("display", "inline").html(MESSAGE.notAvailable);
 					                  } else {
 					                      if (Object.keys(g.nodess).length > 1) {
-						                        d3.select("#helpPopup").html(HELP.disambiguation);  
+						                        d3.select("#helpPopup").html(LOAD.HELP.disambiguation);  
 						                        d3.select("#message").style("display", "inline").html("There are multiple words in the database. <br>Which word are you interested in?");
 						                        var inner = renderGraph(g, width, height);
 						                        appendLanguageTagTextAndTooltip(inner, g);
