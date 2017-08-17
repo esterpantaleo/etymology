@@ -1,5 +1,5 @@
 /*globals
-    d3, console, debug, dagreD3, GraphNode, sortUnique, SPARQL, Node, Rx
+    d3, console, LOAD, dagreD3, GraphNode, sortUnique, SPARQL, Node, Rx, onlyUnique
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 
@@ -10,31 +10,31 @@ function appendLanguageTagTextAndTooltip(inner, g) {
         .style("width", "auto")
         .style("height", "auto")
         .style("display", "inline")
-	.attr("class", "isoText")
+        .attr("class", "isoText")
         .attr("y", "3em")
-	.attr("x", "1em")
-        .html(function(d) { 
-		return g.node(d).iso; 
-	    });
+        .attr("x", "1em")
+        .html(function(d) {
+            return g.node(d).iso;
+        });
     //show tooltip on click on laguage tag
     inner.selectAll("g.node")
         .append("rect")
         .attr("y", "2.2em")
-	.attr("x", "0.8em")
-        .attr("width", function(d) { 
-		return g.node(d).iso.length / 1.7 + "em"; 
-	    })
+        .attr("x", "0.8em")
+        .attr("width", function(d) {
+            return g.node(d).iso.length / 1.7 + "em";
+        })
         .attr("height", "1em")
         .attr("fill", "red")
         .attr("fill-opacity", 0)
         .on("mouseover", function(d) {
             d3.select("#tooltipPopup")
-		.style("display", "inline")
+                .style("display", "inline")
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px")
-		.html(g.node(d).lang);
-	    console.log(g.node(d).lang);
-	    d3.event.stopPropagation();
+                .html(g.node(d).lang);
+            console.log(g.node(d).lang);
+            d3.event.stopPropagation();
         });
 }
 
@@ -42,73 +42,74 @@ function appendDefinitionTooltip(inner, g) {
     //show tooltip on click on nodes                  
     inner.selectAll("g.node")
         .on("mouseover", function(d) {
-	    d3.select("#tooltipPopup")
+            d3.select("#tooltipPopup")
                 .style("display", "inline")
                 .style("left", (d3.event.pageX + 38) + "px")
                 .style("top", (d3.event.pageY - 28) + "px")
-	        .html("");
+                .html("");
             g.node(d).iri.forEach(
-	        function(iri){ 
-                    g.nodess[iri].logTooltip(); 
+                function(iri) {
+                    g.nodess[iri].logTooltip();
                 });
-	    d3.event.stopPropagation();
-	})
+            d3.event.stopPropagation();
+        });
 }
 
 function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
     inner.selectAll("g.node")
-	.on('click', function(d){
-	    var iri = g.node(d).iri;
+        .on('click', function(d) {
+            var iri = g.node(d).iri;
             drawDAGRE(iri, 2, width, height);
-	    d3.select("#tooltipPopup")
+            d3.select("#tooltipPopup")
                 .style("display", "none");
         })
         .on('mouseover', function(d) {
-	    d3.select(this).style("cursor", "pointer");
 
-	    d3.select("#tooltipPopup")
-		.style("display", "inline") 
-		.style("left", (d3.event.pageX + 38) + "px")
-		.style("top", (d3.event.pageY - 28) + "px")
-		.html("");
-	    var iri = g.node(d).iri;
-	    g.nodess[iri].logTooltip();
+	  d3.select(this).style("cursor", "pointer");
+
+	  d3.select("#tooltipPopup")
+		    .style("display", "inline") 
+		    .style("left", (d3.event.pageX + 38) + "px")
+		    .style("top", (d3.event.pageY - 28) + "px")
+		    .html("");
+	  var iri = g.node(d).iri;
+	  g.nodess[iri].logTooltip();
 	});
 }
 
 function buildDisambiguationDAGRE(response) {
     var disambiguationArray = JSON.parse(response).results.bindings;
     if (disambiguationArray.length === 0) {
-	return null;
-    }         
+        return null;
+    }
     var g = new dagreD3.graphlib.Graph().setGraph({});
-    
+
     //define nodes 
     g.nodess = {};
     disambiguationArray.forEach(function(n) {
-            n.et.value.split(",")
-                .forEach(function(element) {
-                        if (element !== "") {
-                            g.nodess[element] = new Node(element);
-                        } else {
-                            g.nodess[n.iri.value] = new Node(n.iri.value);
-                        }
-                    });
-	});
-    if (debug) {
-	console.log(g.nodess);
+        n.et.value.split(",")
+            .forEach(function(element) {
+                if (element !== "") {
+                    g.nodess[element] = new Node(element);
+                } else {
+                    g.nodess[n.iri.value] = new Node(n.iri.value);
+                }
+            });
+    });
+    if (LOAD.settings.debug) {
+        console.log(g.nodess);
     }
 
     //add nodes and links to the graph
     var m = null;
     for (var n in g.nodess) {
-	g.setNode(n, g.nodess[n], { labelStyle: "font-size: 3em" } );
-	if (null !== m) {
-	    g.setEdge(n, m, { label: "", style: "stroke-width: 0" });
-	}
-	m = n;
+        g.setNode(n, g.nodess[n], { labelStyle: "font-size: 3em" });
+        if (null !== m) {
+            g.setEdge(n, m, { label: "", style: "stroke-width: 0" });
+        }
+        m = n;
     }
-    
+
     return g;
 }
 
@@ -116,7 +117,8 @@ function drawDAGRE(iri, parameter, width, height) {
     //if parameter == 1 submit a short (but less detailed) query
     //if parameter == 2 submit a longer (but more detailed) query
     var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(SPARQL.ancestorQuery(iri, parameter));
-    if (debug) {
+    var source;
+    if (LOAD.settings.debug) {
         console.log(url);
     }
     d3.select("#message").style("display", "inline").html(MESSAGE.loadingMore);
@@ -124,47 +126,45 @@ function drawDAGRE(iri, parameter, width, height) {
     d3.select("#tree-overlay").remove();
 
     source = SPARQL.getXMLHttpRequest(url);
-        
+
     source.subscribe(
         function(response) {
 
             if (null === response) {
-		d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
+		            d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
                 return;
             }
 
-	    d3.select("#helpPopup").html(HELP.dagre);   
-            
+            d3.select("#helpPopup").html(LOAD.HELP.dagre);
+
             var ancestorArray = JSON.parse(response).results.bindings
-		.reduce((ancestors, a) => { 
-			ancestors.push(a.ancestor1.value); 
-			if (undefined !== a.ancestor2) {
-			    ancestors.push(a.ancestor2.value); 
-			}
-			return ancestors; 
-		    }, 
-		    []).filter(onlyUnique);
+                .reduce((ancestors, a) => {
+                    ancestors.push(a.ancestor1.value);
+                    if (undefined !== a.ancestor2) {
+                        ancestors.push(a.ancestor2.value);
+                    }
+                    return ancestors;
+                }, []).filter(onlyUnique);
 
             console.log("ANCESTORS");
             console.log(ancestorArray);
             const subscribe = SPARQL.slicedQuery(ancestorArray, SPARQL.descendantQuery, 8)
                 .subscribe(
                     function(val) {
-			var descendantArray = val.reduce((descendants, d) => {
-				return descendants.concat(JSON.parse(d).results.bindings.map(function(t){ return t.descendant1.value; }));
-			    },
-			    []);
+                        var descendantArray = val.reduce((descendants, d) => {
+                            return descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
+                        }, []);
                         const subscribe = SPARQL.slicedQuery(descendantArray, SPARQL.propertyQuery, 8)
                             .subscribe(function(val) {
                                 var allArray = val.reduce((all, a) => {
-					return all.concat(JSON.parse(a).results.bindings);
-				    },
-				    []);
+                                    return all.concat(JSON.parse(a).results.bindings);
+                                }, []);
                                 if (allArray.length === 0) {
-				    d3.select("#message").style("display", "inline").html(MESSAGE.noEtymology);
+                                    d3.select("#message").style("display", "inline").html(MESSAGE.noEtymology);
                                 } else {
                                     var g = defineGraph(ancestorArray, allArray);
-				    d3.select("#message").style("display", "none");
+				                            d3.select("#message").style("display", "none");
+
                                     var inner = renderGraph(g, width, height);
                                     appendLanguageTagTextAndTooltip(inner, g);
                                     appendDefinitionTooltip(inner, g);
@@ -172,15 +172,15 @@ function drawDAGRE(iri, parameter, width, height) {
                             });
                     },
                     function(error) {
-			d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
-			console.log(error);
-		    },
+			                  d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
+			                  console.log(error);
+		                },
                     () => console.log('done descendants query'));
         },
         function(error) {
             if (parameter === 1) {
-		d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
-		console.log(error);
+		            d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
+		            console.log(error);
             } else {
                 drawDAGRE(iri, 1, width, height);
             }
@@ -424,7 +424,7 @@ function renderGraph(g, width, height) {
         inner.attr("transform", "translate(" + d3.event.translate + ")" +
             "scale(" + d3.event.scale + ")");
     });
-    svg.call(zoom);//.on("dblclick.zoom", null);
+    svg.call(zoom); //.on("dblclick.zoom", null);
 
     // Create the renderer          
     var render = new dagreD3.render();
