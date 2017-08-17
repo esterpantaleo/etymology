@@ -37,35 +37,35 @@ jQuery('document').ready(function($) {
 
                 const source = SPARQL.getXMLHttpRequest(url);
                 source.subscribe(
-                    function(response) {
-                        if (response !== undefined && response !== null) {
-                            d3.select("#tree-overlay").remove();
-                            d3.select("#tooltipPopup").style("display", "none");
-
-                            var g = buildDisambiguationDAGRE(response);
-                            if (null === g) {
-                                d3.select("#message").html(LOAD.MESSAGE.notAvailable);
-                            } else {
-                                if (Object.keys(g.nodess).length > 1) {
-                                    d3.select("#helpPopup").html(LOAD.HELP.disambiguation);
-                                    d3.select("#message").html("There are multiple words in the database. <br>Which word are you interested in?");
-                                    var inner = renderGraph(g, width, height);
-                                    appendLanguageTagTextAndTooltip(inner, g);
-                                    appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
-
-                                    d3.selectAll(".edgePath").remove();
-                                } else {
-                                    var iri = Object.keys(g.nodess)[0];
-                                    drawDAGRE(iri, 2, width, height);
-                                }
-                            }
-                        }
-                    },
-                    function(error) {
-                        console.error(error);
-                        d3.select("#message").html(LOAD.MESSAGE.notAvailable);
-                    },
-                    () => console.log('done disambiguation'));
+				            function(response) {
+				                if (response !== undefined && response !== null) { 
+					                  d3.select("#tree-overlay").remove();
+					                  d3.select("#tooltipPopup").style("display", "none");
+					 
+					                  var g = buildDisambiguationDAGRE(response);
+					                  if (null === g) { 
+					                      d3.select("#message").style("display", "inline").html(MESSAGE.notAvailable);
+					                  } else {
+					                      if (Object.keys(g.nodess).length > 1) {
+						                        d3.select("#helpPopup").html(HELP.disambiguation);  
+						                        d3.select("#message").style("display", "inline").html("There are multiple words in the database. <br>Which word are you interested in?");
+						                        var inner = renderGraph(g, width, height);
+						                        appendLanguageTagTextAndTooltip(inner, g);
+						                        appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
+						 
+						                        d3.selectAll(".edgePath").remove();
+					                      } else {    
+						                        var iri = Object.keys(g.nodess)[0];
+						                        drawDAGRE(iri, 2, width, height);   
+					                      }
+					                  }
+				                }
+				            },
+				            function(error){ 
+				                console.error(error);
+				                d3.select("#message").style("display", "inline").html(MESSAGE.notAvailable);
+				            },
+				            () => console.log('done disambiguation'));
             }
         }
     });

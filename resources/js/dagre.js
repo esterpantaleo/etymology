@@ -64,14 +64,17 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
                 .style("display", "none");
         })
         .on('mouseover', function(d) {
-            d3.select("#tooltipPopup")
-                .style("display", "inline")
-                .style("left", (d3.event.pageX + 38) + "px")
-                .style("top", (d3.event.pageY - 28) + "px")
-                .html("");
-            var iri = g.node(d).iri;
-            g.nodess[iri].logTooltip();
-        });
+
+	  d3.select(this).style("cursor", "pointer");
+
+	  d3.select("#tooltipPopup")
+		    .style("display", "inline") 
+		    .style("left", (d3.event.pageX + 38) + "px")
+		    .style("top", (d3.event.pageY - 28) + "px")
+		    .html("");
+	  var iri = g.node(d).iri;
+	  g.nodess[iri].logTooltip();
+	});
 }
 
 function buildDisambiguationDAGRE(response) {
@@ -118,7 +121,7 @@ function drawDAGRE(iri, parameter, width, height) {
     if (LOAD.settings.debug) {
         console.log(url);
     }
-    d3.select("#message").html(LOAD.MESSAGE.loadingMore);
+    d3.select("#message").style("display", "inline").html(MESSAGE.loadingMore);
     d3.select("#tooltipPopup").attr("display", "none");
     d3.select("#tree-overlay").remove();
 
@@ -128,7 +131,7 @@ function drawDAGRE(iri, parameter, width, height) {
         function(response) {
 
             if (null === response) {
-                d3.select("#message").html(LOAD.MESSAGE.serverError);
+		            d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
                 return;
             }
 
@@ -157,10 +160,11 @@ function drawDAGRE(iri, parameter, width, height) {
                                     return all.concat(JSON.parse(a).results.bindings);
                                 }, []);
                                 if (allArray.length === 0) {
-                                    d3.select("#message").html(LOAD.MESSAGE.noEtymology);
+                                    d3.select("#message").style("display", "inline").html(MESSAGE.noEtymology);
                                 } else {
                                     var g = defineGraph(ancestorArray, allArray);
-                                    d3.select("#message").html("");
+				                            d3.select("#message").style("display", "none");
+
                                     var inner = renderGraph(g, width, height);
                                     appendLanguageTagTextAndTooltip(inner, g);
                                     appendDefinitionTooltip(inner, g);
@@ -168,15 +172,15 @@ function drawDAGRE(iri, parameter, width, height) {
                             });
                     },
                     function(error) {
-                        d3.select("#message").html(LOAD.MESSAGE.serverError);
-                        console.log(error);
-                    },
+			                  d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
+			                  console.log(error);
+		                },
                     () => console.log('done descendants query'));
         },
         function(error) {
             if (parameter === 1) {
-                d3.select("#message").html(LOAD.MESSAGE.serverError);
-                console.log(error);
+		            d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
+		            console.log(error);
             } else {
                 drawDAGRE(iri, 1, width, height);
             }

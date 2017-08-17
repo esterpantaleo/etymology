@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="./resources/css/etytree.css">
 <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
 <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -47,9 +47,9 @@
             </tr>
         </table>
     </div>
-    <div data-role="content" class="ui-content" id="tree-container">
-        <p id="message" align="center" class="message"/>
-        <div id="tree-overlay" style="text-align:center;">
+    <div data-role="content" class="ui-content" id="tree-container" style="text-align: center;">
+        <p id="message" class="message"/>
+        <div id="tree-overlay">
             <div>
                 <br><br><br><br><br>
             </div>
@@ -57,11 +57,11 @@
                 <span class="blueSpan">
                      Type a word in the search bar, then press enter. 
                      <br>
-                     You will see a cloud of words.
+                     You will see a list of words.
                      <br>
-                     Explore the different words by clicking on them and on the circles. 
+                     Explore the different words by mousing over them and on language tags below them. 
                      <br>
-                     Double click on the circle you are interested in.
+                     Click on the word you are interested in.
                 </span>
 		<br><br><br><br><br>
             <div>
@@ -80,7 +80,8 @@
                 <span class="smallSpan">
                     This project is open source (source code <a href="https://github.com/esterpantaleo/etymology">javascript</a>, <a href="https://bitbucket.org/esterpantaleo/dbnary_etymology">java</a>) and uses <a href="http://d3js.org/">d3</a> and <a href="https://www.wiktionary.org/">Wiktionary</a>. There is a SPARQL endpoint <a href="http://etytree-virtuoso.wmflabs.org/sparql">here</a>. Data is under CC BY-SA.
                     <br>
-                    Anyone can directly contribute or indirectly contribute by improving Etymology sections of words in the English Wiktionary. 
+                    In the current version you cannot edit the graph, you can indirectly edit it by editing Etymology sections of words in the English Wiktionary. <br>
+At each new release the database will be updated and the edits will be reflected into the graph. 
                     <br>
                     If you would like to contribute email esterpantaleo at gmail dot com or contact Wikimedia user <a href="https://meta.wikimedia.org/wiki/User_talk:Epantaleo">Epantaleo</a>. If you spot a bug please open an issue <a href="https://github.com/esterpantaleo/etymology/issues">here</a>.
                 </span><br>

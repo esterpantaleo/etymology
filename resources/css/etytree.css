@@ -26,6 +26,7 @@ text {
 .message {
     font-size: 1.5em;
 }
+
 .helpButton {
     border: 0.3em !important; 
     font-size: 1.3em !important;
@@ -40,6 +41,11 @@ text {
     border-color: #f9f9f9 !important;
     border-bottom-left-radius: 1em;
     border-bottom-right-radius: 1em;
+}
+
+.ui-content {
+    margin: 0px !important;
+    padding: 0px !important;
 }
 
 .blueSpan {
@@ -69,7 +75,7 @@ text {
     position: absolute;
     background: lightblue;
     text-align: left;
-    padding: 0.1em;
+    padding: 0.3em;
     font: 1em sans-serif;
     border: solid 0.3em red;
     border-radius: 0.5em;
