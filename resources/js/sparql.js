@@ -1,5 +1,5 @@
 /*globals
-    Rx, XMLHttpRequest, console, d3, MESSAGE, debug
+    Rx, XMLHttpRequest, console, d3, MESSAGE, LOAD
 */
 var SPARQL = (function(module) {
 
@@ -34,14 +34,14 @@ var SPARQL = (function(module) {
             tmpArray = myArray.slice(i, i + chunk);
             //console.log(SPARQL.unionQuery(tmpArray, query));                   
             url = this.ENDPOINT + "?query=" + encodeURIComponent(this.unionQuery(tmpArray, queryFunction));
-            if (debug) {
+            if (LOAD.settings.debug) {
                 console.log(url);
             }
             sources.push(this.getXMLHttpRequest(url));
         }
         const queryObservable = Rx.Observable.zip.apply(this, sources)
             .catch((err) => {
-                d3.select("#message").html(MESSAGE.serverError);
+                d3.select("#message").html(LOAD.MESSAGE.serverError);
 
                 //Return an empty Observable which gets collapsed in the output             
                 return Rx.Observable.empty();

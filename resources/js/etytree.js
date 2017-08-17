@@ -1,8 +1,8 @@
 /*globals
-    jQuery, d3, debug, console, window, document, SPARQL, drawDisambiguation, HELP, buildDisambiguationDAGRE, MESSAGE, renderGraph, drawDAGRE, appendDefinitionTooltipOrDrawDAGRE, appendLanguageTagTextAndTooltip
+    jQuery, d3, LOAD, console, window, document, SPARQL, drawDisambiguation, buildDisambiguationDAGRE, renderGraph, drawDAGRE, appendDefinitionTooltipOrDrawDAGRE, appendLanguageTagTextAndTooltip
 */
 jQuery('document').ready(function($) {
-    d3.select("#helpPopup").html(HELP.intro);
+    d3.select("#helpPopup").html(LOAD.HELP.intro);
 
     var div = d3.select("body").append("div")
         .attr("data-role", "popup")
@@ -25,13 +25,13 @@ jQuery('document').ready(function($) {
             var lemma = $(this).val(); //.replace("/", "!slash!");
 
             if (lemma) {
-                if (debug) {
+                if (LOAD.settings.debug) {
                     console.log("searching lemma in database");
                 }
                 var width = window.innerWidth,
                     height = $(document).height() - $('#header').height();
                 var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(SPARQL.disambiguationQuery(lemma));
-                if (debug) {
+                if (LOAD.settings.debug) {
                     console.log(url);
                 }
 
@@ -44,10 +44,10 @@ jQuery('document').ready(function($) {
 
                             var g = buildDisambiguationDAGRE(response);
                             if (null === g) {
-                                d3.select("#message").html(MESSAGE.notAvailable);
+                                d3.select("#message").html(LOAD.MESSAGE.notAvailable);
                             } else {
                                 if (Object.keys(g.nodess).length > 1) {
-                                    d3.select("#helpPopup").html(HELP.disambiguation);
+                                    d3.select("#helpPopup").html(LOAD.HELP.disambiguation);
                                     d3.select("#message").html("There are multiple words in the database. <br>Which word are you interested in?");
                                     var inner = renderGraph(g, width, height);
                                     appendLanguageTagTextAndTooltip(inner, g);
@@ -63,7 +63,7 @@ jQuery('document').ready(function($) {
                     },
                     function(error) {
                         console.error(error);
-                        d3.select("#message").html(MESSAGE.notAvailable);
+                        d3.select("#message").html(LOAD.MESSAGE.notAvailable);
                     },
                     () => console.log('done disambiguation'));
             }

@@ -1,5 +1,5 @@
 /*globals
-    d3, console, debug, dagreD3, GraphNode, sortUnique, SPARQL, Node, Rx, MESSAGE, HELP, onlyUnique
+    d3, console, LOAD, dagreD3, GraphNode, sortUnique, SPARQL, Node, Rx, onlyUnique
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 
@@ -93,7 +93,7 @@ function buildDisambiguationDAGRE(response) {
                 }
             });
     });
-    if (debug) {
+    if (LOAD.settings.debug) {
         console.log(g.nodess);
     }
 
@@ -115,10 +115,10 @@ function drawDAGRE(iri, parameter, width, height) {
     //if parameter == 2 submit a longer (but more detailed) query
     var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(SPARQL.ancestorQuery(iri, parameter));
     var source;
-    if (debug) {
+    if (LOAD.settings.debug) {
         console.log(url);
     }
-    d3.select("#message").html(MESSAGE.loadingMore);
+    d3.select("#message").html(LOAD.MESSAGE.loadingMore);
     d3.select("#tooltipPopup").attr("display", "none");
     d3.select("#tree-overlay").remove();
 
@@ -128,11 +128,11 @@ function drawDAGRE(iri, parameter, width, height) {
         function(response) {
 
             if (null === response) {
-                d3.select("#message").html(MESSAGE.serverError);
+                d3.select("#message").html(LOAD.MESSAGE.serverError);
                 return;
             }
 
-            d3.select("#helpPopup").html(HELP.dagre);
+            d3.select("#helpPopup").html(LOAD.HELP.dagre);
 
             var ancestorArray = JSON.parse(response).results.bindings
                 .reduce((ancestors, a) => {
@@ -157,7 +157,7 @@ function drawDAGRE(iri, parameter, width, height) {
                                     return all.concat(JSON.parse(a).results.bindings);
                                 }, []);
                                 if (allArray.length === 0) {
-                                    d3.select("#message").html(MESSAGE.noEtymology);
+                                    d3.select("#message").html(LOAD.MESSAGE.noEtymology);
                                 } else {
                                     var g = defineGraph(ancestorArray, allArray);
                                     d3.select("#message").html("");
@@ -168,14 +168,14 @@ function drawDAGRE(iri, parameter, width, height) {
                             });
                     },
                     function(error) {
-                        d3.select("#message").html(MESSAGE.serverError);
+                        d3.select("#message").html(LOAD.MESSAGE.serverError);
                         console.log(error);
                     },
                     () => console.log('done descendants query'));
         },
         function(error) {
             if (parameter === 1) {
-                d3.select("#message").html(MESSAGE.serverError);
+                d3.select("#message").html(LOAD.MESSAGE.serverError);
                 console.log(error);
             } else {
                 drawDAGRE(iri, 1, width, height);
