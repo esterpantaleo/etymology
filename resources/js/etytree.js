@@ -44,11 +44,11 @@ jQuery('document').ready(function($) {
 					 
 					 var g = buildDisambiguationDAGRE(response);
 					 if (null === g) { 
-					     d3.select("#message").html(MESSAGE.notAvailable);
+					     d3.select("#message").style("display", "inline").html(MESSAGE.notAvailable);
 					 } else {
 					     if (Object.keys(g.nodess).length > 1) {
 						 d3.select("#helpPopup").html(HELP.disambiguation);  
-						 d3.select("#message").html("There are multiple words in the database. <br>Which word are you interested in?");
+						 d3.select("#message").style("display", "inline").html("There are multiple words in the database. <br>Which word are you interested in?");
 						 var inner = renderGraph(g, width, height);
 						 appendLanguageTagTextAndTooltip(inner, g);
 						 appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
@@ -63,7 +63,7 @@ jQuery('document').ready(function($) {
 				 },
 				 function(error){ 
 				     console.error(error);
-				     d3.select("#message").html(MESSAGE.notAvailable);
+				     d3.select("#message").style("display", "inline").html(MESSAGE.notAvailable);
 				 },
 				 () => console.log('done disambiguation'));
             }

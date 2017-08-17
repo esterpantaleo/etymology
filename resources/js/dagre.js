@@ -64,6 +64,8 @@ function appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height) {
                 .style("display", "none");
         })
         .on('mouseover', function(d) {
+	    d3.select(this).style("cursor", "pointer");
+
 	    d3.select("#tooltipPopup")
 		.style("display", "inline") 
 		.style("left", (d3.event.pageX + 38) + "px")
@@ -117,7 +119,7 @@ function drawDAGRE(iri, parameter, width, height) {
     if (debug) {
         console.log(url);
     }
-    d3.select("#message").html(MESSAGE.loadingMore);
+    d3.select("#message").style("display", "inline").html(MESSAGE.loadingMore);
     d3.select("#tooltipPopup").attr("display", "none");
     d3.select("#tree-overlay").remove();
 
@@ -127,7 +129,7 @@ function drawDAGRE(iri, parameter, width, height) {
         function(response) {
 
             if (null === response) {
-		d3.select("#message").html(MESSAGE.serverError);
+		d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
                 return;
             }
 
@@ -159,10 +161,10 @@ function drawDAGRE(iri, parameter, width, height) {
 				    },
 				    []);
                                 if (allArray.length === 0) {
-				    d3.select("#message").html(MESSAGE.noEtymology);
+				    d3.select("#message").style("display", "inline").html(MESSAGE.noEtymology);
                                 } else {
                                     var g = defineGraph(ancestorArray, allArray);
-				    d3.select("#message").html("");
+				    d3.select("#message").style("display", "none");
                                     var inner = renderGraph(g, width, height);
                                     appendLanguageTagTextAndTooltip(inner, g);
                                     appendDefinitionTooltip(inner, g);
@@ -170,14 +172,14 @@ function drawDAGRE(iri, parameter, width, height) {
                             });
                     },
                     function(error) {
-			d3.select("#message").html(MESSAGE.serverError);
+			d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
 			console.log(error);
 		    },
                     () => console.log('done descendants query'));
         },
         function(error) {
             if (parameter === 1) {
-		d3.select("#message").html(MESSAGE.serverError);
+		d3.select("#message").style("display", "inline").html(MESSAGE.serverError);
 		console.log(error);
             } else {
                 drawDAGRE(iri, 1, width, height);
