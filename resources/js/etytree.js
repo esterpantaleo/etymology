@@ -15,7 +15,10 @@ var EtyTree = {
         };
         etyBase.config = {
             modules: ['DB', 'GRAPH', 'LOAD'],
-            debug: false
+            debug: false,
+            urls: {
+                ENDPOINT: "https://etytree-virtuoso.wmflabs.org/sparql"
+            }
         };
         bindModules(etyBase, etyBase.config.modules);
         return etyBase;

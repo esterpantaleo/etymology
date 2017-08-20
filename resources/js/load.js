@@ -1,5 +1,5 @@
 /*globals 
-    d3, Rx, DB, console, XMLHttpRequest
+    d3, Rx, console, XMLHttpRequest
 */
 var LOAD = (function(module) {
 
@@ -28,6 +28,167 @@ var LOAD = (function(module) {
             noEtymology: "Sorry, it seems like no etymology is available in the English Wiktionary for this word.",
             loadingMore: "Loading, please wait... This word is etymologically related to many words."
         };
+
+        class GraphNode {
+            constructor(i) {
+                this.counter = i;
+                this.iri = [];
+                //this.all contains this.iri (i.e. equivalent nodes) 
+                //and also identical nodes in the tree
+                //e.g. ee_1_door and ee_door
+                this.all = [];
+                this.linked = undefined;
+                this.linkedToSource = [];
+                this.linkedToSourceCopy = [];
+                this.linkedToTarget = [];
+
+                this.der = undefined;
+                this.isAncestor = false;
+
+                this.shape = "rect";
+                this.style = "fill: lightBlue; stroke: black";
+                this.rx = this.ry = 7;
+            }
+        }
+
+        class Node {
+            constructor(i) {
+                this.iri = i;
+                var tmp = this.parseIri(i);
+                this.iso = tmp.iso;
+                this.label = tmp.label;
+                //ety is an integer                              
+                //and represents the etymology number encoded in the iri;
+                this.ety = tmp.ety;
+                this.lang = etyBase.LOAD.langMap.get(this.iso);
+                //graphNode specifies the graphNode(s) corresponding to the node                           
+                this.graphNode = [];
+                //eqIri is an array of iri-s of Node-s that are equivalent to the Node             
+                this.eqIri = [];
+
+                this.der = undefined;
+                this.isAncestor = false;
+
+                this.shape = "rect";
+                this.style = "fill: lightBlue; stroke: black";
+                this.rx = this.ry = 7;
+            }
+
+            logTooltip() {
+                var query = etyBase.DB.lemmaQuery(this.iri);
+                var url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(query);
+
+                if (etyBase.config.debug) {
+                    console.log(url);
+                }
+
+                var that = this;
+
+                const source = etyBase.DB.getXMLHttpRequest(url);
+                source.subscribe(
+                    function(response) {
+                        var text = "<b>" + that.label + "</b><br><br><br>";
+                        if (null !== response) {
+                            //print definition                                                      
+                            var dataJson = JSON.parse(response).results.bindings;
+                            text += dataJson.reduce(
+                                function(s, element) {
+                                    return s += that.logDefinition(element.pos, element.gloss);
+                                },
+                                ""
+                            );
+                            //print links 
+                            text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
+                                that.logLinks(dataJson[0].links.value);
+                        } else {
+                            text += "-";
+                        }
+                        d3.select("#tooltipPopup")
+                            .append("p")
+                            .html(text);
+                    },
+                    function(error) {
+                        console.error(error);
+                        var text = "<b>" + that.label + "</b><br><br><br>";
+                        text += "-";
+                        d3.select("#tooltipPopup")
+                            .append("p")
+                            .html(text);
+                    });
+            }
+
+            parseIri(iri) {
+                var iso, label, ety,
+                    tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
+                    .split("/");
+
+                if (tmp.length > 1) {
+                    iso = tmp[0];
+                    label = tmp[1];
+                } else {
+                    iso = "eng";
+                    label = tmp[0];
+                }
+                //ety is an integer                                                           
+                //and represents the etymology number encoded in the iri;                              
+                //if ety === 0 the iri is __ee_word                                    
+                //if ety === 1 the iri is __ee_1_word                                             
+                //etc                                                                                               
+                ety = 0;
+                if (null !== label.match(/__ee_[0-9]+_/g)) {
+                    //ety is an integer specifying the etymology entry                                
+                    ety = label.match(/__ee_[0-9]+_/g)[0]
+                        .match(/__ee_(.*?)_/)[1];
+                }
+
+                label = label.replace(/__ee_[0-9]+_/g, "")
+                    .replace("__ee_", "")
+                    .replace("__", "'")
+                    .replace(/^_/g, "*")
+                    .replace(/_/g, " ")
+                    .replace("__", "'")
+                    .replace(/_/g, " ")
+                    .replace("%C2%B7", "·");
+
+                var obj = {
+                    iso: iso,
+                    label: label,
+                    ety: ety
+                };
+
+                return obj;
+            }
+
+            logDefinition(pos, gloss) {
+                if (undefined !== pos && undefined !== gloss) {
+                    return gloss.value.split(";;;;").map(function(el) {
+                        return pos.value + " - " + el + "<br><br>";
+                    }).join("");
+                } else {
+                    return "-";
+                }
+            }
+
+            logLinks(links) {
+                return links.split(",")
+                    .map(function(e) {
+                        var linkName;
+                        if (e.startsWith("https://en.wiktionary.org/wiki/Reconstruction")) {
+                            linkName = e.replace(/https:\/\/en.wiktionary.org\/wiki\/Reconstruction:/g, "")
+                                .split("/")
+                                .join(" ");
+                        } else {
+                            linkName = e.split("/")
+                                .pop()
+                                .split("#")
+                                .reverse()
+                                .join(" ")
+                                .replace(/_/g, " ");
+                        }
+                        return "<a href=\"" + e + "\" target=\"_blank\">" + linkName + "</a>";
+                    }).join(", ");
+            }
+        }
 
         var init = function() {
             //LOAD LANGUAGES
@@ -59,6 +220,10 @@ var LOAD = (function(module) {
 
         this.HELP = HELP;
         this.MESSAGE = MESSAGE;
+        this.classes = {
+            GraphNode: GraphNode,
+            Node: Node
+        };
         this.init = init;
 
         etyBase[moduleName] = this;
@@ -75,165 +240,4 @@ function onlyUnique(value, index, self) {
 
 function transform(d) {
     return "translate(" + d.x + "," + d.y + ")";
-}
-
-class GraphNode {
-    constructor(i) {
-        this.counter = i;
-        this.iri = [];
-        //this.all contains this.iri (i.e. equivalent nodes) 
-        //and also identical nodes in the tree
-        //e.g. ee_1_door and ee_door
-        this.all = [];
-        this.linked = undefined;
-        this.linkedToSource = [];
-        this.linkedToSourceCopy = [];
-        this.linkedToTarget = [];
-
-        this.der = undefined;
-        this.isAncestor = false;
-
-        this.shape = "rect";
-        this.style = "fill: lightBlue; stroke: black";
-        this.rx = this.ry = 7;
-    }
-}
-
-class Node {
-    constructor(i) {
-        this.iri = i;
-        var tmp = this.parseIri(i);
-        this.iso = tmp.iso;
-        this.label = tmp.label;
-        //ety is an integer                              
-        //and represents the etymology number encoded in the iri;
-        this.ety = tmp.ety;
-        this.lang = LOAD.langMap.get(this.iso);
-        //graphNode specifies the graphNode(s) corresponding to the node                           
-        this.graphNode = [];
-        //eqIri is an array of iri-s of Node-s that are equivalent to the Node             
-        this.eqIri = [];
-
-        this.der = undefined;
-        this.isAncestor = false;
-
-        this.shape = "rect";
-        this.style = "fill: lightBlue; stroke: black";
-        this.rx = this.ry = 7;
-    }
-
-    logTooltip() {
-        var query = DB.lemmaQuery(this.iri);
-        var url = DB.ENDPOINT + "?query=" + encodeURIComponent(query);
-
-        if (LOAD.settings.debug) {
-            console.log(url);
-        }
-
-        var that = this;
-
-        const source = DB.getXMLHttpRequest(url);
-        source.subscribe(
-            function(response) {
-                var text = "<b>" + that.label + "</b><br><br><br>";
-                if (null !== response) {
-                    //print definition                                                      
-                    var dataJson = JSON.parse(response).results.bindings;
-                    text += dataJson.reduce(
-                        function(s, element) {
-                            return s += that.logDefinition(element.pos, element.gloss);
-                        },
-                        ""
-                    );
-                    //print links 
-                    text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
-                        that.logLinks(dataJson[0].links.value);
-                } else {
-                    text += "-";
-                }
-                d3.select("#tooltipPopup")
-                    .append("p")
-                    .html(text);
-            },
-            function(error) {
-                console.error(error);
-                var text = "<b>" + that.label + "</b><br><br><br>";
-                text += "-";
-                d3.select("#tooltipPopup")
-                    .append("p")
-                    .html(text);
-            });
-    }
-
-    parseIri(iri) {
-        var iso, label, ety,
-            tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
-            .split("/");
-
-        if (tmp.length > 1) {
-            iso = tmp[0];
-            label = tmp[1];
-        } else {
-            iso = "eng";
-            label = tmp[0];
-        }
-        //ety is an integer                                                           
-        //and represents the etymology number encoded in the iri;                              
-        //if ety === 0 the iri is __ee_word                                    
-        //if ety === 1 the iri is __ee_1_word                                             
-        //etc                                                                                               
-        ety = 0;
-        if (null !== label.match(/__ee_[0-9]+_/g)) {
-            //ety is an integer specifying the etymology entry                                
-            ety = label.match(/__ee_[0-9]+_/g)[0]
-                .match(/__ee_(.*?)_/)[1];
-        }
-
-        label = label.replace(/__ee_[0-9]+_/g, "")
-            .replace("__ee_", "")
-            .replace("__", "'")
-            .replace(/^_/g, "*")
-            .replace(/_/g, " ")
-            .replace("__", "'")
-            .replace(/_/g, " ")
-            .replace("%C2%B7", "·");
-
-        var obj = {
-            iso: iso,
-            label: label,
-            ety: ety
-        };
-
-        return obj;
-    }
-
-    logDefinition(pos, gloss) {
-        if (undefined !== pos && undefined !== gloss) {
-            return gloss.value.split(";;;;").map(function(el) {
-                return pos.value + " - " + el + "<br><br>";
-            }).join("");
-        } else {
-            return "-";
-        }
-    }
-
-    logLinks(links) {
-        return links.split(",")
-            .map(function(e) {
-                var linkName;
-                if (e.startsWith("https://en.wiktionary.org/wiki/Reconstruction")) {
-                    linkName = e.replace(/https:\/\/en.wiktionary.org\/wiki\/Reconstruction:/g, "")
-                        .split("/")
-                        .join(" ");
-                } else {
-                    linkName = e.split("/")
-                        .pop()
-                        .split("#")
-                        .reverse()
-                        .join(" ")
-                        .replace(/_/g, " ");
-                }
-                return "<a href=\"" + e + "\" target=\"_blank\">" + linkName + "</a>";
-            }).join(", ");
-    }
 }

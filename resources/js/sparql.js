@@ -6,8 +6,6 @@ var DB = (function(module) {
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
 
-        var ENDPOINT = "https://etytree-virtuoso.wmflabs.org/sparql";
-
         var getXMLHttpRequest = function(url) {
             return Rx.Observable.create(observer => {
                 const req = new XMLHttpRequest();
@@ -36,7 +34,7 @@ var DB = (function(module) {
             for (i = 0, j = myArray.length; i < j; i += chunk) {
                 tmpArray = myArray.slice(i, i + chunk);
                 //console.log(DB.unionQuery(tmpArray, query));                   
-                url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
+                url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
                 if (etyBase.config.debug) {
                     console.log(url);
                 }
@@ -188,7 +186,6 @@ var DB = (function(module) {
             return query;
         };
 
-        this.ENDPOINT = ENDPOINT;
         this.getXMLHttpRequest = getXMLHttpRequest;
         this.slicedQuery = slicedQuery;
         this.disambiguationQuery = disambiguationQuery;

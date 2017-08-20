@@ -1,5 +1,5 @@
 /*globals
-    $, d3, console, LOAD, dagreD3, GraphNode, DB, Node, Rx, onlyUnique, window, document
+    $, d3, console, dagreD3, GraphNode, Node, Rx, onlyUnique, window, document
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 var GRAPH = (function(module) {
@@ -94,9 +94,9 @@ var GRAPH = (function(module) {
                 n.et.value.split(",")
                     .forEach(function(element) {
                         if (element !== "") {
-                            g.nodess[element] = new Node(element);
+                            g.nodess[element] = new etyBase.LOAD.classes.Node(element);
                         } else {
-                            g.nodess[n.iri.value] = new Node(n.iri.value);
+                            g.nodess[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value);
                         }
                     });
             });
@@ -120,7 +120,7 @@ var GRAPH = (function(module) {
         var drawDAGRE = function(iri, parameter, width, height) {
             //if parameter == 1 submit a short (but less detailed) query
             //if parameter == 2 submit a longer (but more detailed) query
-            var url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.ancestorQuery(iri, parameter));
+            var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.ancestorQuery(iri, parameter));
             var source;
             if (etyBase.config.debug) {
                 console.log(url);
@@ -203,20 +203,20 @@ var GRAPH = (function(module) {
                 //save all nodes        
                 //define isAncestor
                 if (undefined !== element.s && (undefined === g.nodess[element.s.value] || null === g.nodess[element.s.value])) {
-                    g.nodess[element.s.value] = new Node(element.s.value);
+                    g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value);
                     if (ancestors.indexOf(element.s.value) > -1) {
                         g.nodess[element.s.value].isAncestor = true;
                     }
                 }
                 if (undefined !== element.rel && (undefined === g.nodess[element.rel.value] || null === g.nodess[element.rel.value])) {
-                    g.nodess[element.rel.value] = new Node(element.rel.value);
+                    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value);
                     if (ancestors.indexOf(element.rel.value) > -1) {
                         g.nodess[element.s.value].isAncestor = true;
                     }
                 }
                 if (undefined !== element.rel && undefined !== element.eq) {
                     if (undefined === g.nodess[element.eq.value] || null === g.nodess[element.eq.value]) {
-                        g.nodess[element.eq.value] = new Node(element.eq.value);
+                        g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value);
                     }
                     if (ancestors.indexOf(element.eq.value) > -1) {
                         g.nodess[element.eq.value].isAncestor = true;
@@ -227,7 +227,7 @@ var GRAPH = (function(module) {
                 }
                 if (undefined !== element.der) {
                     if (undefined === g.nodess[element.der.value] || null === g.nodess[element.der.value]) {
-                        g.nodess[element.der.value] = new Node(element.der.value);
+                        g.nodess[element.der.value] = new etyBase.LOAD.classes.Node(element.der.value);
                     }
                     //add property der
                     g.nodess[element.s.value].der = true;
@@ -262,7 +262,7 @@ var GRAPH = (function(module) {
                     //the set of ancestors and descendants
                     //then merge them in one graphNode
                     if (tmp.length === 1) {
-                        var gg = new GraphNode(counter);
+                        var gg = new etyBase.LOAD.classes.GraphNode(counter);
                         //initialize graphNode.all 
                         gg.all.push(n);
                         //define graphNode.iri 
@@ -286,7 +286,7 @@ var GRAPH = (function(module) {
             for (var n in g.nodess) {
                 if (g.nodess[n].graphNode.length === 0) {
                     //add iri
-                    var gg = new GraphNode(counter);
+                    var gg = new etyBase.LOAD.classes.GraphNode(counter);
                     gg.iri = g.nodess[n].eqIri;
                     gg.iri.push(n);
                     var tmp = [];
@@ -477,7 +477,7 @@ var GRAPH = (function(module) {
                         }
                         var width = window.innerWidth,
                             height = $(document).height() - $('#header').height();
-                        var url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
+                        var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
                         if (etyBase.config.debug) {
                             console.log(url);
                         }
