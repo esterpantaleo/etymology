@@ -1,5 +1,5 @@
 /*globals
-    Rx, XMLHttpRequest, console, d3
+    $, Rx, XMLHttpRequest, console, d3, window, document
 */
 var DB = (function(module) {
 
@@ -29,8 +29,8 @@ var DB = (function(module) {
             });
         };
 
-        //function to slice up a big sparql query (that cannot be processed by virtuoso)                     
-        // into a bunch of smaller queries in chunks of "chunk"                                             
+        /* function to slice up a big sparql query (that cannot be processed by virtuoso) */
+        /* into a bunch of smaller queries in chunks of "chunk" */
         var slicedQuery = function(myArray, queryFunction, chunk) {
             var i, j, tmpArray, url, sources = [];
             for (i = 0, j = myArray.length; i < j; i += chunk) {
@@ -46,7 +46,7 @@ var DB = (function(module) {
                 .catch((err) => {
                     d3.select("#message").html(etyBase.LOAD.MESSAGE.serverError);
 
-                    //Return an empty Observable which gets collapsed in the output             
+                    /* Return an empty Observable which gets collapsed in the output */
                     return Rx.Observable.empty();
                 });
             return queryObservable;
@@ -63,8 +63,8 @@ var DB = (function(module) {
                 "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) " +
                 "WHERE { " +
                 "    ?iri rdfs:label ?label . ?label bif:contains \"\'" + encodedWord + "\'\" . " +
-                //exclude entries that contain the searched word but include other words
-                //(e.g.: search="door" label="doorbell", exclude "doorbell")
+                // exclude entries that contain the searched word but include other words
+                // (e.g.: search="door" label="doorbell", exclude "doorbell")
                 "    FILTER REGEX(?label, \"^" + encodedWord + "$\", 'i') . " +
                 "    ?iri rdf:type dbetym:EtymologyEntry . " +
                 "    OPTIONAL { " +
@@ -188,6 +188,80 @@ var DB = (function(module) {
             return query;
         };
 
+        var init = function() {
+
+            d3.select("#helpPopup").html(etyBase.LOAD.HELP.intro);
+
+            var div = d3.select("body").append("div")
+                .attr("data-role", "popup")
+                .attr("data-dismissible", "true")
+                .attr("id", "tooltipPopup")
+                .style("display", "none")
+                .attr("class", "ui-content tooltipDiv");
+
+            $(window).click(function() {
+                d3.select("#tooltipPopup")
+                    .style("display", "none");
+            });
+
+            $('#tooltipPopup').click(function(event) {
+                event.stopPropagation();
+            });
+
+            $('#tags').on("keypress click", function(e) {
+                var tag = this;
+                if (e.which === 13 || e.type === 'click') {
+                    var lemma = $(tag).val(); //.replace("/", "!slash!");
+
+                    if (lemma) {
+                        if (etyBase.LOAD.settings.debug) {
+                            console.log("searching lemma in database");
+                        }
+                        var width = window.innerWidth,
+                            height = $(document).height() - $('#header').height();
+                        var url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
+                        if (etyBase.LOAD.settings.debug) {
+                            console.log(url);
+                        }
+
+                        const source = etyBase.DB.getXMLHttpRequest(url);
+                        source.subscribe(
+                            function(response) {
+                                if (response !== undefined && response !== null) {
+                                    d3.select("#tree-overlay").remove();
+                                    d3.select("#tooltipPopup").style("display", "none");
+
+                                    var g = etyBase.GRAPH.buildDisambiguationDAGRE(response);
+                                    if (null === g) {
+                                        d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.notAvailable);
+                                    } else {
+                                        if (Object.keys(g.nodess).length > 1) {
+                                            d3.select("#helpPopup").html(etyBase.LOAD.HELP.disambiguation);
+                                            d3.select("#message").style("display", "inline").html("There are multiple words in the database. <br>Which word are you interested in?");
+                                            var inner = etyBase.GRAPH.renderGraph(g, width, height);
+                                            etyBase.GRAPH.appendLanguageTagTextAndTooltip(inner, g);
+                                            etyBase.GRAPH.appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
+
+                                            d3.selectAll(".edgePath").remove();
+                                        } else {
+                                            var iri = Object.keys(g.nodess)[0];
+                                            etyBase.GRAPH.drawDAGRE(iri, 2, width, height);
+                                        }
+                                    }
+                                }
+                            },
+                            function(error) {
+                                console.error(error);
+                                d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.notAvailable);
+                            },
+                            () => console.log('done disambiguation'));
+                    }
+                }
+            });
+
+
+        };
+
         this.ENDPOINT = ENDPOINT;
         this.getXMLHttpRequest = getXMLHttpRequest;
         this.slicedQuery = slicedQuery;
@@ -197,6 +271,7 @@ var DB = (function(module) {
         this.descendantQuery = descendantQuery;
         this.propertyQuery = propertyQuery;
         this.unionQuery = unionQuery;
+        this.init = init;
 
         etyBase[moduleName] = this;
     };
