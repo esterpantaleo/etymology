@@ -100,7 +100,7 @@ var GRAPH = (function(module) {
                         }
                     });
             });
-            if (etyBase.LOAD.settings.debug) {
+            if (etyBase.config.debug) {
                 console.log(g.nodess);
             }
 
@@ -122,7 +122,7 @@ var GRAPH = (function(module) {
             //if parameter == 2 submit a longer (but more detailed) query
             var url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.ancestorQuery(iri, parameter));
             var source;
-            if (etyBase.LOAD.settings.debug) {
+            if (etyBase.config.debug) {
                 console.log(url);
             }
             d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.loadingMore);
@@ -472,13 +472,13 @@ var GRAPH = (function(module) {
                     var lemma = $(tag).val(); //.replace("/", "!slash!");
 
                     if (lemma) {
-                        if (etyBase.LOAD.settings.debug) {
+                        if (etyBase.config.debug) {
                             console.log("searching lemma in database");
                         }
                         var width = window.innerWidth,
                             height = $(document).height() - $('#header').height();
                         var url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
-                        if (etyBase.LOAD.settings.debug) {
+                        if (etyBase.config.debug) {
                             console.log(url);
                         }
 

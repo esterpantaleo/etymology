@@ -14,7 +14,8 @@ var EtyTree = {
             }
         };
         etyBase.config = {
-            modules: ['DB', 'GRAPH', 'LOAD']
+            modules: ['DB', 'GRAPH', 'LOAD'],
+            debug: false
         };
         bindModules(etyBase, etyBase.config.modules);
         return etyBase;

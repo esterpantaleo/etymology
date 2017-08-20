@@ -37,7 +37,7 @@ var DB = (function(module) {
                 tmpArray = myArray.slice(i, i + chunk);
                 //console.log(DB.unionQuery(tmpArray, query));                   
                 url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
-                if (etyBase.LOAD.settings.debug) {
+                if (etyBase.config.debug) {
                     console.log(url);
                 }
                 sources.push(etyBase.DB.getXMLHttpRequest(url));

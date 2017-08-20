@@ -6,9 +6,6 @@ var LOAD = (function(module) {
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
 
-        var settings = {
-            debug: false
-        };
         var HELP = {
             intro: "Enter a word in the search bar, then press enter or click.",
             disambiguation: "<b>Disambiguation page</b>" +
@@ -35,32 +32,31 @@ var LOAD = (function(module) {
         var init = function() {
             //LOAD LANGUAGES
             //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English")      
-            if (module.settings.debug) {
+            if (etyBase.config.debug) {
                 console.log("loading languages");
             }
 
-            module.langMap = new Map();
+            etyBase.LOAD.langMap = new Map();
             var ssv = d3.dsv(";", "text/plain");
             ssv("./resources/data/etymology-only_languages.csv", function(data) {
                 data.forEach(function(entry) {
-                    module.langMap.set(entry.code, entry["canonical name"]);
+                    etyBase.LOAD.langMap.set(entry.code, entry["canonical name"]);
                 });
             });
             ssv("./resources/data/list_of_languages.csv", function(data) {
                 data.forEach(function(entry) {
-                    module.langMap.set(entry.code, entry["canonical name"]);
+                    etyBase.LOAD.langMap.set(entry.code, entry["canonical name"]);
                 });
             });
             d3.text("./resources/data/iso-639-3.tab", function(error, textString) {
                 var headers = ["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"].join("\t");
                 var data = d3.tsv.parse(headers + textString);
                 data.forEach(function(entry) {
-                    module.langMap.set(entry.Id, entry.Ref_Name);
+                    etyBase.LOAD.langMap.set(entry.Id, entry.Ref_Name);
                 });
             });
         };
 
-        this.settings = settings;
         this.HELP = HELP;
         this.MESSAGE = MESSAGE;
         this.init = init;
