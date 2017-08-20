@@ -2,58 +2,70 @@
     d3, Rx, DB, console, XMLHttpRequest
 */
 var LOAD = (function(module) {
-    module.settings = {
-        debug: false
-    };
-    module.HELP = {
-        intro: "Enter a word in the search bar, then press enter or click.",
-        disambiguation: "<b>Disambiguation page</b>" +
-            "<br>Pick the word you are interested in." +
-            "<ul>" +
-            "<li>Mouse over a node to display lexical information</li>" +
-            "<li>Mouse over the language tag under the node to display the language</li>" +
-            "<li>Click on a node to choose a word</li>" +
-            "</ul>",
-        dagre: "Arrows go from ancestor to descendant.<ul>" +
-            "<li>Mouse over a node to display lexical information</li>" +
-            "<li>Mouse over the language tag under the node to display the language</li>" +
-            "</ul>"
-    };
 
-    module.MESSAGE = {
-        notAvailable: "This word is not available in the database.",
-        loading: "Loading, please wait...",
-        serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
-        noEtymology: "Sorry, it seems like no etymology is available in the English Wiktionary for this word.",
-        loadingMore: "Loading, please wait... This word is etymologically related to many words."
-    };
+    module.bindModule = function(base, moduleName) {
+        var etyBase = base;
 
-    module.init = function() {
-        //LOAD LANGUAGES
-        //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English")      
-        if (module.settings.debug) {
-            console.log("loading languages");
-        }
+        var settings = {
+            debug: false
+        };
+        var HELP = {
+            intro: "Enter a word in the search bar, then press enter or click.",
+            disambiguation: "<b>Disambiguation page</b>" +
+                "<br>Pick the word you are interested in." +
+                "<ul>" +
+                "<li>Mouse over a node to display lexical information</li>" +
+                "<li>Mouse over the language tag under the node to display the language</li>" +
+                "<li>Click on a node to choose a word</li>" +
+                "</ul>",
+            dagre: "Arrows go from ancestor to descendant.<ul>" +
+                "<li>Mouse over a node to display lexical information</li>" +
+                "<li>Mouse over the language tag under the node to display the language</li>" +
+                "</ul>"
+        };
 
-        module.langMap = new Map();
-        var ssv = d3.dsv(";", "text/plain");
-        ssv("./resources/data/etymology-only_languages.csv", function(data) {
-            data.forEach(function(entry) {
-                module.langMap.set(entry.code, entry["canonical name"]);
+        var MESSAGE = {
+            notAvailable: "This word is not available in the database.",
+            loading: "Loading, please wait...",
+            serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
+            noEtymology: "Sorry, it seems like no etymology is available in the English Wiktionary for this word.",
+            loadingMore: "Loading, please wait... This word is etymologically related to many words."
+        };
+
+        var init = function() {
+            //LOAD LANGUAGES
+            //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English")      
+            if (module.settings.debug) {
+                console.log("loading languages");
+            }
+
+            module.langMap = new Map();
+            var ssv = d3.dsv(";", "text/plain");
+            ssv("./resources/data/etymology-only_languages.csv", function(data) {
+                data.forEach(function(entry) {
+                    module.langMap.set(entry.code, entry["canonical name"]);
+                });
             });
-        });
-        ssv("./resources/data/list_of_languages.csv", function(data) {
-            data.forEach(function(entry) {
-                module.langMap.set(entry.code, entry["canonical name"]);
+            ssv("./resources/data/list_of_languages.csv", function(data) {
+                data.forEach(function(entry) {
+                    module.langMap.set(entry.code, entry["canonical name"]);
+                });
             });
-        });
-        d3.text("./resources/data/iso-639-3.tab", function(error, textString) {
-            var headers = ["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"].join("\t");
-            var data = d3.tsv.parse(headers + textString);
-            data.forEach(function(entry) {
-                module.langMap.set(entry.Id, entry.Ref_Name);
+            d3.text("./resources/data/iso-639-3.tab", function(error, textString) {
+                var headers = ["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"].join("\t");
+                var data = d3.tsv.parse(headers + textString);
+                data.forEach(function(entry) {
+                    module.langMap.set(entry.Id, entry.Ref_Name);
+                });
             });
-        });
+        };
+
+        this.settings = settings;
+        this.HELP = HELP;
+        this.MESSAGE = MESSAGE;
+        this.init = init;
+
+        etyBase[moduleName] = this;
     };
 
     return module;
@@ -229,5 +241,3 @@ class Node {
             }).join(", ");
     }
 }
-
-LOAD.init();

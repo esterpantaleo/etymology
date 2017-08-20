@@ -3,15 +3,23 @@
 */
 var EtyTree = {
     create: function() {
-        var etytree = Object.create(this);
-        etytree.DB = DB;
-        etytree.GRAPH = GRAPH;
-        etytree.LOAD = LOAD;
-        return etytree;
+        var etyBase = Object.create(this);
+        var bindModules = function(base, modules) {
+            for (var i = modules.length - 1; i >= 0; i--) {
+                window[modules[i]].bindModule(base, modules[i]);
+            }
+        };
+        var modules = ['DB', 'GRAPH', 'LOAD'];
+        bindModules(etyBase, modules);
+        return etyBase;
     },
     init: function() {
-        var that = this;
-        d3.select("#helpPopup").html(that.LOAD.HELP.intro);
+        var etyBase = this;
+        
+        /* Run LOAD's init function -- Should this be called differently? */
+        etyBase.LOAD.init();
+
+        d3.select("#helpPopup").html(etyBase.LOAD.HELP.intro);
 
         var div = d3.select("body").append("div")
             .attr("data-role", "popup")
@@ -35,45 +43,45 @@ var EtyTree = {
                 var lemma = $(tag).val(); //.replace("/", "!slash!");
 
                 if (lemma) {
-                    if (that.LOAD.settings.debug) {
+                    if (etyBase.LOAD.settings.debug) {
                         console.log("searching lemma in database");
                     }
                     var width = window.innerWidth,
                         height = $(document).height() - $('#header').height();
-                    var url = that.DB.ENDPOINT + "?query=" + encodeURIComponent(that.DB.disambiguationQuery(lemma));
-                    if (that.LOAD.settings.debug) {
+                    var url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
+                    if (etyBase.LOAD.settings.debug) {
                         console.log(url);
                     }
 
-                    const source = that.DB.getXMLHttpRequest(url);
+                    const source = etyBase.DB.getXMLHttpRequest(url);
                     source.subscribe(
                         function(response) {
                             if (response !== undefined && response !== null) {
                                 d3.select("#tree-overlay").remove();
                                 d3.select("#tooltipPopup").style("display", "none");
 
-                                var g = that.GRAPH.buildDisambiguationDAGRE(response);
+                                var g = etyBase.GRAPH.buildDisambiguationDAGRE(response);
                                 if (null === g) {
-                                    d3.select("#message").style("display", "inline").html(that.LOAD.MESSAGE.notAvailable);
+                                    d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.notAvailable);
                                 } else {
                                     if (Object.keys(g.nodess).length > 1) {
-                                        d3.select("#helpPopup").html(that.LOAD.HELP.disambiguation);
+                                        d3.select("#helpPopup").html(etyBase.LOAD.HELP.disambiguation);
                                         d3.select("#message").style("display", "inline").html("There are multiple words in the database. <br>Which word are you interested in?");
-                                        var inner = that.GRAPH.renderGraph(g, width, height);
-                                        that.GRAPH.appendLanguageTagTextAndTooltip(inner, g);
-                                        that.GRAPH.appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
+                                        var inner = etyBase.GRAPH.renderGraph(g, width, height);
+                                        etyBase.GRAPH.appendLanguageTagTextAndTooltip(inner, g);
+                                        etyBase.GRAPH.appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
 
                                         d3.selectAll(".edgePath").remove();
                                     } else {
                                         var iri = Object.keys(g.nodess)[0];
-                                        that.GRAPH.drawDAGRE(iri, 2, width, height);
+                                        etyBase.GRAPH.drawDAGRE(iri, 2, width, height);
                                     }
                                 }
                             }
                         },
                         function(error) {
                             console.error(error);
-                            d3.select("#message").style("display", "inline").html(that.LOAD.MESSAGE.notAvailable);
+                            d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.notAvailable);
                         },
                         () => console.log('done disambiguation'));
                 }
