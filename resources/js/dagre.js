@@ -1,5 +1,5 @@
 /*globals
-    d3, console, LOAD, dagreD3, GraphNode, DB, Node, Rx, onlyUnique
+    $, d3, console, LOAD, dagreD3, GraphNode, DB, Node, Rx, onlyUnique, window, document
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 var GRAPH = (function(module) {

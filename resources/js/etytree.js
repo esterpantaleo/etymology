@@ -9,16 +9,21 @@ var EtyTree = {
                 window[modules[i]].bindModule(base, modules[i]);
             }
         };
-        var modules = ['DB', 'GRAPH', 'LOAD'];
-        bindModules(etyBase, modules);
+        etyBase.config = {
+            modules: ['DB', 'GRAPH', 'LOAD']
+        };
+        bindModules(etyBase, etyBase.config.modules);
         return etyBase;
     },
     init: function() {
         var etyBase = this;
-        
-        /* Run LOAD's init function -- Should this be called differently? */
-        etyBase.LOAD.init();
-        etyBase.GRAPH.init();
+
+        /* Load init function for every module */
+        etyBase.config.modules.forEach((moduleName) => {
+            if (etyBase[moduleName] && (typeof etyBase[moduleName].init === 'function')) {
+                etyBase[moduleName].init();
+            }
+        });
     }
 };
 

@@ -1,5 +1,5 @@
 /*globals
-    $, Rx, XMLHttpRequest, console, d3, window, document
+    Rx, XMLHttpRequest, console, d3
 */
 var DB = (function(module) {
 
