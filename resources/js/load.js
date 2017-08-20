@@ -76,7 +76,7 @@ var LOAD = (function(module) {
 
             logTooltip() {
                 var query = etyBase.DB.lemmaQuery(this.iri);
-                var url = etyBase.DB.ENDPOINT + "?query=" + encodeURIComponent(query);
+                var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
 
                 if (etyBase.config.debug) {
                     console.log(url);
