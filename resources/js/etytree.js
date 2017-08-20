@@ -4,6 +4,18 @@
 var EtyTree = {
     create: function() {
         var etyBase = Object.create(this);
+
+        //HELPER FUNCTIONS
+        etyBase.helpers = {
+            onlyUnique: function(value, index, self) {
+                return self.indexOf(value) === index;
+            },
+            transform: function(d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            }
+        };
+
+        /* Binding Modules */
         var bindModules = function(base, modules) {
             for (var i = modules.length - 1; i >= 0; i--) {
                 if (!window[modules[i]]) {
@@ -13,6 +25,8 @@ var EtyTree = {
                 window[modules[i]].bindModule(base, modules[i]);
             }
         };
+
+        /* Setup basic settings */
         etyBase.config = {
             modules: ['DB', 'GRAPH', 'LOAD'],
             debug: false,
@@ -20,11 +34,14 @@ var EtyTree = {
                 ENDPOINT: "https://etytree-virtuoso.wmflabs.org/sparql"
             }
         };
+
         bindModules(etyBase, etyBase.config.modules);
         return etyBase;
     },
     init: function() {
         var etyBase = this;
+
+        etyBase.tree = {}; // This will get populated with data, LangMap, inner, g, and some other key items
 
         /* Load init function for every module */
         etyBase.config.modules.forEach((moduleName) => {

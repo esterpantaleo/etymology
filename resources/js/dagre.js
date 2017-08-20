@@ -1,5 +1,5 @@
 /*globals
-    $, d3, console, dagreD3, GraphNode, Node, Rx, onlyUnique, window, document
+    $, d3, console, dagreD3, Rx, window, document
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 var GRAPH = (function(module) {
@@ -148,7 +148,7 @@ var GRAPH = (function(module) {
                                 ancestors.push(a.ancestor2.value);
                             }
                             return ancestors;
-                        }, []).filter(onlyUnique);
+                        }, []).filter(etyBase.helpers.onlyUnique);
 
                     console.log("ANCESTORS");
                     console.log(ancestorArray);
@@ -257,7 +257,7 @@ var GRAPH = (function(module) {
                             }
                         }
                     }
-                    tmp = tmp.filter(onlyUnique);
+                    tmp = tmp.filter(etyBase.helpers.onlyUnique);
                     //if only ee_word and ee_n_word with n an integer belong to
                     //the set of ancestors and descendants
                     //then merge them in one graphNode
@@ -277,7 +277,7 @@ var GRAPH = (function(module) {
 
                         //push to graphNodes
                         g.graphNodes[counter] = gg;
-                        g.graphNodes[counter].iri = g.graphNodes[counter].iri.filter(onlyUnique);
+                        g.graphNodes[counter].iri = g.graphNodes[counter].iri.filter(etyBase.helpers.onlyUnique);
                         counter++;
                     }
                 }
@@ -294,7 +294,7 @@ var GRAPH = (function(module) {
                         tmp.concat(element.eqIri);
                     });
                     gg.iri.concat(tmp);
-                    gg.iri = gg.iri.filter(onlyUnique);
+                    gg.iri = gg.iri.filter(etyBase.helpers.onlyUnique);
                     gg.iri.forEach(function(element) {
                         g.nodess[element].graphNode.push(counter);
                     });
@@ -307,7 +307,7 @@ var GRAPH = (function(module) {
                         //add iri
                         g.nodess[element].graphNode.push(graphNode);
                         g.graphNodes[graphNode].iri.concat(g.nodess[element].eqIri);
-                        g.graphNodes[graphNode].iri = g.graphNodes[graphNode].iri.filter(onlyUnique);
+                        g.graphNodes[graphNode].iri = g.graphNodes[graphNode].iri.filter(etyBase.helpers.onlyUnique);
                     });
                 }
             }

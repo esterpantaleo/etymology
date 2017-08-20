@@ -60,7 +60,7 @@ var LOAD = (function(module) {
                 //ety is an integer                              
                 //and represents the etymology number encoded in the iri;
                 this.ety = tmp.ety;
-                this.lang = etyBase.LOAD.langMap.get(this.iso);
+                this.lang = etyBase.tree.langMap.get(this.iso);
                 //graphNode specifies the graphNode(s) corresponding to the node                           
                 this.graphNode = [];
                 //eqIri is an array of iri-s of Node-s that are equivalent to the Node             
@@ -197,23 +197,23 @@ var LOAD = (function(module) {
                 console.log("loading languages");
             }
 
-            etyBase.LOAD.langMap = new Map();
+            etyBase.tree.langMap = new Map();
             var ssv = d3.dsv(";", "text/plain");
             ssv("./resources/data/etymology-only_languages.csv", function(data) {
                 data.forEach(function(entry) {
-                    etyBase.LOAD.langMap.set(entry.code, entry["canonical name"]);
+                    etyBase.tree.langMap.set(entry.code, entry["canonical name"]);
                 });
             });
             ssv("./resources/data/list_of_languages.csv", function(data) {
                 data.forEach(function(entry) {
-                    etyBase.LOAD.langMap.set(entry.code, entry["canonical name"]);
+                    etyBase.tree.langMap.set(entry.code, entry["canonical name"]);
                 });
             });
             d3.text("./resources/data/iso-639-3.tab", function(error, textString) {
                 var headers = ["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"].join("\t");
                 var data = d3.tsv.parse(headers + textString);
                 data.forEach(function(entry) {
-                    etyBase.LOAD.langMap.set(entry.Id, entry.Ref_Name);
+                    etyBase.tree.langMap.set(entry.Id, entry.Ref_Name);
                 });
             });
         };
@@ -232,12 +232,3 @@ var LOAD = (function(module) {
     return module;
 
 })(LOAD || {});
-
-//HELPER FUNCTIONS
-function onlyUnique(value, index, self) {
-    return self.indexOf(value) === index;
-}
-
-function transform(d) {
-    return "translate(" + d.x + "," + d.y + ")";
-}
