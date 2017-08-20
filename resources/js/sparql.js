@@ -1,7 +1,7 @@
 /*globals
     Rx, XMLHttpRequest, console, d3, MESSAGE, LOAD
 */
-var SPARQL = (function(module) {
+var DB = (function(module) {
 
     module.ENDPOINT = "https://etytree-virtuoso.wmflabs.org/sparql";
 
@@ -32,7 +32,7 @@ var SPARQL = (function(module) {
         var i, j, tmpArray, url, sources = [];
         for (i = 0, j = myArray.length; i < j; i += chunk) {
             tmpArray = myArray.slice(i, i + chunk);
-            //console.log(SPARQL.unionQuery(tmpArray, query));                   
+            //console.log(DB.unionQuery(tmpArray, query));                   
             url = this.ENDPOINT + "?query=" + encodeURIComponent(this.unionQuery(tmpArray, queryFunction));
             if (LOAD.settings.debug) {
                 console.log(url);
@@ -186,4 +186,4 @@ var SPARQL = (function(module) {
     };
 
     return module;
-})(SPARQL || {});
+})(DB || {});

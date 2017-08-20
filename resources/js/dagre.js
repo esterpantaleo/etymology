@@ -1,5 +1,5 @@
 /*globals
-    d3, console, LOAD, dagreD3, GraphNode, SPARQL, Node, Rx, onlyUnique
+    d3, console, LOAD, dagreD3, GraphNode, DB, Node, Rx, onlyUnique
 */
 /*jshint loopfunc: true, shadow: true */ // Consider removing this and fixing these
 var GRAPH = (function(module) {
@@ -117,7 +117,7 @@ var GRAPH = (function(module) {
     module.drawDAGRE = function(iri, parameter, width, height) {
         //if parameter == 1 submit a short (but less detailed) query
         //if parameter == 2 submit a longer (but more detailed) query
-        var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(SPARQL.ancestorQuery(iri, parameter));
+        var url = DB.ENDPOINT + "?query=" + encodeURIComponent(DB.ancestorQuery(iri, parameter));
         var source;
         if (LOAD.settings.debug) {
             console.log(url);
@@ -126,7 +126,7 @@ var GRAPH = (function(module) {
         d3.select("#tooltipPopup").attr("display", "none");
         d3.select("#tree-overlay").remove();
 
-        source = SPARQL.getXMLHttpRequest(url);
+        source = DB.getXMLHttpRequest(url);
 
         source.subscribe(
             function(response) {
@@ -149,13 +149,13 @@ var GRAPH = (function(module) {
 
                 console.log("ANCESTORS");
                 console.log(ancestorArray);
-                const subscribe = SPARQL.slicedQuery(ancestorArray, SPARQL.descendantQuery, 8)
+                const subscribe = DB.slicedQuery(ancestorArray, DB.descendantQuery, 8)
                     .subscribe(
                         function(val) {
                             var descendantArray = val.reduce((descendants, d) => {
                                 return descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
                             }, []);
-                            const subscribe = SPARQL.slicedQuery(descendantArray, SPARQL.propertyQuery, 8)
+                            const subscribe = DB.slicedQuery(descendantArray, DB.propertyQuery, 8)
                                 .subscribe(function(val) {
                                     var allArray = val.reduce((all, a) => {
                                         return all.concat(JSON.parse(a).results.bindings);

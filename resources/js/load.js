@@ -1,5 +1,5 @@
 /*globals 
-    d3, Rx, SPARQL, console, XMLHttpRequest
+    d3, Rx, DB, console, XMLHttpRequest
 */
 var LOAD = (function(module) {
     module.settings = {
@@ -115,8 +115,8 @@ class Node {
     }
 
     logTooltip() {
-        var query = SPARQL.lemmaQuery(this.iri);
-        var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(query);
+        var query = DB.lemmaQuery(this.iri);
+        var url = DB.ENDPOINT + "?query=" + encodeURIComponent(query);
 
         if (LOAD.settings.debug) {
             console.log(url);
@@ -124,7 +124,7 @@ class Node {
 
         var that = this;
 
-        const source = SPARQL.getXMLHttpRequest(url);
+        const source = DB.getXMLHttpRequest(url);
         source.subscribe(
             function(response) {
                 var text = "<b>" + that.label + "</b><br><br><br>";

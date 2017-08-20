@@ -1,5 +1,5 @@
 /*globals
-    jQuery, d3, LOAD, console, window, document, SPARQL, GRAPH
+    jQuery, d3, LOAD, console, window, document, DB, GRAPH
 */
 jQuery('document').ready(function($) {
     d3.select("#helpPopup").html(LOAD.HELP.intro);
@@ -30,12 +30,12 @@ jQuery('document').ready(function($) {
                 }
                 var width = window.innerWidth,
                     height = $(document).height() - $('#header').height();
-                var url = SPARQL.ENDPOINT + "?query=" + encodeURIComponent(SPARQL.disambiguationQuery(lemma));
+                var url = DB.ENDPOINT + "?query=" + encodeURIComponent(DB.disambiguationQuery(lemma));
                 if (LOAD.settings.debug) {
                     console.log(url);
                 }
 
-                const source = SPARQL.getXMLHttpRequest(url);
+                const source = DB.getXMLHttpRequest(url);
                 source.subscribe(
                     function(response) {
                         if (response !== undefined && response !== null) {
