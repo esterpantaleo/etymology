@@ -26,7 +26,8 @@ var LOAD = (function(module) {
             loading: "Loading, please wait...",
             serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
             noEtymology: "Sorry, it seems like no etymology is available in the English Wiktionary for this word.",
-            loadingMore: "Loading, please wait... This word is etymologically related to many words."
+            loadingMore: "Loading, please wait... This word is etymologically related to many words.",
+	    disambiguation: "There are multiple words in the database. <br>Which word are you interested in?"
         };
 
         class GraphNode {
@@ -52,18 +53,18 @@ var LOAD = (function(module) {
         }
 
         class Node {
-            constructor(i) {
+            constructor(i, label) {
                 this.iri = i;
                 var tmp = this.parseIri(i);
                 this.iso = tmp.iso;
-                this.label = tmp.label;
+                this.label = label;
                 //ety is an integer                              
                 //and represents the etymology number encoded in the iri;
                 this.ety = tmp.ety;
                 this.lang = etyBase.tree.langMap.get(this.iso);
-                //graphNode specifies the graphNode(s) corresponding to the node                           
+                //graphNode specifies the graphNode(s) corresponding to the node
                 this.graphNode = [];
-                //eqIri is an array of iri-s of Node-s that are equivalent to the Node             
+                //eqIri is an array of iri-s of Node-s that are equivalent to the Node 
                 this.eqIri = [];
 
                 this.der = undefined;
@@ -89,7 +90,7 @@ var LOAD = (function(module) {
                     function(response) {
                         var text = "<b>" + that.label + "</b><br><br><br>";
                         if (null !== response) {
-                            //print definition                                                      
+                            //print definition  
                             var dataJson = JSON.parse(response).results.bindings;
                             text += dataJson.reduce(
                                 function(s, element) {
@@ -129,14 +130,14 @@ var LOAD = (function(module) {
                     iso = "eng";
                     label = tmp[0];
                 }
-                //ety is an integer                                                           
-                //and represents the etymology number encoded in the iri;                              
+                //ety is an integer                 
+                //and represents the etymology number encoded in the iri;
                 //if ety === 0 the iri is __ee_word                                    
-                //if ety === 1 the iri is __ee_1_word                                             
-                //etc                                                                                               
+                //if ety === 1 the iri is __ee_1_word            
+                //etc                                            
                 ety = 0;
                 if (null !== label.match(/__ee_[0-9]+_/g)) {
-                    //ety is an integer specifying the etymology entry                                
+                    //ety is an integer specifying the etymology entry      
                     ety = label.match(/__ee_[0-9]+_/g)[0]
                         .match(/__ee_(.*?)_/)[1];
                 }

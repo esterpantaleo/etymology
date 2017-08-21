@@ -19,7 +19,7 @@ var EtyTree = {
         var bindModules = function(base, modules) {
             for (var i = modules.length - 1; i >= 0; i--) {
                 if (!window[modules[i]]) {
-                    console.error('Module ' + modules[i] + 'is not loaded.');
+                    console.error('Module ' + modules[i] + ' is not loaded.');
                     return false;
                 }
                 window[modules[i]].bindModule(base, modules[i]);
@@ -29,7 +29,7 @@ var EtyTree = {
         /* Setup basic settings */
         etyBase.config = {
             modules: ['DB', 'GRAPH', 'LOAD'],
-            debug: false,
+            debug: true,
             urls: {
                 ENDPOINT: "https://etytree-virtuoso.wmflabs.org/sparql"
             }

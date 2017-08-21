@@ -52,23 +52,28 @@ var DB = (function(module) {
 
 
         var disambiguationQuery = function(lemma) {
-            var encodedWord = lemma.replace(/'/g, "\\\\'").replace("·", "%C2%B7");
+            var encodedLemma = lemma
+		.replace(/'/g, "\\\\'")
+		.replace("·", "%C2%B7")
+		.replace("*", "_"); //parse reconstructed words 
+	    //.replace("/", "!slash!");  
             var query =
                 "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
                 "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-                "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) " +
+                "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ?lemma " +
                 "WHERE { " +
-                "    ?iri rdfs:label ?label . ?label bif:contains \"\'" + encodedWord + "\'\" . " +
+                "    ?iri rdfs:label ?label . ?label bif:contains \"\'" + encodedLemma + "\'\" . " +
                 // exclude entries that contain the searched word but include other words
                 // (e.g.: search="door" label="doorbell", exclude "doorbell")
-                "    FILTER REGEX(?label, \"^" + encodedWord + "$\", 'i') . " +
+                "    FILTER REGEX(?label, \"^" + encodedLemma + "$\", 'i') . " +
                 "    ?iri rdf:type dbetym:EtymologyEntry . " +
                 "    OPTIONAL { " +
                 "        ?iri dbnary:describes  ?ee . " +
                 "        ?ee rdf:type dbetym:EtymologyEntry . " +
                 "    } " +
+                "    BIND (STR(?label) AS ?lemma) " +
                 "} ";
 
             return query;
@@ -165,15 +170,27 @@ var DB = (function(module) {
 
         var propertyQuery = function(iri) {
             var query =
-                "SELECT DISTINCT ?s ?rel ?eq ?der " +
+                "SELECT DISTINCT ?s ?rel ?eq ?der ?sLabel ?relLabel ?eqLabel ?derLabel " +
                 "{           " +
                 "   VALUES ?rel " +
                 "   {           " +
                 "       <" + iri + "> " +
                 "   } " +
+                "   ?rel rdfs:label ?relTmp" +
+                "   BIND (STR(?relTmp) AS ?relLabel) " +
                 "   ?s dbetym:etymologicallyRelatedTo ?rel . " +
-                "   OPTIONAL { ?eq dbetym:etymologicallyEquivalentTo{0,6} ?rel . } " +
-                "   OPTIONAL { ?s dbetym:etymologicallyDerivesFrom ?der . } " +
+		"   ?s rdfs:label ?sTmp " +
+                "   BIND (STR(?sTmp) AS ?sLabel) " +
+                "   OPTIONAL { " +
+                "       ?eq dbetym:etymologicallyEquivalentTo{0,6} ?rel . " +
+		"       ?eq rdfs:label ?eqTmp " +
+                "       BIND (STR(?eqTmp) AS ?eqLabel) " +
+                "   } " +
+                "   OPTIONAL { " +
+                "       ?s dbetym:etymologicallyDerivesFrom ?der . " +
+		"       ?der rdfs:label ?derTmp " +
+                "       BIND (STR(?derTmp) AS ?derLabel) " +
+                "   } " +
                 //  "   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . } "+
                 "}";
             return query;

@@ -91,12 +91,13 @@ var GRAPH = (function(module) {
             //define nodes 
             g.nodess = {};
             disambiguationArray.forEach(function(n) {
+		var label = n.lemma.value.replace(/^_/, '*');
                 n.et.value.split(",")
                     .forEach(function(element) {
                         if (element !== "") {
-                            g.nodess[element] = new etyBase.LOAD.classes.Node(element);
+                            g.nodess[element] = new etyBase.LOAD.classes.Node(element, label);
                         } else {
-                            g.nodess[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value);
+                            g.nodess[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value, label);
                         }
                     });
             });
@@ -125,8 +126,11 @@ var GRAPH = (function(module) {
             if (etyBase.config.debug) {
                 console.log(url);
             }
-            d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.loadingMore);
-            d3.select("#tooltipPopup").attr("display", "none");
+            d3.select("#message")
+		.style("display", "inline")
+		.html(etyBase.LOAD.MESSAGE.loadingMore);
+            d3.select("#tooltipPopup")
+		.attr("display", "none");
             d3.select("#tree-overlay").remove();
 
             source = etyBase.DB.getXMLHttpRequest(url);
@@ -135,7 +139,9 @@ var GRAPH = (function(module) {
                 function(response) {
 
                     if (null === response) {
-                        d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.serverError);
+                        d3.select("#message")
+			    .style("display", "inline")
+			    .html(etyBase.LOAD.MESSAGE.serverError);
                         return;
                     }
 
@@ -158,32 +164,41 @@ var GRAPH = (function(module) {
                                 var descendantArray = val.reduce((descendants, d) => {
                                     return descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
                                 }, []);
-                                const subscribe = etyBase.DB.slicedQuery(descendantArray, etyBase.DB.propertyQuery, 8)
+                                const subscribe = etyBase.DB.slicedQuery(descendantArray, etyBase.DB.propertyQuery, 4)
                                     .subscribe(function(val) {
                                         var allArray = val.reduce((all, a) => {
                                             return all.concat(JSON.parse(a).results.bindings);
                                         }, []);
                                         if (allArray.length === 0) {
-                                            d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.noEtymology);
+                                            d3.select("#message")
+						.style("display", "inline")
+						.html(etyBase.LOAD.MESSAGE.noEtymology);
                                         } else {
                                             var g = etyBase.GRAPH.defineGraph(ancestorArray, allArray);
-                                            d3.select("#message").style("display", "none");
+                                            d3.select("#message")
+						.style("display", "none");
 
                                             var inner = etyBase.GRAPH.renderGraph(g, width, height);
-                                            etyBase.GRAPH.appendLanguageTagTextAndTooltip(inner, g);
-                                            etyBase.GRAPH.appendDefinitionTooltip(inner, g);
+                                            etyBase.GRAPH
+						.appendLanguageTagTextAndTooltip(inner, g);
+                                            etyBase.GRAPH
+						.appendDefinitionTooltip(inner, g);
                                         }
                                     });
                             },
                             function(error) {
-                                d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.serverError);
+                                d3.select("#message")
+				    .style("display", "inline")
+				    .html(etyBase.LOAD.MESSAGE.serverError);
                                 console.log(error);
                             },
                             () => console.log('done descendants query'));
                 },
                 function(error) {
                     if (parameter === 1) {
-                        d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.serverError);
+                        d3.select("#message")
+			    .style("display", "inline")
+			    .html(etyBase.LOAD.MESSAGE.serverError);
                         console.log(error);
                     } else {
                         etyBase.GRAPH.drawDAGRE(iri, 1, width, height);
@@ -200,14 +215,17 @@ var GRAPH = (function(module) {
             //CONSTRUCTING NODES
             g.nodess = {};
             response.forEach(function(element) {
+		    var label;
 		    //save all nodes        
 		    //define isAncestor
 		    if (undefined !== element.s && undefined === g.nodess[element.s.value]) {
-			g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value);
+			label = element.sLabel.value.replace(/^_/, '*');
+			g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, label);
 		    }
 		    if (undefined !== element.rel) {
+			label = element.relLabel.value.replace(/^_/, '*');
 			if (undefined === g.nodess[element.rel.value]) {
-			    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value);
+			    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value, label);
 			}
 			if (ancestors.indexOf(element.rel.value) > -1) {
 			    g.nodess[element.rel.value].isAncestor = true;
@@ -215,7 +233,8 @@ var GRAPH = (function(module) {
 		    }
 		    if (undefined !== element.rel && undefined !== element.eq) {
 			if (undefined === g.nodess[element.eq.value]) {
-			    g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value);
+			    label = element.eqLabel.value.replace(/^_/, '*');
+			    g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, label);
 			}
 			//push to eqIri
 			if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) == -1) {
@@ -227,7 +246,8 @@ var GRAPH = (function(module) {
 		    }
 		    if (undefined !== element.der) {
 			if (undefined === g.nodess[element.der.value]) {
-			    g.nodess[element.der.value] = new etyBase.LOAD.classes.Node(element.der.value);
+			    label = element.derLabel.value.replace(/^_/, '*');
+			    g.nodess[element.der.value] = new etyBase.LOAD.classes.Node(element.der.value, label);
 			}
 			//add property der
 			g.nodess[element.s.value].der = true;
@@ -237,7 +257,7 @@ var GRAPH = (function(module) {
             //CONSTRUCTING GRAPHNODES
             //a graphNode is some kind of super node that merges Nodes that are etymologically equivalent
             //or that refer to the same word - also called here identical Nodes 
-            //(e.g.: if only ee_word and ee_n_word with n an integer belong to                          
+            //(e.g.: if only ee_word and ee_n_word with n an integer belong to
             //the set of ancestors and descendants           
             //then merge them into one graphNode) 
             //the final graph will use these super nodes (graphNodes)  
@@ -457,7 +477,8 @@ var GRAPH = (function(module) {
 
         var init = function() {
 
-            d3.select("#helpPopup").html(etyBase.LOAD.HELP.intro);
+            d3.select("#helpPopup")
+		.html(etyBase.LOAD.HELP.intro);
 
             var div = d3.select("body").append("div")
                 .attr("data-role", "popup")
@@ -478,7 +499,7 @@ var GRAPH = (function(module) {
             $('#tags').on("keypress click", function(e) {
                 var tag = this;
                 if (e.which === 13 || e.type === 'click') {
-                    var lemma = $(tag).val(); //.replace("/", "!slash!");
+                    var lemma = $(tag).val();
 
                     if (lemma) {
                         if (etyBase.config.debug) {
@@ -488,6 +509,7 @@ var GRAPH = (function(module) {
                             height = $(document).height() - $('#header').height();
                         var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
                         if (etyBase.config.debug) {
+			    console.log("disambiguation query");
                             console.log(url);
                         }
 
@@ -495,16 +517,23 @@ var GRAPH = (function(module) {
                         source.subscribe(
                             function(response) {
                                 if (response !== undefined && response !== null) {
-                                    d3.select("#tree-overlay").remove();
-                                    d3.select("#tooltipPopup").style("display", "none");
+                                    d3.select("#tree-overlay")
+					.remove();
+                                    d3.select("#tooltipPopup")
+					.style("display", "none");
 
                                     var g = etyBase.GRAPH.buildDisambiguationDAGRE(response);
                                     if (null === g) {
-                                        d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.notAvailable);
+                                        d3.select("#message")
+					    .style("display", "inline")
+					    .html(etyBase.LOAD.MESSAGE.notAvailable);
                                     } else {
                                         if (Object.keys(g.nodess).length > 1) {
-                                            d3.select("#helpPopup").html(etyBase.LOAD.HELP.disambiguation);
-                                            d3.select("#message").style("display", "inline").html("There are multiple words in the database. <br>Which word are you interested in?");
+                                            d3.select("#helpPopup")
+						.html(etyBase.LOAD.HELP.disambiguation);
+                                            d3.select("#message")
+						.style("display", "inline")
+						.html(etyBase.LOAD.MESSAGE.disambiguation);
                                             var inner = etyBase.GRAPH.renderGraph(g, width, height);
                                             etyBase.GRAPH.appendLanguageTagTextAndTooltip(inner, g);
                                             etyBase.GRAPH.appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
@@ -519,7 +548,13 @@ var GRAPH = (function(module) {
                             },
                             function(error) {
                                 console.error(error);
-                                d3.select("#message").style("display", "inline").html(etyBase.LOAD.MESSAGE.notAvailable);
+				d3.select("#tree-overlay")
+                                    .remove();
+                                d3.select("#tooltipPopup")
+                                    .style("display", "none");
+                                d3.select("#message")
+				    .style("display", "inline")
+				    .html(etyBase.LOAD.MESSAGE.notAvailable);
                             },
                             () => console.log('done disambiguation'));
                     }
