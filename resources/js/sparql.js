@@ -137,8 +137,10 @@ var DB = (function(module) {
                     "SELECT DISTINCT ?ancestor1 ?ancestor2 " +
                     "{ " +
                     "   <" + iri + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 . " +
-                    "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?ancestor1 . " +
-                    "   ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 .} " +
+                    "   OPTIONAL { " +
+                    "       ?eq dbetym:etymologicallyEquivalentTo ?ancestor1 . " +
+                    "       ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 . " +
+                    "   } " +
                     "} ";
             } else if (queryDepth === 2) {
                 query +=
@@ -170,7 +172,7 @@ var DB = (function(module) {
                 "       <" + iri + "> " +
                 "   } " +
                 "   ?s dbetym:etymologicallyRelatedTo ?rel . " +
-                "   OPTIONAL { ?rel dbetym:etymologicallyEquivalentTo{0,6} ?eq . } " +
+                "   OPTIONAL { ?eq dbetym:etymologicallyEquivalentTo{0,6} ?rel . } " +
                 "   OPTIONAL { ?s dbetym:etymologicallyDerivesFrom ?der . } " +
                 //  "   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . } "+
                 "}";

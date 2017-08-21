@@ -200,54 +200,54 @@ var GRAPH = (function(module) {
             //CONSTRUCTING NODES
             g.nodess = {};
             response.forEach(function(element) {
-                //save all nodes        
-                //define isAncestor
-                if (undefined !== element.s && (undefined === g.nodess[element.s.value] || null === g.nodess[element.s.value])) {
-                    g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value);
-                    if (ancestors.indexOf(element.s.value) > -1) {
-                        g.nodess[element.s.value].isAncestor = true;
-                    }
-                }
-                if (undefined !== element.rel && (undefined === g.nodess[element.rel.value] || null === g.nodess[element.rel.value])) {
-                    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value);
-                    if (ancestors.indexOf(element.rel.value) > -1) {
-                        g.nodess[element.s.value].isAncestor = true;
-                    }
-                }
-                if (undefined !== element.rel && undefined !== element.eq) {
-                    if (undefined === g.nodess[element.eq.value] || null === g.nodess[element.eq.value]) {
-                        g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value);
-                    }
-                    if (ancestors.indexOf(element.eq.value) > -1) {
-                        g.nodess[element.eq.value].isAncestor = true;
-                    }
-                    //push to eqIri
-                    g.nodess[element.rel.value].eqIri.push(element.eq.value);
-                    g.nodess[element.eq.value].eqIri.push(element.rel.value);
-                }
-                if (undefined !== element.der) {
-                    if (undefined === g.nodess[element.der.value] || null === g.nodess[element.der.value]) {
-                        g.nodess[element.der.value] = new etyBase.LOAD.classes.Node(element.der.value);
-                    }
-                    //add property der
-                    g.nodess[element.s.value].der = true;
-                }
-            });
+		    //save all nodes        
+		    //define isAncestor
+		    if (undefined !== element.s && undefined === g.nodess[element.s.value]) {
+			g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value);
+		    }
+		    if (undefined !== element.rel) {
+			if (undefined === g.nodess[element.rel.value]) {
+			    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value);
+			}
+			if (ancestors.indexOf(element.rel.value) > -1) {
+			    g.nodess[element.rel.value].isAncestor = true;
+			}
+		    }
+		    if (undefined !== element.rel && undefined !== element.eq) {
+			if (undefined === g.nodess[element.eq.value]) {
+			    g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value);
+			}
+			//push to eqIri
+			if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) == -1) {
+			    g.nodess[element.rel.value].eqIri.push(element.eq.value);
+			}
+			if (g.nodess[element.eq.value].eqIri.indexOf(element.rel.value) == -1) {
+			    g.nodess[element.eq.value].eqIri.push(element.rel.value);
+			}
+		    }
+		    if (undefined !== element.der) {
+			if (undefined === g.nodess[element.der.value]) {
+			    g.nodess[element.der.value] = new etyBase.LOAD.classes.Node(element.der.value);
+			}
+			//add property der
+			g.nodess[element.s.value].der = true;
+		    }
+		});
 
             //CONSTRUCTING GRAPHNODES
             //a graphNode is some kind of super node that merges Nodes that are etymologically equivalent
             //or that refer to the same word - also called here identical Nodes 
-            //(e.g.: if only ee_word and ee_n_word with n an integer belong to                                                                          
-            //the set of ancestors and descendants                                                                                                
+            //(e.g.: if only ee_word and ee_n_word with n an integer belong to                          
+            //the set of ancestors and descendants           
             //then merge them into one graphNode) 
             //the final graph will use these super nodes (graphNodes)  
             g.graphNodes = {};
             var counter = 0; //counts how many graphNodes have been created so far
             for (var n in g.nodess) {
                 if (g.nodess[n].ety === 0) {
-                    var tmp = [];
                     var iso = g.nodess[n].iso;
                     var label = g.nodess[n].label;
+		    var tmp = [];
                     for (var m in g.nodess) {
                         if (undefined !== g.nodess[m]) {
                             if (g.nodess[m].iso === iso && g.nodess[m].label === label) {
@@ -289,12 +289,12 @@ var GRAPH = (function(module) {
                     var gg = new etyBase.LOAD.classes.GraphNode(counter);
                     gg.iri = g.nodess[n].eqIri;
                     gg.iri.push(n);
-                    var tmp = [];
-                    gg.iri.forEach(function(element) {
-                        tmp.concat(element.eqIri);
-                    });
-                    gg.iri.concat(tmp);
+		    var equivalent = gg.iri.reduce(function(a,b) {
+			    return a.concat(b.eqIri);
+			}, [])
+		    gg.iri.concat(equivalent); 
                     gg.iri = gg.iri.filter(etyBase.helpers.onlyUnique);
+		    //add graphNode, graphNodes
                     gg.iri.forEach(function(element) {
                         g.nodess[element].graphNode.push(counter);
                     });
@@ -304,11 +304,14 @@ var GRAPH = (function(module) {
                     var graphNode = g.nodess[n].graphNode[0];
 
                     g.nodess[n].eqIri.forEach(function(element) {
-                        //add iri
-                        g.nodess[element].graphNode.push(graphNode);
-                        g.graphNodes[graphNode].iri.concat(g.nodess[element].eqIri);
-                        g.graphNodes[graphNode].iri = g.graphNodes[graphNode].iri.filter(etyBase.helpers.onlyUnique);
-                    });
+			    //add graphNode
+			    if (element != n) {
+				g.nodess[element].graphNode.push(graphNode);
+			    }
+			    //add iri
+			    g.graphNodes[graphNode].iri.concat(g.nodess[element].eqIri);
+			    g.graphNodes[graphNode].iri = g.graphNodes[graphNode].iri.filter(etyBase.helpers.onlyUnique);
+			});
                 }
             }
 
@@ -363,8 +366,6 @@ var GRAPH = (function(module) {
             for (var gg in g.graphNodes) {
                 //collapse nodes that have more than 10 descendants and color them differently      
                 if (!showDerivedNodes && g.graphNodes[gg].linkedToTarget.length > 10) {
-                    console.log("the following node has more than 10 targets: collapsing");
-                    console.log(g.graphNodes[gg]);
                     g.graphNodes[gg].linkedToTarget.map(function(e) {
                         if (g.graphNodes[e].linkedToSource.length === 1) {
                             g.graphNodes[e].der = true;
@@ -411,6 +412,14 @@ var GRAPH = (function(module) {
                 g.setEdge(element.source,
                     element.target, { label: "", lineInterpolate: "basis" });
             });
+	    
+	    if (etyBase.config.debug) {
+		console.log("g.nodess");
+		console.log(g.nodess) ;  
+		console.log("g.graphNodes");
+		console.log(g.graphNodes);
+	    }
+
 
             return g;
         };
