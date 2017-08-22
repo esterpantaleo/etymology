@@ -126,12 +126,13 @@ var GRAPH = (function(module) {
             if (etyBase.config.debug) {
                 console.log(url);
             }
-            d3.select("#message")
-		.style("display", "inline")
+            $('#message')
+		.css('display', 'inline')
 		.html(etyBase.LOAD.MESSAGE.loadingMore);
             d3.select("#tooltipPopup")
 		.attr("display", "none");
-            d3.select("#tree-overlay").remove();
+            $('#tree-overlay')
+		.remove();
 
             source = etyBase.DB.getXMLHttpRequest(url);
 
@@ -139,13 +140,13 @@ var GRAPH = (function(module) {
                 function(response) {
 
                     if (null === response) {
-                        d3.select("#message")
-			    .style("display", "inline")
+                        $('#message')
+			    .css('display', 'inline')
 			    .html(etyBase.LOAD.MESSAGE.serverError);
                         return;
                     }
 
-                    d3.select("#helpPopup").html(etyBase.LOAD.HELP.dagre);
+                    $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
 
                     var ancestorArray = JSON.parse(response).results.bindings
                         .reduce((ancestors, a) => {
@@ -170,13 +171,13 @@ var GRAPH = (function(module) {
                                             return all.concat(JSON.parse(a).results.bindings);
                                         }, []);
                                         if (allArray.length === 0) {
-                                            d3.select("#message")
-						.style("display", "inline")
+                                            $('#message')
+						.css('display', 'inline')
 						.html(etyBase.LOAD.MESSAGE.noEtymology);
                                         } else {
                                             var g = etyBase.GRAPH.defineGraph(ancestorArray, allArray);
-                                            d3.select("#message")
-						.style("display", "none");
+                                            $('#message')
+						.css('display', 'none');
 
                                             var inner = etyBase.GRAPH.renderGraph(g, width, height);
                                             etyBase.GRAPH
@@ -187,8 +188,8 @@ var GRAPH = (function(module) {
                                     });
                             },
                             function(error) {
-                                d3.select("#message")
-				    .style("display", "inline")
+                                $('#message')
+				    .css('display', 'inline')
 				    .html(etyBase.LOAD.MESSAGE.serverError);
                                 console.log(error);
                             },
@@ -196,8 +197,8 @@ var GRAPH = (function(module) {
                 },
                 function(error) {
                     if (parameter === 1) {
-                        d3.select("#message")
-			    .style("display", "inline")
+			$('#message')
+			    .css('display', 'inline')
 			    .html(etyBase.LOAD.MESSAGE.serverError);
                         console.log(error);
                     } else {
@@ -336,6 +337,7 @@ var GRAPH = (function(module) {
             }
 
             var showDerivedNodes = true;
+            //always show derived nodes if tree is small
             if (ancestors.length < 3) showDerivedNodes = true;
 
             for (var gg in g.graphNodes) {
@@ -347,13 +349,13 @@ var GRAPH = (function(module) {
                     g.graphNodes[gg].isAncestor = true;
                 }
 
-                //define der
+                /*//define der
                 var der = g.graphNodes[gg].all.filter(function(element) {
                     return g.nodess[element].der !== undefined;
                 });
                 if (der.length > 0) {
                     g.graphNodes[gg].der = true;
-                }
+                }*/
 
                 //define iso, label, lang
                 g.graphNodes[gg].iso = g.nodess[g.graphNodes[gg].all[0]].iso;
@@ -477,7 +479,7 @@ var GRAPH = (function(module) {
 
         var init = function() {
 
-            d3.select("#helpPopup")
+            $('#helpPopup')
 		.html(etyBase.LOAD.HELP.intro);
 
             var div = d3.select("body").append("div")
@@ -517,28 +519,29 @@ var GRAPH = (function(module) {
                         source.subscribe(
                             function(response) {
                                 if (response !== undefined && response !== null) {
-                                    d3.select("#tree-overlay")
+                                    $('#tree-overlay')
 					.remove();
                                     d3.select("#tooltipPopup")
 					.style("display", "none");
 
                                     var g = etyBase.GRAPH.buildDisambiguationDAGRE(response);
                                     if (null === g) {
-                                        d3.select("#message")
-					    .style("display", "inline")
+                                        $('#message')
+					    .css('display', 'inline')
 					    .html(etyBase.LOAD.MESSAGE.notAvailable);
                                     } else {
                                         if (Object.keys(g.nodess).length > 1) {
-                                            d3.select("#helpPopup")
+                                            $('#helpPopup')
 						.html(etyBase.LOAD.HELP.disambiguation);
-                                            d3.select("#message")
-						.style("display", "inline")
+                                            $('#message')
+						.css('display', 'inline')
 						.html(etyBase.LOAD.MESSAGE.disambiguation);
                                             var inner = etyBase.GRAPH.renderGraph(g, width, height);
                                             etyBase.GRAPH.appendLanguageTagTextAndTooltip(inner, g);
                                             etyBase.GRAPH.appendDefinitionTooltipOrDrawDAGRE(inner, g, width, height);
 
-                                            d3.selectAll(".edgePath").remove();
+                                            $('.edgePath')
+						.remove();
                                         } else {
                                             var iri = Object.keys(g.nodess)[0];
                                             etyBase.GRAPH.drawDAGRE(iri, 2, width, height);
@@ -548,12 +551,12 @@ var GRAPH = (function(module) {
                             },
                             function(error) {
                                 console.error(error);
-				d3.select("#tree-overlay")
-                                    .remove();
+				$('#tree-overlay')
+				    .remove();
                                 d3.select("#tooltipPopup")
                                     .style("display", "none");
-                                d3.select("#message")
-				    .style("display", "inline")
+                                $('#message')
+				    .css('display', 'inline')
 				    .html(etyBase.LOAD.MESSAGE.notAvailable);
                             },
                             () => console.log('done disambiguation'));
