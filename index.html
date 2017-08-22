@@ -21,29 +21,46 @@
 
 <!--<div data-role="page">-->
     <div data-role="header" id="header">
-        <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
-            <br>
-	    <tr>
-	        <td colspan="2">
-	        <span class="bigSpan">etytree</span> - <span class="mediumSpan"> a graphical etymology dictionary</span> 
-		</td>
-	    </tr>
-	    <br>
-	    <tr>
-                <td> 
-                    <input class="mediumSpan" type="text" data-type="search" placeholder="search word" id="tags"></input>
-                </td>
+       <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
+           
+	   <tr>
+               <td>
+                   <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
+                       <tr>
+                       <img src="./resources/images/etytree_logo.png" alt="logo" height="60%" width="60%" style="display:block; margin:auto;" />
+                       </tr>
+                       <br>
+                   </table>
+               </td>
+               <td>
+                   <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
+	               <tr>
+	                   
+	                       <span class="bigSpan">etytree</span> - <span class="mediumSpan"> a graphical etymology dictionary</span> 
+		           
+	               </tr>
+	               <br>
+	               <tr>
+                           <td>
+                               <input class="mediumSpan" type="text" data-type="search" placeholder="search word" id="tags"></input>
+                           </td>
             <!--    <td>
                     <a id="searchButton" data-rel="popup" style="font-size:12px;border:0" data-inline="true" class="ui-btn ui-corner-all ui-icon-search ui-btn-icon-center ui-btn-icon-notext"> </a>
                 </td> -->
-                <td>
-                    <a href="#divHelpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true">help</a>
-                    <div data-role="popup" id="divHelpPopup" class="ui-content help">
-                        <p id="helpPopup" class="help">
-                        </p>
-                    </div>
-                </td>
-            </tr>
+                           <td>
+                               <a href="#divHelpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true">help</a>
+                               <div data-role="popup" id="divHelpPopup" class="ui-content help">
+                                   <p id="helpPopup" class="help" />
+                               </div>
+                           </td>
+                       </tr>
+                   </table>
+               </td>
+               <td>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	       </td>
+           </tr>
+           <br>
         </table>
     </div>
     <div data-role="content" class="ui-content" id="tree-container" style="text-align: center;">
