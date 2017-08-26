@@ -122,7 +122,7 @@ The RDF database of etymological relationships is periodically extracted when a 
 
 - [ ] Add etymology controversies.
 
-- [ ] Currently for some words the Virtuoso server doesn't return data because it reaches timeout. I want to try a different query like the following 
+- [x] Currently for some words the Virtuoso server doesn't return data because it reaches timeout. I want to try a different query like the following 
 ```
     DEFINE input:inference "etymology_ontology"
     PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>
@@ -157,9 +157,9 @@ The RDF database of etymological relationships is periodically extracted when a 
 
 - [x] Click on a word and interrogate the server to get data about the word.
 
-- [ ] Search words with space or with accent 
+- [x] Search words with space or with accent 
 
-- [ ] Extract Reconstructed words.
+- [x] Extract Reconstructed words.
 
 - [ ] Maybe consider Dialects:
 ```
