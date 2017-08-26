@@ -1,11 +1,11 @@
 /*globals 
-    d3, Rx, console, XMLHttpRequest
+    d3, Rx, console, XMLHttpRequest, vis
 */
 var LOAD = (function(module) {
 
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
-
+	var nodeCount = -1;
         var HELP = {
             intro: "Enter a word in the search bar, then press enter or click.",
             disambiguation: "<b>Disambiguation page</b>" +
@@ -30,53 +30,37 @@ var LOAD = (function(module) {
 	    disambiguation: "There are multiple words in the database. <br>Which word are you interested in?"
         };
 
-        class GraphNode {
-            constructor(i) {
-                this.counter = i;
-                this.iri = [];
-                //this.all contains this.iri (i.e. equivalent nodes) 
-                //and also identical nodes in the tree
-                //e.g. ee_1_door and ee_door
-                this.all = [];
-                this.linked = undefined;
-                this.linkedToSource = [];
-                this.linkedToSourceCopy = [];
-                this.linkedToTarget = [];
+	class Node {
+	    constructor() {	       
+		nodeCount ++;
+		this.id = nodeCount;
+		this.iri = [];
+		this.all = []; 
+		this.der = undefined;
+		this.isAncestor = false;  
+	    }/*
 
-                this.der = undefined;
-                this.isAncestor = false;
+	    static get counter() {
+		Node._counter = (Node._counter || -1) + 1;
+		return Node._counter;
+		}*/
+	}
 
-                this.shape = "rect";
-                this.style = "fill: lightBlue; stroke: black";
-                this.rx = this.ry = 7;
-            }
-        }
-
-        class Node {
-            constructor(i, label) {
-                this.iri = i;
-                var tmp = this.parseIri(i);
-                this.iso = tmp.iso;
-                this.label = label;
-                //ety is an integer                              
-                //and represents the etymology number encoded in the iri;
+	class tmpNode {
+            constructor(iri, label) {
+                this.id = iri;
+                var tmp = this.parseIri(iri);
+                this.label = label.replace(/^_/, '*');
                 this.ety = tmp.ety;
                 this.lang = etyBase.tree.langMap.get(this.iso);
-                //graphNode specifies the graphNode(s) corresponding to the node
                 this.graphNode = [];
-                //eqIri is an array of iri-s of Node-s that are equivalent to the Node 
                 this.eqIri = [];
-
                 this.der = undefined;
                 this.isAncestor = false;
-
-                this.shape = "rect";
-                this.style = "fill: lightBlue; stroke: black";
-                this.rx = this.ry = 7;
             }
 
             logTooltip() {
-                var query = etyBase.DB.lemmaQuery(this.iri);
+                var query = etyBase.DB.lemmaQuery(this.id);
                 var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
 
                 if (etyBase.config.debug) {
@@ -105,6 +89,7 @@ var LOAD = (function(module) {
                             text += "-";
                         }
                         d3.select("#tooltipPopup")
+			    .style("display", "inline")
                             .append("p")
                             .html(text);
                     },
@@ -116,16 +101,16 @@ var LOAD = (function(module) {
                             .append("p")
                             .html(text);
                     });
-            }
+	    }
 
             parseIri(iri) {
-                var iso, label, ety,
-                    tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
-                    .split("/");
+                var iso, label, ety, tmp = iri
+		.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
+		.split("/");
 
                 if (tmp.length > 1) {
                     iso = tmp[0];
-                    label = tmp[1];
+		    label = tmp[1];
                 } else {
                     iso = "eng";
                     label = tmp[0];
@@ -141,7 +126,7 @@ var LOAD = (function(module) {
                     ety = label.match(/__ee_[0-9]+_/g)[0]
                         .match(/__ee_(.*?)_/)[1];
                 }
-
+		/*
                 label = label.replace(/__ee_[0-9]+_/g, "")
                     .replace("__ee_", "")
                     .replace("__", "'")
@@ -150,16 +135,10 @@ var LOAD = (function(module) {
                     .replace("__", "'")
                     .replace(/_/g, " ")
                     .replace("%C2%B7", "·");
-
-                var obj = {
-                    iso: iso,
-                    label: label,
-                    ety: ety
-                };
-
-                return obj;
+		*/
+                return {iso: iso, ety: ety};
             }
-
+	    
             logDefinition(pos, gloss) {
                 if (undefined !== pos && undefined !== gloss) {
                     return gloss.value.split(";;;;").map(function(el) {
@@ -188,7 +167,7 @@ var LOAD = (function(module) {
                         }
                         return "<a href=\"" + e + "\" target=\"_blank\">" + linkName + "</a>";
                     }).join(", ");
-            }
+	    }
         }
 
         var init = function() {
@@ -222,7 +201,7 @@ var LOAD = (function(module) {
         this.HELP = HELP;
         this.MESSAGE = MESSAGE;
         this.classes = {
-            GraphNode: GraphNode,
+            tmpNode: tmpNode,
             Node: Node
         };
         this.init = init;
