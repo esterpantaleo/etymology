@@ -5,7 +5,6 @@ var LOAD = (function(module) {
 
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
-	var nodeCount = -1;
         var HELP = {
             intro: "Enter a word in the search bar, then press enter or click.",
             disambiguation: "<b>Disambiguation page</b>" +
@@ -30,16 +29,18 @@ var LOAD = (function(module) {
 	    disambiguation: "There are multiple words in the database. <br>Which word are you interested in?"
         };
 
+	var nodeCount = -1;
+
 	class Node {
 	    constructor() {	       
-		nodeCount ++;
-		this.id = nodeCount;
+		etyBase.LOAD.nodeCount ++;
+		this.id = etyBase.LOAD.nodeCount;
 		this.iri = [];
 		this.all = []; 
 		this.der = undefined;
 		this.isAncestor = false;  
-	    }/*
-
+	    }
+	    /*
 	    static get counter() {
 		Node._counter = (Node._counter || -1) + 1;
 		return Node._counter;
@@ -177,29 +178,29 @@ var LOAD = (function(module) {
                 console.log("loading languages");
             }
 
-            etyBase.tree.langMap = new Map();
-            var ssv = d3.dsv(";", "text/plain");
-            ssv("./resources/data/etymology-only_languages.csv", function(data) {
-                data.forEach(function(entry) {
-                    etyBase.tree.langMap.set(entry.code, entry["canonical name"]);
-                });
-            });
-            ssv("./resources/data/list_of_languages.csv", function(data) {
-                data.forEach(function(entry) {
-                    etyBase.tree.langMap.set(entry.code, entry["canonical name"]);
-                });
-            });
-            d3.text("./resources/data/iso-639-3.tab", function(error, textString) {
-                var headers = ["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"].join("\t");
-                var data = d3.tsv.parse(headers + textString);
-                data.forEach(function(entry) {
-                    etyBase.tree.langMap.set(entry.Id, entry.Ref_Name);
-                });
-            });
-        };
+	    etyBase.tree.langMap = new Map();
+	    const csv = require('csvtojson');
+	    csv({delimiter:";"})
+                .fromFile("./resources/data/etymology-only_languages.csv")
+                .on('json', (jsonObj) => {
+                        etyBase.tree.langMap.set(jsonObj["code"], jsonObj["canonical name"]);
+                    });
+	    csv({delimiter:";"})
+                .fromFile("./resources/data/list_of_languages.csv")
+                .on('json', (jsonObj) => {
+                        etyBase.tree.langMap.set(jsonObj["code"], jsonObj["canonical name"]);
+                    });
+	    csv({delimiter:"\t", headers:["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"]})
+                .fromFile("./resources/data/iso-639-3.tab")
+                .on('json', (jsonObj) => {
+                        etyBase.tree.langMap.set(jsonObj["Id"], jsonObj["Ref_Name"]);
+                    });
+	};
+    
 
         this.HELP = HELP;
         this.MESSAGE = MESSAGE;
+	this.nodeCount = nodeCount;
         this.classes = {
             tmpNode: tmpNode,
             Node: Node

@@ -132,8 +132,21 @@ var DB = (function(module) {
                 "} ";
             return query;
         };
+	
+	/*
+	var ancestorOnlyQuery = function(iri) {
+ 	    var query = "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
+	    //  "SELECT * WHERE {{ " +
+	        "SELECT DISTINCT ?eq0 ?ancestor1 " + //?ancestor2 ?ancestor3 ?ancestor4 ?ancestor5 " +
+	        "{ " + 
+                "   <" + iri + "> dbetym:etymologicallyRelatedTo ?ancestor1 . " +
+                "   OPTIONAL { " +
+                "       <" + iri + "> dbetym:etymologicallyEquivalentTo*|(^dbetym:etymologicallyEquivalentTo)* ?eq0 " +
+                "   } " +
+	        "} ";*/
 
         //(related|equivalent){0,5}
+
         //DEFINE QUERIES TO PLOT GRAPH          
         var ancestorQuery = function(iri, queryDepth) {
             var query = "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ";

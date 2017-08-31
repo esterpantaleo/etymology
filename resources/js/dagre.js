@@ -107,7 +107,7 @@ var GRAPH = (function(module) {
 					    
 					    var g = etyBase.GRAPH.define(ancestorArray, allArray);
 					    var options = {
-						height: (3*height).toString(),
+						height: height.toString(),
 						autoResize: false,
                                                 nodes: {
                                                     shape: "box",
@@ -136,15 +136,22 @@ var GRAPH = (function(module) {
                                                 },
                                                 physics: false
                                             };
-					    etyBase.LOAD.nodeCount = -1;
 					    network = new vis.Network(document.getElementById("tree-overlay"), g, options);
+					    //network.stabilize(100000); 
+					    
 					    //window.onresize = function() {network.fit();}
+					    network.focus(0, {scale: 1, offset: {x: 0, y: 0}});
+					    
 					    network.on("hoverNode", function(params) {
+						    var node = network.body.nodes[params.node];
+						    
+						    var coords = network.canvasToDOM({x: node.x, y: node.y});
+						    console.log(coords.x + " " + coords.y);
                                                     d3.select("#tooltipPopup")
                                                         .style("display", "inline")
                                                         .style("max-width", "400px")
-                                                        .style("left", (network.body.nodes[params.node].x) + "px")
-                                                        .style("top", (network.body.nodes[params.node].y) + "px")
+						        .style("left", (coords.x + 50) + "px")
+                                                        .style("top", (coords.y + 50) + "px")
                                                         .html("");
 
 						    g.nodes.filter(function(e) {
@@ -276,6 +283,7 @@ var GRAPH = (function(module) {
 			});
                     nodes.push(node);
                 } else {
+		    
                     var graphNode = nNode.graphNode[0];
                     
                     nNode.eqIri.forEach(function(element) {
@@ -286,7 +294,6 @@ var GRAPH = (function(module) {
 				    })[0].graphNode.push(graphNode);
 			    }
 			    //add iri
-			    
 			    nodes[graphNode].iri.concat(tmpNodes.filter(function(e) { 
 					return e.id === element;
 				    })[0].eqIri);
@@ -366,7 +373,7 @@ var GRAPH = (function(module) {
             $('#helpPopup')
 		.html(etyBase.LOAD.HELP.intro);
 
-            var div = d3.select("body").append("div")
+            d3.select("#tree-container").append("div")
                 .attr("data-role", "popup")
                 .attr("data-dismissible", "true")
                 .attr("id", "tooltipPopup")
@@ -385,6 +392,7 @@ var GRAPH = (function(module) {
             $('#tags').on("keypress click", function(e) {
                 var tag = this;
                 if (e.which === 13 || e.type === 'click') {
+		    etyBase.LOAD.nodeCount = -1;
                     var lemma = $(tag).val();
 
                     if (lemma) {
@@ -478,32 +486,34 @@ var GRAPH = (function(module) {
 						physics: false
 					    };
 					    //d3.select("#tree-container").append("div").attr("id", "tree-overlay");
-                                            etyBase.LOAD.nodeCount = -1;
+                                            
 					    network = new vis.Network(document.getElementById("tree-overlay"), { nodes: nodes }, options);
 					    
-					    network.on("hoverNode", function(params) {					   
-						    var node = nodes.filter(function(e) {
-							    return e.id === params.node;
-							})[0];
-						  
-						    d3.select("#tooltipPopup")
-							.style("display", "inline")
+					    network.on("hoverNode", function(params) {
+						    var node = network.body.nodes[params.node]
+						       			  
+                                                    var coords = network.canvasToDOM({x: node.x, y: node.y});
+                                                  
+                                                    d3.select("#tooltipPopup")
+                                                        .style("display", "inline")
                                                         .style("max-width", "400px")
-							.style("left", (network.body.nodes[params.node].x) + "px")
-							.style("top", (network.body.nodes[params.node].y) + "px")
-							.html("");
-						
-						    node.logTooltip();
+                                                        .style("left", (coords.x + 50) + "px")
+                                                        .style("top", (coords.y + 50) + "px")
+                                                        .html("");
+						    							    })[0]);
+						    nodes.filter(function(e) {
+							    return e.id === params.node;
+							})[0].logTooltip();
 						});
 					    network.on("click", function(params) {
 						    if (params.nodes.length === 1) {
 							var node = params.nodes[0];
 							etyBase.GRAPH.draw(node, 2, width, height);
+							
 							d3.select("#tooltipPopup")
 							    .style("display", "none");
 						    }
 						});	
-					    
                                         } 
                                     }
                                 }
