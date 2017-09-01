@@ -53,6 +53,7 @@ var LOAD = (function(module) {
                 var tmp = this.parseIri(iri);
                 this.label = label.replace(/^_/, '*');
                 this.ety = tmp.ety;
+		this.iso = tmp.iso;
                 this.lang = etyBase.tree.langMap.get(this.iso);
                 this.graphNode = [];
                 this.eqIri = [];
@@ -179,6 +180,29 @@ var LOAD = (function(module) {
             }
 
 	    etyBase.tree.langMap = new Map();
+
+	    var ssv = d3.dsv(";", "text/plain");
+            ssv("./resources/data/etymology-only_languages.csv", function(data) {
+		    data.forEach(function(entry) {
+			    etyBase.tree.langMap.set(entry["code"], entry["canonical name"]);
+			});
+		});
+            ssv("./resources/data/list_of_languages.csv", function(data) {
+		    data.forEach(function(entry) {
+			    etyBase.tree.langMap.set(entry["code"], entry["canonical name"]);
+			});
+		});
+	    
+            d3.text("./resources/data/iso-639-3.tab", function(error, textString) {
+		    console.log(textString);
+		    var headers = ["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"].join("\t");
+		    var data = d3.tsv.parse(headers + textString);
+		    console.log(data)
+		    data.forEach(function(entry) {
+			    etyBase.tree.langMap.set(entry["Id"], entry["Ref_Name"]);
+			});
+		});
+	    /*
 	    const csv = require('csvtojson');
 	    csv({delimiter:";"})
                 .fromFile("./resources/data/etymology-only_languages.csv")
@@ -195,6 +219,7 @@ var LOAD = (function(module) {
                 .on('json', (jsonObj) => {
                         etyBase.tree.langMap.set(jsonObj["Id"], jsonObj["Ref_Name"]);
                     });
+	    */
 	};
     
 

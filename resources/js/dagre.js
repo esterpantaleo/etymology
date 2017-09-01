@@ -44,7 +44,11 @@ var GRAPH = (function(module) {
         };
 
         var draw = function(iri, parameter, width, height) {
-	    
+	    d3.select("#tree-overlay").remove();
+
+	    d3.select("#tree-container").append("div")
+	        .attr("id", "tree-overlay");
+
             //if parameter == 1 submit a short (but less detailed) query
             //if parameter == 2 submit a longer (but more detailed) query
             var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.ancestorQuery(iri, parameter));
@@ -55,8 +59,7 @@ var GRAPH = (function(module) {
             $('#message')
 		.css('display', 'inline')
 		.html(etyBase.LOAD.MESSAGE.loadingMore);
-            d3.select("#tooltipPopup")
-		.attr("display", "none");
+
 	    if (undefined !== network) {
 		network.destroy();
 	    }
@@ -136,24 +139,54 @@ var GRAPH = (function(module) {
                                                 },
                                                 physics: false
                                             };
-					    network = new vis.Network(document.getElementById("tree-overlay"), g, options);
-					    //network.stabilize(100000); 
+
+					    d3.select("#tree-overlay").append("div")
+					        .attr("position", "absolute")
+					        .attr("data-role", "popup")
+					        .attr("id", "tooltipPopup")
+					        .attr("class", "ui-content tooltipDiv")
+					        .style("display", "inline")
+					        .style("z-index", 2)
+					        .style("max-width", "400px");
+
+					    d3.select("#tree-overlay").append("div")
+					        .attr("id", "visNetwork")
+
+					    network = new vis.Network(document.getElementById("visNetwork"), g, options);
+					    //network.stabilize(100000);
 					    
 					    //window.onresize = function() {network.fit();}
 					    network.focus(0, {scale: 1, offset: {x: 0, y: 0}});
-					    
+					    console.log(g.tmpNodes)
+					    //				    network.getBoundingBox
+					    network.on("beforeDrawing", function (ctx) {
+                                                    g.nodes.forEach(function(node) {
+							    console.log(node);
+                                                            var nodePosition = network.getPositions([node.id]);
+                                                            //ctx.fillStyle = '#294475';
+                                                            var scale = network.getScale();
+                                                            var fontsize = 16;
+
+                                                            var visibleFontSize = 16 * scale;
+                                                            if (visibleFontSize > 30) {
+                                                                ctx.font = 30/scale + "px Arial";
+                                                            }
+                                                            else {
+                                                                ctx.font = 16 + "px Arial";
+                                                            }
+							    ctx.fillText(node.iso, nodePosition[node.id].x + 10 , nodePosition[node.id].y + 27);
+                                                        })
+                                                        });
 					    network.on("hoverNode", function(params) {
 						    var node = network.body.nodes[params.node];
 						    
 						    var coords = network.canvasToDOM({x: node.x, y: node.y});
-						    console.log(coords.x + " " + coords.y);
-                                                    d3.select("#tooltipPopup")
-                                                        .style("display", "inline")
-                                                        .style("max-width", "400px")
-						        .style("left", (coords.x + 50) + "px")
-                                                        .style("top", (coords.y + 50) + "px")
+						    
+						    d3.select("#tooltipPopup")
+                                                        .style("left", (coords.x + 60) + "px")
+                                                        .style("top", coords.y + "px")
                                                         .html("");
-
+						    
 						    g.nodes.filter(function(e) {
                                                             return e.id === params.node;
                                                         })[0].iri.forEach(function(iri) {
@@ -373,21 +406,11 @@ var GRAPH = (function(module) {
             $('#helpPopup')
 		.html(etyBase.LOAD.HELP.intro);
 
-            d3.select("#tree-container").append("div")
-                .attr("data-role", "popup")
-                .attr("data-dismissible", "true")
-                .attr("id", "tooltipPopup")
-                .style("display", "none")
-                .attr("class", "ui-content tooltipDiv");
-
             $(window).click(function() {
                 d3.select("#tooltipPopup")
                     .style("display", "none");
             });
 
-            $('#tooltipPopup').click(function(event) {
-                event.stopPropagation();
-            });
 
             $('#tags').on("keypress click", function(e) {
                 var tag = this;
@@ -414,9 +437,6 @@ var GRAPH = (function(module) {
 				    if (undefined !== network) {
 					network.destroy();
 				    }
-                                    d3.select("#tooltipPopup")
-					.style("display", "none");
-
 				    var disambiguationArray = JSON.parse(response).results.bindings;
 				    if (disambiguationArray.length === 0) {
 					return null;
@@ -439,13 +459,16 @@ var GRAPH = (function(module) {
 					console.log(nodes);
 				    }
 
+				    d3.select("#tree-overlay").remove();
+
+				    d3.select("#tree-container").append("div")
+					.attr("id", "tree-overlay");
+
                                     if (nodes.length === 0) {
                                         $('#message')
 					    .css('display', 'inline')
 					    .html(etyBase.LOAD.MESSAGE.notAvailable);
                                     } else {
-					console.log("width="+width);
-					console.log("height="+height);
 					if (nodes.length === 1){
 					    var iri = nodes[0].id; 
 					    etyBase.GRAPH.draw(iri, 2, width, height);
@@ -485,33 +508,65 @@ var GRAPH = (function(module) {
 						},
 						physics: false
 					    };
-					    //d3.select("#tree-container").append("div").attr("id", "tree-overlay");
-                                            
-					    network = new vis.Network(document.getElementById("tree-overlay"), { nodes: nodes }, options);
 					    
-					    network.on("hoverNode", function(params) {
-						    var node = network.body.nodes[params.node]
-						       			  
+					    d3.select("#tree-overlay").append("div")
+                                                .attr("position", "absolute")
+                                                .attr("data-role", "popup")
+                                                .attr("id", "tooltipPopup")
+                                                .attr("class", "ui-content tooltipDiv")
+                                                .style("display", "inline")
+                                                .style("z-index", 2)
+                                                .style("max-width", "400px");
+
+                                            d3.select("#tree-overlay").append("div")
+                                                .attr("id", "visNetwork")
+                                            
+					    network = new vis.Network(document.getElementById("visNetwork"), { nodes: nodes }, options);
+					    
+					    network.moveTo({scale:1.0});
+
+					    //add language tag
+					    network.on("beforeDrawing", function (ctx) {
+						    nodes.forEach(function(node) {
+							var nodePosition = network.getPositions([node.id]);
+							//ctx.fillStyle = '#294475';
+							
+							var scale = network.getScale();
+							var fontsize = 16;
+							
+							var visibleFontSize = 16 * scale;
+							if (visibleFontSize > 30) {
+							    ctx.font = 30/scale + "px Arial";  
+							}
+							else {
+							    ctx.font = 16 + "px Arial";
+							    }
+							ctx.fillText(node.iso, nodePosition[node.id].x + 10 , nodePosition[node.id].y + 27);
+							})
+						});
+
+					    network.on("hoverNode", function(params) {						    
+						    var node = network.body.nodes[params.node];
+
                                                     var coords = network.canvasToDOM({x: node.x, y: node.y});
-                                                  
+
                                                     d3.select("#tooltipPopup")
-                                                        .style("display", "inline")
-                                                        .style("max-width", "400px")
-                                                        .style("left", (coords.x + 50) + "px")
-                                                        .style("top", (coords.y + 50) + "px")
-                                                        .html("");
-						    							    })[0]);
+                                                        .style("left", (coords.x + 60) + "px")
+                                                        .style("top", coords.y + "px")
+							.html("");
+						    						
 						    nodes.filter(function(e) {
 							    return e.id === params.node;
 							})[0].logTooltip();
 						});
+
 					    network.on("click", function(params) {
 						    if (params.nodes.length === 1) {
 							var node = params.nodes[0];
 							etyBase.GRAPH.draw(node, 2, width, height);
 							
-							d3.select("#tooltipPopup")
-							    .style("display", "none");
+							//							d3.select("#tooltipPopup")
+							//  .style("display", "none");
 						    }
 						});	
                                         } 
