@@ -27,30 +27,6 @@ var DB = (function(module) {
             });
         };
 
-        /* function to slice up a big sparql query (that cannot be processed by virtuoso) */
-        /* into a bunch of smaller queries in chunks of "chunk" */
-        var slicedQuery = function(myArray, queryFunction, chunk) {
-            var i, j, tmpArray, url, sources = [];
-            for (i = 0, j = myArray.length; i < j; i += chunk) {
-                tmpArray = myArray.slice(i, i + chunk);
-                //console.log(DB.unionQuery(tmpArray, query));                   
-                url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
-                if (etyBase.config.debug) {
-                    console.log(url);
-                }
-                sources.push(etyBase.DB.getXMLHttpRequest(url));
-            }
-            const queryObservable = Rx.Observable.zip.apply(this, sources)
-                .catch((err) => {
-                    d3.select("#message").html(etyBase.LOAD.MESSAGE.serverError);
-
-                    /* Return an empty Observable which gets collapsed in the output */
-                    return Rx.Observable.empty();
-                });
-            return queryObservable;
-        };
-
-
         var disambiguationQuery = function(lemma) {
             var encodedLemma = lemma
 		.replace(/'/g, "\\\\'")
@@ -77,7 +53,7 @@ var DB = (function(module) {
                 "} ";
 
             return query;
-        };
+	};
 
         //DEFINE QUERY TO GET LINKS, POS AND GLOSS           
         var lemmaQuery = function(iri) {
@@ -130,43 +106,125 @@ var DB = (function(module) {
                 "        } " +
                 "    } " +
                 "} ";
+	    
             return query;
         };
-	
-	/*
-	var ancestorOnlyQuery = function(iri) {
- 	    var query = "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
-	    //  "SELECT * WHERE {{ " +
-	        "SELECT DISTINCT ?eq0 ?ancestor1 " + //?ancestor2 ?ancestor3 ?ancestor4 ?ancestor5 " +
-	        "{ " + 
-                "   <" + iri + "> dbetym:etymologicallyRelatedTo ?ancestor1 . " +
-                "   OPTIONAL { " +
-                "       <" + iri + "> dbetym:etymologicallyEquivalentTo*|(^dbetym:etymologicallyEquivalentTo)* ?eq0 " +
-                "   } " +
-	        "} ";*/
 
-        //(related|equivalent){0,5}
+	    var query = function(iteration, describes, resource) {
+		var toreturn = "";
+		if (undefined === resource){
+		    resource = "?ancestor" + iteration;
+		}
+		if (describes) {
+		    toreturn += resource + " dbnary:describes ?var" + iteration + " . ";
+		    resource = "?var" + iteration;
+		}
+		toreturn += resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (iteration+1) + " . " +
+                " BIND(EXISTS {" + resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (iteration+1) + " } AS ?der" + (iteration+1) + ") " +
+                " BIND(EXISTS {" + resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration+1) + " } AS ?eq" + (iteration+1) + ") ";
+		return toreturn;
+	    }
+	    //Array(N).fill().map((e,i)=>i+1);
+	    //for (var i = 1; i <= N; i++) {
+
+	    var intertwinedQuery = function(){
+		var toreturn = 
+		"OPTIONAL { " +
+                query(1, false) +
+                "    OPTIONAL { " +
+                query(2, false) +
+                "        OPTIONAL { " +
+                query(3, false) +
+                "        } " +
+                "        OPTIONAL { " +
+                query(3, true) +
+                "        } " +
+                "    } " + 
+                "    OPTIONAL { " + 
+                query(2, true) +
+		"        OPTIONAL { " +
+                query(3, false) +
+                "        } " +
+		"        OPTIONAL { " +
+                query(3, true) +
+                "        } " +
+                "    } " + 
+                "} " + 
+                "OPTIONAL { " +
+                query(1, true) +
+                "    OPTIONAL { " +
+                query(2, false) +
+		"        OPTIONAL { " +
+                query(3, false) +
+                "        } " +
+		"        OPTIONAL { " +
+                query(3, true) +
+                "        } " +
+                "    } " +
+	        "    OPTIONAL { " +
+                query(2, true) +
+		"        OPTIONAL { " +
+                query(3, false) +
+                "        } " +
+		"        OPTIONAL { " +
+                query(3, true) +
+                "        } " +
+                "    } " +
+                "} " ;
+		return toreturn;
+	    }
+	    
+	    var detailedAncestorQuery = function(iri) {
+		var toreturn = 
+		"PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
+		"PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " + 
+		"SELECT ?var0 ?ancestor1 ?var1 ?der1 ?eq1 ?ancestor2 ?var2 ?der2 ?eq2 ?ancestor3 {" +//?h ?der3 ?eq3 ?ancestor4 { " +//?k ?der4 ?eq4 ?ancestor5 {" + //?l ?der5 ?eq5 ?ancestor6 { " +
+		"    { " + //open {
+		"	SELECT DISTINCT * { " + //open select 
+                query(0, false, "<" + iri+ ">") +
+                intertwinedQuery() +
+                "    }}" + //close select
+	        " UNION " +
+		"    {{ " +
+	        "       SELECT DISTINCT * { " + //open select
+	        query(0, true, "<" + iri+ ">") +
+		intertwinedQuery() +
+		"    }" + //close select 
+                "}} " +//close {
+                "} ";
+		
+		return toreturn;
+            };
 
         //DEFINE QUERIES TO PLOT GRAPH          
         var ancestorQuery = function(iri, queryDepth) {
             var query = "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> ";
             if (queryDepth === 1) {
                 query +=
-                    "SELECT DISTINCT ?ancestor1 ?ancestor2 " +
+                    "SELECT DISTINCT ?ancestor1 ?der ?ancestor2 ?der1 ?der1_1 ?der2 ?der2_1" +
                     "{ " +
                     "   <" + iri + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 . " +
+		    "   OPTIONAL { <" + iri + "> dbetym:etymologicallyDerivesFrom ?der . } " +
+                    "   OPTIONAL { ?der1 dbetym:etymologicallyDerivesFrom/(dbetym:etymologicallyRelatedTo*) ?ancestor1 .  " +
+                    "              ?der1 dbetym:etymologicallyDerivesFrom ?der1_1 . }" +
                     "   OPTIONAL { " +
                     "       ?eq dbetym:etymologicallyEquivalentTo ?ancestor1 . " +
                     "       ?eq dbetym:etymologicallyRelatedTo* ?ancestor2 . " +
-                    "   } " +
+                    "       OPTIONAL { ?der2 dbetym:etymologicallyDerivesFrom/(dbetym:etymologicallyRelatedTo*) ?ancestor2 . " +
+		    "                  ?der2  dbetym:etymologicallyDerivesFrom ?der2_1 . }" +
+                    "   } " +     //filter not exists { <" + iri + "> (dbetym:etymologicallyRelatedTo*)/dbetym:etymologicallyDerivesFrom ?ancestor1 . }
                     "} ";
             } else if (queryDepth === 2) {
                 query +=
-                    "SELECT DISTINCT ?ancestor1 " +
+                    "SELECT DISTINCT ?ancestor1 ?der ?der1 ?der1_1" +
                     "{ " +
                     "   <" + iri + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 . " +
+		    "   OPTIONAL { <" + iri + "> dbetym:etymologicallyDerivesFrom ?der . } " +
+                    "   OPTIONAL { ?der1 dbetym:etymologicallyDerivesFrom/(dbetym:etymologicallyRelatedTo*) ?ancestor1 . " +
+                    "              ?der1 dbetym:etymologicallyDerivesFrom ?der1_1 . } " +
                     "} ";
             }
+	    console.log(query);
             return query;
         };
 
@@ -219,15 +277,17 @@ var DB = (function(module) {
         };
 
         this.getXMLHttpRequest = getXMLHttpRequest;
-        this.slicedQuery = slicedQuery;
         this.disambiguationQuery = disambiguationQuery;
         this.lemmaQuery = lemmaQuery;
         this.ancestorQuery = ancestorQuery;
         this.descendantQuery = descendantQuery;
         this.propertyQuery = propertyQuery;
         this.unionQuery = unionQuery;
+	    this.query = query;
+	    this.intertwinedQuery = intertwinedQuery;
+	    this.detailedAncestorQuery = detailedAncestorQuery;
         etyBase[moduleName] = this;
-    };
+	};
 
     return module;
 })(DB || {});

@@ -194,10 +194,10 @@ var LOAD = (function(module) {
 		});
 	    
             d3.text("./resources/data/iso-639-3.tab", function(error, textString) {
-		    console.log(textString);
+		    
 		    var headers = ["Id", "Part2B", "Part2T", "Part1", "Scope", "Language_Type", "Ref_Name", "Comment"].join("\t");
 		    var data = d3.tsv.parse(headers + textString);
-		    console.log(data)
+		    
 		    data.forEach(function(entry) {
 			    etyBase.tree.langMap.set(entry["Id"], entry["Ref_Name"]);
 			});
