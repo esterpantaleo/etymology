@@ -23,6 +23,7 @@ var GRAPH = (function(module) {
             //show tooltip on click on laguage tag
             inner.selectAll("g.node")
                 .append("rect")
+		.attr("x", "0.8em")
                 .attr("y", "2.2em")
                 .attr("x", "0.8em")
                 .attr("width", function(d) {
@@ -61,16 +62,14 @@ var GRAPH = (function(module) {
 
         var appendDefinitionTooltipOrDrawDAGRE = function(inner, g, width, height) {
             inner.selectAll("g.node")
-                .on('click', function(d) {
+                .on("click", function(d) {
                     var iri = g.node(d).iri;
                     etyBase.GRAPH.drawDAGRE(iri, 2, width, height);
                     d3.select("#tooltipPopup")
                         .style("display", "none");
                 })
-                .on('mouseover', function(d) {
-
+                .on("mouseover", function(d) {
                     d3.select(this).style("cursor", "pointer");
-
                     d3.select("#tooltipPopup")
                         .style("display", "inline")
                         .style("left", (d3.event.pageX + 38) + "px")
@@ -91,13 +90,12 @@ var GRAPH = (function(module) {
             //define nodes 
             g.nodess = {};
             disambiguationArray.forEach(function(n) {
-		var label = n.lemma.value.replace(/^_/, '*');
                 n.et.value.split(",")
                     .forEach(function(element) {
                         if (element !== "") {
-                            g.nodess[element] = new etyBase.LOAD.classes.Node(element, label);
+                            g.nodess[element] = new etyBase.LOAD.classes.Node(element, n.lemma.value);
                         } else {
-                            g.nodess[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value, label);
+                            g.nodess[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value, n.lemma.value);
                         }
                     });
             });
@@ -216,17 +214,14 @@ var GRAPH = (function(module) {
             //CONSTRUCTING NODES
             g.nodess = {};
             response.forEach(function(element) {
-		    var label;
 		    //save all nodes        
 		    //define isAncestor
 		    if (undefined !== element.s && undefined === g.nodess[element.s.value]) {
-			label = element.sLabel.value.replace(/^_/, '*');
-			g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, label);
+			g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, element.sLabel.value);
 		    }
 		    if (undefined !== element.rel) {
-			label = element.relLabel.value.replace(/^_/, '*');
 			if (undefined === g.nodess[element.rel.value]) {
-			    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value, label);
+			    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value, element.relLabel.value);
 			}
 			if (ancestors.indexOf(element.rel.value) > -1) {
 			    g.nodess[element.rel.value].isAncestor = true;
@@ -234,8 +229,7 @@ var GRAPH = (function(module) {
 		    }
 		    if (undefined !== element.rel && undefined !== element.eq) {
 			if (undefined === g.nodess[element.eq.value]) {
-			    label = element.eqLabel.value.replace(/^_/, '*');
-			    g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, label);
+			    g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, element.eqLabel.value);
 			}
 			//push to eqIri
 			if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) == -1) {
@@ -247,11 +241,10 @@ var GRAPH = (function(module) {
 		    }
 		    if (undefined !== element.der) {
 			if (undefined === g.nodess[element.der.value]) {
-			    label = element.derLabel.value.replace(/^_/, '*');
-			    g.nodess[element.der.value] = new etyBase.LOAD.classes.Node(element.der.value, label);
+			    g.nodess[element.der.value] = new etyBase.LOAD.classes.Node(element.der.value, element.derLabel.value);
 			}
 			//add property der
-			g.nodess[element.s.value].der = true;
+			//g.nodess[element.s.value].der = true;
 		    }
 		});
 
@@ -336,9 +329,8 @@ var GRAPH = (function(module) {
                 }
             }
 
-            var showDerivedNodes = true;
             //always show derived nodes if tree is small
-            if (ancestors.length < 3) showDerivedNodes = true;
+            if (ancestors.length < 3) etyBase.config.showDerivedNodes = true;
 
             for (var gg in g.graphNodes) {
                 //define all
@@ -370,7 +362,7 @@ var GRAPH = (function(module) {
                         target = g.nodess[element.s.value].graphNode[0];
 
                     if (source !== target) {
-                        if (showDerivedNodes) {
+                        if (etyBase.config.showDerivedNodes) {
                             g.graphNodes[source].linkedToTarget.push(target);
                         } else {
                             //linkedToTarget only counts the number of descendants that are not derived words
@@ -387,7 +379,7 @@ var GRAPH = (function(module) {
 
             for (var gg in g.graphNodes) {
                 //collapse nodes that have more than 10 descendants and color them differently      
-                if (!showDerivedNodes && g.graphNodes[gg].linkedToTarget.length > 10) {
+                if (!etyBase.config.showDerivedNodes && g.graphNodes[gg].linkedToTarget.length > 10) {
                     g.graphNodes[gg].linkedToTarget.map(function(e) {
                         if (g.graphNodes[e].linkedToSource.length === 1) {
                             g.graphNodes[e].der = true;
@@ -406,7 +398,7 @@ var GRAPH = (function(module) {
                     var source = g.nodess[element.rel.value].graphNode[0],
                         target = g.nodess[element.s.value].graphNode[0];
                     if (source !== target) {
-                        if (showDerivedNodes || g.graphNodes[target].isAncestor || !(g.graphNodes[source].der || g.graphNodes[target].der)) {
+                        if (etyBase.config.showDerivedNodes || g.graphNodes[target].isAncestor || !(g.graphNodes[source].der || g.graphNodes[target].der)) {
                             var Link = { "source": source, "target": target };
                             if (g.graphNodes[target].linkedToSourceCopy.indexOf(source) === -1) {
                                 //define linked and linkedToSourceCopy

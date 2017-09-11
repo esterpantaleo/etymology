@@ -32,7 +32,8 @@ var EtyTree = {
             debug: true,
             urls: {
                 ENDPOINT: "https://etytree-virtuoso.wmflabs.org/sparql"
-            }
+            },
+            showDerivedNodes: true
         };
 
         bindModules(etyBase, etyBase.config.modules);

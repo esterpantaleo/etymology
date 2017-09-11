@@ -55,7 +55,8 @@ var DB = (function(module) {
             var encodedLemma = lemma
 		.replace(/'/g, "\\\\'")
 		.replace("·", "%C2%B7")
-		.replace("*", "_"); //parse reconstructed words 
+		.replace("*", "_")
+                .replace("'", "__"); //parse reconstructed words 
 	    //.replace("/", "!slash!");  
             var query =
                 "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
