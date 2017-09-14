@@ -171,7 +171,7 @@ var DB = (function(module) {
 
         var propertyQuery = function(iri) {
             var query =
-                "SELECT DISTINCT ?s ?rel ?eq ?der ?sLabel ?relLabel ?eqLabel ?derLabel " +
+                "SELECT DISTINCT ?s ?rel ?eq ?sLabel ?relLabel ?eqLabel" +
                 "{           " +
                 "   VALUES ?rel " +
                 "   {           " +
@@ -186,11 +186,6 @@ var DB = (function(module) {
                 "       ?eq dbetym:etymologicallyEquivalentTo{0,6} ?rel . " +
 		"       ?eq rdfs:label ?eqTmp " +
                 "       BIND (STR(?eqTmp) AS ?eqLabel) " +
-                "   } " +
-                "   OPTIONAL { " +
-                "       ?s dbetym:etymologicallyDerivesFrom ?der . " +
-		"       ?der rdfs:label ?derTmp " +
-                "       BIND (STR(?derTmp) AS ?derLabel) " +
                 "   } " +
                 //  "   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . } "+
                 "}";
