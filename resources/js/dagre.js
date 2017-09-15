@@ -29,57 +29,54 @@ var GRAPH = (function(module) {
 
 
 	var constructDisambiguationGraph = function(lemma) {
+	    //clean screen
+	    $('#tree-overlay')
+                .remove();
+            d3.select("#tooltipPopup")
+                .style("display", "none");
+	    
+	    //query database
 	    var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
             if (etyBase.config.debug) {
                 console.log("disambiguation query = " + url);
             }
-
             etyBase.DB.getXMLHttpRequest(url).subscribe(
                 response => {
-                    if (response !== undefined && response !== null) {
-                        $('#tree-overlay')
-                            .remove();
-                        d3.select("#tooltipPopup")
-                            .style("display", "none");
-
-			var g = parseDisambiguationNodes(response);
-                        if (null === g) {
-                            $('#message')
-                                .css('display', 'inline')
-                                .html(etyBase.LOAD.MESSAGE.notAvailable);
-                        } else {
-                            if (Object.keys(g.nodess).length > 1) {
-                                $('#helpPopup')
-                                    .html(etyBase.LOAD.HELP.disambiguation);
-                                $('#message')
-                                    .css('display', 'inline')
-                                    .html(etyBase.LOAD.MESSAGE.disambiguation);
-                                renderGraph(g).selectAll("g.node")
-                                    .on("click", function(d) {
-                                        var iri = g.node(d).iri;
-                                        constructEtymologyGraph(iri, 2);
-                                    })
-                            } else {
-                                var iri = Object.keys(g.nodess)[0];
-                                constructEtymologyGraph(iri, 2);
-                            }
-			}
-		    }
+		    var g = parseDisambiguationNodes(response);
+                    if (Object.keys(g.nodess).length === 0) {
+                        $('#message')
+                            .css('display', 'inline')
+                            .html(etyBase.LOAD.MESSAGE.notAvailable);
+                    } else if (Object.keys(g.nodess).length === 1) {
+			var iri = Object.keys(g.nodess)[0];
+                        constructEtymologyGraph(iri);
+		    } else {
+                        $('#helpPopup')
+                            .html(etyBase.LOAD.HELP.disambiguation);
+                        $('#message')
+                            .css('display', 'inline')
+                            .html(etyBase.LOAD.MESSAGE.disambiguation);
+                        renderGraph(g).selectAll("g.node")
+                            .on("click", function(d) {
+                                var iri = g.node(d).iri;
+                                constructEtymologyGraph(iri);
+                            })
+                    } 
 		},
-		error => notAvailable(error),
+		error => { 
+		    $('#message')
+			.css('display', 'inline')
+			.html("Server error. " + error); 
+		},
                 () => console.log('done disambiguation'));
 	};
 		
         var parseDisambiguationNodes = function(response) {
-            var disambiguationArray = JSON.parse(response).results.bindings;
-	    if (disambiguationArray.length === 0) {
-                return null;
-            }
-
-            var g = new dagreD3.graphlib.Graph().setGraph({});
-
+	    var g = new dagreD3.graphlib.Graph().setGraph({});
+	    g.nodess = {};
+	    var disambiguationArray = JSON.parse(response).results.bindings;
+	    
             //define nodes 
-            g.nodess = {};
             disambiguationArray.forEach(function(n) {
                 n.et.value.split(",")
                     .forEach(function(element) {
@@ -90,9 +87,6 @@ var GRAPH = (function(module) {
                         }
                     });
             });
-            if (etyBase.config.debug) {
-                console.log(g.nodess);
-            }
 
             //add nodes and links to the graph
             var m = null;
@@ -104,9 +98,26 @@ var GRAPH = (function(module) {
                 m = n;
             }
 
+	    if (etyBase.config.debug) {
+                console.log(g.nodess);
+            }
             return g;
         };
 
+	var detailedParseAncestors = function(response) {
+	    var ancestorArray = response
+                .reduce((ancestors, a) => {
+                    ancestors.push(a.ancestor1.value);
+                    if (a.der1.value === "0" && undefined !== a.ancestor2) {
+                        ancestors.push(a.ancestor2.value);
+                        if (a.der2.value === "0" && undefined !== a.ancestor3){
+                            ancestors.push(a.ancestor3.value);
+                        }
+                    }
+                    return ancestors;
+                }, []).filter(etyBase.helpers.onlyUnique);
+	    return ancestorArray;
+        };
 
 	var parseAncestors = function(response) {
 	    var ancestorArray = JSON.parse(response).results.bindings
@@ -137,9 +148,7 @@ var GRAPH = (function(module) {
 	    return descendantArray;
 	};
 
-        var constructEtymologyGraph = function(iri, parameter) {
-            //if parameter == 1 submit a short (but less detailed) query
-            //if parameter == 2 submit a longer (but more detailed) query
+        var constructEtymologyGraph = function(iri) {
             $('#message')
 		.css('display', 'inline')
 		.html(etyBase.LOAD.MESSAGE.loadingMore);
@@ -147,24 +156,24 @@ var GRAPH = (function(module) {
 		.attr("display", "none");
             $('#tree-overlay')
 		.remove();
-
+	    d3.select("#tooltipPopup")
+                .attr("display", "none");
 	    //todo: use a different query for ancestors
-	    var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.ancestorQuery(iri, parameter));
-	    if (etyBase.config.debug) {
-		console.log(url);
-            }
-            etyBase.DB.getXMLHttpRequest(url)
+	    
+//	    var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.ancestorQuery(iri));
+//	    if (etyBase.config.debug) {
+//		console.log(url);
+  //          }
+
+	    const params = new URLSearchParams();
+	    params.set("format", "application/sparql-results+json");
+	    var url = etyBase.config.urls.ENDPOINT + "?" + params;
+	    console.log("posting");
+	    etyBase.DB.postXMLHttpRequest(etyBase.DB.detailedAncestorQuery(iri))
 		.subscribe(
-                    ancestorResponse => {
-			if (null === ancestorResponse) {
-			    $('#message')
-				.css('display', 'inline')
-				.html(etyBase.LOAD.MESSAGE.serverError);
-			    return;
-			}
+		    ancestorResponse => {
+			ancestorArray = parseAncestors(ancestorResponse);
 			
-			$('#helpPopup').html(etyBase.LOAD.HELP.dagre);
-			var ancestorArray = parseAncestors(ancestorResponse);
 			etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.descendantQuery, 8)
                             .subscribe( 
 				descendantResponse => { 
@@ -173,11 +182,12 @@ var GRAPH = (function(module) {
 					.subscribe(
 					    propertyResponse => {
 						var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
-						if (null === g) {
+						if (Object.keys(g.nodess).length === 0) {
 						    $('#message')
 							.css('display', 'inline')
 							.html(etyBase.LOAD.MESSAGE.noEtymology);
 						} else {
+						    $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
 						    renderGraph(g);
 						}
 					    });
@@ -185,28 +195,22 @@ var GRAPH = (function(module) {
 				error => serverError(error),
 				() => console.log('done descendants query'));
                     },
-                    error => {
-			if (parameter === 1) {
-			    serverError(error);
-			} else {
-                            constructEtymologyGraph(iri, 1);
-			}
-                    },
-                    () => console.log('done DAGRE' + parameter));
+                    error => serverError(error),
+                    () => console.log('done ancestor query')
+	    );
         };
 	
         var parseEtymologyNodes = function(ancestors, ancestorResponse, propertyResponse) {
-	    
+	    var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
+	    g.nodess = {};
+
 	    var allArray = propertyResponse.reduce((all, a) => {
                 return all.concat(JSON.parse(a).results.bindings);
             }, []);
             if (allArray.length === 0) {
-		return null;
-	    } else {
-		var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
-		
+		return g;
+	    } else {		
 		//CONSTRUCTING NODES
-		g.nodess = {};
 		allArray.forEach(function(element) {
 		    //save all nodes        
 		    //define isAncestor
