@@ -55,7 +55,7 @@ var DB = (function(module) {
             var i, j, tmpArray, url, sources = [];
             for (i = 0, j = myArray.length; i < j; i += chunk) {
                 tmpArray = myArray.slice(i, i + chunk);
-                console.log(etyBase.DB.unionQuery(tmpArray, queryFunction));                   
+                console.log(etyBase.DB.unionQuery(tmpArray, queryFunction));
                 url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
                 if (etyBase.config.debug) {
                     console.log(url);
@@ -182,30 +182,19 @@ var DB = (function(module) {
 		query += "OPTIONAL {" + ancestorSubquery(i, false) + tmp + "} ";
 	    } 
 	    return query;
-	}
-	
-	var detailedAncestorQueryBool = function(iri, depth, bool) {
-	    var seq = [];
-	    for (var i = 1; i < depth; i++) {
-		seq.push(i);
-	    }
-	    var query =
-		"PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
-		"PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
-		"SELECT DISTINCT * {" +
-                ancestorSubquery(0, bool, "<" + iri+ ">") +
-                iterativeQuery(1, depth) +                
-                "} ";
-	    console.log(query);
-	    return query;
 	};
-
+	
 	var detailedAncestorQuery = function(iri, depth) {
 	    var sources = [];
-	    var url = detailedAncestorQueryBool(iri, depth, true);
-	    sources.push(etyBase.DB.postXMLHttpRequest(url));
-	    url = detailedAncestorQueryBool(iri, depth, false);
-	    sources.push(etyBase.DB.postXMLHttpRequest(url));
+	    var queryPart1 =
+                "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
+                "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
+                "SELECT DISTINCT * {";
+	    var queryPart3 = iterativeQuery(1, depth) + "}";
+	    var query = queryPart1 + ancestorSubquery(0, true, "<" + iri+ ">") + queryPart3;
+	    sources.push(etyBase.DB.postXMLHttpRequest(query));
+	    query = queryPart1 + ancestorSubquery(0, false, "<" + iri+ ">") + queryPart3; 
+	    sources.push(etyBase.DB.postXMLHttpRequest(query));
 
 	    const queryObservable = Rx.Observable.zip.apply(this, sources)
                 .catch((err) => {
@@ -248,21 +237,23 @@ var DB = (function(module) {
                 "   } " +
                 "   ?rel rdfs:label ?relTmp" +
                 "   BIND (STR(?relTmp) AS ?relLabel) " +
-                "   ?s dbetym:etymologicallyRelatedTo ?rel . " +
-                "   OPTIONAL { " +
-                "       ?m dbnary:describes ?s . " +
-                "       ?m rdfs:label ?sTmp . " +   
-                "       BIND (STR(?sTmp) AS ?sLabel) " +   
-                "   } " +
-                "   OPTIONAL { " +
-		"       ?s rdfs:label ?sTmp " +
-                "       BIND (STR(?sTmp) AS ?sLabel) " +
-                "   } " +
-                "   OPTIONAL { " +
-                "       ?eq dbetym:etymologicallyEquivalentTo{0,6} ?rel . " +
-		"       ?eq rdfs:label ?eqTmp " +
-                "       BIND (STR(?eqTmp) AS ?eqLabel) " +
-                "   } " +
+                "   OPTIONAL { " + 
+                "       ?s dbetym:etymologicallyRelatedTo ?rel . " +
+                "       OPTIONAL { " +
+                "           ?m dbnary:describes ?s . " +
+                "           ?m rdfs:label ?sTmp . " +   
+                "           BIND (STR(?sTmp) AS ?sLabel) " +   
+                "       } " +
+                "       OPTIONAL { " +
+		"           ?s rdfs:label ?sTmp " +
+                "           BIND (STR(?sTmp) AS ?sLabel) " +
+                "       } " +
+                "       OPTIONAL { " +
+                "           ?eq dbetym:etymologicallyEquivalentTo{0,6} ?rel . " +
+		"           ?eq rdfs:label ?eqTmp " +
+                "           BIND (STR(?eqTmp) AS ?eqLabel) " +
+                "       } " +
+                "    } " +
                 //  "   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . } "+
                 "}";
             return query;

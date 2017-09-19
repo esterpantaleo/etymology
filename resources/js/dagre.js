@@ -58,6 +58,7 @@ var GRAPH = (function(module) {
                         renderGraph(g).selectAll("g.node")
                             .on("click", function(d) {
                                 var iri = g.node(d).iri;
+				console.log(iri);
                                 constructEtymologyGraph(iri);
                             })
                     } 
@@ -67,7 +68,11 @@ var GRAPH = (function(module) {
 			.css('display', 'inline')
 			.html("Server error. " + error); 
 		},
-                () => console.log('done disambiguation'));
+                () => { 
+		    if (etyBase.config.debug) {
+			console.log('done disambiguation');
+		    }
+		});
 	};
 		
         var parseDisambiguationNodes = function(response) {
@@ -152,12 +157,6 @@ var GRAPH = (function(module) {
 		.remove();
 	    d3.select("#tooltipPopup")
                 .attr("display", "none");
-	    //todo: use a different query for ancestors
-	    
-//	    var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.ancestorQuery(iri));
-//	    if (etyBase.config.debug) {
-//		console.log(url);
-  //          }
 
 	    const params = new URLSearchParams();
 	    params.set("format", "application/sparql-results+json");
@@ -167,14 +166,17 @@ var GRAPH = (function(module) {
 		.subscribe(
 		    ancestorResponse => {
 			var ancestorArray = detailedParseAncestors(ancestorResponse);
+			ancestorArray.push(iri);
 			etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.descendantQuery, 8)
                             .subscribe( 
 				descendantResponse => { 
 				    var descendantArray = parseDescendants(descendantResponse);
-				    etyBase.DB.slicedQuery(descendantArray, etyBase.DB.propertyQuery, 4)
+				    var desAndAncArray = ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
+				    etyBase.DB.slicedQuery(desAndAncArray, etyBase.DB.propertyQuery, 4)
 					.subscribe(
 					    propertyResponse => {
 						var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
+						
 						if (Object.keys(g.nodess).length === 0) {
 						    $('#message')
 							.css('display', 'inline')
@@ -185,15 +187,26 @@ var GRAPH = (function(module) {
 						}
 					    },
 					    error => serverError(error),
-					    () => console.log('done property query'));
+					    () => {
+						if (etyBase.config.debug) {
+						    console.log('done property query');
+						}
+					    });
 				},
 				error => serverError(error),
-				() => console.log('done descendants query'));
+				() => {
+				    if (etyBase.config.debug) {
+					console.log('done descendants query');
+				    }
+				});
                     },
                     error => serverError(error),
-                    () => console.log('done ancestor query')
-	    );
-        };
+                    () => {
+			if (etyBase.config.debug) {
+			    console.log('done ancestor query');
+			}
+		    });
+	};
 	
         var parseEtymologyNodes = function(ancestors, ancestorResponse, propertyResponse) {
 	    var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });

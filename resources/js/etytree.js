@@ -29,7 +29,7 @@ var EtyTree = {
         /* Setup basic settings */
         etyBase.config = {
             modules: ['DB', 'GRAPH', 'LOAD'],
-            debug: true,
+            debug: false,
             urls: {
                 ENDPOINT: "https://etytree-virtuoso.wmflabs.org/sparql"
             },
