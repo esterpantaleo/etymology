@@ -55,7 +55,7 @@ var DB = (function(module) {
             var i, j, tmpArray, url, sources = [];
             for (i = 0, j = myArray.length; i < j; i += chunk) {
                 tmpArray = myArray.slice(i, i + chunk);
-                //console.log(DB.unionQuery(tmpArray, query));                   
+                console.log(etyBase.DB.unionQuery(tmpArray, queryFunction));                   
                 url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
                 if (etyBase.config.debug) {
                     console.log(url);
@@ -174,39 +174,47 @@ var DB = (function(module) {
             return query;
         };
 
-	var iterativeQuery = function(query, i, max) {
-	    if (i < max) {
-		var toreturn = [true, false].reduce(function(q, bool) {
-		    return q + "OPTIONAL { " + ancestorSubquery(i, bool) + iterativeQuery(q, i + 1, max) + "}";
-		}, "");
-		query += toreturn;
+	var iterativeQuery = function(i, depth) {
+	    var query = "";
+	    if (i < depth) {
+		var tmp = iterativeQuery(i + 1, depth);
+		query += "OPTIONAL {" + ancestorSubquery(i, true) + tmp + "} ";
+		query += "OPTIONAL {" + ancestorSubquery(i, false) + tmp + "} ";
 	    } 
 	    return query;
 	}
 	
-	var detailedAncestorQuery = function(iri) {
-	    var max = 4;
+	var detailedAncestorQueryBool = function(iri, depth, bool) {
+	    var seq = [];
+	    for (var i = 1; i < depth; i++) {
+		seq.push(i);
+	    }
 	    var query =
-                "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
-                "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
-                "SELECT ?var0 ";
-
-            query += [1, 2, 3].reduce(function(output, number) { return output + "?ancestor" + number + " ?var" + number + " ?der" + number + " ?eq" + number + " "; }, "");
-	    query += "?ancestor" + (max + 1) + " { " +
-                "    { " + //open {  
-                "SELECT DISTINCT * { " + //open select  
-                ancestorSubquery(0, false, "<" + iri+ ">") +
-                iterativeQuery("", 1, max) +
-                "    }}" + //close select
-/*                        " UNION " +
-                "    {{ " +
-                "       SELECT DISTINCT * { " + //open select 
-                ancestorSubquery(0, true, "<" + iri+ ">") +
-                iterativeQuery("", 1, max) +
-                "    }" + //close select
-                "}} " +//close {    
-*/                "} ";
+		"PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
+		"PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
+		"SELECT DISTINCT * {" +
+                ancestorSubquery(0, bool, "<" + iri+ ">") +
+                iterativeQuery(1, depth) +                
+                "} ";
+	    console.log(query);
 	    return query;
+	};
+
+	var detailedAncestorQuery = function(iri, depth) {
+	    var sources = [];
+	    var url = detailedAncestorQueryBool(iri, depth, true);
+	    sources.push(etyBase.DB.postXMLHttpRequest(url));
+	    url = detailedAncestorQueryBool(iri, depth, false);
+	    sources.push(etyBase.DB.postXMLHttpRequest(url));
+
+	    const queryObservable = Rx.Observable.zip.apply(this, sources)
+                .catch((err) => {
+                    d3.select("#message").html(etyBase.LOAD.MESSAGE.serverError);
+
+                    /* Return an empty Observable which gets collapsed in the output */
+                    return Rx.Observable.empty();
+                });
+            return queryObservable;
 	};
 
         var ancestorQuery = function(iri) {
@@ -241,8 +249,15 @@ var DB = (function(module) {
                 "   ?rel rdfs:label ?relTmp" +
                 "   BIND (STR(?relTmp) AS ?relLabel) " +
                 "   ?s dbetym:etymologicallyRelatedTo ?rel . " +
-		"   ?s rdfs:label ?sTmp " +
-                "   BIND (STR(?sTmp) AS ?sLabel) " +
+                "   OPTIONAL { " +
+                "       ?m dbnary:describes ?s . " +
+                "       ?m rdfs:label ?sTmp . " +   
+                "       BIND (STR(?sTmp) AS ?sLabel) " +   
+                "   } " +
+                "   OPTIONAL { " +
+		"       ?s rdfs:label ?sTmp " +
+                "       BIND (STR(?sTmp) AS ?sLabel) " +
+                "   } " +
                 "   OPTIONAL { " +
                 "       ?eq dbetym:etymologicallyEquivalentTo{0,6} ?rel . " +
 		"       ?eq rdfs:label ?eqTmp " +

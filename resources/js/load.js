@@ -57,7 +57,8 @@ var LOAD = (function(module) {
                 this.iri = i;
                 var tmp = this.parseIri(i);
                 this.iso = tmp.iso;
-                this.label = label.replace(/^_/, '*').replace("__", "'").replace("%C2%B7", "·");
+                this.label = (undefined === label) ? tmp.label : label;
+		this.label = this.label.replace(/^_/, '*').replace("__", "'").replace("%C2%B7", "·");
                 //ety is an integer                              
                 //and represents the etymology number encoded in the iri;
                 this.ety = tmp.ety;

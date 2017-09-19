@@ -27,7 +27,6 @@ var GRAPH = (function(module) {
 		.html(etyBase.LOAD.MESSAGE.notAvailable);
 	}
 
-
 	var constructDisambiguationGraph = function(lemma) {
 	    //clean screen
 	    $('#tree-overlay')
@@ -105,8 +104,11 @@ var GRAPH = (function(module) {
         };
 
 	var detailedParseAncestors = function(response) {
+	    console.log("ancestor response");
 	    console.log(response);
-	    var ancestorArray = JSON.parse(response).results.bindings
+	    var ancestorArray = response.reduce((all, a) => {
+		return all.concat(JSON.parse(a).results.bindings);
+	    }, [])
                 .reduce((ancestors, a) => {
                     ancestors.push(a.ancestor1.value);
                     if (a.der1.value === "0" && undefined !== a.ancestor2) {
@@ -160,12 +162,11 @@ var GRAPH = (function(module) {
 	    const params = new URLSearchParams();
 	    params.set("format", "application/sparql-results+json");
 	    var url = etyBase.config.urls.ENDPOINT + "?" + params;
-	    console.log("posting");
-	    etyBase.DB.postXMLHttpRequest(etyBase.DB.detailedAncestorQuery(iri))
+	    
+	    etyBase.DB.detailedAncestorQuery(iri, 5)
 		.subscribe(
 		    ancestorResponse => {
-			ancestorArray = detailedParseAncestors(ancestorResponse);
-			
+			var ancestorArray = detailedParseAncestors(ancestorResponse);
 			etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.descendantQuery, 8)
                             .subscribe( 
 				descendantResponse => { 
@@ -182,7 +183,9 @@ var GRAPH = (function(module) {
 						    $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
 						    renderGraph(g);
 						}
-					    });
+					    },
+					    error => serverError(error),
+					    () => console.log('done property query'));
 				},
 				error => serverError(error),
 				() => console.log('done descendants query'));
@@ -201,17 +204,21 @@ var GRAPH = (function(module) {
             }, []);
             if (allArray.length === 0) {
 		return g;
-	    } else {		
+	    } else {
+		console.log("allArray");
+		console.log(allArray);
 		//CONSTRUCTING NODES
 		allArray.forEach(function(element) {
 		    //save all nodes        
 		    //define isAncestor
 		    if (undefined !== element.s && undefined === g.nodess[element.s.value]) {
-			g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, element.sLabel.value);
+			var label = (undefined === element.sLabel) ? undefined : element.sLabel.value; 
+			g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, label);
 		    }
 		    if (undefined !== element.rel) {
 			if (undefined === g.nodess[element.rel.value]) {
-			    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value, element.relLabel.value);
+			    var label = (undefined === element.relLabel) ? undefined : element.relLabel.value;
+			    g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value, label);
 			}
 			if (ancestors.indexOf(element.rel.value) > -1) {
 			    g.nodess[element.rel.value].isAncestor = true;
@@ -219,7 +226,8 @@ var GRAPH = (function(module) {
 		    }
 		    if (undefined !== element.rel && undefined !== element.eq) {
 			if (undefined === g.nodess[element.eq.value]) {
-			    g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, element.eqLabel.value);
+			    var label = (undefined === element.eqLabel) ? undefined : element.eqLabel.value;
+			    g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, label);
 			}
 			//push to eqIri
 			if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) == -1) {
@@ -311,8 +319,6 @@ var GRAPH = (function(module) {
                     }
 		}
 		
-		//always show derived nodes if tree is small
-		//if (ancestors.length < 3) etyBase.config.showDerivedNodes = true;
 		for (var gg in g.graphNodes) {
                     //define all
                     g.graphNodes[gg].all = g.graphNodes[gg].all.concat(g.graphNodes[gg].iri);
