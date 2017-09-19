@@ -174,50 +174,38 @@ var DB = (function(module) {
             return query;
         };
 
-        var intertwinedQuery = function(bool){
-            var query =
-                "OPTIONAL { " +
-                ancestorSubquery(1, bool) +
-                "    OPTIONAL { " +
-                ancestorSubquery(2, false) +
-                "        OPTIONAL { " +
-                ancestorSubquery(3, false) +
-                "        } " +
-                "        OPTIONAL { " +
-                ancestorSubquery(3, true) +
-                "        } " +
-                "    } " +
-                "    OPTIONAL { " +
-                ancestorSubquery(2, true) +
-                "        OPTIONAL { " +
-                ancestorSubquery(3, false) +
-                "        } " +
-                "        OPTIONAL { " +
-                ancestorSubquery(3, true) +
-                "        } " +
-                "    } " +
-                "} ";
-            return query;
-        };
-
+	var iterativeQuery = function(query, i, max) {
+	    if (i < max) {
+		var toreturn = [true, false].reduce(function(q, bool) {
+		    return q + "OPTIONAL { " + ancestorSubquery(i, bool) + iterativeQuery(q, i + 1, max) + "}";
+		}, "");
+		query += toreturn;
+	    } 
+	    return query;
+	}
+	
 	var detailedAncestorQuery = function(iri) {
+	    var max = 4;
 	    var query =
                 "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
                 "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
-                "SELECT ?var0 ?ancestor1 ?var1 ?der1 ?eq1 ?ancestor2 ?var2 ?der2 ?eq2 ?ancestor3 {" +//?var3 ?der3 ?eq3 ?ancestor4 ?var4 ?der4 ?eq4 ?ancestor5 ?var5 ?der5 ?eq5 ?ancestor6 { " +  
+                "SELECT ?var0 ";
+
+            query += [1, 2, 3].reduce(function(output, number) { return output + "?ancestor" + number + " ?var" + number + " ?der" + number + " ?eq" + number + " "; }, "");
+	    query += "?ancestor" + (max + 1) + " { " +
                 "    { " + //open {  
                 "SELECT DISTINCT * { " + //open select  
                 ancestorSubquery(0, false, "<" + iri+ ">") +
-                intertwinedQuery(true) + " " + intertwinedQuery(false) +
+                iterativeQuery("", 1, max) +
                 "    }}" + //close select
-                        " UNION " +
+/*                        " UNION " +
                 "    {{ " +
                 "       SELECT DISTINCT * { " + //open select 
                 ancestorSubquery(0, true, "<" + iri+ ">") +
-                intertwinedQuery(true) + " " + intertwinedQuery(false) +
+                iterativeQuery("", 1, max) +
                 "    }" + //close select
                 "}} " +//close {    
-                "} ";
+*/                "} ";
 	    return query;
 	};
 

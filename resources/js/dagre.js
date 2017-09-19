@@ -105,38 +105,28 @@ var GRAPH = (function(module) {
         };
 
 	var detailedParseAncestors = function(response) {
-	    var ancestorArray = response
+	    console.log(response);
+	    var ancestorArray = JSON.parse(response).results.bindings
                 .reduce((ancestors, a) => {
                     ancestors.push(a.ancestor1.value);
                     if (a.der1.value === "0" && undefined !== a.ancestor2) {
                         ancestors.push(a.ancestor2.value);
                         if (a.der2.value === "0" && undefined !== a.ancestor3){
-                            ancestors.push(a.ancestor3.value);
+                            ancestors.push(a.ancestor3.value); 
+			    if (a.der3.value === "0" && undefined !== a.ancestor4){
+				ancestors.push(a.ancestor4.value);
+				if (a.der4.value === "0" && undefined !== a.ancestor5){
+				    ancestors.push(a.ancestor5.value);
+				}
+			    }
                         }
                     }
                     return ancestors;
                 }, []).filter(etyBase.helpers.onlyUnique);
+	    console.log("ancestors");
+	    console.log(ancestorArray);
 	    return ancestorArray;
         };
-
-	var parseAncestors = function(response) {
-	    var ancestorArray = JSON.parse(response).results.bindings
-                .reduce(
-		    (ancestors, a) => {
-			ancestors.push(a.ancestor1.value);
-			if (undefined !== a.ancestor2) {
-                            ancestors.push(a.ancestor2.value);
-			}
-			return ancestors;
-                    }, 
-		    [])
-		.filter(etyBase.helpers.onlyUnique);
-	    
-            console.log("ANCESTORS");
-            console.log(ancestorArray);
-
-	    return ancestorArray;
-	};
 	
 	var parseDescendants = function(response) {
 	    var descendantArray = response
@@ -145,6 +135,8 @@ var GRAPH = (function(module) {
 			return descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
 		    }, 
 		    []);
+	    console.log("descendants");
+	    console.log(descendantArray);
 	    return descendantArray;
 	};
 
@@ -172,7 +164,7 @@ var GRAPH = (function(module) {
 	    etyBase.DB.postXMLHttpRequest(etyBase.DB.detailedAncestorQuery(iri))
 		.subscribe(
 		    ancestorResponse => {
-			ancestorArray = parseAncestors(ancestorResponse);
+			ancestorArray = detailedParseAncestors(ancestorResponse);
 			
 			etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.descendantQuery, 8)
                             .subscribe( 
