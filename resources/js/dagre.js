@@ -109,8 +109,6 @@ var GRAPH = (function(module) {
         };
 
 	var detailedParseAncestors = function(response) {
-	    console.log("ancestor response");
-	    console.log(response);
 	    var ancestorArray = response.reduce((all, a) => {
 		return all.concat(JSON.parse(a).results.bindings);
 	    }, [])
@@ -147,6 +145,44 @@ var GRAPH = (function(module) {
 	    return descendantArray;
 	};
 
+	//if the searched word is derived from 2 or more words, return false
+	//i.e. do not search for descendants
+	//In this case the searched word is a compound word
+	//we are not interested in descendants of the words that make up the searched word
+	var doFindDescendants = function(response) {
+	    var firstAncestorArray = response.reduce((all, a) => {
+		return all.concat(JSON.parse(a).results.bindings);
+	    }, [])
+		.reduce((ancestors, a) => {
+		    if (a.der1.value === "1") {
+			ancestors.push(a.ancestor1.value);
+		    }
+		    return ancestors;
+		}, []).filter(etyBase.helpers.onlyUnique);
+	    if (firstAncestorArray.length > 1)
+		return false;
+	    else
+		return true;
+	};
+
+	var lemmaNotStartsOrEndsWithDash = function(iri) {
+	    tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
+	    .split("/");
+	    if (tmp.length > 1) {
+		label = tmp[1];
+	    } else {
+		label = tmp[0];
+	    }
+	    label = label.replace(/__ee_[0-9]+_/g, "")
+                    .replace("__ee_", "");
+	    console.log("label=" + label);
+	    if (label.startsWith("-") || label.startsWith("_-") || label.endsWith("-")){
+		return false;
+	    } else {
+		return true;
+	    }
+	};
+	    
         var constructEtymologyGraph = function(iri) {
             $('#message')
 		.css('display', 'inline')
@@ -167,38 +203,63 @@ var GRAPH = (function(module) {
 		    ancestorResponse => {
 			var ancestorArray = detailedParseAncestors(ancestorResponse);
 			ancestorArray.push(iri);
-			etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.descendantQuery, 8)
-                            .subscribe( 
-				descendantResponse => { 
-				    var descendantArray = parseDescendants(descendantResponse);
-				    var desAndAncArray = ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
-				    etyBase.DB.slicedQuery(desAndAncArray, etyBase.DB.propertyQuery, 4)
-					.subscribe(
-					    propertyResponse => {
-						var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
-						
-						if (Object.keys(g.nodess).length === 0) {
-						    $('#message')
-							.css('display', 'inline')
-							.html(etyBase.LOAD.MESSAGE.noEtymology);
-						} else {
-						    $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
-						    renderGraph(g);
-						}
-					    },
-					    error => serverError(error),
-					    () => {
-						if (etyBase.config.debug) {
-						    console.log('done property query');
-						}
-					    });
-				},
-				error => serverError(error),
-				() => {
-				    if (etyBase.config.debug) {
-					console.log('done descendants query');
-				    }
-				});
+			var filteredAncestorArray = ancestorArray.filter(lemmaNotStartsOrEndsWithDash);
+			console.log("filteredAncestorArray=" + filteredAncestorArray);
+			if (doFindDescendants) {
+			    etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
+				.subscribe( 
+				    descendantResponse => { 
+					var descendantArray = parseDescendants(descendantResponse);
+					var desAndAncArray = ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
+					etyBase.DB.slicedQuery(desAndAncArray, etyBase.DB.propertyQuery, 3)
+					    .subscribe(
+						propertyResponse => {
+						    var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
+						    
+						    if (Object.keys(g.nodess).length === 0) {
+							$('#message')
+							    .css('display', 'inline')
+							    .html(etyBase.LOAD.MESSAGE.noEtymology);
+						    } else {
+							$('#helpPopup').html(etyBase.LOAD.HELP.dagre);
+							renderGraph(g);
+						    }
+						},
+						error => serverError(error),
+						() => {
+						    if (etyBase.config.debug) {
+							console.log('done property query');
+						    }
+						});
+				    },
+				    error => serverError(error),
+				    () => {
+					if (etyBase.config.debug) {
+					    console.log('done descendants query');
+					}
+				    });
+			} else {
+			    etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.propertyQuery, 3)
+                                .subscribe(
+				    propertyResponse => {
+                                        var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
+					
+                                        if (Object.keys(g.nodess).length === 0) {
+                                            $('#message')
+                                                .css('display', 'inline')
+                                                .html(etyBase.LOAD.MESSAGE.noEtymology);
+                                        } else {
+                                            $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
+                                            renderGraph(g);
+                                        }
+                                    },
+                                    error => serverError(error),
+                                    () => {
+                                        if (etyBase.config.debug) {
+                                            console.log('done property query');
+                                        }
+                                    });
+			}
                     },
                     error => serverError(error),
                     () => {

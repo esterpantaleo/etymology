@@ -55,7 +55,7 @@ var DB = (function(module) {
             var i, j, tmpArray, url, sources = [];
             for (i = 0, j = myArray.length; i < j; i += chunk) {
                 tmpArray = myArray.slice(i, i + chunk);
-                console.log(etyBase.DB.unionQuery(tmpArray, queryFunction));
+                
                 url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
                 if (etyBase.config.debug) {
                     console.log(url);
@@ -235,8 +235,6 @@ var DB = (function(module) {
                 "   {           " +
                 "       <" + iri + "> " +
                 "   } " +
-                "   ?rel rdfs:label ?relTmp" +
-                "   BIND (STR(?relTmp) AS ?relLabel) " +
                 "   OPTIONAL { " + 
                 "       ?s dbetym:etymologicallyRelatedTo ?rel . " +
                 "       OPTIONAL { " +
@@ -254,8 +252,12 @@ var DB = (function(module) {
                 "           BIND (STR(?eqTmp) AS ?eqLabel) " +
                 "       } " +
                 "    } " +
+		"    OPTIONAL { " +
+                "        ?rel rdfs:label ?relTmp" +
+                "        BIND (STR(?relTmp) AS ?relLabel) " +
+                "    } " +
                 //  "   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . } "+
-                "}";
+                "} LIMIT 200";
             return query;
         };
 
