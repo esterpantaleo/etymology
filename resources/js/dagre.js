@@ -108,7 +108,7 @@ var GRAPH = (function(module) {
             return g;
         };
 
-	var detailedParseAncestors = function(response) {
+	var parseAncestors = function(response) {
 	    var ancestorArray = response.reduce((all, a) => {
 		return all.concat(JSON.parse(a).results.bindings);
 	    }, [])
@@ -133,16 +133,15 @@ var GRAPH = (function(module) {
 	    return ancestorArray;
         };
 	
-	var parseDescendants = function(response) {
+	var parseDescendants = function(ancestorArray, response) {
 	    var descendantArray = response
 		.reduce(
 		    (descendants, d) => {
 			return descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
-		    }, 
-		    []);
+		    }, []).filter(etyBase.helpers.onlyUnique);
 	    console.log("descendants");
 	    console.log(descendantArray);
-	    return descendantArray;
+	    return ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
 	};
 
 	//if the searched word is derived from 2 or more words, return false
@@ -198,20 +197,19 @@ var GRAPH = (function(module) {
 	    params.set("format", "application/sparql-results+json");
 	    var url = etyBase.config.urls.ENDPOINT + "?" + params;
 	    
-	    etyBase.DB.detailedAncestorQuery(iri, 5)
+	    etyBase.DB.ancestorQuery(iri, 5)
 		.subscribe(
 		    ancestorResponse => {
-			var ancestorArray = detailedParseAncestors(ancestorResponse);
+			var ancestorArray = parseAncestors(ancestorResponse);
 			ancestorArray.push(iri);
 			var filteredAncestorArray = ancestorArray.filter(lemmaNotStartsOrEndsWithDash);
 			console.log("filteredAncestorArray=" + filteredAncestorArray);
-			if (doFindDescendants) {
+			if (doFindDescendants(ancestorResponse)) {
 			    etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
 				.subscribe( 
 				    descendantResponse => { 
-					var descendantArray = parseDescendants(descendantResponse);
-					var desAndAncArray = ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
-					etyBase.DB.slicedQuery(desAndAncArray, etyBase.DB.propertyQuery, 3)
+					var allArray = parseDescendants(ancestorArray, descendantResponse);
+					etyBase.DB.slicedQuery(allArray, etyBase.DB.propertyQuery, 3)
 					    .subscribe(
 						propertyResponse => {
 						    var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
@@ -276,7 +274,7 @@ var GRAPH = (function(module) {
 	    var allArray = propertyResponse.reduce((all, a) => {
                 return all.concat(JSON.parse(a).results.bindings);
             }, []);
-            if (allArray.length === 0) {
+            if (allArray.length < 2) {
 		return g;
 	    } else {
 		console.log("allArray");
@@ -304,11 +302,13 @@ var GRAPH = (function(module) {
 			    g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, label);
 			}
 			//push to eqIri
-			if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) == -1) {
-			    g.nodess[element.rel.value].eqIri.push(element.eq.value);
-			}
-			if (g.nodess[element.eq.value].eqIri.indexOf(element.rel.value) == -1) {
-			    g.nodess[element.eq.value].eqIri.push(element.rel.value);
+			if (element.rel.value !== element.eq.value) {
+			    if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) == -1) {
+				g.nodess[element.rel.value].eqIri.push(element.eq.value);
+			    }
+			    if (g.nodess[element.eq.value].eqIri.indexOf(element.rel.value) == -1) {
+				g.nodess[element.eq.value].eqIri.push(element.rel.value);
+			    }
 			}
 		    }
 		});
@@ -341,81 +341,88 @@ var GRAPH = (function(module) {
 			//the set of ancestors and descendants
 			//then merge them in one graphNode
 			if (tmp.length === 1) {
-                            var gg = new etyBase.LOAD.classes.GraphNode(counter);
-                            //initialize graphNode.all 
-                            gg.all.push(n);
-                            //define graphNode.iri 
-                            gg.iri = g.nodess[tmp[0]].eqIri;
-                            gg.iri.push(tmp[0]);
+                    //        var gg = new etyBase.LOAD.classes.GraphNode(counter);
+                    
                             //define node.graphNode
-                            g.nodess[n].graphNode.push(counter);
-                            g.nodess[tmp[0]].graphNode.push(counter);
-                            gg.iri.forEach(function(element) {
-				g.nodess[element].graphNode.push(counter);
-                            });
-			    
-                            //push to graphNodes
-                            g.graphNodes[counter] = gg;
-                            g.graphNodes[counter].iri = g.graphNodes[counter].iri.filter(etyBase.helpers.onlyUnique);
+			    var eqIri = g.nodess[n].eqIri.concat(g.nodess[tmp[0]].eqIri).filter(etyBase.helpers.onlyUnique);
+			   
+			    eqIri = eqIri.reduce(function(eq, element) {
+				return eq.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique);
+			    }, []);
+			    var graphNode = eqIri.reduce(function(gn, element) {
+				if (undefined === g.nodess[element].graphNode) {
+				    return gn;
+				} else {
+				    return gn.push(g.nodess[element].graphNode);
+				}
+                            }, []).filter(etyBase.helpers.onlyUnique).sort();
+			    if (graphNode.length === 0) {
+				graphNode = counter;
+				counter ++;
+			    } else {
+				graphNode = graphNode[0];
+			    } 
+				
+			    eqIri.forEach(function(element) {
+				g.nodess[element].eqIri = eqIri;
+				g.nodess[element].graphNode = graphNode;
+			    });			
+                
                             counter++;
 			}
                     }
 		}
 		
 		for (var n in g.nodess) {
-                    if (g.nodess[n].graphNode.length === 0) {
-			//add iri
-			var gg = new etyBase.LOAD.classes.GraphNode(counter);
-			gg.iri = g.nodess[n].eqIri;
-			gg.iri.push(n);
-			var equivalent = gg.iri.reduce(function(a,b) {
-			    return a.concat(b.eqIri);
-			}, [])
-			gg.iri.concat(equivalent); 
-			gg.iri = gg.iri.filter(etyBase.helpers.onlyUnique);
-			//add graphNode, graphNodes
-			gg.iri.forEach(function(element) {
-                            g.nodess[element].graphNode.push(counter);
-			});
-			g.graphNodes[counter] = gg;
-			counter++;
-                    } else {
-			var graphNode = g.nodess[n].graphNode[0];
+                    if (undefined === g.nodess[n].graphNode) {
+			var eqIri = g.nodess[n].eqIri;
+			eqIri = eqIri.reduce(function(eq, element) { 
+			    return eq.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique);
+			}, []);   
+			var graphNode = eqIri.reduce(function(gn, element) {
+			    if (undefined === g.nodess[element].graphNode) {
+                                    return gn;
+                                } else {
+                                    return gn.push(g.nodess[element].graphNode);
+                                }
+                            }, []).filter(etyBase.helpers.onlyUnique).sort();
+                        if (graphNode.length === 0) {
+                            graphNode = counter;
+                            counter ++;
+                        } else {
+                            graphNode = graphNode[0];
+                        }
 			
-			g.nodess[n].eqIri.forEach(function(element) {
-			    //add graphNode
-			    if (element != n) {
-				g.nodess[element].graphNode.push(graphNode);
-			    }
-			    //add iri
-			    g.graphNodes[graphNode].iri = g.graphNodes[graphNode].iri.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique);
-			});
-                    }
+                        eqIri.forEach(function(element) {
+                            g.nodess[element].eqIri = eqIri;
+                            g.nodess[element].graphNode = graphNode;
+                        });
+			
+                        counter++;
+		    }
 		}
 		
-		for (var gg in g.graphNodes) {
-                    //define all
-                    g.graphNodes[gg].all = g.graphNodes[gg].all.concat(g.graphNodes[gg].iri);
-		    
-                    //define isAncestor
-                    if (g.graphNodes[gg].all.filter(function(element) { return g.nodess[element].isAncestor; }).length > 0) {
-			g.graphNodes[gg].all.forEach(function(element) { g.nodess[element].isAncestor = true; });
-			g.graphNodes[gg].isAncestor = true;
-                    }
-		    
-                    //define iso, label, lang
-                    g.graphNodes[gg].iso = g.nodess[g.graphNodes[gg].all[0]].iso;
-                    g.graphNodes[gg].label = g.graphNodes[gg].iri.map(function(i) { return g.nodess[i].label; }).join(",");
-                    g.graphNodes[gg].lang = g.nodess[g.graphNodes[gg].all[0]].lang;
+		var graphNodes = [];
+		for (var n in g.nodess) {
+		    var gn = g.nodess[n].graphNode; 
+		    if (graphNodes.indexOf(gn) === -1) {
+			var gg = new etyBase.LOAD.classes.GraphNode(gn);
+			gg.counter = gn;
+			gg.iri = g.nodess[n].eqIri;
+			gg.iso = g.nodess[n].iso;
+			gg.label = gg.iri.map(function(i) { return g.nodess[i].label; }).filter(etyBase.helpers.onlyUnique).join(",");
+			gg.lang = g.nodess[n].lang;
+			g.setNode(gn, gg);
 
-		    g.setNode(gg, g.graphNodes[gg]);
+			graphNodes.push(gg.counter);  
+		    }
 		}
 
 		//CONSTRUCTING LINKS
 		allArray.forEach(function(element) {
                     if (undefined !== element.rel && undefined !== element.s) {
-			var source = g.nodess[element.rel.value].graphNode[0],
-                        target = g.nodess[element.s.value].graphNode[0];
+			var source = g.nodess[element.rel.value].graphNode,
+                        target = g.nodess[element.s.value].graphNode;
 			if (source !== target) {
                             g.setEdge(source, target, { label: "", lineInterpolate: "basis" });
 			}
@@ -427,9 +434,13 @@ var GRAPH = (function(module) {
 		if (etyBase.config.debug) {
 		    console.log("g.nodess");
 		    console.log(g.nodess) ;  
-		    console.log("g.graphNodes");
-		    console.log(g.graphNodes);
+		    console.log("g");
+		    console.log(g);
 		}
+		console.log("g.nodess");
+                console.log(g.nodess) ;
+                console.log("g");
+                console.log(g);
 		
 		$('#message')
                     .css('display', 'none');

@@ -184,7 +184,7 @@ var DB = (function(module) {
 	    return query;
 	};
 	
-	var detailedAncestorQuery = function(iri, depth) {
+	var ancestorQuery = function(iri, depth) {
 	    var sources = [];
 	    var queryPart1 =
                 "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
@@ -205,16 +205,6 @@ var DB = (function(module) {
                 });
             return queryObservable;
 	};
-
-        var ancestorQuery = function(iri) {
-            var query = 
-		"PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
-                "SELECT DISTINCT ?ancestor1 " +
-                "{ " +
-                "   <" + iri + "> dbetym:etymologicallyRelatedTo{0,5} ?ancestor1 . " +
-                    "} ";
-            return query;
-        };
 
         var descendantQuery = function(iri) {
             var query =
@@ -276,7 +266,6 @@ var DB = (function(module) {
         this.disambiguationQuery = disambiguationQuery;
         this.lemmaQuery = lemmaQuery;
         this.ancestorQuery = ancestorQuery;
-	this.detailedAncestorQuery = detailedAncestorQuery;
         this.descendantQuery = descendantQuery;
         this.propertyQuery = propertyQuery;
         this.unionQuery = unionQuery;

@@ -34,16 +34,6 @@ var LOAD = (function(module) {
             constructor(i) {
                 this.counter = i;
                 this.iri = [];
-                //this.all contains this.iri (i.e. equivalent nodes) 
-                //and also identical nodes in the tree
-                //e.g. ee_1_door and ee_door
-                this.all = [];
-                this.linked = undefined;
-                this.linkedToSource = [];
-                this.linkedToSourceCopy = [];
-                this.linkedToTarget = [];
-
-                this.der = undefined;
                 this.isAncestor = false;
 
                 this.shape = "rect";
@@ -63,12 +53,12 @@ var LOAD = (function(module) {
                 //and represents the etymology number encoded in the iri;
                 this.ety = tmp.ety;
                 this.lang = etyBase.tree.langMap.get(this.iso);
-                //graphNode specifies the graphNode(s) corresponding to the node
-                this.graphNode = [];
+                //graphNode specifies the graphNode corresponding to the node
+                this.graphNode = undefined;
                 //eqIri is an array of iri-s of Node-s that are equivalent to the Node 
                 this.eqIri = [];
-
-                this.der = undefined;
+		this.eqIri.push(i);
+//                this.der = undefined;
                 this.isAncestor = false;
 
                 this.shape = "rect";
