@@ -114,13 +114,13 @@ var GRAPH = (function(module) {
 	    }, [])
                 .reduce((ancestors, a) => {
                     ancestors.push(a.ancestor1.value);
-                    if (a.der1.value === "0" && undefined !== a.ancestor2) {
+                    if (a.der1.value === "0" && undefined !== a.ancestor2 && lemmaNotStartsOrEndsWithDash(a.ancestor1.value)) {
                         ancestors.push(a.ancestor2.value);
-                        if (a.der2.value === "0" && undefined !== a.ancestor3){
+                        if (a.der2.value === "0" && undefined !== a.ancestor3 && lemmaNotStartsOrEndsWithDash(a.ancestor2.value)) {
                             ancestors.push(a.ancestor3.value); 
-			    if (a.der3.value === "0" && undefined !== a.ancestor4){
+			    if (a.der3.value === "0" && undefined !== a.ancestor4 && lemmaNotStartsOrEndsWithDash(a.ancestor3.value)) {
 				ancestors.push(a.ancestor4.value);
-				if (a.der4.value === "0" && undefined !== a.ancestor5){
+				if (a.der4.value === "0" && undefined !== a.ancestor5 && lemmaNotStartsOrEndsWithDash(a.ancestor4.value)) {
 				    ancestors.push(a.ancestor5.value);
 				}
 			    }
@@ -203,7 +203,7 @@ var GRAPH = (function(module) {
 		    ancestorResponse => {
 			var ancestorArray = parseAncestors(ancestorResponse);
 			ancestorArray.push(iri);
-			var filteredAncestorArray = ancestorArray.filter(lemmaNotStartsOrEndsWithDash);
+			var filteredAncestorArray = ancestorArray.filter(function(element) { return lemmaNotStartsOrEndsWithDash(element); });
 			console.log("filteredAncestorArray=" + filteredAncestorArray);
 			if (doFindDescendants(ancestorResponse)) {
 			    etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
