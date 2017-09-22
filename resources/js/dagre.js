@@ -137,7 +137,8 @@ var GRAPH = (function(module) {
 	    var descendantArray = response
 		.reduce(
 		    (descendants, d) => {
-			return descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
+			descendants = descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
+			return descendants;
 		    }, []).filter(etyBase.helpers.onlyUnique);
 	    console.log("descendants");
 	    console.log(descendantArray);
@@ -272,7 +273,8 @@ var GRAPH = (function(module) {
 	    g.nodess = {};
 
 	    var allArray = propertyResponse.reduce((all, a) => {
-                return all.concat(JSON.parse(a).results.bindings);
+		all = all.concat(JSON.parse(a).results.bindings);
+                return all;
             }, []);
             if (allArray.length < 2) {
 		return g;
@@ -347,13 +349,15 @@ var GRAPH = (function(module) {
 			    var eqIri = g.nodess[n].eqIri.concat(g.nodess[tmp[0]].eqIri).filter(etyBase.helpers.onlyUnique);
 			   
 			    eqIri = eqIri.reduce(function(eq, element) {
-				return eq.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique);
+				eq = eq.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique)
+				return eq;
 			    }, []);
 			    var graphNode = eqIri.reduce(function(gn, element) {
 				if (undefined === g.nodess[element].graphNode) {
 				    return gn;
 				} else {
-				    return gn.push(g.nodess[element].graphNode);
+				    gn.push(g.nodess[element].graphNode);
+				    return gn;
 				}
                             }, []).filter(etyBase.helpers.onlyUnique).sort();
 			    if (graphNode.length === 0) {
@@ -376,16 +380,18 @@ var GRAPH = (function(module) {
 		for (var n in g.nodess) {
                     if (undefined === g.nodess[n].graphNode) {
 			var eqIri = g.nodess[n].eqIri;
-			eqIri = eqIri.reduce(function(eq, element) { 
-			    return eq.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique);
+			eqIri = eqIri.reduce(function(eq, element) {
+			    eq = eq.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique);
+			    return eq;
 			}, []);   
 			var graphNode = eqIri.reduce(function(gn, element) {
-			    if (undefined === g.nodess[element].graphNode) {
-                                    return gn;
-                                } else {
-                                    return gn.push(g.nodess[element].graphNode);
-                                }
-                            }, []).filter(etyBase.helpers.onlyUnique).sort();
+                            if (undefined === g.nodess[element].graphNode) {
+                                return gn;
+                            } else {
+                                gn.push(g.nodess[element].graphNode);
+                                return gn;
+                            }
+                        }, []).filter(etyBase.helpers.onlyUnique).sort();
                         if (graphNode.length === 0) {
                             graphNode = counter;
                             counter ++;
