@@ -58,7 +58,6 @@ var LOAD = (function(module) {
                 //eqIri is an array of iri-s of Node-s that are equivalent to the Node 
                 this.eqIri = [];
 		this.eqIri.push(i);
-//                this.der = undefined;
                 this.isAncestor = false;
 
                 this.shape = "rect";
@@ -67,6 +66,8 @@ var LOAD = (function(module) {
             }
 
             logTooltip() {
+		console.log("this.iri");
+		console.log(this.iri);
                 var query = etyBase.DB.lemmaQuery(this.iri);
                 var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
 
@@ -83,6 +84,8 @@ var LOAD = (function(module) {
                         if (null !== response) {
                             //print definition  
                             var dataJson = JSON.parse(response).results.bindings;
+			    console.log("dataJson")
+			    console.log(dataJson)
                             text += dataJson.reduce(
                                 function(s, element) {
                                     return s += that.logDefinition(element.pos, element.gloss);

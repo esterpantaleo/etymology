@@ -58,7 +58,7 @@ var GRAPH = (function(module) {
                         renderGraph(g).selectAll("g.node")
                             .on("click", function(d) {
                                 var iri = g.node(d).iri;
-				console.log(iri);
+				
                                 constructEtymologyGraph(iri);
                             })
                     } 
@@ -175,7 +175,7 @@ var GRAPH = (function(module) {
 	    }
 	    label = label.replace(/__ee_[0-9]+_/g, "")
                     .replace("__ee_", "");
-	    console.log("label=" + label);
+	    
 	    if (label.startsWith("-") || label.startsWith("_-") || label.endsWith("-")){
 		return false;
 	    } else {
@@ -204,7 +204,7 @@ var GRAPH = (function(module) {
 			var ancestorArray = parseAncestors(ancestorResponse);
 			ancestorArray.push(iri);
 			var filteredAncestorArray = ancestorArray.filter(function(element) { return lemmaNotStartsOrEndsWithDash(element); });
-			console.log("filteredAncestorArray=" + filteredAncestorArray);
+			
 			if (doFindDescendants(ancestorResponse)) {
 			    etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
 				.subscribe( 
@@ -528,10 +528,16 @@ var GRAPH = (function(module) {
                     if (typeof iri === "string") {
                         g.nodess[iri].logTooltip();
                     } else {
-                        iri.forEach(
-                            function(i) {
-                                g.nodess[i].logTooltip();
-                            });
+                        iri.reduce(function(obj, i) {
+			    var label = g.nodess[i].label;
+			    if (obj.labels.indexOf(label) === -1) {
+				obj.labels.push(label);
+				obj.iris.push(i);
+				return obj;
+			    } else {
+				return obj;
+			    }
+                        }, { labels: [], iris: [] }).iris.forEach(function(i) { g.nodess[i].logTooltip(); });
                     }
                     d3.event.stopPropagation();
                 });
