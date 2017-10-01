@@ -1,32 +1,32 @@
 /*globals
-    Rx, XMLHttpRequest, console, d3
+    Rx, XMLHttpRequest, console, d3, URLSearchParams, FormData, Blob
 */
 var DB = (function(module) {
 
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
 
-	var postXMLHttpRequest = function(content) {
-	    return Rx.Observable.create(observer => {
-		const req = new XMLHttpRequest();
-		const params = new URLSearchParams();
-		params.set("format", "application/sparql-results+json");
-		var formData = new FormData();
-		var blob = new Blob([content], { type: "text/xml" });
-		formData.append("query", blob);
-		req.open('POST', etyBase.config.urls.ENDPOINT + "?" + params);
-		req.onload = function(oEvent) {
-		    if (req.status == 200) {
-			observer.next(req.responseText);
-			observer.complete();
-		    } else {
-			observer.error(new Error('An error occured'));
-		    }
-		};
-		
-		req.send(formData);
-	    });
-	};
+        var postXMLHttpRequest = function(content) {
+            return Rx.Observable.create(observer => {
+                const req = new XMLHttpRequest();
+                const params = new URLSearchParams();
+                params.set("format", "application/sparql-results+json");
+                var formData = new FormData();
+                var blob = new Blob([content], { type: "text/xml" });
+                formData.append("query", blob);
+                req.open('POST', etyBase.config.urls.ENDPOINT + "?" + params);
+                req.onload = function(oEvent) {
+                    if (req.status === 200) {
+                        observer.next(req.responseText);
+                        observer.complete();
+                    } else {
+                        observer.error(new Error('An error occured'));
+                    }
+                };
+
+                req.send(formData);
+            });
+        };
 
         var getXMLHttpRequest = function(url) {
             return Rx.Observable.create(observer => {
@@ -55,7 +55,7 @@ var DB = (function(module) {
             var i, j, tmpArray, url, sources = [];
             for (i = 0, j = myArray.length; i < j; i += chunk) {
                 tmpArray = myArray.slice(i, i + chunk);
-                
+
                 url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
                 if (etyBase.config.debug) {
                     console.log(url);
@@ -75,11 +75,11 @@ var DB = (function(module) {
 
         var disambiguationQuery = function(lemma) {
             var encodedLemma = lemma
-		.replace(/'/g, "\\\\'")
-		.replace("·", "%C2%B7")
-		.replace("*", "_")
+                .replace(/'/g, "\\\\'")
+                .replace("·", "%C2%B7")
+                .replace("*", "_")
                 .replace("'", "__"); //parse reconstructed words 
-	    //.replace("/", "!slash!");  
+            //.replace("/", "!slash!");  
             var query =
                 "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
                 "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
@@ -160,43 +160,43 @@ var DB = (function(module) {
         //DEFINE QUERIES TO PLOT GRAPH
         var ancestorSubquery = function(iteration, describes, resource) {
             var query = "";
-            if (undefined === resource){
+            if (undefined === resource) {
                 resource = "?ancestor" + iteration;
             }
             if (describes) {
                 query += resource + " dbnary:describes ?var" + iteration + " . ";
                 resource = "?var" + iteration;
             }
-            query += resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (iteration+1) + " . " +
-                " BIND(EXISTS {" + resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (iteration+1) + " } AS ?der" + (iteration+1) + ") " +
-                " BIND(EXISTS {" + resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration+1) + " } AS ?eq" + (iteration+1) + ") ";
-         
+            query += resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (iteration + 1) + " . " +
+                " BIND(EXISTS {" + resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (iteration + 1) + " } AS ?der" + (iteration + 1) + ") " +
+                " BIND(EXISTS {" + resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration + 1) + " } AS ?eq" + (iteration + 1) + ") ";
+
             return query;
         };
 
-	var iterativeQuery = function(i, depth) {
-	    var query = "";
-	    if (i < depth) {
-		var tmp = iterativeQuery(i + 1, depth);
-		query += "OPTIONAL {" + ancestorSubquery(i, true) + tmp + "} ";
-		query += "OPTIONAL {" + ancestorSubquery(i, false) + tmp + "} ";
-	    } 
-	    return query;
-	};
-	
-	var ancestorQuery = function(iri, depth) {
-	    var sources = [];
-	    var queryPart1 =
+        var iterativeQuery = function(i, depth) {
+            var query = "";
+            if (i < depth) {
+                var tmp = iterativeQuery(i + 1, depth);
+                query += "OPTIONAL {" + ancestorSubquery(i, true) + tmp + "} ";
+                query += "OPTIONAL {" + ancestorSubquery(i, false) + tmp + "} ";
+            }
+            return query;
+        };
+
+        var ancestorQuery = function(iri, depth) {
+            var sources = [];
+            var queryPart1 =
                 "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
                 "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
                 "SELECT DISTINCT * {";
-	    var queryPart3 = iterativeQuery(1, depth) + "}";
-	    var query = queryPart1 + ancestorSubquery(0, true, "<" + iri+ ">") + queryPart3;
-	    sources.push(etyBase.DB.postXMLHttpRequest(query));
-	    query = queryPart1 + ancestorSubquery(0, false, "<" + iri+ ">") + queryPart3; 
-	    sources.push(etyBase.DB.postXMLHttpRequest(query));
+            var queryPart3 = iterativeQuery(1, depth) + "}";
+            var query = queryPart1 + ancestorSubquery(0, true, "<" + iri + ">") + queryPart3;
+            sources.push(etyBase.DB.postXMLHttpRequest(query));
+            query = queryPart1 + ancestorSubquery(0, false, "<" + iri + ">") + queryPart3;
+            sources.push(etyBase.DB.postXMLHttpRequest(query));
 
-	    const queryObservable = Rx.Observable.zip.apply(this, sources)
+            const queryObservable = Rx.Observable.zip.apply(this, sources)
                 .catch((err) => {
                     d3.select("#message").html(etyBase.LOAD.MESSAGE.serverError);
 
@@ -204,7 +204,7 @@ var DB = (function(module) {
                     return Rx.Observable.empty();
                 });
             return queryObservable;
-	};
+        };
 
         var descendantQuery = function(iri) {
             var query =
@@ -225,24 +225,24 @@ var DB = (function(module) {
                 "   {           " +
                 "       <" + iri + "> " +
                 "   } " +
-                "   OPTIONAL { " + 
+                "   OPTIONAL { " +
                 "       ?s dbetym:etymologicallyRelatedTo ?rel . " +
                 "       OPTIONAL { " +
                 "           ?m dbnary:describes ?s . " +
-                "           ?m rdfs:label ?sTmp . " +   
-                "           BIND (STR(?sTmp) AS ?sLabel) " +   
+                "           ?m rdfs:label ?sTmp . " +
+                "           BIND (STR(?sTmp) AS ?sLabel) " +
                 "       } " +
                 "       OPTIONAL { " +
-		"           ?s rdfs:label ?sTmp " +
+                "           ?s rdfs:label ?sTmp " +
                 "           BIND (STR(?sTmp) AS ?sLabel) " +
                 "       } " +
                 "       OPTIONAL { " +
                 "           ?eq dbetym:etymologicallyEquivalentTo{0,6} ?rel . " +
-		"           ?eq rdfs:label ?eqTmp " +
+                "           ?eq rdfs:label ?eqTmp " +
                 "           BIND (STR(?eqTmp) AS ?eqLabel) " +
                 "       } " +
                 "    } " +
-		"    OPTIONAL { " +
+                "    OPTIONAL { " +
                 "        ?rel rdfs:label ?relTmp" +
                 "        BIND (STR(?relTmp) AS ?relLabel) " +
                 "    } " +
@@ -261,7 +261,7 @@ var DB = (function(module) {
         };
 
         this.getXMLHttpRequest = getXMLHttpRequest;
-	this.postXMLHttpRequest = postXMLHttpRequest;
+        this.postXMLHttpRequest = postXMLHttpRequest;
         this.slicedQuery = slicedQuery;
         this.disambiguationQuery = disambiguationQuery;
         this.lemmaQuery = lemmaQuery;
