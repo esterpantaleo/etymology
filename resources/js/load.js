@@ -35,9 +35,8 @@ var LOAD = (function(module) {
                 this.counter = i;
                 this.iri = [];
                 this.isAncestor = false;
-
                 this.shape = "rect";
-                this.style = "fill: lightBlue; stroke: black";
+//                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
             }
         }

@@ -321,8 +321,7 @@ var GRAPH = (function(module) {
 		//(e.g.: if only ee_word and ee_n_word with n an integer belong to
 		//the set of ancestors and descendants           
 		//then merge them into one graphNode) 
-		//the final graph will use these super nodes (graphNodes)  
-		g.graphNodes = {};
+		//the final graph will use these super nodes (graphNodes)
 		var counter = 0; //counts how many graphNodes have been created so far
 		for (var n in g.nodess) {
                     if (g.nodess[n].ety === 0) {
@@ -408,19 +407,27 @@ var GRAPH = (function(module) {
 		    }
 		}
 		
-		var graphNodes = [];
 		for (var n in g.nodess) {
 		    var gn = g.nodess[n].graphNode; 
-		    if (graphNodes.indexOf(gn) === -1) {
+		    if (undefined === g._nodes[gn]) {
 			var gg = new etyBase.LOAD.classes.GraphNode(gn);
 			gg.counter = gn;
 			gg.iri = g.nodess[n].eqIri;
 			gg.iso = g.nodess[n].iso;
-			gg.label = gg.iri.map(function(i) { return g.nodess[i].label; }).filter(etyBase.helpers.onlyUnique).join(",");
+			gg.label = gg.iri.map(function(i) { 
+			    return g.nodess[i].label; 
+			})
+			    .filter(etyBase.helpers.onlyUnique)
+			    .join(",");
 			gg.lang = g.nodess[n].lang;
+			gg.isAncestor = g.nodess[n].isAncestor;
+			if (gg.isAncestor) {
+			    console.log("is ancestor");
+			    gg.style = "fill: #F0E68C; stroke: black";
+			} else {
+			    gg.style = "fill: lightBlue; stroke: black"; 
+			}
 			g.setNode(gn, gg);
-
-			graphNodes.push(gg.counter);  
 		    }
 		}
 
@@ -430,7 +437,22 @@ var GRAPH = (function(module) {
 			var source = g.nodess[element.rel.value].graphNode,
                         target = g.nodess[element.s.value].graphNode;
 			if (source !== target) {
-                            g.setEdge(source, target, { label: "", lineInterpolate: "basis" });
+			    if (g._nodes[source].isAncestor && g._nodes[target].isAncestor) {
+				g.setEdge(source, target, { 
+				    label: "", 
+				    lineInterpolate:"basis",
+				    style: "stroke: black; fill: none; stroke-width: 0.1em;",
+                                    arrowheadStyle: "fill: black"
+				}); 
+			    } else {
+				g.setEdge(source, target, { 
+				    label: "", 
+				    lineInterpolate: "basis",
+				    style: "stroke: lightBlue; fill: none; stroke-width: 0.1em;",
+				    arrowheadStyle: "fill: lightBlue",
+                                    
+				});
+			    }
 			}
                     }		    
 		});
