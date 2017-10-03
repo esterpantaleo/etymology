@@ -127,12 +127,6 @@ input:focus:-ms-input-placeholder { color:transparent; }
     100% { opacity: 1.0; }
 }
 
-.edgePath path {
-    stroke: lightBlue;
-    fill: lightBlue;
-    stroke-width: 0.3em;
-}
-
 ::-webkit-input-placeholder { /* Chrome */
     color: Gainsboro;
 }

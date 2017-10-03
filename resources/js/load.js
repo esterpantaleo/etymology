@@ -35,9 +35,8 @@ var LOAD = (function(module) {
                 this.counter = i;
                 this.iri = [];
                 this.isAncestor = false;
-
                 this.shape = "rect";
-                this.style = "fill: lightBlue; stroke: black";
+//                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
             }
         }
@@ -84,8 +83,8 @@ var LOAD = (function(module) {
                         if (null !== response) {
                             //print definition  
                             var dataJson = JSON.parse(response).results.bindings;
-                            console.log("dataJson")
-                            console.log(dataJson)
+                            console.log("dataJson");
+                            console.log(dataJson);
                             text += dataJson.reduce(
                                 function(s, element) {
                                     return s += that.logDefinition(element.pos, element.gloss);
