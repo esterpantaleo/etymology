@@ -422,7 +422,6 @@ var GRAPH = (function(module) {
 			gg.lang = g.nodess[n].lang;
 			gg.isAncestor = g.nodess[n].isAncestor;
 			if (gg.isAncestor) {
-			    console.log("is ancestor");
 			    gg.style = "fill: #F0E68C; stroke: black";
 			} else {
 			    gg.style = "fill: lightBlue; stroke: black"; 
@@ -458,7 +457,6 @@ var GRAPH = (function(module) {
 		});
 
 		//todo: add links between ancestors
-		
 		if (etyBase.config.debug) {
 		    console.log("g.nodess");
 		    console.log(g.nodess) ;  
