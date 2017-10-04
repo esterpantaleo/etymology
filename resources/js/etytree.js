@@ -17,7 +17,7 @@ var EtyTree = {
 
         /* Binding Modules */
         var bindModules = function(base, modules) {
-            for (var i = modules.length - 1; i >= 0; i--) {
+            for (var i = 0; i < modules.length; i++) {
                 if (!window[modules[i]]) {
                     console.error('Module ' + modules[i] + ' is not loaded.');
                     return false;
