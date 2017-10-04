@@ -216,6 +216,7 @@ var GRAPH = (function(module) {
                                         etyBase.DB.slicedQuery(allArray, etyBase.DB.propertyQuery, 3)
                                             .subscribe(
                                                 propertyResponse => {
+                                                    setData(ancestorArray, ancestorResponse, propertyResponse);
                                                     var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
 
                                                     if (Object.keys(g.nodess).length === 0) {
@@ -245,6 +246,7 @@ var GRAPH = (function(module) {
                             etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.propertyQuery, 3)
                                 .subscribe(
                                     propertyResponse => {
+                                        setData(ancestorArray, ancestorResponse, propertyResponse);
                                         var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
 
                                         if (Object.keys(g.nodess).length === 0) {
@@ -273,14 +275,18 @@ var GRAPH = (function(module) {
                     });
         };
 
-        var parseEtymologyNodes = function(ancestors, ancestorResponse, propertyResponse) {
-            var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
-            g.nodess = {};
-
-            var allArray = propertyResponse.reduce((all, a) => {
+        var setData = function(ancestors, ancestorResponse, propertyResponse) {
+            etyBase.tree.data = propertyResponse.reduce((all, a) => {
                 all = all.concat(JSON.parse(a).results.bindings);
                 return all;
             }, []);
+        };
+
+        var parseEtymologyNodes = function(ancestors, ancestorResponse, propertyResponse) {
+            var allArray = etyBase.tree.data;
+            var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
+            g.nodess = {};
+
             if (allArray.length < 2) {
                 return g;
             } else {
