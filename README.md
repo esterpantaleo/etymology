@@ -42,8 +42,8 @@ Besides etymological relationships data also contain POS-s, definitions, senses 
 An example query to the [sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) follows:
 
     PREFIX eng: <http://etytree-virtuoso.wmflabs.org/dbnary/eng/>
-    SELECT DISTINCT ?p ?o {
-        eng:__ee_get ?p ?o
+    SELECT ?p ?o {
+        eng:__ee_door ?p ?o
     }
 
 Property http://www.w3.org/2000/01/rdf-schema#seeAlso is used to link to the Wiktionary page the etymological entry was extracted from.
@@ -63,104 +63,102 @@ If you want to find ancestors of "door":
     }
 
 ## DATA EXTRACTION: dbnary_etymology
-The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology).
+The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
 ### COMPILING THE CODE
 [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology) is a [Maven](https://maven.apache.org/download.cgi) project (use java 8 and maven3).
 #### GENERATE DOCUMENTATION
-    cd dbnary_etymology/extractor/
+Let's assume you cloned the repository in your home:
+    cd ~/dbnary_etymology/
     mvn site
     mvn javadoc:jar
-#### UPDATE PACKAGE
-    cd dbnary_etymology
-    mvn package
-#### FULL DATA EXTRACTION - FOREIGN WORDS
-    VERSION=20170601
-    EXEC=~/dbnary_etymology/dbnary-extractor/target/dbnary-extractor-2.0e-SNAPSHOT-jar-with-dependencies.jar
-    DUMP=/srv/datasets/dumps/$VERSION/enwiktionary-$VERSION-pages-articles.utf-16.xml
-    FPAGE=0
-    TPAGE=2000000
-    LOG=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.ttl.log
-    OUT=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.ttl
-    ETY=extracts/lemon/en/$VERSION/enwkt-$VERSION_x_${FPAGE}_${TPAGE}.etymology.ttl
-    PREFIX=http://etytree-virtuoso.wmflabs.org/dbnary
-    rm ${OUT}
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXEC} org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage ${FPAGE} --topage ${TPAGE} -E ${ETY} -o ${OUT} ${DUMP} 3>&1 1>>${LOG} 2>&1
+#### PREPROCESS INPUT DATA
+First we need an XML dump of English Wiktionary. Then we need to convert it into UTF-8 format (using [iconv](https://en.wikipedia.org/wiki/Iconv) for example):
 
-#### SINGLE ENTRY EXTRACTION - ENGLISH WORD
-    WORD="door"
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -l en --prefix http://etytree-virtuoso.wmflabs.org/ --etymology $DUMP $WORD
+    VERSION=20170920
+    DATA_DIR=/srv/datasets/dumps/$VERSION/                                                               #output data folder
+    tmp_dump=/public/dumps/public/enwiktionary/$VERSION/enwiktionary-$VERSION-pages-articles.xml.bz2     #path to the dump
+    
+    mkdir ${DATA_DIR}
+    dump=${DATA_DIR}/enwiktionary-$VERSION-pages-articles.utf-16.xml
+    bzcat ${tmp_dump} |iconv -f UTF-8 -t UTF-16 > $dump
+
+#### EXTRACTION OF ENGLISH WORDS
+With the following code we can extract data relative to English words:
+
+    OUT_DIR=/srv/datasets/dbnary/$VERSION/                                                               #output folder
+    LOG_DIR=/srv/datasets/dbnary/$VERSION/logs/
+    EXECUTABLE=~/dbnary_etymology/dbnary-extractor/target/dbnary-extractor-2.0e-SNAPSHOT-jar-with-dependencies.jar
+    mkdir ${OUT_DIR}
+    mkdir ${LOG_DIR}
+
+    PREFIX=http://etytree-virtuoso.wmflabs.org/dbnary
+    LOG_FILE=${LOG_DIR}/enwkt-$VERSION.ttl.log
+    OUT_FILE=${OUT_DIR}/enwkt-$VERSION.ttl
+    ETY_FILE=${OUT_DIR}/enwkt-$VERSION.etymology.ttl
+    rm ${LOG_FILE}
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
+    #compress the output if needed
+    gzip ${OUT_FILE}
+    gzip ${ETY_FILE}
+    #after inspecting the log file, I usually only keep the last few lines
+    tail ${LOG_FILE} > ${LOG_DIR}/tmp
+    mv ${LOG_DIR}/tmp  ${LOG_FILE}
+
+#### EXTRACTION OF FOREIGN WORDS
+For memory reasons I only process a subset of the full data set at a time (from page 0 to page 1800000, from page 1899999 to page 3600000, from page 3600000 to page 6000000).
+  
+    fpage=0
+    tpage=1800000
+    LOG_FILE=${LOG_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl.log 
+    OUT_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl
+    ETY_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.etymology.ttl
+    rm ${LOG_FILE}
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
+    gzip ${OUT_FILE}
+    gzip ${ETY_FILE}
+    #after inspecting the log file, I usually only keep	the last few lines
+    tail ${LOG_FILE} > ${LOG_DIR}/tmp
+    mv ${LOG_DIR}/tmp  ${LOG_FILE}
+
+    fpage=1800000
+    tpage=3600000
+    LOG_FILE=${LOG_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl.log
+    OUT_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl
+    ETY_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.etymology.ttl
+    rm ${LOG_FILE}
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
+    gzip ${OUT_FILE}
+    gzip ${ETY_FILE}
+    #after inspecting the log file, I usually only keep the last few lines
+    tail ${LOG_FILE} > ${LOG_DIR}/tmp
+    mv ${LOG_DIR}/tmp  ${LOG_FILE}
+
+    fpage=3600000
+    tpage=6000000
+    LOG_FILE=${LOG_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl.log
+    OUT_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl
+    ETY_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.etymology.ttl
+    rm ${LOG_FILE}
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
+    gzip ${OUT_FILE}
+    gzip ${ETY_FILE}
+    #after inspecting the log file, I usually only keep the last few lines
+    tail ${LOG_FILE} > ${LOG_DIR}/tmp
+    mv ${LOG_DIR}/tmp  ${LOG_FILE}
 
 #### SINGLE ENTRY EXTRACTION - FOREIGN WORD
     WORD="door"
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXEC org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology testfile $DUMP $WORD
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXECUTABLE org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology testfile $dump $WORD
 
 ## ETYTREE TO DO
 
-- [ ] To speed up queries edit ontology and add new properties to identify different etymological categories as described in [Wiktionary's Etymology help page](https://en.wiktionary.org/wiki/Wiktionary:Etymology):
-* inherited word (template inherited)
-* borrowed word (template borrowed)
-* named from people
-* developed from initialism
-* surface analysis
-* long detailed etymology - propose a new template??
-* invented word/coined expression (coined by)
-* back-formation (e.g.: burglar -> burgle, play the tamburine -> tambour, i.e. remove a morpheme, real or perceived) (template back-form)
-* compound (template compound)
-* phrase
-* initialism
-* acronym
-* abbreviation
-* clipping
-* blend/portmanteau (template blend)
-* calque/loan translation
-* year template - propose a new template??
-* cognates - I plan to ignore this
-- [ ] parse glosses in templates
-- [x] I would like to add a preferred direction to the graph, that goes from left to right following the evolution of a word from the past to the present. This would mean in terms of force field to add a magnetic field that orients arrows towards a preferred direction.
-
-- [ ] Add zoom to tooltip, set zoom also in google chrome and other browsers.
-
+- [ ] Add qualifiers to links between nodes: inherited word (template inherited), borrowed word (template borrowed), named from people, developed from initialism, surface analysis, long detailed etymology (propose a new template?), invented word/coined expression (coined by), back-formation (e.g.: burglar -> burgle, play the tamburine -> tambour, i.e. remove a morpheme, real or perceived) (template back-form), compound (template compound), initialism, acronym, abbreviation, clipping, blend/portmanteau (template blend), calque/loan translation, year template (propose a new template?), cognates (I actually plan to ignore this).
+- [ ] Parse glosses in templates
+- [ ] Parse nested templates
+- [ ] Add zoom to tooltip
 - [ ] Add etymology controversies.
-
-- [x] Currently for some words the Virtuoso server doesn't return data because it reaches timeout. I want to try a different query like the following 
-```
-    DEFINE input:inference "etymology_ontology"
-    PREFIX dbetym: <http://kaiko.getalp.org/dbnaryetymology#>
-    PREFIX owl: <http://www.w3.org/2002/07/owl#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-    SELECT DISTINCT ?source ?p ?o ?cognate ?pcognate ?scognate
-        { 
-            ?source ?p ?o . 
-            FILTER (?p in (dbetym:etymologicallyDerivesFrom, dbetym:descendsFrom, dbetym:derivesFrom,dbetym:etymologicallyEquivalentTo))
-     #      {
-     #          SELECT ?source
-     #          {
-     #              ?source dbetym:etymologicallyRelatedTo{1,}  <http://kaiko.getalp.org/dbnary/eng/__ee_1_water> . 
-     #          }
-     #      }
-     #      UNION
-            {
-                SELECT ?source
-                {
-                    <http://kaiko.getalp.org/dbnary/eng/__ee_1_water> dbetym:etymologicallyRelatedTo{1,} ?source . 
-                } 
-            }
-            OPTIONAL 
-            {
-                ?source dbetym:etymologicallyRelatedTo{1,} ?cognate . 
-                ?scognate ?pcognate ?cognate . 
-                FILTER (?pcognate in (dbetym:etymologicallyDerivesFrom, dbetym:descendsFrom, dbetym:derivesFrom,dbetym:etymologicallyEquivalentTo)) 
-            }
-        }
-```
-
-- [x] Click on a word and interrogate the server to get data about the word.
-
-- [x] Search words with space or with accent 
-
-- [x] Extract Reconstructed words.
-
+- [ ] Add alternative etymologies.
+- [ ] Parse diacritics.
 - [ ] Maybe consider Dialects:
 ```
     Module:da:Dialects ?
@@ -170,7 +168,6 @@ The RDF database of etymological relationships is periodically extracted when a 
     Module:hy:Dialects ?
     Module:la:Dialects (e.g.: aug -> link = Late Latin#Late and post-classical Latin, display = post-Augustan)
 ```
-
 - [ ] Maybe consider additional modules: 
 ```
     Module:families/data mapping language code -> language name  (e.g.: aav -> canonicalName = "Austro-Asiatic",otherNames = {"Austroasiatic"}
