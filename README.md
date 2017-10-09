@@ -32,7 +32,7 @@ File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/is
 
 File list_of_languages.csv has been downloaded from [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format).
 
-## The SPARQL ENDPOINT 
+## Using the SPARQL ENDPOINT 
 This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - data was extracted on 01/06/2017).
 
 I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyRelatedTo, etymologicallyDerivesFrom and etymologicallyEquivalentTo.
@@ -62,12 +62,14 @@ If you want to find ancestors of "door":
          eng:__ee_1_door dbetym:etymologicallyRelatedTo+ ?o .
     }
 
-## DATA EXTRACTION: dbnary_etymology
+## FOR DEVELOPERS
+###DATA EXTRACTION: dbnary_etymology
 The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
-### COMPILING THE CODE
+#### COMPILING THE CODE
 [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology) is a [Maven](https://maven.apache.org/download.cgi) project (use java 8 and maven3).
 #### GENERATE DOCUMENTATION
 Let's assume you cloned the repository in your home:
+
     cd ~/dbnary_etymology/
     mvn site
     mvn javadoc:jar
@@ -80,11 +82,9 @@ First we need an XML dump of English Wiktionary. Then we need to convert it into
     
     mkdir ${DATA_DIR}
     dump=${DATA_DIR}/enwiktionary-$VERSION-pages-articles.utf-16.xml
-    bzcat ${tmp_dump} |iconv -f UTF-8 -t UTF-16 > $dump
+    bzcat ${tmp_dump} |iconv -f UTF-8 -t UTF-16 > $dump    #This operation takes approximately 7 minutes.
 
-This operation takes approximately 7 minutes.
-
-#### EXTRACTION OF ENGLISH WORDS
+#### EXTRACT ENGLISH WORDS
 With the following code we can extract data relative to English words:
 
     OUT_DIR=/srv/datasets/dbnary/$VERSION/                                                               #output folder
@@ -98,10 +98,7 @@ With the following code we can extract data relative to English words:
     OUT_FILE=${OUT_DIR}/enwkt-$VERSION.ttl
     ETY_FILE=${OUT_DIR}/enwkt-$VERSION.etymology.ttl
     rm ${LOG_FILE}
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
-
-This operation takes approximately 45 minutes
-
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1   #This operation takes approximately 45 minutes
     #compress the output if needed
     gzip ${OUT_FILE}
     gzip ${ETY_FILE}
@@ -109,7 +106,7 @@ This operation takes approximately 45 minutes
     tail ${LOG_FILE} > ${LOG_DIR}/tmp
     mv ${LOG_DIR}/tmp  ${LOG_FILE}
 
-#### EXTRACTION OF FOREIGN WORDS
+#### EXTRACT FOREIGN WORDS
 For memory reasons I only process a subset of the full data set at a time (from page 0 to page 1800000 - which takes approximately 100 minutes, from page 1899999 to page 3600000 which takes approximately 50 minutes, from page 3600000 to page 6000000 which takes approximately 100 minutes). Note that 24G are needed to process the data.
 
     fpage=0
@@ -151,16 +148,18 @@ For memory reasons I only process a subset of the full data set at a time (from 
     tail ${LOG_FILE} > ${LOG_DIR}/tmp
     mv ${LOG_DIR}/tmp  ${LOG_FILE}
 
-#### SINGLE ENTRY EXTRACTION - FOREIGN WORD
+#### EXTRACT A SINGLE ENTRY - FOREIGN WORD
     WORD="door"
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXECUTABLE org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology testfile $dump $WORD
 
-#### FOR DEVELOPERS: UPDATING VIRTUOSO
-Update ontology (for VERSION=20170920):
+###UPDATE DATABASE ON VIRTUOSO
+#### Update ontology files 
+For VERSION=20170920:
 
     cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl  /srv/datasets/dbnary/$VERSION/
     cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl  /srv/datasets/dbnary/$VERSION/
 
+#### Update database
 From isql execute the following steps (step A):
 
     SPARQL CLEAR GRAPH <http://etytree-virtuoso.wmflabs.org/dbnary>;
@@ -178,7 +177,7 @@ From isql execute the following steps (step A):
     checkpoint;
     EXIT;
 
-#####In case an error occurs:
+In case an error occurs:
 
     12:00:44 PL LOG:  File /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl.gz error 37000 SP029: TURTLE RDF loader, line 10636983: syntax error processed pending to here.
     12:06:09 PL LOG:  File /srv/datasets/dbnary/20170920//enwkt-1800000_3600000.etymology.ttl.gz error 37000 SP029: TURTLE RDF loader, line 4772623: syntax error processed pending to here.
@@ -191,14 +190,14 @@ edit files manually:
     gzip /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl
 
 Go to step A above and repeat. Then run the following command from the terminal
+
     isql 1111 dba password /opt/virtuoso/db/bootstrap.sql
 
-#####After dealing with errors
-Relaunch the server.                              
+After dealing with errors relaunch the server.                              
 From isql:
+
     sparql SELECT COUNT(*) WHERE { ?s ?p ?o } ;
     sparql SELECT ?g COUNT(*) { GRAPH ?g {?s ?p ?o.} } GROUP BY ?g ORDER BY DESC 2;
-
     -- Build Full Text Indexes by running the following commands using the Virtuoso isql program
     RDF_OBJ_FT_RULE_ADD (null, null, 'All');
     VT_INC_INDEX_DB_DBA_RDF_OBJ ();
@@ -207,14 +206,16 @@ From isql:
     -- Run the following procedure using the Virtuoso isql program to calculate the IRI ranks. Note this should be run periodically as the data grows to re-rank the IRIs.
     s_rank();
 
-#####POTENTIAL ISSUE ABOUT SETTING UP CORS            
-The following link will help you setting up CORS for Virtuoso: http://vos.openlinksw.com/owiki/wiki/VOS/VirtTipsAndTricksCORsEnableSPARQLURLs
+#### CORS setup
+The following link will help you set up CORS for Virtuoso: http://vos.openlinksw.com/owiki/wiki/VOS/VirtTipsAndTricksCORsEnableSPARQLURLs
 
-#####Starting and stopping Virtuoso
+#### Start and stop Virtuoso
 To start:
+
     cd /opt/virtuoso/db
     virtuoso-t -f
 To stop:
+
     cd /opt/virtuoso-opensource/bin
     isql 1111 dba password
     SQL> shutdown();
