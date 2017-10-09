@@ -6,6 +6,17 @@ If you have comments on the project please write on the [talk page](https://meta
  
 This project has been inspired by my interest in etymology, in  open source collaborative projects and in interactive visualizations.
 
+## Description
+Etytree uses data extracted from an XML dump of the English Wiktionary using an algorithm implemented in [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - the dump currently used dates back to September 28th, 2017. Data extracted with dbnary_etymology has been loaded into a Virtuoso DBMS which can be accessed at [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) and explored with a faceted browser. 
+
+The list of languages and ISO codes can be found at [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) and are imported from Wiktionary and periodically updated (the current files date back to September 22nd, 2017).
+
+File etymology-only_languages.csv has been created from Wiktionary data with a lua module available [here](https://en.wiktionary.org/wiki/Wiktionary:Etymology-only_languages,_csv_format). File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/iso639-3/iso-639-3.tab) (the first line has been removed). File list_of_languages.csv has been downloaded from [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format). 
+
+I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyRelatedTo, etymologicallyDerivesFrom and etymologicallyEquivalentTo.
+
+Besides etymological relationships data also contain POS-s, definitions, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
+
 ## Licence
 
 The code is distributed under [MIT licence](https://opensource.org/licenses/MIT) and the data is distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
@@ -23,21 +34,8 @@ The site's html files are contained in [the repo root](https://github.com/esterp
 
 Then you can run a lint of the JS files by running `grunt js` in your command line, from the repo root.
 
-## Language data
-Files contained in [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) are imported from Wiktionary and updated when a new dump of the English Wiktionary is generated (updated on 07/22/2017). 
-
-File etymology-only_languages.csv has been created from Wiktionary data with a lua module available [here](https://en.wiktionary.org/wiki/Wiktionary:Etymology-only_languages,_csv_format).
-
-File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/iso639-3/iso-639-3.tab) (the first line has been removed).
-
-File list_of_languages.csv has been downloaded from [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format).
-
 ## Using the SPARQL ENDPOINT 
-This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - data was extracted on 01/06/2017).
-
-I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyRelatedTo, etymologicallyDerivesFrom and etymologicallyEquivalentTo.
-
-Besides etymological relationships data also contain POS-s, definitions, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
+This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
 
 An example query to the [sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) follows:
 
@@ -64,7 +62,7 @@ If you want to find ancestors of "door":
 
 ## FOR DEVELOPERS
 ### EXTRACT THE DATA USING dbnary_etymology
-The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
+The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is available at [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
 #### COMPILE THE CODE
 [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology) is a [Maven](https://maven.apache.org/download.cgi) project (use java 8 and maven3).
 #### GENERATE DOCUMENTATION
