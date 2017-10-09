@@ -82,6 +82,8 @@ First we need an XML dump of English Wiktionary. Then we need to convert it into
     dump=${DATA_DIR}/enwiktionary-$VERSION-pages-articles.utf-16.xml
     bzcat ${tmp_dump} |iconv -f UTF-8 -t UTF-16 > $dump
 
+This operation takes approximately 7 minutes.
+
 #### EXTRACTION OF ENGLISH WORDS
 With the following code we can extract data relative to English words:
 
@@ -97,6 +99,9 @@ With the following code we can extract data relative to English words:
     ETY_FILE=${OUT_DIR}/enwkt-$VERSION.etymology.ttl
     rm ${LOG_FILE}
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
+
+This operation takes approximately 45 minutes
+
     #compress the output if needed
     gzip ${OUT_FILE}
     gzip ${ETY_FILE}
@@ -105,8 +110,8 @@ With the following code we can extract data relative to English words:
     mv ${LOG_DIR}/tmp  ${LOG_FILE}
 
 #### EXTRACTION OF FOREIGN WORDS
-For memory reasons I only process a subset of the full data set at a time (from page 0 to page 1800000, from page 1899999 to page 3600000, from page 3600000 to page 6000000).
-  
+For memory reasons I only process a subset of the full data set at a time (from page 0 to page 1800000 - which takes approximately 100 minutes, from page 1899999 to page 3600000 which takes approximately 50 minutes, from page 3600000 to page 6000000 which takes approximately 100 minutes). Note that 24G are needed to process the data.
+
     fpage=0
     tpage=1800000
     LOG_FILE=${LOG_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl.log 
@@ -150,6 +155,69 @@ For memory reasons I only process a subset of the full data set at a time (from 
     WORD="door"
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXECUTABLE org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology testfile $dump $WORD
 
+#### FOR DEVELOPERS: UPDATING VIRTUOSO
+Update ontology (for VERSION=20170920):
+
+    cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl  /srv/datasets/dbnary/$VERSION/
+    cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl  /srv/datasets/dbnary/$VERSION/
+
+From isql execute the following steps (step A):
+
+    SPARQL CLEAR GRAPH <http://etytree-virtuoso.wmflabs.org/dbnary>;
+    SPARQL CLEAR GRAPH <http://etytree-virtuoso.wmflabs.org/dbnaryetymology>;
+    ld_dir ('/srv/datasets/dbnary/20170920/', '*.ttl.gz','http://etytree-virtuoso.wmflabs.org/dbnary');
+    ld_dir ('/srv/datasets/dbnary/20170920/', '*.owl','http://etytree-virtuoso.wmflabs.org/dbnaryetymology');
+    -- do the following to see which files were registered to be added:
+    SELECT * FROM DB.DBA.LOAD_LIST;
+    -- if unsatisfied use:
+    -- delete from DB.DBA.LOAD_LIST;
+    rdf_loader_run();  ----- 1378390 msec. 
+    -- do nothing too heavy while data is loading
+    checkpoint;   ----- 50851 msec.
+    commit WORK;  ----- 1417 msec.
+    checkpoint;
+    EXIT;
+
+#####In case an error occurs:
+
+    12:00:44 PL LOG:  File /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl.gz error 37000 SP029: TURTLE RDF loader, line 10636983: syntax error processed pending to here.
+    12:06:09 PL LOG:  File /srv/datasets/dbnary/20170920//enwkt-1800000_3600000.etymology.ttl.gz error 37000 SP029: TURTLE RDF loader, line 4772623: syntax error processed pending to here.
+    
+edit files manually:
+
+    zcat /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl.gz > /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl
+    emacs -nw /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl.gz      #goto-line 10636983
+    #change line
+    gzip /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl
+
+Go to step A above and repeat. Then run the following command from the terminal
+    isql 1111 dba password /opt/virtuoso/db/bootstrap.sql
+
+#####After dealing with errors
+Relaunch the server.                              
+From isql:
+    sparql SELECT COUNT(*) WHERE { ?s ?p ?o } ;
+    sparql SELECT ?g COUNT(*) { GRAPH ?g {?s ?p ?o.} } GROUP BY ?g ORDER BY DESC 2;
+
+    -- Build Full Text Indexes by running the following commands using the Virtuoso isql program
+    RDF_OBJ_FT_RULE_ADD (null, null, 'All');
+    VT_INC_INDEX_DB_DBA_RDF_OBJ ();
+    -- Run the following procedure using the Virtuoso isql program to populate label lookup tables periodically and activate the Label text box of the Entity Label Lookup tab:
+    urilbl_ac_init_db();
+    -- Run the following procedure using the Virtuoso isql program to calculate the IRI ranks. Note this should be run periodically as the data grows to re-rank the IRIs.
+    s_rank();
+
+#####POTENTIAL ISSUE ABOUT SETTING UP CORS            
+The following link will help you setting up CORS for Virtuoso: http://vos.openlinksw.com/owiki/wiki/VOS/VirtTipsAndTricksCORsEnableSPARQLURLs
+
+#####Starting and stopping Virtuoso
+To start:
+    cd /opt/virtuoso/db
+    virtuoso-t -f
+To stop:
+    cd /opt/virtuoso-opensource/bin
+    isql 1111 dba password
+    SQL> shutdown();
 ## ETYTREE TO DO
 
 - [ ] Add qualifiers to links between nodes: inherited word (template inherited), borrowed word (template borrowed), named from people, developed from initialism, surface analysis, long detailed etymology (propose a new template?), invented word/coined expression (coined by), back-formation (e.g.: burglar -> burgle, play the tamburine -> tambour, i.e. remove a morpheme, real or perceived) (template back-form), compound (template compound), initialism, acronym, abbreviation, clipping, blend/portmanteau (template blend), calque/loan translation, year template (propose a new template?), cognates (I actually plan to ignore this).
