@@ -63,9 +63,9 @@ If you want to find ancestors of "door":
     }
 
 ## FOR DEVELOPERS
-###DATA EXTRACTION: dbnary_etymology
+### EXTRACT THE DATA USING dbnary_etymology
 The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
-#### COMPILING THE CODE
+#### COMPILE THE CODE
 [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology) is a [Maven](https://maven.apache.org/download.cgi) project (use java 8 and maven3).
 #### GENERATE DOCUMENTATION
 Let's assume you cloned the repository in your home:
@@ -152,7 +152,7 @@ For memory reasons I only process a subset of the full data set at a time (from 
     WORD="door"
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXECUTABLE org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology testfile $dump $WORD
 
-###UPDATE DATABASE ON VIRTUOSO
+### UPDATE DATABASE ON VIRTUOSO
 #### Update ontology files 
 For VERSION=20170920:
 
