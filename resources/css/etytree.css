@@ -141,3 +141,19 @@ input:focus:-ms-input-placeholder { color:transparent; }
     color: Gainsboro;
     opacity: 1;
 }
+
+@media screen and (min-width: 0px) and (max-width: 400px) {
+    #tdTitle { display: none; }
+    #tdHelpPopup { display: none; }  /* hide it on small screens */ 
+    #tdEmpty { display: none; }
+    #lineBreaks { display: none; }
+    #message { font-size: 70%; }
+}
+
+@media screen and (min-width: 401px) and (max-width: 1024px) {
+    #tdTitle { display: block; }
+    #tdHelpPopup { display: block; } /* show it elsewhere */
+    #tdEmpty { display: block; }
+    #lineBreaks { display: block; }
+    #message { font-size: 100%; }
+}

@@ -72,7 +72,12 @@ var DB = (function(module) {
             return queryObservable;
         };
 
-
+        //this function takes as input a string 
+        //and outputs a query to the etytree SPARQL endpoint;
+        //the query returns a table with 3 headers
+        //"iri": the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
+	//"et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
+	//"lemma": a string containing the rdfs label of the resource "iri"
         var disambiguationQuery = function(lemma) {
             var encodedLemma = lemma
                 .replace(/'/g, "\\\\'")
@@ -87,13 +92,14 @@ var DB = (function(module) {
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
                 "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ?lemma " +
                 "WHERE { " +
-                "    ?iri rdfs:label ?label . ?label bif:contains \"\'" + encodedLemma + "\'\" . " +
+                "    ?iri rdfs:label ?label . " +
+                "    ?label bif:contains \"\'" + encodedLemma + "\'\" . " +
                 // exclude entries that contain the searched word but include other words
                 // (e.g.: search="door" label="doorbell", exclude "doorbell")
                 "    FILTER REGEX(?label, \"^" + encodedLemma + "$\", 'i') . " +
                 "    ?iri rdf:type dbetym:EtymologyEntry . " +
                 "    OPTIONAL { " +
-                "        ?iri dbnary:describes  ?ee . " +
+                "        ?iri dbnary:describes ?ee . " +
                 "        ?ee rdf:type dbetym:EtymologyEntry . " +
                 "    } " +
                 "    BIND (STR(?label) AS ?lemma) " +

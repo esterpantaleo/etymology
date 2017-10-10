@@ -25,22 +25,24 @@
                <td>
                    <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
                        <tr>
-                       <img src="./resources/images/etytree_logo.png" alt="logo" width="60%" style="display:block;margin:auto;height:auto;" />
+                           <img src="./resources/images/etytree_logo.png" alt="logo" width="60%" style="display:block;margin:auto;height:auto;" />
                        </tr>
                        <br>
                    </table>
                </td>
                <td>
                    <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
-		       <tr>      
-	                   <span class="bigSpan">etytree</span> - <span class="mediumSpan"> a graphical and multilingual etymology dictionary</span>				                
+		       <tr>
+                           <div id="tdTitle">      
+	                       <span class="bigSpan">etytree</span><span class="mediumSpan"> - a graphical and multilingual etymology dictionary</span>
+                               <br>
+                           </div>  				                
                        </tr>
-                       <br>
                        <tr>
                            <td>
                                <input class="mediumSpan" type="text" data-type="search" placeholder="search word" id="tags"></input>
                            </td>
-                           <td>
+                           <td id="tdHelpPopup">
                                <a href="#divHelpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true">help</a>
                                <div data-role="popup" id="divHelpPopup" class="ui-content help">
                                    <p id="helpPopup" class="help" />
@@ -49,7 +51,7 @@
                        </tr>
                    </table>
                </td>
-               <td>
+               <td id="tdEmpty">
                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	       </td>
            </tr>
@@ -59,10 +61,9 @@
     <div data-role="content" class="ui-content" id="tree-container" style="text-align: center;">
         <p id="message" class="message"/>
         <div id="tree-overlay">
-            <div>
-                <br><br><br><br><br>
+            <div id="lineBreaks">
+                <br><br><br><br><br><br>
             </div>
-                <br>
                 <span class="blueSpan">
                      Type a word in the search bar, then press enter. 
                      <br>

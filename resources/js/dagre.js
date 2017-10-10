@@ -80,17 +80,12 @@ var GRAPH = (function(module) {
             var g = new dagreD3.graphlib.Graph().setGraph({});
             g.nodess = {};
             var disambiguationArray = JSON.parse(response).results.bindings;
-
+	    console.log("disam");console.log(disambiguationArray);
             //define nodes 
             disambiguationArray.forEach(function(n) {
-                n.et.value.split(",")
-                    .forEach(function(element) {
-                        if (element !== "") {
-                            g.nodess[element] = new etyBase.LOAD.classes.Node(element, n.lemma.value);
-                        } else {
-                            g.nodess[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value, n.lemma.value);
-                        }
-                    });
+                if (n.et.value === "" || n.et.value.split(",").length > 1) {
+                    g.nodess[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value, n.lemma.value);
+                }
             });
 
             //add nodes and links to the graph
