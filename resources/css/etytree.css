@@ -66,11 +66,6 @@ text {
     font-size: 2em;
 }
 
-.mediumSpan {
-    font-weight: bold;
-    font-size: 1.5em;
-}
-
 .tooltipDiv {
     position: absolute;
     background: lightblue;
@@ -142,18 +137,30 @@ input:focus:-ms-input-placeholder { color:transparent; }
     opacity: 1;
 }
 
-@media screen and (min-width: 0px) and (max-width: 400px) {
+@media screen and (min-width: 0px) and (max-width: 1219px) {
     #tdTitle { display: none; }
     #tdHelpPopup { display: none; }  /* hide it on small screens */ 
     #tdEmpty { display: none; }
     #lineBreaks { display: none; }
     #message { font-size: 70%; }
+    #logo { width: 60%; max-width: 6em;}
+    .mediumSpan {
+        font-weight: bold;
+        font-size: 1em;
+    }
+    #title { display: block; }
 }
 
-@media screen and (min-width: 401px) and (max-width: 1024px) {
+@media screen and (min-width: 1220px) {
     #tdTitle { display: block; }
     #tdHelpPopup { display: block; } /* show it elsewhere */
     #tdEmpty { display: block; }
     #lineBreaks { display: block; }
     #message { font-size: 100%; }
+    #logo { width: 50%; }
+    .mediumSpan {
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+    #title { display: none; }
 }

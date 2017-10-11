@@ -2,24 +2,24 @@
 
 This is a first version of the Wikimedia project [etytree](https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary). The aim of the project is to visualize in an interactive web page the etymological tree (i.e., the etymology of a word in the form of a tree, with ancestors, cognate words, derived words, etc.) of any word in any language using data extracted from Wiktionary. 
 
-If you have comments on the project please write on the [talk page](https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary) of the project.
- 
 This project has been inspired by my interest in etymology, in  open source collaborative projects and in interactive visualizations.
 
+If you have comments on the project please write on its [talk page](https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary).
+
 ## Description
-Etytree uses data extracted from an XML dump of the English Wiktionary using an algorithm implemented in [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (we are a little behind now - the dump currently used dates back to September 28th, 2017. Data extracted with dbnary_etymology has been loaded into a Virtuoso DBMS which can be accessed at [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) and explored with a faceted browser. 
+Etytree uses data extracted from an XML dump of the English Wiktionary using an algorithm implemented in [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (the dump currently used dates back to September 28th, 2017). Data extracted with dbnary_etymology has been loaded into a Virtuoso DBMS which can be accessed at [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) and explored with a faceted browser. 
 
-The list of languages and ISO codes can be found at [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) and are imported from Wiktionary and periodically updated (the current files date back to September 22nd, 2017).
+The list of languages and ISO codes can be found at [resources/data](https://github.com/esterpantaleo/etymology/tree/master/resources/data) and are imported from Wiktionary and periodically updated (the current files date back to September 22nd, 2017). File etymology-only_languages.csv has been created from Wiktionary data with a lua module available [here](https://en.wiktionary.org/wiki/Wiktionary:Etymology-only_languages,_csv_format). File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/iso639-3/iso-639-3.tab) (the first line has been removed). File list_of_languages.csv has been downloaded from [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format). 
 
-File etymology-only_languages.csv has been created from Wiktionary data with a lua module available [here](https://en.wiktionary.org/wiki/Wiktionary:Etymology-only_languages,_csv_format). File iso-639-3.tab has been downloaded from [this link](http://www-01.sil.org/iso639-3/iso-639-3.tab) (the first line has been removed). File list_of_languages.csv has been downloaded from [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:List_of_languages,_csv_format). 
+I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyRelatedTo, etymologicallyDerivesFrom and etymologicallyEquivalentTo. This ontology needs improvements.
 
-I have defined an ontology for etymologies [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl?at=master&fileviewer=file-view-default). In particular I have defined properties etymologicallyRelatedTo, etymologicallyDerivesFrom and etymologicallyEquivalentTo.
+Property http://www.w3.org/2000/01/rdf-schema#seeAlso is used to link etymological entries to the Wiktionary pages they have been extracted from.
 
-Besides etymological relationships data also contain POS-s, definitions, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
+Besides etymological relationships, the database also contain POS-s, definitions, senses and more as extracted by [dbnary](https://bitbucket.org/serasset/dbnary). The ontology for dbnary is defined [here](https://bitbucket.org/esterpantaleo/dbnary_etymology/src/078e0d9a2f274d63166a6bab1bf994587728277d/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl?at=master&fileviewer=file-view-default).
 
 ## Licence
 
-The code is distributed under [MIT licence](https://opensource.org/licenses/MIT) and the data is distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
+The code is distributed under [MIT licence](https://opensource.org/licenses/MIT) and the data is distributed under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ## Viewing the Site
 
@@ -44,7 +44,6 @@ An example query to the [sparql endpoint](http://etytree-virtuoso.wmflabs.org/sp
         eng:__ee_door ?p ?o
     }
 
-Property http://www.w3.org/2000/01/rdf-schema#seeAlso is used to link to the Wiktionary page the etymological entry was extracted from.
 If you want to find all entries containing string "door":
 
     SELECT DISTINCT ?s {
@@ -72,7 +71,7 @@ Let's assume you cloned the repository in your home:
     mvn site
     mvn javadoc:jar
 #### PREPROCESS INPUT DATA
-First we need an XML dump of English Wiktionary. Then we need to convert it into UTF-8 format (using [iconv](https://en.wikipedia.org/wiki/Iconv) for example):
+First you need an XML dump of English Wiktionary. Then you need to convert it into UTF-8 format (using [iconv](https://en.wikipedia.org/wiki/Iconv) for example):
 
     VERSION=20170920
     DATA_DIR=/srv/datasets/dumps/$VERSION/                                                               #output data folder
@@ -83,7 +82,7 @@ First we need an XML dump of English Wiktionary. Then we need to convert it into
     bzcat ${tmp_dump} |iconv -f UTF-8 -t UTF-16 > $dump    #This operation takes approximately 7 minutes.
 
 #### EXTRACT ENGLISH WORDS
-With the following code we can extract data relative to English words:
+With the following code you can extract data relative to English words:
 
     OUT_DIR=/srv/datasets/dbnary/$VERSION/                                                               #output folder
     LOG_DIR=/srv/datasets/dbnary/$VERSION/logs/
