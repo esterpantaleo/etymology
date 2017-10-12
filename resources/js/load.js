@@ -65,8 +65,6 @@ var LOAD = (function(module) {
             }
 
             logTooltip() {
-                console.log("this.iri");
-                console.log(this.iri);
                 var query = etyBase.DB.lemmaQuery(this.iri);
                 var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
 
@@ -76,39 +74,26 @@ var LOAD = (function(module) {
 
                 var that = this;
 
-                const source = etyBase.DB.getXMLHttpRequest(url);
-                source.subscribe(
-                    function(response) {
-                        var text = "<b>" + that.label + "</b><br><br><br>";
-                        if (null !== response) {
-                            //print definition  
-                            var dataJson = JSON.parse(response).results.bindings;
-                            console.log("dataJson");
-                            console.log(dataJson);
-                            text += dataJson.reduce(
-                                function(s, element) {
-                                    return s += that.logDefinition(element.pos, element.gloss);
-                                },
-                                ""
-                            );
-                            //print links 
-                            text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
-                                that.logLinks(dataJson[0].links.value);
-                        } else {
-                            text += "-";
-                        }
-                        d3.select("#tooltipPopup")
-                            .append("p")
-                            .html(text);
-                    },
-                    function(error) {
-                        console.error(error);
-                        var text = "<b>" + that.label + "</b><br><br><br>";
-                        text += "-";
-                        d3.select("#tooltipPopup")
-                            .append("p")
-                            .html(text);
-                    });
+                return etyBase.DB.getXMLHttpRequest(url)
+		   .flatMap(response => {
+                       var text = "<b>" + that.label + "</b><br><br><br>";
+                       if (null !== response) {
+                           //print definition  
+                           var dataJson = JSON.parse(response).results.bindings;
+                           text += dataJson.reduce(
+                               function(s, element) {
+                                   return s += that.logDefinition(element.pos, element.gloss);
+                               },
+                               ""
+                           );
+                           //print links 
+                           text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
+                               that.logLinks(dataJson[0].links.value);
+                       } else {
+                           text += "-";
+                       }
+		       return Promise.resolve(text);
+                   });
             }
 
             parseIri(iri) {

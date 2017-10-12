@@ -59,7 +59,6 @@ var GRAPH = (function(module) {
                         renderGraph().selectAll("g.node")
                             .on("click", function(d) {
                                 var iri = g.node(d).iri;
-
                                 constructEtymologyGraph(iri);
                             });
                     }
@@ -80,7 +79,7 @@ var GRAPH = (function(module) {
             var g = new dagreD3.graphlib.Graph().setGraph({});
             g.nodess = {};
             var disambiguationArray = JSON.parse(response).results.bindings;
-	    console.log("disam");console.log(disambiguationArray);
+	    
             //define nodes 
             disambiguationArray.forEach(function(n) {
                 if (n.et.value === "" || n.et.value.split(",").length > 1) {
@@ -91,7 +90,7 @@ var GRAPH = (function(module) {
             //add nodes and links to the graph
             var m = null;
             for (var n in g.nodess) {
-                g.setNode(n, g.nodess[n], { labelStyle: "font-size: 3em" });
+                g.setNode(n, g.nodess[n]);
                 if (null !== m) {
                     g.setEdge(n, m, { label: "", style: "stroke-width: 0" });
                 }
@@ -189,8 +188,6 @@ var GRAPH = (function(module) {
                 .attr("display", "none");
             $('#tree-overlay')
                 .remove();
-            d3.select("#tooltipPopup")
-                .attr("display", "none");
 
             const params = new URLSearchParams();
             params.set("format", "application/sparql-results+json");
@@ -470,10 +467,6 @@ var GRAPH = (function(module) {
                     console.log("g");
                     console.log(g);
                 }
-                console.log("g.nodess");
-                console.log(g.nodess);
-                console.log("g");
-                console.log(g);
 
                 $('#message')
                     .css('display', 'none');
@@ -518,51 +511,27 @@ var GRAPH = (function(module) {
                 .scale(initialScale)
                 .event(svg);
 
-            //append language tag to nodes            
-            inner.selectAll("g.node")
-                .append("text")
-                .style("width", "auto")
-                .style("height", "auto")
-                .style("display", "inline")
-                .attr("class", "isoText")
-                .attr("x", "1em")
-                .attr("y", "3em")
-                .html(function(d) {
-                    return g.node(d).iso;
-                });
-
-            //show tooltip on click on language tag   
-            inner.selectAll("g.node")
-                .append("rect")
-                .attr("x", "0.8em")
-                .attr("y", "2.2em")
-                .attr("x", "0.8em")
-                .attr("width", function(d) {
-                    return g.node(d).iso.length / 1.7 + "em";
-                })
-                .attr("height", "1em")
-                .attr("fill", "red")
-                .attr("fill-opacity", 0)
-                .on("mouseover", function(d) {
-                    d3.select("#tooltipPopup")
-                        .style("display", "inline")
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px")
-                        .html(g.node(d).lang);
-                    d3.event.stopPropagation();
-                });
-
-            //show tooltip on click on nodes                
+	    //show tooltip on mouseover nodes 
             inner.selectAll("g.node")
                 .on("mouseover", function(d) {
                     d3.select("#tooltipPopup")
                         .style("display", "inline")
                         .style("left", (d3.event.pageX + 38) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px")
-                        .html("");
-                    var iri = g.node(d).iri;
+                        .style("top", (d3.event.pageY - 28) + "px");
+		    d3.select("#tooltipText").html("");
+                    var iri = g.node(d).iri;                   
                     if (typeof iri === "string") {
-                        g.nodess[iri].logTooltip();
+                        g.nodess[iri]
+			    .logTooltip()
+			    .subscribe(text => {
+				d3.select("#tooltipText").html(""); 
+				d3.select("#tooltipText")
+				    .append("p")
+				    .html(text);
+			    }, error => {
+				d3.select("#tooltipText")
+				    .html("<b>" + that.label + "</b><br><br><br>-");
+			    });
                     } else {
                         iri.reduce(function(obj, i) {
                             var label = g.nodess[i].label;
@@ -573,8 +542,51 @@ var GRAPH = (function(module) {
                             } else {
                                 return obj;
                             }
-                        }, { labels: [], iris: [] }).iris.forEach(function(i) { g.nodess[i].logTooltip(); });
+                        }, { labels: [], iris: [] }).iris.forEach(function(i) { 
+			    g.nodess[i]
+				.logTooltip()
+				.subscribe(text => {
+				    d3.select("#tooltipText")
+					.append("p")
+					.html(text);
+				});
+			});
                     }
+                    d3.event.stopPropagation();
+                });
+
+            //append language tag to nodes            
+            inner.selectAll("g.node")
+                .append("text")
+                .style("display", "inline")
+                .attr("class", "isoText")
+                .attr("x", "1em")
+                .attr("y", "3em")
+                .html(function(d) {
+                    return g.node(d).iso;
+                });
+
+            //show tooltip on mouseover language tag   
+            inner.selectAll("g.node")
+                .append("rect")
+                .attr("x", "0.8em")
+                .attr("y", "2.2em")
+                .attr("width", function(d) {
+                    return g.node(d).iso.length / 1.7 + "em";
+                })
+                .attr("height", "1em")
+                .attr("fill", "red")
+                .attr("fill-opacity", 0)
+                .on("mouseover", function(d) {
+		    d3.select("#tooltipText").remove();
+                    d3.select("#tooltipPopup")
+                        .style("display", "inline")
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                    d3.select("#tooltipPopup")
+                        .append("div")
+                        .attr("id", "tooltipText")
+                        .html(g.node(d).lang);
                     d3.event.stopPropagation();
                 });
 
@@ -592,7 +604,9 @@ var GRAPH = (function(module) {
                 .attr("data-dismissible", "true")
                 .attr("id", "tooltipPopup")
                 .style("display", "none")
-                .attr("class", "ui-content tooltipDiv");
+                .attr("class", "ui-content tooltipDiv")
+                .append("div")
+                .attr("id", "tooltipText");
 
             $(window).click(function() {
                 d3.select("#tooltipPopup")

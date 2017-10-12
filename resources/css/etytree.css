@@ -4,27 +4,13 @@ html * {
     text-shadow: none !important;
 }
 
-text {
-    pointer-events: none;
-    font-size: 2em;
-}
-
 .isoText {
     font-size: 1em;
 }
- 
-.iso {
-    text-anchor: middle;
-    font-size: 0.5em;
-}
-
+  
 .help {
     font-size: 1em;
     max-width: 15em;
-}
-
-.message {
-    font-size: 1.5em;
 }
 
 .helpButton {
@@ -138,29 +124,32 @@ input:focus:-ms-input-placeholder { color:transparent; }
 }
 
 @media screen and (min-width: 0px) and (max-width: 1219px) {
-    #tdTitle { display: none; }
-    #tdHelpPopup { display: none; }  /* hide it on small screens */ 
+    #tdTitle { display: none; } /* hide it on small screens */ 
+    #tdHelpPopup { display: none; }  
     #tdEmpty { display: none; }
     #lineBreaks { display: none; }
-    #message { font-size: 70%; }
+    .message { font-size: 1em; }
     #logo { width: 60%; max-width: 6em;}
     .mediumSpan {
         font-weight: bold;
         font-size: 1em;
     }
     #title { display: block; }
+    text { font-size: 1em; }
+    .tooltipDiv { font-size: 0.8em; }
 }
 
 @media screen and (min-width: 1220px) {
-    #tdTitle { display: block; }
-    #tdHelpPopup { display: block; } /* show it elsewhere */
+    #tdTitle { display: block; } /* show it elsewhere */
+    #tdHelpPopup { display: block; } 
     #tdEmpty { display: block; }
     #lineBreaks { display: block; }
-    #message { font-size: 100%; }
+    .message { font-size: 1.5em; }
     #logo { width: 50%; }
     .mediumSpan {
         font-weight: bold;
         font-size: 1.5em;
     }
     #title { display: none; }
+    text { font-size: 2em; }
 }
