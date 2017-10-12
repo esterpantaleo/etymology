@@ -511,8 +511,10 @@ var GRAPH = (function(module) {
                 .scale(initialScale)
                 .event(svg);
 
+	    inner.selectAll("g.node > rect")
+		.attr("class", "word");
 	    //show tooltip on mouseover nodes 
-            inner.selectAll("g.node")
+            inner.selectAll(".word")
                 .on("mouseover", function(d) {
 		    d3.selectAll(".tooltip").remove(); 
 		    d3.select("#tooltipPopup")
@@ -524,44 +526,41 @@ var GRAPH = (function(module) {
                         g.nodess[iri]
 			    .logTooltip()
 			    .subscribe(text => {
-				d3.selectAll(".tooltip").remove(); 
 				d3.select("#tooltipPopup")
 				    .append("p")
 				    .attr("class", "tooltip") 
 				    .html(text);
 			    }, error => {
-				d3.selectAll(".tooltip").remove(); 
 				d3.select("#tooltipPopup")
                                     .append("p")
 				    .attr("class", "tooltip")
 				    .html("<b>" + that.label + "</b><br><br><br>-");
-				d3.event.stopPropagation();
 			    });
                     } else {
-                        iri.reduce(function(obj, i) {
+                        var tooltips = iri.reduce(function(obj, i) {
                             var label = g.nodess[i].label;
                             if (obj.labels.indexOf(label) === -1) {
                                 obj.labels.push(label);
-                                obj.iris.push(i);
+                                obj.text.push(g.nodess[i].logTooltip());
                                 return obj;
                             } else {
                                 return obj;
                             }
-                        }, { labels: [], iris: [] }).iris.forEach(function(i) { 
-			    g.nodess[i]
-				.logTooltip()
-				.subscribe(text => {	
-				    if (i === 0) {
-					d3.selectAll(".tooltip").remove();
-				    }
-				    d3.select("#tooltipPopup")
-					.append("p")
-					.attr("class", "tooltip") 
-					.html(text);
-				    d3.event.stopPropagation();
-				});
+                        }, { labels: [], text: [] });
+                        var obs = Rx.Observable.zip
+			    .apply(this, tooltips.text)
+			    .catch((err) => {
+				console.log(err); 
+				return Rx.Observable.empty();
+			    });
+			obs.subscribe(res => {
+			    d3.select("#tooltipPopup")  
+				.append("p") 
+				.attr("class", "tooltip") 
+				.html(res.join("<br><br>"));
 			});
                     }
+                    d3.event.stopPropagation();
                 });
 
             //append language tag to nodes            

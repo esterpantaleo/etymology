@@ -76,6 +76,7 @@ var LOAD = (function(module) {
 
                 return etyBase.DB.getXMLHttpRequest(url)
 		   .flatMap(response => {
+		       d3.selectAll(".tooltip").remove(); 
                        var text = "<b>" + that.label + "</b><br><br><br>";
                        if (null !== response) {
                            //print definition  
