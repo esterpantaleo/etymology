@@ -55,7 +55,7 @@ var EtyTree = {
 
 var ety;
 
-jQuery('document').ready(function($) {
+jQuery(window).load(function($) {
     ety = EtyTree.create();
     ety.init();
 });
