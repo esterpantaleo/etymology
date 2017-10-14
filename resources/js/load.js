@@ -36,7 +36,7 @@ var LOAD = (function(module) {
                 this.iri = [];
                 this.isAncestor = false;
                 this.shape = "rect";
-//                this.style = "fill: lightBlue; stroke: black";
+                //                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
             }
         }
@@ -75,25 +75,25 @@ var LOAD = (function(module) {
                 var that = this;
 
                 return etyBase.DB.getXMLHttpRequest(url)
-		   .flatMap(response => {
-                       var text = "<b>" + that.label + "</b><br><br><br>";
-                       if (null !== response) {
-                           //print definition  
-                           var dataJson = JSON.parse(response).results.bindings;
-                           text += dataJson.reduce(
-                               function(s, element) {
-                                   return s += that.logDefinition(element.pos, element.gloss);
-                               },
-                               ""
-                           );
-                           //print links 
-                           text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
-                               that.logLinks(dataJson[0].links.value);
-                       } else {
-                           text += "-";
-                       }
-		       return Promise.resolve(text);
-                   });
+                    .flatMap(response => {
+                        var text = "<b>" + that.label + "</b><br><br><br>";
+                        if (null !== response) {
+                            //print definition  
+                            var dataJson = JSON.parse(response).results.bindings;
+                            text += dataJson.reduce(
+                                function(s, element) {
+                                    return s += that.logDefinition(element.pos, element.gloss);
+                                },
+                                ""
+                            );
+                            //print links 
+                            text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
+                                that.logLinks(dataJson[0].links.value);
+                        } else {
+                            text += "-";
+                        }
+                        return Promise.resolve(text);
+                    });
             }
 
             parseIri(iri) {

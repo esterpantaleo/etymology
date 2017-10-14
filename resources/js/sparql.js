@@ -76,8 +76,8 @@ var DB = (function(module) {
         //and outputs a query to the etytree SPARQL endpoint;
         //the query returns a table with 3 headers
         //"iri": the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
-	//"et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
-	//"lemma": a string containing the rdfs label of the resource "iri"
+        //"et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
+        //"lemma": a string containing the rdfs label of the resource "iri"
         var disambiguationQuery = function(lemma) {
             var encodedLemma = lemma
                 .replace(/'/g, "\\\\'")

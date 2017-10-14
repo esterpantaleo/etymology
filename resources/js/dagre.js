@@ -79,7 +79,7 @@ var GRAPH = (function(module) {
             var g = new dagreD3.graphlib.Graph().setGraph({});
             g.nodess = {};
             var disambiguationArray = JSON.parse(response).results.bindings;
-	    
+
             //define nodes 
             disambiguationArray.forEach(function(n) {
                 if (n.et.value === "" || n.et.value.split(",").length > 1) {
@@ -511,32 +511,32 @@ var GRAPH = (function(module) {
                 .scale(initialScale)
                 .event(svg);
 
-	    //show tooltip on mouseover nodes 
+            //show tooltip on mouseover nodes 
             inner.selectAll("g.node")
                 .on("mouseover", function(d) {
-		    d3.selectAll(".tooltip").remove(); 
-		    d3.select("#tooltipPopup")
+                    d3.selectAll(".tooltip").remove();
+                    d3.select("#tooltipPopup")
                         .style("display", "inline")
                         .style("left", (d3.event.pageX + 38) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
-                    var iri = g.node(d).iri;                   
+                    var iri = g.node(d).iri;
                     if (typeof iri === "string") {
                         g.nodess[iri]
-			    .logTooltip()
-			    .subscribe(text => {
-				d3.selectAll(".tooltip").remove(); 
-				d3.select("#tooltipPopup")
-				    .append("p")
-				    .attr("class", "tooltip") 
-				    .html(text);
-			    }, error => {
-				d3.selectAll(".tooltip").remove(); 
-				d3.select("#tooltipPopup")
+                            .logTooltip()
+                            .subscribe(text => {
+                                d3.selectAll(".tooltip").remove();
+                                d3.select("#tooltipPopup")
                                     .append("p")
-				    .attr("class", "tooltip")
-				    .html("<b>" + that.label + "</b><br><br><br>-");
-				d3.event.stopPropagation();
-			    });
+                                    .attr("class", "tooltip")
+                                    .html(text);
+                            }, error => {
+                                d3.selectAll(".tooltip").remove();
+                                d3.select("#tooltipPopup")
+                                    .append("p")
+                                    .attr("class", "tooltip")
+                                    .html("<b>" + that.label + "</b><br><br><br>-");
+                                d3.event.stopPropagation();
+                            });
                     } else {
                         iri.reduce(function(obj, i) {
                             var label = g.nodess[i].label;
@@ -547,20 +547,20 @@ var GRAPH = (function(module) {
                             } else {
                                 return obj;
                             }
-                        }, { labels: [], iris: [] }).iris.forEach(function(i) { 
-			    g.nodess[i]
-				.logTooltip()
-				.subscribe(text => {	
-				    if (i === 0) {
-					d3.selectAll(".tooltip").remove();
-				    }
-				    d3.select("#tooltipPopup")
-					.append("p")
-					.attr("class", "tooltip") 
-					.html(text);
-				    d3.event.stopPropagation();
-				});
-			});
+                        }, { labels: [], iris: [] }).iris.forEach(function(i) {
+                            g.nodess[i]
+                                .logTooltip()
+                                .subscribe(text => {
+                                    if (i === 0) {
+                                        d3.selectAll(".tooltip").remove();
+                                    }
+                                    d3.select("#tooltipPopup")
+                                        .append("p")
+                                        .attr("class", "tooltip")
+                                        .html(text);
+                                    d3.event.stopPropagation();
+                                });
+                        });
                     }
                 });
 
@@ -587,13 +587,13 @@ var GRAPH = (function(module) {
                 .attr("fill", "red")
                 .attr("fill-opacity", 0)
                 .on("mouseover", function(d) {
-		    d3.selectAll(".tooltip").remove();
+                    d3.selectAll(".tooltip").remove();
                     d3.select("#tooltipPopup")
                         .style("display", "inline")
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 28) + "px")
                         .append("p")
-			.attr("class", "tooltip")
+                        .attr("class", "tooltip")
                         .html(g.node(d).lang);
                     d3.event.stopPropagation();
                 });
