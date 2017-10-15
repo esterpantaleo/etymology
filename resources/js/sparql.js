@@ -57,9 +57,7 @@ var DB = (function(module) {
                 tmpArray = myArray.slice(i, i + chunk);
 
                 url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
-                if (etyBase.config.debug) {
-                    console.log(url);
-                }
+                etyBase.helpers.debugLog(url);
                 sources.push(etyBase.DB.getXMLHttpRequest(url));
             }
             const queryObservable = Rx.Observable.zip.apply(this, sources)

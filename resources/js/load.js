@@ -68,9 +68,7 @@ var LOAD = (function(module) {
                 var query = etyBase.DB.lemmaQuery(this.iri);
                 var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
 
-                if (etyBase.config.debug) {
-                    console.log(url);
-                }
+                etyBase.helpers.debugLog(url);
 
                 var that = this;
 
@@ -172,9 +170,7 @@ var LOAD = (function(module) {
         var init = function() {
             //LOAD LANGUAGES
             //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English")      
-            if (etyBase.config.debug) {
-                console.log("loading languages");
-            }
+            etyBase.helpers.debugLog("loading languages");
 
             etyBase.tree.langMap = new Map();
             var ssv = d3.dsv(";", "text/plain");

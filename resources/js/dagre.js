@@ -8,7 +8,7 @@ var GRAPH = (function(module) {
         var etyBase = base;
 
         var serverError = function(error) {
-            console.log(error);
+            console.error(error);
 
             $('#message')
                 .css('display', 'inline')
@@ -36,9 +36,9 @@ var GRAPH = (function(module) {
 
             //query database
             var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
-            if (etyBase.config.debug) {
-                console.log("disambiguation query = " + url);
-            }
+            
+            etyBase.helpers.debugLog("disambiguation query = " + url);
+
             etyBase.DB.getXMLHttpRequest(url).subscribe(
                 response => {
                     var g = parseDisambiguationNodes(response);
@@ -69,9 +69,9 @@ var GRAPH = (function(module) {
                         .html("Server error. " + error);
                 },
                 () => {
-                    if (etyBase.config.debug) {
-                        console.log('done disambiguation');
-                    }
+                    
+                    etyBase.helpers.debugLog('done disambiguation');
+
                 });
         };
 
@@ -97,9 +97,8 @@ var GRAPH = (function(module) {
                 m = n;
             }
 
-            if (etyBase.config.debug) {
-                console.log(g.nodess);
-            }
+            etyBase.helpers.debugLog(g.nodess);
+
             return g;
         };
 
@@ -123,8 +122,8 @@ var GRAPH = (function(module) {
                     }
                     return ancestors;
                 }, []).filter(etyBase.helpers.onlyUnique);
-            console.log("ancestors");
-            console.log(ancestorArray);
+            etyBase.helpers.debugLog("ancestors");
+            etyBase.helpers.debugLog(ancestorArray);
             return ancestorArray;
         };
 
@@ -135,8 +134,8 @@ var GRAPH = (function(module) {
                         descendants = descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
                         return descendants;
                     }, []).filter(etyBase.helpers.onlyUnique);
-            console.log("descendants");
-            console.log(descendantArray);
+            etyBase.helpers.debugLog("descendants");
+            etyBase.helpers.debugLog(descendantArray);
             return ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
         };
 
@@ -223,16 +222,12 @@ var GRAPH = (function(module) {
                                                 },
                                                 error => serverError(error),
                                                 () => {
-                                                    if (etyBase.config.debug) {
-                                                        console.log('done property query');
-                                                    }
+                                                    etyBase.helpers.debugLog('done property query');
                                                 });
                                     },
                                     error => serverError(error),
                                     () => {
-                                        if (etyBase.config.debug) {
-                                            console.log('done descendants query');
-                                        }
+                                        etyBase.helpers.debugLog('done descendants query');
                                     });
                         } else {
                             etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.propertyQuery, 3)
@@ -253,17 +248,13 @@ var GRAPH = (function(module) {
                                     },
                                     error => serverError(error),
                                     () => {
-                                        if (etyBase.config.debug) {
-                                            console.log('done property query');
-                                        }
+                                        etyBase.helpers.debugLog('done property query');
                                     });
                         }
                     },
                     error => serverError(error),
                     () => {
-                        if (etyBase.config.debug) {
-                            console.log('done ancestor query');
-                        }
+                        etyBase.helpers.debugLog('done ancestor query');
                     });
         };
 
@@ -282,8 +273,8 @@ var GRAPH = (function(module) {
             if (allArray.length < 2) {
                 return g;
             } else {
-                console.log("allArray");
-                console.log(allArray);
+                etyBase.helpers.debugLog("allArray");
+                etyBase.helpers.debugLog(allArray);
                 //CONSTRUCTING NODES
                 allArray.forEach(function(element) {
                     //save all nodes        
@@ -461,12 +452,10 @@ var GRAPH = (function(module) {
 
                 //todo: add links between ancestors
 
-                if (etyBase.config.debug) {
-                    console.log("g.nodess");
-                    console.log(g.nodess);
-                    console.log("g");
-                    console.log(g);
-                }
+                etyBase.helpers.debugLog("g.nodess");
+                etyBase.helpers.debugLog(g.nodess);
+                etyBase.helpers.debugLog("g");
+                etyBase.helpers.debugLog(g);
 
                 $('#message')
                     .css('display', 'none');
