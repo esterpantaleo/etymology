@@ -12,95 +12,90 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.7/js/hopscotch.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.1/Rx.min.js"></script>
 <script src="./vendors/dagre-d3/dagre-d3.js"></script>
-<script async src="./resources/js/liveTour.js"></script>
-<script async src="./resources/js/sparql.js"></script>   
-<script async src="./resources/js/load.js"></script>
-<script async src="./resources/js/dagre.js"></script>
-<script async src="./resources/js/etytree.js"></script>  
 <body> 
-<!--<div data-role="page">-->
-    <div data-role="header" id="header">
-       <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
-	    <tr>
-               <td>
-                   <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
-                       <tr>
-                       <img src="./resources/images/etytree_logo.png" alt="logo" width="60%" style="display:block;margin:auto;height:auto;" />
-                       </tr>
-                       <br>
-                   </table>
-               </td>
-               <td>
-                   <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
-		       <tr>      
-	                   <span class="bigSpan">etytree</span> - <span class="mediumSpan"> a graphical etymology dictionary</span>				                
-                       </tr>
-                       <br>
-                       <tr>
-                           <td>
-                               <input class="mediumSpan" type="text" data-type="search" placeholder="search word" id="tags"></input>
-                           </td>
-                           <td>
-                               <a href="#divHelpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true">help</a>
-                               <div data-role="popup" id="divHelpPopup" class="ui-content help">
-                                   <p id="helpPopup" class="help" />
-                               </div>
-                           </td>
-                       </tr>
-                   </table>
-               </td>
-               <td>
-                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	       </td>
-           </tr>
-           <br>
+  <div data-role="header" id="header">
+    <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
+      <td>
+        <img id="logo" src="./resources/images/etytree_logo.png" alt="logo" style="display:block;margin:auto;height:auto;" />
+      </td>
+      <td>
+        <table style="empty-cells:hide; margin-left:auto; margin-right:auto;">          
+	  <tr>
+            <div id="tdTitle">
+	      <span class="bigSpan">etytree</span><span class="mediumSpan"> - a graphical and multilingual etymology dictionary</span>
+              <br>
+            </div>  				                
+          </tr>
+          <tr>
+            <td>
+              <input class="mediumSpan" type="text" data-type="search" placeholder="search" id="tags"></input>
+            </td>
+            <td id="tdHelpPopup">
+              <a href="#divHelpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true">help</a>
+              <div data-role="popup" id="divHelpPopup" class="ui-content help">
+                <p id="helpPopup" class="help" />
+              </div>
+            </td>
+          </tr>
         </table>
-    </div>
+           </td>
+      <td id="tdEmpty">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	   </td>
+      <br>
+    </table>
+  </div>
     <div data-role="content" class="ui-content" id="tree-container" style="text-align: center;">
-        <p id="message" class="message"/>
-        <div id="tree-overlay">
-            <div>
-                <br><br><br><br><br>
-            </div>
-                <br>
-                <span class="blueSpan">
-                     Type a word in the search bar, then press enter. 
-                     <br>
-                     You will see a list of words.
-                     <br>
-                     Explore the different words by mousing over them and on language tags below them. 
-                     <br>
-                     Click on the word you are interested in.
-                </span>
-		<br><br><br><br><br>
-            <div>
-                etytree can visualize the etymological tree of a word, i.e., 
-                <br>
-                the etymology - or the origin of a word and the historical development of its meaning - in the form of a tree, 
-                <br>
-                reconstructing its ancestral form, its cognate words, its derived words, etc. 
-                <br>
-                <br>
-                <span class="redSpan">This first version uses directed graphs instead of trees and extracts and parses data automatically from a dump of the English Wiktionary. </span>
-                <br>
-            </div>
+      <p id="message" class="message"/>
+      <div id="tree-overlay">
+        <div id="lineBreaks">
+                <br><br><br><br><br><br>
+        </div>
+        <div id="title">
+	  <br>
+          <span class="bigSpan">etytree</span>
+          <br>
+          <span class="mediumSpan">a graphical and multilingual etymology dictionary</span>
+          <br><br><br><br>
+        </div>
+        <span class="blueSpan">
+          Type a word in the search bar, then press enter. 
+          <br>
+          You will see a list of words.
+          <br>
+          Explore the different words by mousing/tapping over them and on language tags below them. 
+          <br>
+          Click on the word you are interested in.
+        </span>
+	<br><br><br><br><br>
+        <div>
+          etytree can visualize the etymological tree of a word, i.e., 
+          <br>
+          the etymology - or the origin of a word and the historical development of its meaning - in the form of a tree, 
+          <br>
+          reconstructing its ancestral form, its cognate words, its derived words, etc. 
+          <br>
+          <br>
+          <span class="redSpan">This first version uses directed graphs instead of trees and extracts and parses data automatically from a dump of the English Wiktionary. </span>
+          <br>
+        </div>
+        <br>
+        <div>
+          <span class="smallSpan">
+            This project is open source (source code <a href="https://github.com/esterpantaleo/etymology">javascript</a>, <a href="https://bitbucket.org/esterpantaleo/dbnary_etymology">java</a>) and uses <a href="http://d3js.org/">d3</a> and <a href="https://www.wiktionary.org/">Wiktionary</a>. There is a SPARQL endpoint <a href="http://etytree-virtuoso.wmflabs.org/sparql">here</a>. Data is under CC BY-SA.
             <br>
-            <div>
-                <span class="smallSpan">
-                    This project is open source (source code <a href="https://github.com/esterpantaleo/etymology">javascript</a>, <a href="https://bitbucket.org/esterpantaleo/dbnary_etymology">java</a>) and uses <a href="http://d3js.org/">d3</a> and <a href="https://www.wiktionary.org/">Wiktionary</a>. There is a SPARQL endpoint <a href="http://etytree-virtuoso.wmflabs.org/sparql">here</a>. Data is under CC BY-SA.
-                    <br>
-                    In the current version you cannot edit the graph, you can indirectly edit it by editing Etymology sections of words in the English Wiktionary. <br>
-At each new release the database will be updated and the edits will be reflected into the graph. 
-                    <br>
-                    If you would like to contribute email esterpantaleo at gmail dot com or contact Wikimedia user <a href="https://meta.wikimedia.org/wiki/User_talk:Epantaleo">Epantaleo</a>. If you spot a bug please open an issue <a href="https://github.com/esterpantaleo/etymology/issues">here</a>.
-                </span><br>
-            </div>
+            In the current version you cannot edit the graph, you can indirectly edit it by editing Etymology sections of words in the English Wiktionary. <br>
+	    At each new release the database will be updated and the edits will be reflected into the graph. 
+            <br>
+            If you would like to contribute email esterpantaleo at gmail dot com or contact Wikimedia user <a href="https://meta.wikimedia.org/wiki/User_talk:Epantaleo">Epantaleo</a>. If you spot a bug please open an issue <a href="https://github.com/esterpantaleo/etymology/issues">here</a>.
+          </span><br>
         </div>
+      </div>
     </div>
-    <!--
-    <div id="tooltipPopup-popup" class="ui-popup-container ui-popup-hidden ui-popup-truncate">
-        <div data-role="popup" data-dismissible="true" id="tooltipPopup" class="ui-content" style="position:absolute;background=lightBlue;text-align:left;padding:2px;font:12px sans-serif;border:0px;border-radius:8px;width:auto;height:auto;">
-        </div>
-    </div>--> 
+    <script src="./resources/js/liveTour.js"></script>
+    <script src="./resources/js/sparql.js"></script>   
+    <script src="./resources/js/load.js"></script>
+    <script src="./resources/js/dagre.js"></script>
+    <script src="./resources/js/etytree.js" defer></script>  
 </body>
 </html>

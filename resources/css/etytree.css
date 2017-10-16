@@ -4,27 +4,13 @@ html * {
     text-shadow: none !important;
 }
 
-text {
-    pointer-events: none;
-    font-size: 2em;
-}
-
 .isoText {
     font-size: 1em;
 }
- 
-.iso {
-    text-anchor: middle;
-    font-size: 0.5em;
-}
-
+  
 .help {
     font-size: 1em;
     max-width: 15em;
-}
-
-.message {
-    font-size: 1.5em;
 }
 
 .helpButton {
@@ -64,11 +50,6 @@ text {
 
 .bigSpan {
     font-size: 2em;
-}
-
-.mediumSpan {
-    font-weight: bold;
-    font-size: 1.5em;
 }
 
 .tooltipDiv {
@@ -127,12 +108,6 @@ input:focus:-ms-input-placeholder { color:transparent; }
     100% { opacity: 1.0; }
 }
 
-.edgePath path {
-    stroke: lightBlue;
-    fill: lightBlue;
-    stroke-width: 0.3em;
-}
-
 ::-webkit-input-placeholder { /* Chrome */
     color: Gainsboro;
 }
@@ -146,4 +121,35 @@ input:focus:-ms-input-placeholder { color:transparent; }
 :-moz-placeholder { /* Firefox 4 - 18 */
     color: Gainsboro;
     opacity: 1;
+}
+
+@media screen and (min-width: 0px) and (max-width: 600px) {
+    #tdTitle { display: none; } /* hide it on small screens */ 
+    #tdHelpPopup { display: none; }  
+    #tdEmpty { display: none; }
+    #lineBreaks { display: none; }
+    .message { font-size: 1em; }
+    #logo { width: 60%; max-width: 6em;}
+    .mediumSpan {
+        font-weight: bold;
+        font-size: 1em;
+    }
+    #title { display: block; }
+    text { font-size: 1em; }
+    .tooltipDiv { font-size: 0.8em; }
+}
+
+@media screen and (min-width: 601px) {
+    #tdTitle { display: block; } /* show it elsewhere */
+    #tdHelpPopup { display: block; } 
+    #tdEmpty { display: block; }
+    #lineBreaks { display: block; }
+    .message { font-size: 1.5em; }
+    #logo { width: 50%; }
+    .mediumSpan {
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+    #title { display: none; }
+    text { font-size: 2em; }
 }

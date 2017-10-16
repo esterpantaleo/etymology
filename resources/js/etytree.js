@@ -12,12 +12,17 @@ var EtyTree = {
             },
             transform: function(d) {
                 return "translate(" + d.x + "," + d.y + ")";
+            },
+            debugLog: function(logText) {
+                if (etyBase.config.debug) {
+                    console.log(logText);
+                }
             }
         };
 
         /* Binding Modules */
         var bindModules = function(base, modules) {
-            for (var i = modules.length - 1; i >= 0; i--) {
+            for (var i = 0; i < modules.length; i++) {
                 if (!window[modules[i]]) {
                     console.error('Module ' + modules[i] + ' is not loaded.');
                     return false;
@@ -55,7 +60,7 @@ var EtyTree = {
 
 var ety;
 
-jQuery('document').ready(function($) {
+jQuery(window).load(function($) {
     ety = EtyTree.create();
     ety.init();
 });

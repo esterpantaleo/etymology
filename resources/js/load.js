@@ -27,7 +27,7 @@ var LOAD = (function(module) {
             serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
             noEtymology: "Sorry, it seems like no etymology is available in the English Wiktionary for this word.",
             loadingMore: "Loading, please wait...",
-	    disambiguation: "There are multiple words in the database. <br>Which word are you interested in?"
+            disambiguation: "There are multiple words in the database. <br>Which word are you interested in?"
         };
 
         class GraphNode {
@@ -35,9 +35,10 @@ var LOAD = (function(module) {
                 this.counter = i;
                 this.iri = [];
                 this.isAncestor = false;
+//                this.isDerived = false;
 
                 this.shape = "rect";
-                this.style = "fill: lightBlue; stroke: black";
+                //                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
             }
         }
@@ -48,7 +49,7 @@ var LOAD = (function(module) {
                 var tmp = this.parseIri(i);
                 this.iso = tmp.iso;
                 this.label = (undefined === label) ? tmp.label : label;
-		this.label = this.label.replace(/^_/, '*').replace("__", "'").replace("%C2%B7", "·");
+                this.label = this.label.replace(/^_/, '*').replace("__", "'").replace("%C2%B7", "·");
                 //ety is an integer                              
                 //and represents the etymology number encoded in the iri;
                 this.ety = tmp.ety;
@@ -57,8 +58,9 @@ var LOAD = (function(module) {
                 this.graphNode = undefined;
                 //eqIri is an array of iri-s of Node-s that are equivalent to the Node 
                 this.eqIri = [];
-		this.eqIri.push(i);
+                this.eqIri.push(i);
                 this.isAncestor = false;
+//                this.isDerived = false;
 
                 this.shape = "rect";
                 this.style = "fill: lightBlue; stroke: black";
@@ -66,26 +68,20 @@ var LOAD = (function(module) {
             }
 
             logTooltip() {
-		console.log("this.iri");
-		console.log(this.iri);
                 var query = etyBase.DB.lemmaQuery(this.iri);
                 var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
 
-                if (etyBase.config.debug) {
-                    console.log(url);
-                }
+                etyBase.helpers.debugLog(url);
 
                 var that = this;
 
-                const source = etyBase.DB.getXMLHttpRequest(url);
-                source.subscribe(
-                    function(response) {
+                return etyBase.DB.getXMLHttpRequest(url)
+		                .flatMap(response => {
+		                    d3.selectAll(".tooltip").remove(); 
                         var text = "<b>" + that.label + "</b><br><br><br>";
                         if (null !== response) {
                             //print definition  
                             var dataJson = JSON.parse(response).results.bindings;
-			    console.log("dataJson")
-			    console.log(dataJson)
                             text += dataJson.reduce(
                                 function(s, element) {
                                     return s += that.logDefinition(element.pos, element.gloss);
@@ -98,18 +94,8 @@ var LOAD = (function(module) {
                         } else {
                             text += "-";
                         }
-                        d3.select("#tooltipPopup")
-                            .append("p")
-                            .html(text);
-                    },
-                    function(error) {
-                        console.error(error);
-                        var text = "<b>" + that.label + "</b><br><br><br>";
-                        text += "-";
-                        d3.select("#tooltipPopup")
-                            .append("p")
-                            .html(text);
-                    });
+		                    return Promise.resolve(text);
+                   });
             }
 
             parseIri(iri) {
@@ -188,9 +174,7 @@ var LOAD = (function(module) {
         var init = function() {
             //LOAD LANGUAGES
             //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English")      
-            if (etyBase.config.debug) {
-                console.log("loading languages");
-            }
+            etyBase.helpers.debugLog("loading languages");
 
             etyBase.tree.langMap = new Map();
             var ssv = d3.dsv(";", "text/plain");
