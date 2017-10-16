@@ -58,7 +58,6 @@ var GRAPH = (function(module) {
                         renderGraph(g).selectAll("g.node")
                             .on("click", function(d) {
                                 var iri = g.node(d).iri;
-				
                                 constructEtymologyGraph(iri);
                             })
                     } 
@@ -540,7 +539,7 @@ var GRAPH = (function(module) {
                         }, { labels: [], iris: [] }).iris.forEach(function(i) { g.nodess[i].logTooltip(); });
                     }
                     d3.event.stopPropagation();
-                });
+		});          
 	    
             //svg.attr("height", g.graph().height * initialScale + 40);}}
             return inner;
