@@ -8,7 +8,7 @@ var GRAPH = (function(module) {
         var etyBase = base;
 
         var serverError = function(error) {
-            console.log(error);
+            console.error(error);
 
             $('#message')
                 .css('display', 'inline')
@@ -36,9 +36,9 @@ var GRAPH = (function(module) {
 
             //query database
             var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.disambiguationQuery(lemma));
-            if (etyBase.config.debug) {
-                console.log("disambiguation query = " + url);
-            }
+            
+            etyBase.helpers.debugLog("disambiguation query = " + url);
+
             etyBase.DB.getXMLHttpRequest(url).subscribe(
                 response => {
                     var g = parseDisambiguationNodes(response);
@@ -69,9 +69,9 @@ var GRAPH = (function(module) {
                         .html("Server error. " + error);
                 },
                 () => {
-                    if (etyBase.config.debug) {
-                        console.log('done disambiguation');
-                    }
+                    
+                    etyBase.helpers.debugLog('done disambiguation');
+
                 });
         };
 
@@ -79,7 +79,7 @@ var GRAPH = (function(module) {
             var g = new dagreD3.graphlib.Graph().setGraph({});
             g.nodess = {};
             var disambiguationArray = JSON.parse(response).results.bindings;
-	    
+
             //define nodes 
             disambiguationArray.forEach(function(n) {
                 if (n.et.value === "" || n.et.value.split(",").length > 1) {
@@ -97,9 +97,8 @@ var GRAPH = (function(module) {
                 m = n;
             }
 
-            if (etyBase.config.debug) {
-                console.log(g.nodess);
-            }
+            etyBase.helpers.debugLog(g.nodess);
+
             return g;
         };
 
@@ -123,8 +122,8 @@ var GRAPH = (function(module) {
                     }
                     return ancestors;
                 }, []).filter(etyBase.helpers.onlyUnique);
-            console.log("ancestors");
-            console.log(ancestorArray);
+            etyBase.helpers.debugLog("ancestors");
+            etyBase.helpers.debugLog(ancestorArray);
             return ancestorArray;
         };
 
@@ -226,16 +225,12 @@ console.log(filteredAncestorArray)
                                                 },
                                                 error => serverError(error),
                                                 () => {
-                                                    if (etyBase.config.debug) {
-                                                        console.log('done property query');
-                                                    }
+                                                    etyBase.helpers.debugLog('done property query');
                                                 });
                                     },
                                     error => serverError(error),
                                     () => {
-                                        if (etyBase.config.debug) {
-                                            console.log('done descendants query');
-                                        }
+                                        etyBase.helpers.debugLog('done descendants query');
                                     });
 /*                        } else {
                             etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.propertyQuery, 3)
@@ -256,17 +251,13 @@ console.log(filteredAncestorArray)
                                     },
                                     error => serverError(error),
                                     () => {
-                                        if (etyBase.config.debug) {
-                                            console.log('done property query');
-                                        }
+                                        etyBase.helpers.debugLog('done property query');
                                     });
                         }*/
                     },
                     error => serverError(error),
                     () => {
-                        if (etyBase.config.debug) {
-                            console.log('done ancestor query');
-                        }
+                        etyBase.helpers.debugLog('done ancestor query');
                     });
         };
 
@@ -287,8 +278,8 @@ console.log(filteredAncestorArray)
             if (propertyResponse.length < 2) {
                 return g;
             } else {
-                console.log("propertyResponse");
-                console.log(propertyResponse);
+                etyBase.helpers.debugLog("propertyResponse");
+                etyBase.helpers.debugLog(propertyResponse);
                 //CONSTRUCTING NODES
                 propertyResponse.forEach(function(element) {
                     //save all nodes        
@@ -468,12 +459,11 @@ console.log(filteredAncestorArray)
                 });
 
                 //todo: add links between ancestors
-                if (etyBase.config.debug) {
-                    console.log("g.nodess");
-                    console.log(g.nodess);
-                    console.log("g");
-                    console.log(g);
-                }
+
+                etyBase.helpers.debugLog("g.nodess");
+                etyBase.helpers.debugLog(g.nodess);
+                etyBase.helpers.debugLog("g");
+                etyBase.helpers.debugLog(g);
 
                 $('#message')
                     .css('display', 'none');
@@ -517,32 +507,32 @@ console.log(filteredAncestorArray)
             zoom.translate([(window.innerWidth - g.graph().width * initialScale) / 2, 20])
                 .scale(initialScale)
                 .event(svg);
-
-	    inner.selectAll("g.node > rect")
-		.attr("class", "word");
-	    //show tooltip on mouseover nodes 
+          
+	          inner.selectAll("g.node > rect")
+		            .attr("class", "word");
+	          //show tooltip on mouseover nodes 
             inner.selectAll(".word")
                 .on("mouseover", function(d) {
-		    d3.selectAll(".tooltip").remove(); 
-		    d3.select("#tooltipPopup")
+                    d3.selectAll(".tooltip").remove();
+                    d3.select("#tooltipPopup")
                         .style("display", "inline")
                         .style("left", (d3.event.pageX + 38) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
-                    var iri = g.node(d).iri;                   
+                    var iri = g.node(d).iri;
                     if (typeof iri === "string") {
                         g.nodess[iri]
-			    .logTooltip()
-			    .subscribe(text => {
-				d3.select("#tooltipPopup")
-				    .append("p")
-				    .attr("class", "tooltip") 
-				    .html(text);
-			    }, error => {
-				d3.select("#tooltipPopup")
+             			          .logTooltip()
+			                      .subscribe(text => {
+				                        d3.select("#tooltipPopup")
+				                            .append("p")
+				                            .attr("class", "tooltip") 
+				                            .html(text);
+			                      }, error => {
+				                        d3.select("#tooltipPopup")
                                     .append("p")
-				    .attr("class", "tooltip")
-				    .html("<b>" + that.label + "</b><br><br><br>-");
-			    });
+				                            .attr("class", "tooltip")
+				                            .html("<b>" + that.label + "</b><br><br><br>-");
+			                      });
                     } else {
                         var tooltips = iri.reduce(function(obj, i) {
                             var label = g.nodess[i].label;
@@ -555,17 +545,17 @@ console.log(filteredAncestorArray)
                             }
                         }, { labels: [], text: [] });
                         var obs = Rx.Observable.zip
-			    .apply(this, tooltips.text)
-			    .catch((err) => {
-				console.log(err); 
-				return Rx.Observable.empty();
-			    });
-			obs.subscribe(res => {
-			    d3.select("#tooltipPopup")  
-				.append("p") 
-				.attr("class", "tooltip") 
-				.html(res.join("<br><br>"));
-			});
+			                      .apply(this, tooltips.text)
+			                      .catch((err) => {
+				                        console.log(err); 
+				                        return Rx.Observable.empty();
+			                      });
+			                   obs.subscribe(res => {
+			                       d3.select("#tooltipPopup")  
+				                         .append("p") 
+				                         .attr("class", "tooltip") 
+				                         .html(res.join("<br><br>"));
+			                       });
                     }
                     d3.event.stopPropagation();
                 });
@@ -593,13 +583,13 @@ console.log(filteredAncestorArray)
                 .attr("fill", "red")
                 .attr("fill-opacity", 0)
                 .on("mouseover", function(d) {
-		    d3.selectAll(".tooltip").remove();
+                    d3.selectAll(".tooltip").remove();
                     d3.select("#tooltipPopup")
                         .style("display", "inline")
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 28) + "px")
                         .append("p")
-			.attr("class", "tooltip")
+                        .attr("class", "tooltip")
                         .html(g.node(d).lang);
                     d3.event.stopPropagation();
                 });

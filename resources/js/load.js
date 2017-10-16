@@ -38,7 +38,7 @@ var LOAD = (function(module) {
 //                this.isDerived = false;
 
                 this.shape = "rect";
-//                this.style = "fill: lightBlue; stroke: black";
+                //                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
             }
         }
@@ -71,32 +71,30 @@ var LOAD = (function(module) {
                 var query = etyBase.DB.lemmaQuery(this.iri);
                 var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
 
-                if (etyBase.config.debug) {
-                    console.log(url);
-                }
+                etyBase.helpers.debugLog(url);
 
                 var that = this;
 
                 return etyBase.DB.getXMLHttpRequest(url)
-		   .flatMap(response => {
-		       d3.selectAll(".tooltip").remove(); 
-                       var text = "<b>" + that.label + "</b><br><br><br>";
-                       if (null !== response) {
-                           //print definition  
-                           var dataJson = JSON.parse(response).results.bindings;
-                           text += dataJson.reduce(
-                               function(s, element) {
-                                   return s += that.logDefinition(element.pos, element.gloss);
-                               },
-                               ""
-                           );
-                           //print links 
-                           text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
-                               that.logLinks(dataJson[0].links.value);
-                       } else {
-                           text += "-";
-                       }
-		       return Promise.resolve(text);
+		                .flatMap(response => {
+		                    d3.selectAll(".tooltip").remove(); 
+                        var text = "<b>" + that.label + "</b><br><br><br>";
+                        if (null !== response) {
+                            //print definition  
+                            var dataJson = JSON.parse(response).results.bindings;
+                            text += dataJson.reduce(
+                                function(s, element) {
+                                    return s += that.logDefinition(element.pos, element.gloss);
+                                },
+                                ""
+                            );
+                            //print links 
+                            text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
+                                that.logLinks(dataJson[0].links.value);
+                        } else {
+                            text += "-";
+                        }
+		                    return Promise.resolve(text);
                    });
             }
 
@@ -176,9 +174,7 @@ var LOAD = (function(module) {
         var init = function() {
             //LOAD LANGUAGES
             //used to print on screen the language name when the user clicks on a node (e.g.: eng -> "English")      
-            if (etyBase.config.debug) {
-                console.log("loading languages");
-            }
+            etyBase.helpers.debugLog("loading languages");
 
             etyBase.tree.langMap = new Map();
             var ssv = d3.dsv(";", "text/plain");

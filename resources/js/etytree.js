@@ -12,6 +12,11 @@ var EtyTree = {
             },
             transform: function(d) {
                 return "translate(" + d.x + "," + d.y + ")";
+            },
+            debugLog: function(logText) {
+                if (etyBase.config.debug) {
+                    console.log(logText);
+                }
             }
         };
 
