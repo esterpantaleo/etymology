@@ -135,8 +135,6 @@ var GRAPH = (function(module) {
                         descendants = descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
                         return descendants;
                     }, []).filter(etyBase.helpers.onlyUnique);
-            console.log("descendants");
-            console.log(descendantArray);
             return ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
         };
 
@@ -198,18 +196,23 @@ var GRAPH = (function(module) {
                     ancestorResponse => {
                         var ancestorArray = parseAncestors(ancestorResponse);
                         ancestorArray.push(iri);
+                        //filteredAncestorArray is ancestorArray without words that start or end with dash
+                        //we will find descendants of filteredAncestorArray, thus excluding descendants of words that start or end with dash
                         var filteredAncestorArray = ancestorArray.filter(function(element) { return lemmaNotStartsOrEndsWithDash(element); });
-
-                        if (doFindDescendants(ancestorResponse)) {
+console.log("filteredAncestorArray")
+console.log(filteredAncestorArray)
+//                        if (doFindDescendants(ancestorResponse)) {
                             etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
                                 .subscribe(
                                     descendantResponse => {
                                         var allArray = parseDescendants(ancestorArray, descendantResponse);
+					console.log("descendants");
+					console.log(allArray);
                                         etyBase.DB.slicedQuery(allArray, etyBase.DB.propertyQuery, 3)
                                             .subscribe(
                                                 propertyResponse => {
-                                                    setData(ancestorArray, ancestorResponse, propertyResponse);
-                                                    var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
+                                                    setData(propertyResponse);
+                                                    var g = parseEtymologyNodes(ancestorArray, allArray);
 
                                                     if (Object.keys(g.nodess).length === 0) {
                                                         $('#message')
@@ -234,7 +237,7 @@ var GRAPH = (function(module) {
                                             console.log('done descendants query');
                                         }
                                     });
-                        } else {
+/*                        } else {
                             etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.propertyQuery, 3)
                                 .subscribe(
                                     propertyResponse => {
@@ -257,7 +260,7 @@ var GRAPH = (function(module) {
                                             console.log('done property query');
                                         }
                                     });
-                        }
+                        }*/
                     },
                     error => serverError(error),
                     () => {
@@ -267,28 +270,32 @@ var GRAPH = (function(module) {
                     });
         };
 
-        var setData = function(ancestors, ancestorResponse, propertyResponse) {
+        var setData = function(propertyResponse) {
             etyBase.tree.data = propertyResponse.reduce((all, a) => {
                 all = all.concat(JSON.parse(a).results.bindings);
                 return all;
             }, []);
         };
 
-        var parseEtymologyNodes = function(ancestors, ancestorResponse, propertyResponse) {
-            var allArray = etyBase.tree.data;
+        //todo: filter derived terms if (they are leaves && they are not ancestors)
+        //todo: iterate this step
+        var parseEtymologyNodes = function(ancestors, allArray) {
+            var propertyResponse = etyBase.tree.data;
             var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
             g.nodess = {};
 
-            if (allArray.length < 2) {
+            if (propertyResponse.length < 2) {
                 return g;
             } else {
-                console.log("allArray");
-                console.log(allArray);
+                console.log("propertyResponse");
+                console.log(propertyResponse);
                 //CONSTRUCTING NODES
-                allArray.forEach(function(element) {
+                propertyResponse.forEach(function(element) {
                     //save all nodes        
                     //define isAncestor
-                    if (undefined !== element.s && undefined === g.nodess[element.s.value]) {
+                    //push to eqIri
+		    //if s is not in ancestors or descendants don't add it to the graph and therefore do not add its links 
+                    if (undefined !== element.s && undefined === g.nodess[element.s.value] && allArray.indexOf(element.s.value) > -1) {
                         var label = (undefined === element.sLabel) ? undefined : element.sLabel.value;
                         g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, label);
                     }
@@ -306,7 +313,6 @@ var GRAPH = (function(module) {
                             var label = (undefined === element.eqLabel) ? undefined : element.eqLabel.value;
                             g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, label);
                         }
-                        //push to eqIri
                         if (element.rel.value !== element.eq.value) {
                             if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) === -1) {
                                 g.nodess[element.rel.value].eqIri.push(element.eq.value);
@@ -434,33 +440,34 @@ var GRAPH = (function(module) {
                 }
 
                 //CONSTRUCTING LINKS
-                allArray.forEach(function(element) {
+                propertyResponse.forEach(function(element) {
                     if (undefined !== element.rel && undefined !== element.s) {
-                        var source = g.nodess[element.rel.value].graphNode,
+			if (undefined !== g.nodess[element.s.value]) { 
+                            var source = g.nodess[element.rel.value].graphNode,
                             target = g.nodess[element.s.value].graphNode;
-                        if (source !== target) {
-                            if (g._nodes[source].isAncestor && g._nodes[target].isAncestor) {
-                                g.setEdge(source, target, {
-                                    label: "",
-                                    lineInterpolate: "basis",
-                                    style: "stroke: black; fill: none; stroke-width: 0.1em;",
-                                    arrowheadStyle: "fill: black"
-                                });
-                            } else {
-                                g.setEdge(source, target, {
-                                    label: "",
-                                    lineInterpolate: "basis",
-                                    style: "stroke: lightBlue; fill: none; stroke-width: 0.1em;",
-                                    arrowheadStyle: "fill: lightBlue",
-
-                                });
+                            if (source !== target) {
+				if (g._nodes[source].isAncestor && g._nodes[target].isAncestor) {
+                                    g.setEdge(source, target, {
+					label: "",
+					lineInterpolate: "basis",
+					style: "stroke: black; fill: none; stroke-width: 0.1em;",
+					arrowheadStyle: "fill: black"
+                                    });
+				} else {
+                                    g.setEdge(source, target, {
+					label: "",
+					lineInterpolate: "basis",
+					style: "stroke: lightBlue; fill: none; stroke-width: 0.1em;",
+					arrowheadStyle: "fill: lightBlue",
+					
+                                    });
+				}
                             }
-                        }
+			}
                     }
                 });
 
                 //todo: add links between ancestors
-
                 if (etyBase.config.debug) {
                     console.log("g.nodess");
                     console.log(g.nodess);

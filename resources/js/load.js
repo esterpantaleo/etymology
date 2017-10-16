@@ -35,6 +35,8 @@ var LOAD = (function(module) {
                 this.counter = i;
                 this.iri = [];
                 this.isAncestor = false;
+//                this.isDerived = false;
+
                 this.shape = "rect";
 //                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
@@ -58,6 +60,7 @@ var LOAD = (function(module) {
                 this.eqIri = [];
                 this.eqIri.push(i);
                 this.isAncestor = false;
+//                this.isDerived = false;
 
                 this.shape = "rect";
                 this.style = "fill: lightBlue; stroke: black";
