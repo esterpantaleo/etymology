@@ -35,6 +35,8 @@ var LOAD = (function(module) {
                 this.counter = i;
                 this.iri = [];
                 this.isAncestor = false;
+//                this.isDerived = false;
+
                 this.shape = "rect";
                 //                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
@@ -58,6 +60,7 @@ var LOAD = (function(module) {
                 this.eqIri = [];
                 this.eqIri.push(i);
                 this.isAncestor = false;
+//                this.isDerived = false;
 
                 this.shape = "rect";
                 this.style = "fill: lightBlue; stroke: black";
@@ -73,7 +76,8 @@ var LOAD = (function(module) {
                 var that = this;
 
                 return etyBase.DB.getXMLHttpRequest(url)
-                    .flatMap(response => {
+		                .flatMap(response => {
+		                    d3.selectAll(".tooltip").remove(); 
                         var text = "<b>" + that.label + "</b><br><br><br>";
                         if (null !== response) {
                             //print definition  
@@ -90,8 +94,8 @@ var LOAD = (function(module) {
                         } else {
                             text += "-";
                         }
-                        return Promise.resolve(text);
-                    });
+		                    return Promise.resolve(text);
+                   });
             }
 
             parseIri(iri) {

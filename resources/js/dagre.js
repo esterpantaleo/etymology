@@ -134,8 +134,6 @@ var GRAPH = (function(module) {
                         descendants = descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
                         return descendants;
                     }, []).filter(etyBase.helpers.onlyUnique);
-            etyBase.helpers.debugLog("descendants");
-            etyBase.helpers.debugLog(descendantArray);
             return ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
         };
 
@@ -197,18 +195,23 @@ var GRAPH = (function(module) {
                     ancestorResponse => {
                         var ancestorArray = parseAncestors(ancestorResponse);
                         ancestorArray.push(iri);
+                        //filteredAncestorArray is ancestorArray without words that start or end with dash
+                        //we will find descendants of filteredAncestorArray, thus excluding descendants of words that start or end with dash
                         var filteredAncestorArray = ancestorArray.filter(function(element) { return lemmaNotStartsOrEndsWithDash(element); });
-
-                        if (doFindDescendants(ancestorResponse)) {
+console.log("filteredAncestorArray")
+console.log(filteredAncestorArray)
+//                        if (doFindDescendants(ancestorResponse)) {
                             etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
                                 .subscribe(
                                     descendantResponse => {
                                         var allArray = parseDescendants(ancestorArray, descendantResponse);
+					console.log("descendants");
+					console.log(allArray);
                                         etyBase.DB.slicedQuery(allArray, etyBase.DB.propertyQuery, 3)
                                             .subscribe(
                                                 propertyResponse => {
-                                                    setData(ancestorArray, ancestorResponse, propertyResponse);
-                                                    var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
+                                                    setData(propertyResponse);
+                                                    var g = parseEtymologyNodes(ancestorArray, allArray);
 
                                                     if (Object.keys(g.nodess).length === 0) {
                                                         $('#message')
@@ -229,7 +232,7 @@ var GRAPH = (function(module) {
                                     () => {
                                         etyBase.helpers.debugLog('done descendants query');
                                     });
-                        } else {
+/*                        } else {
                             etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.propertyQuery, 3)
                                 .subscribe(
                                     propertyResponse => {
@@ -250,7 +253,7 @@ var GRAPH = (function(module) {
                                     () => {
                                         etyBase.helpers.debugLog('done property query');
                                     });
-                        }
+                        }*/
                     },
                     error => serverError(error),
                     () => {
@@ -258,28 +261,32 @@ var GRAPH = (function(module) {
                     });
         };
 
-        var setData = function(ancestors, ancestorResponse, propertyResponse) {
+        var setData = function(propertyResponse) {
             etyBase.tree.data = propertyResponse.reduce((all, a) => {
                 all = all.concat(JSON.parse(a).results.bindings);
                 return all;
             }, []);
         };
 
-        var parseEtymologyNodes = function(ancestors, ancestorResponse, propertyResponse) {
-            var allArray = etyBase.tree.data;
+        //todo: filter derived terms if (they are leaves && they are not ancestors)
+        //todo: iterate this step
+        var parseEtymologyNodes = function(ancestors, allArray) {
+            var propertyResponse = etyBase.tree.data;
             var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
             g.nodess = {};
 
-            if (allArray.length < 2) {
+            if (propertyResponse.length < 2) {
                 return g;
             } else {
-                etyBase.helpers.debugLog("allArray");
-                etyBase.helpers.debugLog(allArray);
+                etyBase.helpers.debugLog("propertyResponse");
+                etyBase.helpers.debugLog(propertyResponse);
                 //CONSTRUCTING NODES
-                allArray.forEach(function(element) {
+                propertyResponse.forEach(function(element) {
                     //save all nodes        
                     //define isAncestor
-                    if (undefined !== element.s && undefined === g.nodess[element.s.value]) {
+                    //push to eqIri
+		    //if s is not in ancestors or descendants don't add it to the graph and therefore do not add its links 
+                    if (undefined !== element.s && undefined === g.nodess[element.s.value] && allArray.indexOf(element.s.value) > -1) {
                         var label = (undefined === element.sLabel) ? undefined : element.sLabel.value;
                         g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, label);
                     }
@@ -297,7 +304,6 @@ var GRAPH = (function(module) {
                             var label = (undefined === element.eqLabel) ? undefined : element.eqLabel.value;
                             g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, label);
                         }
-                        //push to eqIri
                         if (element.rel.value !== element.eq.value) {
                             if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) === -1) {
                                 g.nodess[element.rel.value].eqIri.push(element.eq.value);
@@ -425,28 +431,30 @@ var GRAPH = (function(module) {
                 }
 
                 //CONSTRUCTING LINKS
-                allArray.forEach(function(element) {
+                propertyResponse.forEach(function(element) {
                     if (undefined !== element.rel && undefined !== element.s) {
-                        var source = g.nodess[element.rel.value].graphNode,
+			if (undefined !== g.nodess[element.s.value]) { 
+                            var source = g.nodess[element.rel.value].graphNode,
                             target = g.nodess[element.s.value].graphNode;
-                        if (source !== target) {
-                            if (g._nodes[source].isAncestor && g._nodes[target].isAncestor) {
-                                g.setEdge(source, target, {
-                                    label: "",
-                                    lineInterpolate: "basis",
-                                    style: "stroke: black; fill: none; stroke-width: 0.1em;",
-                                    arrowheadStyle: "fill: black"
-                                });
-                            } else {
-                                g.setEdge(source, target, {
-                                    label: "",
-                                    lineInterpolate: "basis",
-                                    style: "stroke: lightBlue; fill: none; stroke-width: 0.1em;",
-                                    arrowheadStyle: "fill: lightBlue",
-
-                                });
+                            if (source !== target) {
+				if (g._nodes[source].isAncestor && g._nodes[target].isAncestor) {
+                                    g.setEdge(source, target, {
+					label: "",
+					lineInterpolate: "basis",
+					style: "stroke: black; fill: none; stroke-width: 0.1em;",
+					arrowheadStyle: "fill: black"
+                                    });
+				} else {
+                                    g.setEdge(source, target, {
+					label: "",
+					lineInterpolate: "basis",
+					style: "stroke: lightBlue; fill: none; stroke-width: 0.1em;",
+					arrowheadStyle: "fill: lightBlue",
+					
+                                    });
+				}
                             }
-                        }
+			}
                     }
                 });
 
@@ -499,9 +507,11 @@ var GRAPH = (function(module) {
             zoom.translate([(window.innerWidth - g.graph().width * initialScale) / 2, 20])
                 .scale(initialScale)
                 .event(svg);
-
-            //show tooltip on mouseover nodes 
-            inner.selectAll("g.node")
+          
+	          inner.selectAll("g.node > rect")
+		            .attr("class", "word");
+	          //show tooltip on mouseover nodes 
+            inner.selectAll(".word")
                 .on("mouseover", function(d) {
                     d3.selectAll(".tooltip").remove();
                     d3.select("#tooltipPopup")
@@ -511,46 +521,43 @@ var GRAPH = (function(module) {
                     var iri = g.node(d).iri;
                     if (typeof iri === "string") {
                         g.nodess[iri]
-                            .logTooltip()
-                            .subscribe(text => {
-                                d3.selectAll(".tooltip").remove();
-                                d3.select("#tooltipPopup")
+             			          .logTooltip()
+			                      .subscribe(text => {
+				                        d3.select("#tooltipPopup")
+				                            .append("p")
+				                            .attr("class", "tooltip") 
+				                            .html(text);
+			                      }, error => {
+				                        d3.select("#tooltipPopup")
                                     .append("p")
-                                    .attr("class", "tooltip")
-                                    .html(text);
-                            }, error => {
-                                d3.selectAll(".tooltip").remove();
-                                d3.select("#tooltipPopup")
-                                    .append("p")
-                                    .attr("class", "tooltip")
-                                    .html("<b>" + that.label + "</b><br><br><br>-");
-                                d3.event.stopPropagation();
-                            });
+				                            .attr("class", "tooltip")
+				                            .html("<b>" + that.label + "</b><br><br><br>-");
+			                      });
                     } else {
-                        iri.reduce(function(obj, i) {
+                        var tooltips = iri.reduce(function(obj, i) {
                             var label = g.nodess[i].label;
                             if (obj.labels.indexOf(label) === -1) {
                                 obj.labels.push(label);
-                                obj.iris.push(i);
+                                obj.text.push(g.nodess[i].logTooltip());
                                 return obj;
                             } else {
                                 return obj;
                             }
-                        }, { labels: [], iris: [] }).iris.forEach(function(i) {
-                            g.nodess[i]
-                                .logTooltip()
-                                .subscribe(text => {
-                                    if (i === 0) {
-                                        d3.selectAll(".tooltip").remove();
-                                    }
-                                    d3.select("#tooltipPopup")
-                                        .append("p")
-                                        .attr("class", "tooltip")
-                                        .html(text);
-                                    d3.event.stopPropagation();
-                                });
-                        });
+                        }, { labels: [], text: [] });
+                        var obs = Rx.Observable.zip
+			                      .apply(this, tooltips.text)
+			                      .catch((err) => {
+				                        console.log(err); 
+				                        return Rx.Observable.empty();
+			                      });
+			                   obs.subscribe(res => {
+			                       d3.select("#tooltipPopup")  
+				                         .append("p") 
+				                         .attr("class", "tooltip") 
+				                         .html(res.join("<br><br>"));
+			                       });
                     }
+                    d3.event.stopPropagation();
                 });
 
             //append language tag to nodes            

@@ -223,7 +223,7 @@ var DB = (function(module) {
 
         var propertyQuery = function(iri) {
             var query =
-                "SELECT DISTINCT ?s ?rel ?eq ?sLabel ?relLabel ?eqLabel" +
+                "SELECT DISTINCT ?s ?rel ?eq ?sDer ?sLabel ?relLabel ?eqLabel" +
                 "{           " +
                 "   VALUES ?rel " +
                 "   {           " +
@@ -231,6 +231,9 @@ var DB = (function(module) {
                 "   } " +
                 "   OPTIONAL { " +
                 "       ?s dbetym:etymologicallyRelatedTo ?rel . " +
+//                "       OPTIONAL { " + 
+//                "           ?s dbetym:etymologicallyDerivesFrom ?rel . " +
+//                "       } " +
                 "       OPTIONAL { " +
                 "           ?m dbnary:describes ?s . " +
                 "           ?m rdfs:label ?sTmp . " +
