@@ -36,7 +36,8 @@ var LOAD = (function(module) {
                 this.iri = [];
                 this.isAncestor = false;
 //                this.isDerived = false;
-
+		this.hidden = false;
+		this.childrenHidden = false;
                 this.shape = "rect";
                 //                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
