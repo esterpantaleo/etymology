@@ -38,9 +38,13 @@ var LOAD = (function(module) {
 //                this.isDerived = false;
 		this.hidden = false;
 		this.childrenHidden = false;
-                this.shape = "rect";
-                //                this.style = "fill: lightBlue; stroke: black";
-                this.rx = this.ry = 7;
+            }
+	    
+	    attr(a, b) {
+		this.style = "fill: " + (this.childrenHidden? "lightBlue" : "white") + "; stroke: " + (this.isAncestor? "red" : "steelBlue") + "; stroke-width: 0.2em;";
+                this.shape = "rect"; 
+		this.rx = this.ry = 25;
+		return this;
             }
         }
 
@@ -62,19 +66,21 @@ var LOAD = (function(module) {
                 this.eqIri.push(i);
                 this.isAncestor = false;
 //                this.isDerived = false;
-
-                this.shape = "rect";
-                this.style = "fill: lightBlue; stroke: black";
-                this.rx = this.ry = 7;
             }
+
+	    attr(a, b) {
+		this.style = "fill: #F0E68C; stroke: red; stroke-width: 0.2em;";
+		this.shape = "rect"; 
+		this.rx = this.ry = 25;
+		return this;
+	    };
 
             logTooltip() {
                 var query = etyBase.DB.lemmaQuery(this.iri);
                 var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
+		var that = this;
 
                 etyBase.helpers.debugLog(url);
-
-                var that = this;
 
                 return etyBase.DB.getXMLHttpRequest(url)
 		                .flatMap(response => {
@@ -95,7 +101,7 @@ var LOAD = (function(module) {
                         } else {
                             text += "-";
                         }
-		                    return Promise.resolve(text);
+		        return Promise.resolve(text);
                    });
             }
 
@@ -205,7 +211,6 @@ var LOAD = (function(module) {
             Node: Node
         };
         this.init = init;
-
         etyBase[moduleName] = this;
     };
 

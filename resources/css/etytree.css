@@ -153,3 +153,14 @@ input:focus:-ms-input-placeholder { color:transparent; }
     #title { display: none; }
     text { font-size: 2em; }
 }
+
+.edgePath path.path {
+    stroke: grey;
+    fill: none;
+    stroke-width: 0.2em;
+}
+
+.arrowhead {
+    stroke: grey;
+    fill: grey;
+}
