@@ -65,6 +65,7 @@ var LOAD = (function(module) {
                 this.eqIri = [];
                 this.eqIri.push(i);
                 this.isAncestor = false;
+		this.temporary = false;
 //                this.isDerived = false;
             }
 
@@ -187,7 +188,7 @@ var LOAD = (function(module) {
             var ssv = d3.dsv(";", "text/plain");
             ssv("./resources/data/etymology-only_languages.csv", function(data) {
                 data.forEach(function(entry) {
-                    etyBase.tree.langMap.set(entry.code, entry["canonical name"]);
+		    entry.code.split(",").forEach(function(e) { etyBase.tree.langMap.set(e, entry["canonical name"]); })
                 });
             });
             ssv("./resources/data/list_of_languages.csv", function(data) {

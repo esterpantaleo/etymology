@@ -57,9 +57,7 @@ var GRAPH = (function(module) {
                             .css('display', 'inline')
                             .html(etyBase.LOAD.MESSAGE.disambiguation);
                         var g = defineDisambiguationGraph(nodes);
-			$('#message') 
-			    .css('display', 'none'); 
-			
+						
                         renderGraph(g);
 			embellishGraph(g, nodes);
 			d3.select("#inner").selectAll("g.node")
@@ -113,6 +111,7 @@ var GRAPH = (function(module) {
                 }, [])
                 .reduce((ancestors, a) => {
                     ancestors.push(a.ancestor1.value);
+		    console.log(a.ancestor1.value);
                     if (a.der1.value === "0" && undefined !== a.ancestor2 && lemmaNotStartsOrEndsWithDash(a.ancestor1.value)) {
                         ancestors.push(a.ancestor2.value);
                         if (a.der2.value === "0" && undefined !== a.ancestor3 && lemmaNotStartsOrEndsWithDash(a.ancestor2.value)) {
@@ -138,7 +137,7 @@ var GRAPH = (function(module) {
                     (descendants, d) => {
                         descendants = descendants.concat(JSON.parse(d).results.bindings.map(function(t) { return t.descendant1.value; }));
                         return descendants;
-                    }, []).filter(etyBase.helpers.onlyUnique);
+			}, []).filter(etyBase.helpers.onlyUnique);
             return ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
         };
 
@@ -198,6 +197,10 @@ var GRAPH = (function(module) {
 			.join(",");
 		    gg.lang = nodes[n].lang;
 		    gg.isAncestor = nodes[n].isAncestor;
+		    if (!gg.isAncestor) {
+			gg.hidden = true;
+			gg.childrenHidden = true;
+		    }
 		    graphNodes[gn] = gg;
                 }
             }
@@ -207,8 +210,8 @@ var GRAPH = (function(module) {
 	var defineEtymologyEdges = function(nodes, graphNodes, propertyArray) {
             var graphEdges = [];
 	    propertyArray.forEach(function(element) {
-		    if (undefined !== element.rel && undefined !== element.s) {
-			if (undefined !== nodes[element.s.value]) {
+		    if (undefined !== element.rel && undefined !== element.s){			
+			if (undefined !== nodes[element.s.value] && undefined !== nodes[element.rel.value]) {
 			    var source = nodes[element.rel.value].graphNode,
 				target = nodes[element.s.value].graphNode;
 			    if (source !== target) {
@@ -247,51 +250,72 @@ var GRAPH = (function(module) {
                         //filteredAncestorArray is ancestorArray without words that start or end with dash
                         //we will find descendants of filteredAncestorArray, thus excluding descendants of words that start or end with dash
                         var filteredAncestorArray = ancestorArray.filter(function(element) { return lemmaNotStartsOrEndsWithDash(element); });
-console.log("filteredAncestorArray")
-console.log(filteredAncestorArray)
 			etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
 			    .subscribe(
                                  descendantResponse => {
                                     var allArray = parseDescendants(ancestorArray, descendantResponse);
-				    console.log("descendants");
-				    console.log(allArray);
                                     etyBase.DB.slicedQuery(allArray, etyBase.DB.propertyQuery, 3)
                                         .subscribe(
                                             propertyResponse => {
 						//constructing etymologyNodes, graphNodes, graphEdges
 						//etymologyNodes is the set of input etymology entries
-                                                //graphNodes is the set of nodes in the full graph; a graphNode can correspond to multiple etymology entries (i.e. multiple elements in etymologNodes)
+                                                //graphNodes is the set of nodes in the full graph; a graphNode can correspond to multiple etymology entries (i.e. multiple elements in etymologyNodes)
                                                 var propertyArray = parseProperty(propertyResponse);
                                                 var etymologyNodes = parseEtymologyNodes(ancestorArray, allArray, propertyArray);
-                                                if (Object.keys(etymologyNodes).length === 0) {
+						
+                                                if (Object.keys(etymologyNodes).length < 2) {
                                                     $('#message')
                                                         .css('display', 'inline')
-                                                        .html(etyBase.LOAD.MESSAGE.noEtymology)
+                                                        .html(etyBase.LOAD.MESSAGE.noEtymology);
                                                 } else {
                                                     $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
 					            var graphNodes = defineEtymologyNodes(etymologyNodes);
-						    var graphEdges = defineEtymologyEdges(etymologyNodes, graphNodes, propertyArray);
-
-						    //define dagre
-						    var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
-						    for (var n in graphNodes) {
-							g.setNode(n, graphNodes[n].attr("default", true));
+						    if (Object.keys(graphNodes).length < 2) {
+							$('#message')
+							    .css('display', 'inline')
+							    .html(etyBase.LOAD.MESSAGE.noEtymology);
+						    } else {
+							var graphEdges = defineEtymologyEdges(etymologyNodes, graphNodes, propertyArray);
+							
+							//define dagre
+							var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
+							for (var n in graphNodes) {
+							    if (false === graphNodes[n].hidden) {
+								g.setNode(n, graphNodes[n].attr("default", true));
+							    }
+							}
+							for (var e in graphEdges) {
+							    if (graphNodes[graphEdges[e].source].hidden === false && graphNodes[graphEdges[e].target].hidden === false) {
+								g.setEdge(graphEdges[e].source, graphEdges[e].target, {label: "", lineInterpolate: "basis", arrowheadClass: "arrowhead"});
+							    }
+							}
+							
+							$('#message')
+						            .css('display', 'none');
+						
+							renderGraph(g);
+							embellishGraph(g, etymologyNodes);
+							d3.select("#expand").on("click", function() {
+								var gExpand = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
+								for (var n in graphNodes) {
+								    graphNodes[n].hidden = false;
+								    gExpand.setNode(n, graphNodes[n].attr("default", true));
+								}
+								for (var e in graphEdges) {
+								    gExpand.setEdge(graphEdges[e].source, graphEdges[e].target, {label: "", lineInterpolate: "basis", arrowheadClass: "arrowhead"});
+								}
+								var render = new dagreD3.render();
+								render(d3.select("#inner"), gExpand);
+								embellishGraph(gExpand, etymologyNodes);
+							    });
+							d3.select("#inner").selectAll("g.node")
+						            .on("click", function(d) {
+							        var gToggle = toggleNode(d, g, graphNodes, graphEdges);
+							        var render = new dagreD3.render(); 
+							        render(d3.select("#inner"), gToggle);
+							        embellishGraph(gToggle, etymologyNodes);
+							    });
 						    }
-						    for (var e in graphEdges) {
-							g.setEdge(graphEdges[e].source, graphEdges[e].target, {label: "", lineInterpolate: "basis", arrowheadClass: "arrowhead"});
-						    }
-					
-						    $('#message')
-						        .css('display', 'none');
-						    renderGraph(g);
-						    embellishGraph(g, etymologyNodes);
-						    d3.select("#inner").selectAll("g.node")
-						        .on("click", function(d) {
-							    var gToggle = toggleNode(d, g, graphNodes, graphEdges);
-							    var render = new dagreD3.render(); 
-							    render(d3.select("#inner"), gToggle);
-							    embellishGraph(gToggle, etymologyNodes);
-							});
                                                 }
                                             },
                                             error => serverError(error),
@@ -347,9 +371,9 @@ console.log(filteredAncestorArray)
 		    gToggle.setNode(n, graphNodes[n].attr("default", true));
 		}
 	    }
-	    for (var l in graphEdges) {
-	        if (graphNodes[graphEdges[l].source].hidden === false && graphNodes[graphEdges[l].target].hidden === false) {
-		    gToggle.setEdge(graphEdges[l].source, graphEdges[l].target, { label: "", lineInterpolate: "basis", arrowheadClass: "arrowhead"});
+	    for (var e in graphEdges) {
+	        if (graphNodes[graphEdges[e].source].hidden === false && graphNodes[graphEdges[e].target].hidden === false) {
+		    gToggle.setEdge(graphEdges[e].source, graphEdges[e].target, { label: "", lineInterpolate: "basis", arrowheadClass: "arrowhead"});
 		}
 	    }
 	    return gToggle;
@@ -366,10 +390,14 @@ console.log(filteredAncestorArray)
                     //save all nodes        
                     //define isAncestor
                     //push to eqIri
-		    //if s is not in ancestors or descendants don't add it to the graph and therefore do not add its edges 
-                    if (undefined !== element.s && undefined === nodes[element.s.value] && allArray.indexOf(element.s.value) > -1) {
+                    if (undefined !== element.s && undefined === nodes[element.s.value]) {
                         var label = (undefined === element.sLabel) ? undefined : element.sLabel.value;
                         nodes[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, label);
+			//temporarily add nodes that are not in allArray (s is not in ancestors or descendants)
+			if (allArray.indexOf(element.s.value) > -1) {
+			    nodes[element.s.value].temporary = true;
+			}
+			    
                     }
                     if (undefined !== element.rel) {
                         if (undefined === nodes[element.rel.value]) {
@@ -378,6 +406,7 @@ console.log(filteredAncestorArray)
                         }
                         if (ancestors.indexOf(element.rel.value) > -1) {
                             nodes[element.rel.value].isAncestor = true;
+			    nodes[element.rel.value].temporary = false;
                         }
                     }
                     if (undefined !== element.rel && undefined !== element.eq) {
@@ -395,6 +424,49 @@ console.log(filteredAncestorArray)
                         }
                     }
                 });
+		for (var n in nodes) {
+		    if (true === nodes[n].temporary) {
+			var iso = nodes[n].iso;
+			var label = nodes[n].label;
+			for (var m in nodes) {
+			    if (nodes[m].iso === iso && nodes[m].label === label) {
+				if (false === nodes[m].temporary) {
+				    nodes[n].temporary = false;
+				}
+				if (nodes[m].isAncestor) {
+				    nodes[n].isAncestor = true;
+				}
+			    }
+			}				
+		    }
+		}
+
+		for (var n in nodes) {
+		    if (true === nodes[n].temporary) {
+			nodes[n].eqIri.forEach(function(e) {
+				if (false === nodes[e].temporary) {
+				    nodes[n].temporary = false;
+				}
+				if (nodes[e].isAncestor) {
+				    nodes[n].isAncestor = true;
+				}
+			    });
+		    }
+		}
+
+		for (var n in nodes) {
+		    if (false === nodes[n].temporary) {
+			nodes[n].eqIri.forEach(function(e) {
+				nodes[e].temporary = false;
+			    });
+		    }
+		}
+		
+		for (var n in nodes) {
+		    if (true === nodes[n].temporary) {
+			delete nodes[n];
+		    }
+		}
                 //CONSTRUCTING GRAPHNODES
                 //a graphNode is some kind of super node that merges Nodes that are etymologically equivalent
                 //or that refer to the same word - also called here identical Nodes 
@@ -565,7 +637,7 @@ console.log(filteredAncestorArray)
                         var obs = Rx.Observable.zip
 			    .apply(this, tooltips.text)
 			    .catch((err) => {
-			        console.log(err); 
+				    //console.log(err); 
 				return Rx.Observable.empty();
 			    });
 			obs.subscribe(res => {

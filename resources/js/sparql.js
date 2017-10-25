@@ -55,7 +55,8 @@ var DB = (function(module) {
             var i, j, tmpArray, url, sources = [];
             for (i = 0, j = myArray.length; i < j; i += chunk) {
                 tmpArray = myArray.slice(i, i + chunk);
-
+		console.log("array=");
+		console.log(tmpArray);
                 url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
                 etyBase.helpers.debugLog(url);
                 sources.push(etyBase.DB.getXMLHttpRequest(url));
@@ -199,12 +200,9 @@ var DB = (function(module) {
             sources.push(etyBase.DB.postXMLHttpRequest(query));
             query = queryPart1 + ancestorSubquery(0, false, "<" + iri + ">") + queryPart3;
             sources.push(etyBase.DB.postXMLHttpRequest(query));
-
             const queryObservable = Rx.Observable.zip.apply(this, sources)
                 .catch((err) => {
-                    d3.select("#message").html(etyBase.LOAD.MESSAGE.serverError);
-
-                    /* Return an empty Observable which gets collapsed in the output */
+                    //Return an empty Observable which gets collapsed in the output 
                     return Rx.Observable.empty();
                 });
             return queryObservable;
@@ -223,7 +221,7 @@ var DB = (function(module) {
 
         var propertyQuery = function(iri) {
             var query =
-                "SELECT DISTINCT ?s ?rel ?eq ?sDer ?sLabel ?relLabel ?eqLabel" +
+                "SELECT DISTINCT ?s ?rel ?eq ?sLabel ?relLabel ?eqLabel" +
                 "{           " +
                 "   VALUES ?rel " +
                 "   {           " +
@@ -254,7 +252,7 @@ var DB = (function(module) {
                 "        BIND (STR(?relTmp) AS ?relLabel) " +
                 "    } " +
                 //  "   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . } "+
-                "} LIMIT 200";
+                "} LIMIT 500"; 
             return query;
         };
 
