@@ -10,26 +10,29 @@ var GRAPH = (function(module) {
         var serverError = function(error) {
             console.error(error);
 
-            $('#message')
-                .css('display', 'inline')
+            $("#message")
+                .css("display", "inline")
                 .html(etyBase.LOAD.MESSAGE.serverError);
         };
 
         var notAvailable = function(error) {
             console.error(error);
 
-            $('#tree-overlay')
+            $("#tree-overlay")
                 .remove();
             d3.select("#tooltipPopup")
                 .style("display", "none");
-            $('#message')
-                .css('display', 'inline')
+            $("#message")
+                .css("display", "inline")
                 .html(etyBase.LOAD.MESSAGE.notAvailable);
         };
 
         var constructDisambiguationGraph = function(lemma) {
+	    if (lemma.length < 2) {
+		return;
+	    }
             //clean screen
-            $('#tree-overlay')
+            $("#tree-overlay")
                 .remove();
             d3.select("#tooltipPopup")
                 .style("display", "none");
@@ -44,17 +47,17 @@ var GRAPH = (function(module) {
                     var nodes = parseDisambiguationNodes(response);
                     etyBase.helpers.debugLog(nodes);
                     if (Object.keys(nodes).length === 0) {
-                        $('#message')
-                            .css('display', 'inline')
+                        $("#message")
+                            .css("display", "inline")
                             .html(etyBase.LOAD.MESSAGE.notAvailable);
                     } else if (Object.keys(nodes).length === 1) {
                         var iri = Object.keys(nodes)[0];
                         constructEtymologyGraph(iri);
                     } else {
-                        $('#helpPopup')
+                        $("#helpPopup")
                             .html(etyBase.LOAD.HELP.disambiguation);
-                        $('#message')
-                            .css('display', 'inline')
+                        $("#message")
+                            .css("display", "inline")
                             .html(etyBase.LOAD.MESSAGE.disambiguation);
                         var g = defineDisambiguationGraph(nodes);
 						
@@ -68,12 +71,12 @@ var GRAPH = (function(module) {
                     }
                 },
                 error => {
-                    $('#message')
-                        .css('display', 'inline')
+                    $("#message")
+                        .css("display", "inline")
                         .html("Server error. " + error);
                 },
                 () => {
-                    etyBase.helpers.debugLog('done disambiguation');
+                    etyBase.helpers.debugLog("done disambiguation");
                 });
         };
 
@@ -230,12 +233,12 @@ var GRAPH = (function(module) {
 	};
 
         var constructEtymologyGraph = function(iri) {
-            $('#message')
-                .css('display', 'inline')
+            $("#message")
+                .css("display", "inline")
                 .html(etyBase.LOAD.MESSAGE.loadingMore);
             d3.select("#tooltipPopup")
                 .attr("display", "none");
-            $('#tree-overlay')
+            $("#tree-overlay")
                 .remove();
 
             const params = new URLSearchParams();
@@ -264,21 +267,22 @@ var GRAPH = (function(module) {
                                                 var etymologyNodes = parseEtymologyNodes(ancestorArray, allArray, propertyArray);
 						
                                                 if (Object.keys(etymologyNodes).length < 2) {
-                                                    $('#message')
-                                                        .css('display', 'inline')
+                                                    $("#message")
+                                                        .css("display", "inline")
                                                         .html(etyBase.LOAD.MESSAGE.noEtymology);
                                                 } else {
-                                                    $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
+                                                    $("#helpPopup")
+                                                        .html(etyBase.LOAD.HELP.dagre);
 					            var graphNodes = defineEtymologyNodes(etymologyNodes);
 						    if (Object.keys(graphNodes).length < 2) {
-							$('#message')
-							    .css('display', 'inline')
+							$("#message")
+							    .css("display", "inline")
 							    .html(etyBase.LOAD.MESSAGE.noEtymology);
 						    } else {
 							var graphEdges = defineEtymologyEdges(etymologyNodes, graphNodes, propertyArray);
 							
 							//define dagre
-							var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
+							var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: "LR" });
 							for (var n in graphNodes) {
 							    if (false === graphNodes[n].hidden) {
 								g.setNode(n, graphNodes[n].attr("default", true));
@@ -290,13 +294,13 @@ var GRAPH = (function(module) {
 							    }
 							}
 							
-							$('#message')
-						            .css('display', 'none');
+							$("#message")
+						            .css("display", "none");
 						
 							renderGraph(g);
 							embellishGraph(g, etymologyNodes);
 							d3.select("#expand").on("click", function() {
-								var gExpand = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
+								var gExpand = new dagreD3.graphlib.Graph().setGraph({ rankdir: "LR" });
 								for (var n in graphNodes) {
 								    graphNodes[n].hidden = false;
 								    gExpand.setNode(n, graphNodes[n].attr("default", true));
@@ -320,17 +324,17 @@ var GRAPH = (function(module) {
                                             },
                                             error => serverError(error),
                                             () => {
-                                                etyBase.helpers.debugLog('done property query');
+                                                etyBase.helpers.debugLog("done property query");
                                             });
                                 },
                                 error => serverError(error),
                                 () => {
-                                    etyBase.helpers.debugLog('done descendants query');
+                                    etyBase.helpers.debugLog("done descendants query");
                                 });
                     },
                     error => serverError(error),
                     () => {
-                        etyBase.helpers.debugLog('done ancestor query');
+                        etyBase.helpers.debugLog("done ancestor query");
                     });
         };
 
@@ -365,7 +369,7 @@ var GRAPH = (function(module) {
 		}
 	    }
 	    toggleChildNodes(d);
-	    var gToggle = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
+	    var gToggle = new dagreD3.graphlib.Graph().setGraph({ rankdir: "LR" });
 	    for (var n in graphNodes) {
 		if (false === graphNodes[n].hidden) {
 		    gToggle.setNode(n, graphNodes[n].attr("default", true));
@@ -570,7 +574,7 @@ var GRAPH = (function(module) {
             var svg = d3.select("#tree-container").append("svg")
                 .attr("id", "tree-overlay")
                 .attr("width", window.innerWidth)
-                .attr("height", window.innerHeight - $('#header').height());
+                .attr("height", window.innerHeight - $("#header").height());
 
             var inner = svg.append("g")
 	        .attr("id", "inner") ;
@@ -713,7 +717,7 @@ var GRAPH = (function(module) {
 
         var init = function() {
 
-            $('#helpPopup')
+            $("#helpPopup")
                 .html(etyBase.LOAD.HELP.intro);
 
             var div = d3.select("body").append("div")
@@ -728,22 +732,22 @@ var GRAPH = (function(module) {
                     .style("display", "none");
             });
 
-            $('#tooltipPopup').click(function(event) {
-                event.stopPropagation();
+            $("#tooltipPopup").click(function(e) {
+                e.stopPropagation();
             });
 
-            $('#tags').on("keypress click", function(e) {
-                var tag = this;
-                if (e.which === 13 || e.type === 'click') {
-                    var lemma = $(tag).val();
-
-                    if (lemma) {
-                        var width = window.innerWidth,
-                            height = $(document).height() - $('#header').height();
-                        constructDisambiguationGraph(lemma);
-                    }
+            $("#search").on("keypress", function(e) {
+                var search = this;
+                if (e.which === 13) {
+                    var lemma = $(search).val();
+		    constructDisambiguationGraph(lemma);
                 }
             });
+
+	    $("#btnSearch").click(function(e) {
+		    var lemma = $("#search").val();
+		    constructDisambiguationGraph(lemma);
+		});
 
 
         };

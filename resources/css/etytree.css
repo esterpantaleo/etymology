@@ -20,6 +20,13 @@ html * {
     color: white !important;
 }
 
+.button {
+    border: 0.3em !important;
+    font-size: 1.3em !important;
+    background-color: white !important;
+    color: black !important;
+}
+
 .ui-page .ui-header {    
     background: #b6b8b7 !important;
     border-radius: 1em;
