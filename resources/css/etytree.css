@@ -20,6 +20,13 @@ html * {
     color: white !important;
 }
 
+.button {
+    border: 0.3em !important;
+    font-size: 1.3em !important;
+    background-color: white !important;
+    color: black !important;
+}
+
 .ui-page .ui-header {    
     background: #b6b8b7 !important;
     border-radius: 1em;
@@ -152,4 +159,15 @@ input:focus:-ms-input-placeholder { color:transparent; }
     }
     #title { display: none; }
     text { font-size: 2em; }
+}
+
+.edgePath path.path {
+    stroke: grey;
+    fill: none;
+    stroke-width: 0.2em;
+}
+
+.arrowhead {
+    stroke: grey;
+    fill: grey;
 }

@@ -36,11 +36,18 @@ var LOAD = (function(module) {
                 this.iri = [];
                 this.isAncestor = false;
 //                this.isDerived = false;
-
+		this.toDelete = false;
                 this.shape = "rect";
                 //                this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
             }
+
+	    attr(a, b) {
+		this.style = "fill: white; stroke: " + (this.isAncestor? "red" : "steelBlue") + "; stroke-width: 0.2em;";
+                this.shape = "rect"; 
+		this.rx = this.ry = 25;
+		return this;
+	    }
         }
 
         class Node {
@@ -60,12 +67,20 @@ var LOAD = (function(module) {
                 this.eqIri = [];
                 this.eqIri.push(i);
                 this.isAncestor = false;
-//                this.isDerived = false;
+//		this.temporary = false;
+//              this.isDerived = false;
 
                 this.shape = "rect";
                 this.style = "fill: lightBlue; stroke: black";
                 this.rx = this.ry = 7;
             }
+
+	    attr(a, b) {
+		this.style = "fill: #F0E68C; stroke: red; stroke-width: 0.2em;";
+		this.shape = "rect"; 
+		this.rx = this.ry = 25;
+		return this;
+	    };
 
             logTooltip() {
                 var query = etyBase.DB.lemmaQuery(this.iri);

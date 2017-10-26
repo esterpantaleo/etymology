@@ -223,7 +223,7 @@ var DB = (function(module) {
 
         var propertyQuery = function(iri) {
             var query =
-                "SELECT DISTINCT ?s ?rel ?eq ?sDer ?sLabel ?relLabel ?eqLabel" +
+                "SELECT DISTINCT ?s ?rel ?eq ?sLabel ?relLabel ?eqLabel" +
                 "{           " +
                 "   VALUES ?rel " +
                 "   {           " +
@@ -254,7 +254,7 @@ var DB = (function(module) {
                 "        BIND (STR(?relTmp) AS ?relLabel) " +
                 "    } " +
                 //  "   FILTER NOT EXISTS { ?rel dbetym:etymologicallyDerivesFrom ?der2 . } "+
-                "} LIMIT 200";
+                "} LIMIT 500";
             return query;
         };
 

@@ -10,26 +10,29 @@ var GRAPH = (function(module) {
         var serverError = function(error) {
             console.error(error);
 
-            $('#message')
-                .css('display', 'inline')
+            $("#message")
+                .css("display", "inline")
                 .html(etyBase.LOAD.MESSAGE.serverError);
         };
 
         var notAvailable = function(error) {
             console.error(error);
 
-            $('#tree-overlay')
+            $("#tree-overlay")
                 .remove();
             d3.select("#tooltipPopup")
                 .style("display", "none");
-            $('#message')
-                .css('display', 'inline')
+            $("#message")
+                .css("display", "inline")
                 .html(etyBase.LOAD.MESSAGE.notAvailable);
         };
 
         var constructDisambiguationGraph = function(lemma) {
+	    if (lemma.length < 2) {
+		return;
+	    }
             //clean screen
-            $('#tree-overlay')
+            $("#tree-overlay")
                 .remove();
             d3.select("#tooltipPopup")
                 .style("display", "none");
@@ -41,22 +44,25 @@ var GRAPH = (function(module) {
 
             etyBase.DB.getXMLHttpRequest(url).subscribe(
                 response => {
-                    var g = parseDisambiguationNodes(response);
-                    if (Object.keys(g.nodess).length === 0) {
-                        $('#message')
-                            .css('display', 'inline')
+                    var nodes = parseDisambiguationNodes(response);
+		    etyBase.helpers.debugLog(nodes);
+                    if (Object.keys(nodes).length === 0) {
+                        $("#message")
+                            .css("display", "inline")
                             .html(etyBase.LOAD.MESSAGE.notAvailable);
-                    } else if (Object.keys(g.nodess).length === 1) {
-                        var iri = Object.keys(g.nodess)[0];
+                    } else if (Object.keys(nodes).length === 1) {
+                        var iri = Object.keys(nodes)[0];
                         constructEtymologyGraph(iri);
                     } else {
-                        $('#helpPopup')
+                        $("#helpPopup")
                             .html(etyBase.LOAD.HELP.disambiguation);
-                        $('#message')
-                            .css('display', 'inline')
+                        $("#message")
+                            .css("display", "inline")
                             .html(etyBase.LOAD.MESSAGE.disambiguation);
-                        setGraph(g);
-                        renderGraph().selectAll("g.node")
+                        var g = defineDisambiguationGraph(nodes);
+                        renderGraph(g);
+			embellishGraph(g, nodes);
+			d3.select("#inner").selectAll("g.node")
                             .on("click", function(d) {
                                 var iri = g.node(d).iri;
                                 constructEtymologyGraph(iri);
@@ -64,43 +70,42 @@ var GRAPH = (function(module) {
                     }
                 },
                 error => {
-                    $('#message')
-                        .css('display', 'inline')
+                    $("#message")
+                        .css("display", "inline")
                         .html("Server error. " + error);
                 },
                 () => {
-                    
-                    etyBase.helpers.debugLog('done disambiguation');
-
+                    etyBase.helpers.debugLog("done disambiguation");
                 });
         };
 
         var parseDisambiguationNodes = function(response) {
-            var g = new dagreD3.graphlib.Graph().setGraph({});
-            g.nodess = {};
+	    var nodes = {};
             var disambiguationArray = JSON.parse(response).results.bindings;
 
             //define nodes 
             disambiguationArray.forEach(function(n) {
                 if (n.et.value === "" || n.et.value.split(",").length > 1) {
-                    g.nodess[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value, n.lemma.value);
+                    nodes[n.iri.value] = new etyBase.LOAD.classes.Node(n.iri.value, n.lemma.value);
                 }
             });
 
-            //add nodes and links to the graph
-            var m = null;
-            for (var n in g.nodess) {
-                g.setNode(n, g.nodess[n]);
-                if (null !== m) {
-                    g.setEdge(n, m, { label: "", style: "stroke-width: 0" });
-                }
-                m = n;
-            }
-
-            etyBase.helpers.debugLog(g.nodess);
-
-            return g;
+	    return nodes;
         };
+
+	var defineDisambiguationGraph = function(nodes) {
+	    var g = new dagreD3.graphlib.Graph().setGraph({});
+	    
+	    var m = null;
+	    for (var n in nodes) {
+		g.setNode(n, nodes[n].attr("default", true));
+		if (null !== m) {
+		    g.setEdge(n, m, { label: "", style: "stroke-width: 0" });
+		}
+		m = n;
+	    }
+	    return g;
+	};
 
         var parseAncestors = function(response) {
             var ancestorArray = response.reduce((all, a) => {
@@ -137,26 +142,6 @@ var GRAPH = (function(module) {
             return ancestorArray.concat(descendantArray).filter(etyBase.helpers.onlyUnique);
         };
 
-        //if the searched word is derived from 2 or more words, return false
-        //i.e. do not search for descendants
-        //In this case the searched word is a compound word
-        //we are not interested in descendants of the words that make up the searched word
-        var doFindDescendants = function(response) {
-            var firstAncestorArray = response.reduce((all, a) => {
-                    return all.concat(JSON.parse(a).results.bindings);
-                }, [])
-                .reduce((ancestors, a) => {
-                    if (a.der1.value === "1") {
-                        ancestors.push(a.ancestor1.value);
-                    }
-                    return ancestors;
-                }, []).filter(etyBase.helpers.onlyUnique);
-            if (firstAncestorArray.length > 1)
-                return false;
-            else
-                return true;
-        };
-
         var lemmaNotStartsOrEndsWithDash = function(iri) {
             var tmp,
                 label;
@@ -177,13 +162,116 @@ var GRAPH = (function(module) {
             }
         };
 
+	var defineEtymologyNodes = function(nodes) {
+	    var graphNodes = {};
+	    for (var n in nodes) {
+		var gn = nodes[n].graphNode;
+		if (undefined === graphNodes[gn]) {
+		    var gg = new etyBase.LOAD.classes.GraphNode(gn);
+		    gg.counter = gn;
+		    gg.iri = nodes[n].eqIri;
+		    gg.iso = nodes[n].iso;
+		    gg.label = gg.iri.map(function(i) {
+			    return nodes[i].label;
+			})
+			.filter(etyBase.helpers.onlyUnique)
+			.join(",");
+		    gg.lang = nodes[n].lang;
+		    gg.isAncestor = nodes[n].isAncestor;
+		    graphNodes[gn] = gg;
+		}
+	    }
+	    return graphNodes;
+	};
+	
+	var defineEtymologyEdges = function(nodes, graphNodes, propertyArray) {
+	    var graphEdges = [];
+	    propertyArray.forEach(function(element) {
+		    if (undefined !== element.rel && undefined !== element.s){  
+			if (undefined !== nodes[element.s.value] && undefined !== nodes[element.rel.value]) {
+			    var source = nodes[element.rel.value].graphNode,
+				target = nodes[element.s.value].graphNode;
+			    var color = (graphNodes[source].isAncestor && graphNodes[target].isAncestor) ? "red" : "steelBlue";
+			    if (source !== target) {
+				graphEdges.push({
+					source: source,
+					target: target,
+					style: {label: "",
+						lineInterpolate: "basis",
+						arrowheadStyle: "fill: " + color,
+						style: "stroke: " + color + "; fill: none; stroke-width: 0.2em;"
+						}
+				    });
+			    }
+			}
+		    }
+		});
+
+	    return graphEdges;
+	}
+
+	//if a node is a leaf and its parents are in the same language, remove those nodes                        
+	var filterDerivedTerms = function(g, graphNodes, graphEdges) {
+	    for (var s in g._sucs) {
+		if (!graphNodes[s].isAncestor) {		    
+		    if (Object.keys(g._sucs[s]).length === 0) { //if s is not an ancestor and has no children
+			
+			var parents = Object.keys(g._preds[s]);
+			if (parents.length === 1) { //if s has one parent
+			
+			    if (graphNodes[s].iso === graphNodes[parents[0]].iso) {
+				graphNodes[s].toDelete = true;
+			    }
+			}
+		    } 
+		}
+	    }
+            for (var n in graphNodes) {
+		if (!graphNodes[n].toDelete) {
+		    if (!graphNodes[n].isAncestor) {
+			var iso = graphNodes[n].iso;
+			var parents = Object.keys(g._preds[n]);
+			if (parents.length === 1 && parents[0].iso === iso) {
+			    if (Object.keys(g._sucs[n]).length > 0) { 
+				var remove = true;
+				for (var s in g._sucs[n]) {//if all children of s are to be deleted
+				    if (!graphNodes[s].toDelete) {
+					remove = false;
+				    }
+				}
+				if (remove) {
+				    graphNodes[n].toDelete = true;
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	    
+	    var toreturn = new dagreD3.graphlib.Graph().setGraph({ rankdir: "LR" });
+	    for (var n in graphNodes) {
+		if (!graphNodes[n].toDelete) {
+		    toreturn.setNode(n, graphNodes[n].attr("default", true));
+		}
+	    }
+	    for (var e in graphEdges) {
+		var source = graphEdges[e].source,
+		target = graphEdges[e].target;
+		if (!graphNodes[source].toDelete && !graphNodes[target].toDelete) {
+		    toreturn.setEdge(source, target, graphEdges[e].style);
+		}
+	    }
+	    return toreturn;
+	}
+
+
         var constructEtymologyGraph = function(iri) {
-            $('#message')
-                .css('display', 'inline')
+            $("#message")
+                .css("display", "inline")
                 .html(etyBase.LOAD.MESSAGE.loadingMore);
             d3.select("#tooltipPopup")
                 .attr("display", "none");
-            $('#tree-overlay')
+            $("#tree-overlay")
                 .remove();
 
             const params = new URLSearchParams();
@@ -198,122 +286,166 @@ var GRAPH = (function(module) {
                         //filteredAncestorArray is ancestorArray without words that start or end with dash
                         //we will find descendants of filteredAncestorArray, thus excluding descendants of words that start or end with dash
                         var filteredAncestorArray = ancestorArray.filter(function(element) { return lemmaNotStartsOrEndsWithDash(element); });
-console.log("filteredAncestorArray")
-console.log(filteredAncestorArray)
-//                        if (doFindDescendants(ancestorResponse)) {
-                            etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
-                                .subscribe(
-                                    descendantResponse => {
-                                        var allArray = parseDescendants(ancestorArray, descendantResponse);
-					console.log("descendants");
-					console.log(allArray);
-                                        etyBase.DB.slicedQuery(allArray, etyBase.DB.propertyQuery, 3)
-                                            .subscribe(
-                                                propertyResponse => {
-                                                    setData(propertyResponse);
-                                                    var g = parseEtymologyNodes(ancestorArray, allArray);
+			etyBase.DB.slicedQuery(filteredAncestorArray, etyBase.DB.descendantQuery, 8)
+			    .subscribe(
+			        descendantResponse => {
+				    var allArray = parseDescendants(ancestorArray, descendantResponse);
+                                    etyBase.DB.slicedQuery(allArray, etyBase.DB.propertyQuery, 3)
+                                        .subscribe(
+                                            propertyResponse => {
+						//constructing etymologyNodes, graphNodes, graphEdges
+						//etymologyNodes is the set of input etymology entries
+						//graphNodes is the set of nodes in the full graph; a graphNode can correspond to multiple etymology entries (i.e. multiple elements in etymologyNodes) 
+						var propertyArray = parseProperty(propertyResponse);
+						var etymologyNodes = parseEtymologyNodes(ancestorArray, allArray, propertyArray);
 
-                                                    if (Object.keys(g.nodess).length === 0) {
-                                                        $('#message')
-                                                            .css('display', 'inline')
-                                                            .html(etyBase.LOAD.MESSAGE.noEtymology);
-                                                    } else {
-                                                        $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
-                                                        setGraph(g);
-                                                        renderGraph(g);
-                                                    }
-                                                },
-                                                error => serverError(error),
-                                                () => {
-                                                    etyBase.helpers.debugLog('done property query');
-                                                });
-                                    },
-                                    error => serverError(error),
-                                    () => {
-                                        etyBase.helpers.debugLog('done descendants query');
-                                    });
-/*                        } else {
-                            etyBase.DB.slicedQuery(ancestorArray, etyBase.DB.propertyQuery, 3)
-                                .subscribe(
-                                    propertyResponse => {
-                                        setData(ancestorArray, ancestorResponse, propertyResponse);
-                                        var g = parseEtymologyNodes(ancestorArray, ancestorResponse, propertyResponse);
-
-                                        if (Object.keys(g.nodess).length === 0) {
-                                            $('#message')
-                                                .css('display', 'inline')
-                                                .html(etyBase.LOAD.MESSAGE.noEtymology);
-                                        } else {
-                                            $('#helpPopup').html(etyBase.LOAD.HELP.dagre);
-                                            setGraph(g);
-                                            renderGraph(g);
-                                        }
-                                    },
-                                    error => serverError(error),
-                                    () => {
-                                        etyBase.helpers.debugLog('done property query');
-                                    });
-                        }*/
+                                                if (Object.keys(etymologyNodes).length < 2) {
+                                                    $("#message")
+                                                        .css("display", "inline")
+                                                        .html(etyBase.LOAD.MESSAGE.noEtymology);
+                                                } else {
+                                                    $("#helpPopup")
+                                                        .html(etyBase.LOAD.HELP.dagre);
+						    var graphNodes = defineEtymologyNodes(etymologyNodes);
+						    if (Object.keys(graphNodes).length < 2) {
+							$("#message")
+							    .css("display", "inline")
+							    .html(etyBase.LOAD.MESSAGE.noEtymology);
+						    } else {
+							var graphEdges = defineEtymologyEdges(etymologyNodes, graphNodes, propertyArray);
+							
+							//define dagre 
+							var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: "LR" });
+							for (var n in graphNodes) {
+							    g.setNode(n, graphNodes[n].attr("default", true));
+							}
+							for (var e in graphEdges) {
+							    g.setEdge(graphEdges[e].source, graphEdges[e].target);//, graphEdges[e].style);	
+							}
+							
+							$("#message")
+							    .css("display", "none");
+							
+							g = filterDerivedTerms(g, graphNodes, graphEdges);
+							g = filterDerivedTerms(g, graphNodes, graphEdges);
+							renderGraph(g);
+							embellishGraph(g, etymologyNodes);
+						    }
+                                                }
+                                            },
+                                            error => serverError(error),
+                                            () => {
+                                                etyBase.helpers.debugLog("done property query");
+                                             });
+                                },
+                                error => serverError(error),
+                                () => {
+                                    etyBase.helpers.debugLog("done descendants query");
+                                }); 
                     },
                     error => serverError(error),
                     () => {
-                        etyBase.helpers.debugLog('done ancestor query');
+                        etyBase.helpers.debugLog("done ancestor query");
                     });
         };
 
-        var setData = function(propertyResponse) {
-            etyBase.tree.data = propertyResponse.reduce((all, a) => {
-                all = all.concat(JSON.parse(a).results.bindings);
-                return all;
-            }, []);
-        };
+	var parseProperty = function(propertyResponse) {
+	    return propertyResponse.reduce((all, a) => {
+		all = all.concat(JSON.parse(a).results.bindings);
+		return all;
+	     }, []);
+	};
 
         //todo: filter derived terms if (they are leaves && they are not ancestors)
         //todo: iterate this step
-        var parseEtymologyNodes = function(ancestors, allArray) {
-            var propertyResponse = etyBase.tree.data;
-            var g = new dagreD3.graphlib.Graph().setGraph({ rankdir: 'LR' });
-            g.nodess = {};
-
-            if (propertyResponse.length < 2) {
-                return g;
-            } else {
-                etyBase.helpers.debugLog("propertyResponse");
-                etyBase.helpers.debugLog(propertyResponse);
-                //CONSTRUCTING NODES
-                propertyResponse.forEach(function(element) {
-                    //save all nodes        
-                    //define isAncestor
-                    //push to eqIri
-		    //if s is not in ancestors or descendants don't add it to the graph and therefore do not add its links 
-                    if (undefined !== element.s && undefined === g.nodess[element.s.value] && allArray.indexOf(element.s.value) > -1) {
+	//return nodes
+        var parseEtymologyNodes = function(ancestors, allArray, propertyArray) {
+	    var nodes = {};
+	    if (propertyArray.length > 1) {
+		//CONSTRUCTING NODES
+		propertyArray.forEach(function(element) {
+		    //save all nodes
+		    //define isAncestor
+		    //push to eqIri
+                    if (undefined !== element.s && undefined === nodes[element.s.value]) {
                         var label = (undefined === element.sLabel) ? undefined : element.sLabel.value;
-                        g.nodess[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, label);
-                    }
+                        nodes[element.s.value] = new etyBase.LOAD.classes.Node(element.s.value, label);
+			/*temporarily add nodes that are not in allArray (s is not in ancestors or descendants)
+			if (allArray.indexOf(element.s.value) > -1) {
+			    nodes[element.s.value].temporary = true;
+			}
+			*/                    }
                     if (undefined !== element.rel) {
-                        if (undefined === g.nodess[element.rel.value]) {
+                        if (undefined === nodes[element.rel.value]) {
                             var label = (undefined === element.relLabel) ? undefined : element.relLabel.value;
-                            g.nodess[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value, label);
+                            nodes[element.rel.value] = new etyBase.LOAD.classes.Node(element.rel.value, label);
                         }
                         if (ancestors.indexOf(element.rel.value) > -1) {
-                            g.nodess[element.rel.value].isAncestor = true;
+                            nodes[element.rel.value].isAncestor = true;
+			    //nodes[element.rel.value].temporary = false;
                         }
                     }
                     if (undefined !== element.rel && undefined !== element.eq) {
-                        if (undefined === g.nodess[element.eq.value]) {
+                        if (undefined === nodes[element.eq.value]) {
                             var label = (undefined === element.eqLabel) ? undefined : element.eqLabel.value;
-                            g.nodess[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, label);
+                            nodes[element.eq.value] = new etyBase.LOAD.classes.Node(element.eq.value, label);
                         }
                         if (element.rel.value !== element.eq.value) {
-                            if (g.nodess[element.rel.value].eqIri.indexOf(element.eq.value) === -1) {
-                                g.nodess[element.rel.value].eqIri.push(element.eq.value);
+                            if (nodes[element.rel.value].eqIri.indexOf(element.eq.value) === -1) {
+                                nodes[element.rel.value].eqIri.push(element.eq.value);
                             }
-                            if (g.nodess[element.eq.value].eqIri.indexOf(element.rel.value) === -1) {
-                                g.nodess[element.eq.value].eqIri.push(element.rel.value);
+                            if (nodes[element.eq.value].eqIri.indexOf(element.rel.value) === -1) {
+                                nodes[element.eq.value].eqIri.push(element.rel.value);
                             }
                         }
                     }
                 });
+		/*
+		//remove temporary nodes
+		for (var n in nodes) {
+		    if (nodes[n].temporary) {
+			var iso = nodes[n].iso;
+			var label = nodes[n].label;
+			for (var m in nodes) {
+			    if (nodes[m].iso === iso && nodes[m].label === label) {
+				if (!nodes[m].temporary) {
+				    nodes[n].temporary = false;
+				}
+				if (nodes[m].isAncestor) {
+				    nodes[n].isAncestor = true;
+				}
+			    }
+			}
+		    }
+		}
+
+		for (var n in nodes) {
+		    if (nodes[n].temporary) {
+			nodes[n].eqIri.forEach(function(e) {
+				if (!nodes[e].temporary) {
+				    nodes[n].temporary = false;
+				}
+				if (nodes[e].isAncestor) {
+				    nodes[n].isAncestor = true;
+				}
+			    });
+		    }
+		}
+
+		for (var n in nodes) {
+		    if (!nodes[n].temporary) {
+			nodes[n].eqIri.forEach(function(e) {
+				nodes[e].temporary = false;
+			    });
+		    }
+		}
+		
+		for (var n in nodes) {
+		    if (nodes[n].temporary) {
+			delete nodes[n];
+		    }
+		}
+                */
 
                 //CONSTRUCTING GRAPHNODES
                 //a graphNode is some kind of super node that merges Nodes that are etymologically equivalent
@@ -323,15 +455,15 @@ console.log(filteredAncestorArray)
                 //then merge them into one graphNode) 
                 //the final graph will use these super nodes (graphNodes)
                 var counter = 0; //counts how many graphNodes have been created so far
-                for (var n in g.nodess) {
-                    if (g.nodess[n].ety === 0) {
-                        var iso = g.nodess[n].iso;
-                        var label = g.nodess[n].label;
+                for (var n in nodes) {
+                    if (nodes[n].ety === 0) {
+                        var iso = nodes[n].iso;
+                        var label = nodes[n].label;
                         var tmp = [];
-                        for (var m in g.nodess) {
-                            if (undefined !== g.nodess[m]) {
-                                if (g.nodess[m].iso === iso && g.nodess[m].label === label) {
-                                    if (g.nodess[m].ety > 0) {
+                        for (var m in nodes) {
+                            if (undefined !== nodes[m]) {
+                                if (nodes[m].iso === iso && nodes[m].label === label) {
+                                    if (nodes[m].ety > 0) {
                                         tmp.push(m);
                                     }
                                 }
@@ -342,20 +474,18 @@ console.log(filteredAncestorArray)
                         //the set of ancestors and descendants
                         //then merge them in one graphNode
                         if (tmp.length === 1) {
-                            //        var gg = new etyBase.LOAD.classes.GraphNode(counter);
-
                             //define node.graphNode
-                            var eqIri = g.nodess[n].eqIri.concat(g.nodess[tmp[0]].eqIri).filter(etyBase.helpers.onlyUnique);
+                            var eqIri = nodes[n].eqIri.concat(nodes[tmp[0]].eqIri).filter(etyBase.helpers.onlyUnique);
 
                             eqIri = eqIri.reduce(function(eq, element) {
-                                eq = eq.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique);
+                                eq = eq.concat(nodes[element].eqIri).filter(etyBase.helpers.onlyUnique);
                                 return eq;
                             }, []);
                             var graphNode = eqIri.reduce(function(gn, element) {
-                                if (undefined === g.nodess[element].graphNode) {
+                                if (undefined === nodes[element].graphNode) {
                                     return gn;
                                 } else {
-                                    gn.push(g.nodess[element].graphNode);
+                                    gn.push(nodes[element].graphNode);
                                     return gn;
                                 }
                             }, []).filter(etyBase.helpers.onlyUnique).sort();
@@ -367,8 +497,8 @@ console.log(filteredAncestorArray)
                             }
 
                             eqIri.forEach(function(element) {
-                                g.nodess[element].eqIri = eqIri;
-                                g.nodess[element].graphNode = graphNode;
+                                nodes[element].eqIri = eqIri;
+                                nodes[element].graphNode = graphNode;
                             });
 
                             counter++;
@@ -376,18 +506,18 @@ console.log(filteredAncestorArray)
                     }
                 }
 
-                for (var n in g.nodess) {
-                    if (undefined === g.nodess[n].graphNode) {
-                        var eqIri = g.nodess[n].eqIri;
+                for (var n in nodes) {
+                    if (undefined === nodes[n].graphNode) {
+                        var eqIri = nodes[n].eqIri;
                         eqIri = eqIri.reduce(function(eq, element) {
-                            eq = eq.concat(g.nodess[element].eqIri).filter(etyBase.helpers.onlyUnique);
+                            eq = eq.concat(nodes[element].eqIri).filter(etyBase.helpers.onlyUnique);
                             return eq;
                         }, []);
                         var graphNode = eqIri.reduce(function(gn, element) {
-                            if (undefined === g.nodess[element].graphNode) {
+                            if (undefined === nodes[element].graphNode) {
                                 return gn;
                             } else {
-                                gn.push(g.nodess[element].graphNode);
+                                gn.push(nodes[element].graphNode);
                                 return gn;
                             }
                         }, []).filter(etyBase.helpers.onlyUnique).sort();
@@ -399,95 +529,25 @@ console.log(filteredAncestorArray)
                         }
 
                         eqIri.forEach(function(element) {
-                            g.nodess[element].eqIri = eqIri;
-                            g.nodess[element].graphNode = graphNode;
+                            nodes[element].eqIri = eqIri;
+                            nodes[element].graphNode = graphNode;
                         });
 
                         counter++;
                     }
                 }
+	    }
+	    return nodes;
+	};
 
-                for (var n in g.nodess) {
-                    var gn = g.nodess[n].graphNode;
-                    if (undefined === g._nodes[gn]) {
-                        var gg = new etyBase.LOAD.classes.GraphNode(gn);
-                        gg.counter = gn;
-                        gg.iri = g.nodess[n].eqIri;
-                        gg.iso = g.nodess[n].iso;
-                        gg.label = gg.iri.map(function(i) {
-                                return g.nodess[i].label;
-                            })
-                            .filter(etyBase.helpers.onlyUnique)
-                            .join(",");
-                        gg.lang = g.nodess[n].lang;
-                        gg.isAncestor = g.nodess[n].isAncestor;
-                        if (gg.isAncestor) {
-                            gg.style = "fill: #F0E68C; stroke: black";
-                        } else {
-                            gg.style = "fill: lightBlue; stroke: black";
-                        }
-                        g.setNode(gn, gg);
-                    }
-                }
-
-                //CONSTRUCTING LINKS
-                propertyResponse.forEach(function(element) {
-                    if (undefined !== element.rel && undefined !== element.s) {
-			if (undefined !== g.nodess[element.s.value]) { 
-                            var source = g.nodess[element.rel.value].graphNode,
-                            target = g.nodess[element.s.value].graphNode;
-                            if (source !== target) {
-				if (g._nodes[source].isAncestor && g._nodes[target].isAncestor) {
-                                    g.setEdge(source, target, {
-					label: "",
-					lineInterpolate: "basis",
-					style: "stroke: black; fill: none; stroke-width: 0.1em;",
-					arrowheadStyle: "fill: black"
-                                    });
-				} else {
-                                    g.setEdge(source, target, {
-					label: "",
-					lineInterpolate: "basis",
-					style: "stroke: lightBlue; fill: none; stroke-width: 0.1em;",
-					arrowheadStyle: "fill: lightBlue",
-					
-                                    });
-				}
-                            }
-			}
-                    }
-                });
-
-                //todo: add links between ancestors
-
-                etyBase.helpers.debugLog("g.nodess");
-                etyBase.helpers.debugLog(g.nodess);
-                etyBase.helpers.debugLog("g");
-                etyBase.helpers.debugLog(g);
-
-                $('#message')
-                    .css('display', 'none');
-
-                return g;
-            }
-        };
-
-        var setGraph = function(g) {
-            etyBase.tree.graph = g;
-        };
-
-        var renderGraph = function() {
-            if (!etyBase.tree.graph) {
-                console.error('Empty Graph');
-                return false;
-            }
-            var g = etyBase.tree.graph;
+        var renderGraph = function(g) {
             var svg = d3.select("#tree-container").append("svg")
                 .attr("id", "tree-overlay")
                 .attr("width", window.innerWidth)
-                .attr("height", window.innerHeight - $('#header').height());
+                .attr("height", window.innerHeight - $("#header").height());
 
-            var inner = svg.append("g");
+            var inner = svg.append("g")
+	        .attr("id", "inner");
 
             // Set up zoom support                      
             var zoom = d3.behavior.zoom().on("zoom", function() {
@@ -508,10 +568,14 @@ console.log(filteredAncestorArray)
                 .scale(initialScale)
                 .event(svg);
           
-	          inner.selectAll("g.node > rect")
-		            .attr("class", "word");
-	          //show tooltip on mouseover nodes 
-            inner.selectAll(".word")
+	    return inner;
+	};
+    
+        var embellishGraph = function(g, nodes) {
+	    d3.select("#inner").selectAll("g.node > rect")
+	        .attr("class", "word");
+	    //show tooltip on mouseover nodes 
+            d3.select("#inner").selectAll(".word")
                 .on("mouseover", function(d) {
                     d3.selectAll(".tooltip").remove();
                     d3.select("#tooltipPopup")
@@ -520,48 +584,48 @@ console.log(filteredAncestorArray)
                         .style("top", (d3.event.pageY - 28) + "px");
                     var iri = g.node(d).iri;
                     if (typeof iri === "string") {
-                        g.nodess[iri]
-             			          .logTooltip()
-			                      .subscribe(text => {
-				                        d3.select("#tooltipPopup")
-				                            .append("p")
-				                            .attr("class", "tooltip") 
-				                            .html(text);
-			                      }, error => {
-				                        d3.select("#tooltipPopup")
+                        nodes[iri]
+             		    .logTooltip()
+			    .subscribe(text => {
+			        d3.select("#tooltipPopup")
+				    .append("p")
+				    .attr("class", "tooltip") 
+				    .html(text);
+			    }, error => {
+				d3.select("#tooltipPopup")
                                     .append("p")
-				                            .attr("class", "tooltip")
-				                            .html("<b>" + that.label + "</b><br><br><br>-");
-			                      });
+				    .attr("class", "tooltip")
+				    .html("<b>" + that.label + "</b><br><br><br>-");
+			    });
                     } else {
                         var tooltips = iri.reduce(function(obj, i) {
-                            var label = g.nodess[i].label;
+                            var label = nodes[i].label;
                             if (obj.labels.indexOf(label) === -1) {
                                 obj.labels.push(label);
-                                obj.text.push(g.nodess[i].logTooltip());
+                                obj.text.push(nodes[i].logTooltip());
                                 return obj;
                             } else {
                                 return obj;
                             }
                         }, { labels: [], text: [] });
                         var obs = Rx.Observable.zip
-			                      .apply(this, tooltips.text)
-			                      .catch((err) => {
-				                        console.log(err); 
-				                        return Rx.Observable.empty();
-			                      });
-			                   obs.subscribe(res => {
-			                       d3.select("#tooltipPopup")  
-				                         .append("p") 
-				                         .attr("class", "tooltip") 
-				                         .html(res.join("<br><br>"));
-			                       });
+			    .apply(this, tooltips.text)
+			    .catch((err) => {
+			        console.log(err); 
+			        return Rx.Observable.empty();
+			    });
+			obs.subscribe(res => {
+			    d3.select("#tooltipPopup")  
+			        .append("p") 
+				.attr("class", "tooltip") 
+				.html(res.join("<br><br>"));
+			});
                     }
                     d3.event.stopPropagation();
                 });
 
             //append language tag to nodes            
-            inner.selectAll("g.node")
+            d3.select("#inner").selectAll("g.node")
                 .append("text")
                 .style("display", "inline")
                 .attr("class", "isoText")
@@ -572,7 +636,7 @@ console.log(filteredAncestorArray)
                 });
 
             //show tooltip on mouseover language tag   
-            inner.selectAll("g.node")
+            d3.select("#inner").selectAll("g.node")
                 .append("rect")
                 .attr("x", "0.8em")
                 .attr("y", "2.2em")
@@ -595,7 +659,7 @@ console.log(filteredAncestorArray)
                 });
 
             //show tooltip on click on nodes                
-            inner.selectAll("g.node")
+            d3.select("#inner").selectAll("g.node")
                 .on("mouseover", function(d) {
                     d3.select("#tooltipPopup")
                         .style("display", "inline")
@@ -604,10 +668,10 @@ console.log(filteredAncestorArray)
                         .html("");
                     var iri = g.node(d).iri;
                     if (typeof iri === "string") {
-                        g.nodess[iri].logTooltip();
+                        nodes[iri].logTooltip();
                     } else {
                         iri.reduce(function(obj, i) {
-			    var label = g.nodess[i].label;
+			    var label = nodes[i].label;
 			    if (obj.labels.indexOf(label) === -1) {
 				obj.labels.push(label);
 				obj.iris.push(i);
@@ -615,7 +679,7 @@ console.log(filteredAncestorArray)
 			    } else {
 				return obj;
 			    }
-                        }, { labels: [], iris: [] }).iris.forEach(function(i) { g.nodess[i].logTooltip(); });
+                        }, { labels: [], iris: [] }).iris.forEach(function(i) { nodes[i].logTooltip(); });
                     }
                     d3.event.stopPropagation();
 		});          
@@ -625,7 +689,7 @@ console.log(filteredAncestorArray)
 
         var init = function() {
 
-            $('#helpPopup')
+            $("#helpPopup")
                 .html(etyBase.LOAD.HELP.intro);
 
             var div = d3.select("body").append("div")
@@ -640,24 +704,22 @@ console.log(filteredAncestorArray)
                     .style("display", "none");
             });
 
-            $('#tooltipPopup').click(function(event) {
-                event.stopPropagation();
+            $("#tooltipPopup").click(function(e) {
+                e.stopPropagation();
             });
 
-            $('#tags').on("keypress click", function(e) {
-                var tag = this;
-                if (e.which === 13 || e.type === 'click') {
-                    var lemma = $(tag).val();
+            $("#search").on("keypress", function(e) {
+                var search = this;
+                if (e.which === 13) {
+                    var lemma = $(search).val();
+		    constructDisambiguationGraph(lemma);
+		}
+	    });
 
-                    if (lemma) {
-                        var width = window.innerWidth,
-                            height = $(document).height() - $('#header').height();
-                        constructDisambiguationGraph(lemma);
-                    }
-                }
-            });
-
-
+	    $("#btnSearch").click(function(e) {
+		    var lemma = $("#search").val();
+		    constructDisambiguationGraph(lemma);
+		});
         };
 
         this.init = init;
