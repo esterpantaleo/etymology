@@ -170,7 +170,7 @@ var GRAPH = (function(module) {
                                 val.all.push(a.ancestor3.value);
                                 if (a.der3.value === "0" && undefined !== a.ancestor4 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor3.value)) {
                                     val.all.push(a.ancestor4.value);
-                                    if (a.der4.value === "0" && undefined !== a.ancestor5 && etyBase.helper.lemmaNotStartsOrEndsWithDash(a.ancestor4.value)) {
+                                    if (a.der4.value === "0" && undefined !== a.ancestor5 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor4.value)) {
                                         val.all.push(a.ancestor5.value);
                                         val.last.push(a.ancestor5.value);
                                     }
