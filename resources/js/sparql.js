@@ -172,8 +172,8 @@ var DB = (function(module) {
                 resource = "?var" + iteration;
             }
             query += resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (iteration + 1) + " . " +
-                " BIND(EXISTS {" + resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (iteration + 1) + " } AS ?der" + (iteration + 1) + ") " +
-                " BIND(EXISTS {" + resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration + 1) + " } AS ?eq" + (iteration + 1) + ") ";
+                " BIND(EXISTS {" + resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (iteration + 1) + " } AS ?der" + (iteration + 1) + ") ";
+                //" BIND(EXISTS {" + resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration + 1) + " } AS ?eq" + (iteration + 1) + ") ";
 
             return query;
         };
@@ -214,9 +214,9 @@ var DB = (function(module) {
             var query =
                 "SELECT DISTINCT ?descendant1 " + // ?descendant2",
                 "{ " +
-                "   ?descendant1 dbetym:etymologicallyRelatedTo{0,2} <" + iri + "> . " +
-                //   "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?descendant1 . " +
-                //  "   ?descendant2 dbetym:etymologicallyRelatedTo* ?eq .} " +
+                "   ?descendant1 dbetym:etymologicallyRelatedTo{1,5} <" + iri + "> . " +
+                "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?descendant1 . " +
+                "   ?descendant2 dbetym:etymologicallyRelatedTo* ?eq .} " +
                 "} ";
             return query;
         };
