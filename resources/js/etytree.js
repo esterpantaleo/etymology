@@ -39,7 +39,7 @@ var EtyTree = {
 
                 $("#message")
                     .css("display", "inline")
-                    .html(etyBase.LOAD.MESSAGE.serverError);
+                    .html(etyBase.MESSAGE.serverError);
             },
             lemmaNotStartsOrEndsWithDash: function(iri) {
                 var tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
