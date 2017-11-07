@@ -36,7 +36,10 @@ var EtyTree = {
             },
             serverError: function(error) {
                 console.error(error);
-
+                $("#tooltipPopup")
+                    .attr("display", "none");
+                $("#tree-overlay")
+                    .remove();
                 $("#message")
                     .css("display", "inline")
                     .html(etyBase.MESSAGE.serverError);

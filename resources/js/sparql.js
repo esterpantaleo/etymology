@@ -209,28 +209,6 @@ var DB = (function(module) {
             return queryObservable;
         };
 
-        var parseAncestors = function(response) {
-            return response.reduce((all, a) => {
-                    return all.concat(JSON.parse(a).results.bindings);
-                }, []).reduce((val, a) => {
-                    val.all.push(a.ancestor1.value);
-                    if (a.der1.value === "0" && undefined !== a.ancestor2 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor1.value)) {
-                        val.all.push(a.ancestor2.value);
-                        if (a.der2.value === "0" && undefined !== a.ancestor3 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor2.value)) {
-                            val.all.push(a.ancestor3.value);
-                            if (a.der3.value === "0" && undefined !== a.ancestor4 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor3.value)) {
-                                val.all.push(a.ancestor4.value);
-                                if (a.der4.value === "0" && undefined !== a.ancestor5 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor4.value)) {
-                                    val.all.push(a.ancestor5.value);
-                                    val.last.push(a.ancestor5.value);
-                                }
-                            }
-                        }
-                    }
-                    return val;
-                }, { all: [], last: [] });
-        }
-
         var descendantQuery = function(iri) {
             var query =
                 "SELECT DISTINCT ?descendant1 " + // ?descendant2",
@@ -294,7 +272,6 @@ var DB = (function(module) {
         this.disambiguationQuery = disambiguationQuery;
         this.lemmaQuery = lemmaQuery;
         this.ancestorQuery = ancestorQuery;
-        this.parseAncestors = parseAncestors;
         this.descendantQuery = descendantQuery;
         this.propertyQuery = propertyQuery;
         this.unionQuery = unionQuery;

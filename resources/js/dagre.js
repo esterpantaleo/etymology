@@ -7,117 +7,93 @@ var GRAPH = (function(module) {
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
 
-        class Node {
-            constructor(i, label) {
-                this.iri = i;
-                var tmp = this.parseIri(i);
-                this.iso = tmp.iso;
-                this.label = (undefined === label) ? tmp.label : label;
-                this.label = this.label.replace(/^_/, '*').replace("__", "'").replace("%C2%B7", "·");
-                //ety is an integer                              
-                //and represents the etymology number encoded in the iri;
-                this.ety = tmp.ety;
-                this.lang = etyBase.tree.langMap.get(this.iso);
-                //graphNode specifies the graphNode corresponding to the node
-                this.graphNode = undefined;
-                //eqIri is an array of iri-s of Node-s that are equivalent to the Node 
-                this.eqIri = [];
-                this.eqIri.push(i);
-                this.isAncestor = false;
-            }
-
+        class Dot {
+            //add style
+            //returns this
 	    attr(a, b) {
 		this.style = "fill: white; stroke: " + (this.isAncestor? "red" : "steelBlue") + "; stroke-width: 0.2em;";
 		this.shape = "rect"; 
 		this.rx = this.ry = 25;
 		return this;
 	    }
+        }
 
-            logTooltip() {
-                var query = etyBase.DB.lemmaQuery(this.iri);
-                var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
+        class Node extends Dot{
+            constructor(iri, label) {
+                super();
+                //set this.iri
+                this.iri = iri;
 
-                etyBase.helpers.debugLog(url);
-
-                var that = this;
-
-                return etyBase.DB.getXMLHttpRequest(url)
-		                .flatMap(response => {
-		                    d3.selectAll(".tooltip").remove(); 
-                        var text = "<b>" + that.label + "</b><br><br><br>";
-                        if (null !== response) {
-                            //print definition  
-                            var dataJson = JSON.parse(response).results.bindings;
-                            text += dataJson.reduce(
-                                function(s, element) {
-                                    return s += that.logDefinition(element.pos, element.gloss);
-                                },
-                                ""
-                            );
-                            //print links 
-                            text += "<br><br>Data is under CC BY-SA and has been extracted from: " +
-                                that.logLinks(dataJson[0].links.value);
-                        } else {
-                            text += "-";
-                        }
-		                    return Promise.resolve(text);
-                   });
-            }
-
-            parseIri(iri) {
-                var iso, label, ety,
-                    tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
+                var id = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
                     .split("/");
+	        var tmp = (id.length > 1) ? id[1] : id[0];
 
-                if (tmp.length > 1) {
-                    iso = tmp[0];
-                    label = tmp[1];
-                } else {
-                    iso = "eng";
-                    label = tmp[0];
-                }
-                //ety is an integer                 
-                //and represents the etymology number encoded in the iri;
+                //set this.iso
+                this.iso = (id.length > 1) ? id[0] : "eng";
+
+                //set this.label
+                this.label = (undefined === label) ? tmp.replace("__ee_", "") : label;
+                this.label = label.replace(/^_/, '*').replace("__", "'").replace("%C2%B7", "·").replace(/_/g, " ");
+                
+                //set this.ety
+                //this.ety is an integer representing the etymology number encoded in the iri;
                 //if ety === 0 the iri is __ee_word                                    
                 //if ety === 1 the iri is __ee_1_word            
-                //etc                                            
-                ety = 0;
-                if (null !== label.match(/__ee_[0-9]+_/g)) {
-                    //ety is an integer specifying the etymology entry      
-                    ety = label.match(/__ee_[0-9]+_/g)[0]
-                        .match(/__ee_(.*?)_/)[1];
-                }
-
-                label = label.replace(/__ee_[0-9]+_/g, "")
-                    .replace("__ee_", "")
-                    .replace("__", "'")
-                    .replace(/^_/g, "*")
-                    .replace(/_/g, " ")
-                    .replace("__", "'")
-                    .replace(/_/g, " ")
-                    .replace("%C2%B7", "·");
-
-                var obj = {
-                    iso: iso,
-                    label: label,
-                    ety: ety
-                };
-
-                return obj;
+                //etc       
+                tmp = tmp.match(/__ee_[0-9]+_/g);
+                this.ety = (null === tmp) ? 0 : tmp[0].match(/__ee_(.*?)_/)[1]; 
+                
+                //set this.lang
+                this.lang = etyBase.tree.langMap.get(this.iso);
+                
+                //initialize this.graphNode specifying the graphNode corresponding to the node
+                this.graphNode = undefined;
+                
+                //initialize this.eqIri is an array of iri-s of Node-s that are equivalent to the Node 
+                this.eqIri = [];
+                this.eqIri.push(iri);
+                
+                //initialize this.isAncestor
+                this.isAncestor = false;
             }
 
-            logDefinition(pos, gloss) {
-                if (undefined !== pos && undefined !== gloss) {
-                    return gloss.value.split(";;;;").map(function(el) {
-                        return pos.value + " - " + el + "<br><br>";
-                    }).join("");
+            queryTooltip() { 
+                var that = this;
+                d3.selectAll(".tooltip").remove();
+                var query = etyBase.DB.lemmaQuery(this.iri);
+                var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
+                return etyBase.DB.getXMLHttpRequest(url)
+		    .flatMap(response => that.parseTooltip(response));
+            }
+
+            parseTooltip(response) {
+                var tooltip = "<b>" + this.label + "</b><br><br><br>";
+                if (null !== response) {
+                    //print definition  
+                    var dataJson = JSON.parse(response).results.bindings;
+                    tooltip += this.parseDefinition(dataJson);
+                    //print links 
+                    tooltip += this.parseLinks(dataJson);
                 } else {
-                    return "-";
+                    tooltip += "-";
                 }
+		return Promise.resolve(tooltip);
+            }
+                
+            parseDefinition(dataJson) {
+                return dataJson.map(d => {
+                    if (undefined !== d.pos && undefined !== d.gloss) {
+                        return d.gloss.value.split(";;;;").map(e => {
+                            return d.pos.value + " - " + e + "<br><br>";
+                        }).join("");
+                    }
+                    return "-";
+                 }).join("");
             }
 
-            logLinks(links) {
-                return links.split(",")
+            parseLinks(dataJson) {
+                var toreturn = "<br><br>Data is under CC BY-SA and has been extracted from: ";
+                toreturn += dataJson[0].links.value.split(",")
                     .map(function(e) {
                         var linkName;
                         if (e.startsWith("https://en.wiktionary.org/wiki/Reconstruction")) {
@@ -134,43 +110,62 @@ var GRAPH = (function(module) {
                         }
                         return "<a href=\"" + e + "\" target=\"_blank\">" + linkName + "</a>";
                     }).join(", ");
+                return toreturn;
             }
         }
 
-        class GraphNode {
+        class GraphNode extends Dot{
             constructor(i) {
+                super();
                 this.counter = i;
                 this.iri = [];
                 this.isAncestor = false;
 		this.toDelete = false;
             }
-            
-	    attr(a, b) {
-		this.style = "fill: white; stroke: " + (this.isAncestor? "red" : "steelBlue") + "; stroke-width: 0.2em;";
-		this.shape = "rect"; 
-		this.rx = this.ry = 25;
-		return this;
-	    }
         }
 
         class Data {
             constructor() {
-                this.ancestorsAndDescendants = [];
-                this.lastAncestors = [];
                 this.ancestors = [];
+                this.lastAncestors = [];
+                this.ancestorsAndDescendants = [];
+            }
+
+            parseAncestors(response) {
+                return response.reduce((all, a) => {
+                        return all.concat(JSON.parse(a).results.bindings);
+                    }, []).reduce((val, a) => {
+                        val.all.push(a.ancestor1.value);
+                        if (a.der1.value === "0" && undefined !== a.ancestor2 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor1.value)) {
+                            val.all.push(a.ancestor2.value);
+                            if (a.der2.value === "0" && undefined !== a.ancestor3 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor2.value)) {
+                                val.all.push(a.ancestor3.value);
+                                if (a.der3.value === "0" && undefined !== a.ancestor4 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor3.value)) {
+                                    val.all.push(a.ancestor4.value);
+                                    if (a.der4.value === "0" && undefined !== a.ancestor5 && etyBase.helpers.lemmaNotStartsOrEndsWithDash(a.ancestor4.value)) {
+                                        val.all.push(a.ancestor5.value);
+                                        val.last.push(a.ancestor5.value);
+                                    }
+                                }
+                            }
+                        }
+                        return val;
+                    }, { all: [], last: [] });
             }
 
             setAncestors(iri, response) {
-                var ancestors = etyBase.DB.parseAncestors(response);
+                var that = this;
+                var ancestors = that.parseAncestors(response);
                 ancestors.all.push(iri);
                 this.ancestors = this.ancestors.concat(ancestors.all).filter(etyBase.helpers.onlyUnique);
                 this.lastAncestors = this.lastAncestors.concat(ancestors.last).filter(etyBase.helpers.onlyUnique);
             }
 
             addAncestors(response) {
+                var that = this;
                 if (0 !== response) {
                     var ancestors = response.reduce(function(val, r) {
-                        return val.concat(etyBase.DB.parseAncestors(r).all); 
+                        return val.concat(that.parseAncestors(r).all); 
                         },
                         []);
                     this.ancestors = this.ancestors.concat(ancestors).filter(etyBase.helpers.onlyUnique);
@@ -245,7 +240,7 @@ var GRAPH = (function(module) {
                         if (typeof iri === "string") {
                             var label = that.dagre.node(d).label;
                             that.nodes[iri]
-             		        .logTooltip()
+             		        .queryTooltip()
 			        .subscribe(text => {
 			            d3.select("#tooltipPopup")
 				        .append("p")
@@ -262,7 +257,7 @@ var GRAPH = (function(module) {
                                 var label = that.nodes[i].label;
                                 if (t.labels.indexOf(label) === -1) {
                                     t.labels.push(label);
-                                    t.text.push(that.nodes[i].logTooltip());
+                                    t.text.push(that.nodes[i].queryTooltip());
                                 } 
                                 return t;
                             }, { labels: [], text: [] });
@@ -280,6 +275,7 @@ var GRAPH = (function(module) {
                         }
                         d3.event.stopPropagation();
                     });
+
                 //append language tag to nodes            
                 inner.selectAll("g.node")
                     .append("text")
@@ -324,7 +320,7 @@ var GRAPH = (function(module) {
                             .html("");
                         var iri = that.dagre.node(d).iri;
                         if (typeof iri === "string") {
-                            that.nodes[iri].logTooltip();
+                            that.nodes[iri].queryTooltip();
                         } else {
                             iri.reduce(function(obj, i) {
 			        var label = that.nodes[i].label;
@@ -335,7 +331,10 @@ var GRAPH = (function(module) {
 			        } else {
 				    return obj;
 			        }
-                            }, { labels: [], iris: [] }).iris.forEach(function(i) { that.nodes[i].logTooltip(); });
+                            }, 
+                            { labels: [], iris: [] }).iris.forEach(function(i) { 
+                                that.nodes[i].queryTooltip(); 
+                            });
                         }
                         d3.event.stopPropagation();
 		    });
@@ -347,85 +346,83 @@ var GRAPH = (function(module) {
 	        if (data.properties.length < 2) {
                     return;
                 } else {
-                    var nodes = this.nodes;//!!!!!!!!!!!!!!!!!!!!!!!
+                    var that = this;
 		    //CONSTRUCTING NODES
 		    data.properties.forEach(function(element) {
 		        //save all nodes
 		        //define isAncestor
 		        //push to eqIri
-                        if (undefined !== element.s && undefined === nodes[element.s.value]) {
+                        if (undefined !== element.s && undefined === that.nodes[element.s.value]) {
                             var label = (undefined === element.sLabel) ? undefined : element.sLabel.value;
-                            nodes[element.s.value] = new Node(element.s.value, label);
+                            that.nodes[element.s.value] = new Node(element.s.value, label);
 			    //temporarily add nodes that are not in allArray (s is not in ancestors or descendants)
 			    if (data.ancestorsAndDescendants.length === 0) {
                                 if (data.ancestors.indexOf(element.s.value) === -1) {
-			            nodes[element.s.value].temporary = true;
+			            that.nodes[element.s.value].temporary = true;
                                 } 
                             } else {
                                 if (data.ancestorsAndDescendants.indexOf(element.s.value) === -1) {
-                                    nodes[element.s.value].temporary = true;
+                                    that.nodes[element.s.value].temporary = true;
                                 }
 			    }
 	                }
                         if (undefined !== element.rel) {
-                            if (undefined === nodes[element.rel.value]) {
+                            if (undefined === that.nodes[element.rel.value]) {
                                 var label = (undefined === element.relLabel) ? undefined : element.relLabel.value;
-                                nodes[element.rel.value] = new Node(element.rel.value, label);
+                                that.nodes[element.rel.value] = new Node(element.rel.value, label);
                             }
                             if (data.ancestors.indexOf(element.rel.value) > -1) {
-                                nodes[element.rel.value].isAncestor = true;
+                                that.nodes[element.rel.value].isAncestor = true;
                             }
                         }
                         if (undefined !== element.rel && undefined !== element.eq) {
-                            if (undefined === nodes[element.eq.value]) {
+                            if (undefined === that.nodes[element.eq.value]) {
                                 var label = (undefined === element.eqLabel) ? undefined : element.eqLabel.value;
-                                nodes[element.eq.value] = new Node(element.eq.value, label);
+                                that.nodes[element.eq.value] = new Node(element.eq.value, label);
                             }
                             if (element.rel.value !== element.eq.value) {
-                                if (nodes[element.rel.value].eqIri.indexOf(element.eq.value) === -1) {
-                                    nodes[element.rel.value].eqIri.push(element.eq.value);
+                                if (that.nodes[element.rel.value].eqIri.indexOf(element.eq.value) === -1) {
+                                    that.nodes[element.rel.value].eqIri.push(element.eq.value);
                                 }
-                                if (nodes[element.eq.value].eqIri.indexOf(element.rel.value) === -1) {
-                                    nodes[element.eq.value].eqIri.push(element.rel.value);
+                                if (that.nodes[element.eq.value].eqIri.indexOf(element.rel.value) === -1) {
+                                    that.nodes[element.eq.value].eqIri.push(element.rel.value);
                                 }
                             }
                         }
                     });
                 }
-                this.nodes = nodes;//!!!!!!!!!!!!!!!!
             }
            
             defineGraphNodes() {
-                var nodes = this.nodes;//!!!!!!!!!!!!!!!!
-	        for (var n in nodes) {
-		    var gn = nodes[n].graphNode;
-		    if (undefined === this.graphNodes[gn]) {
+                var that = this;
+	        for (var n in that.nodes) {
+		    var gn = that.nodes[n].graphNode;
+		    if (undefined === that.graphNodes[gn]) {
 		        var gg = new GraphNode(gn);
 		        gg.counter = gn;
-		        gg.iri = nodes[n].eqIri;
-		        gg.iso = nodes[n].iso;
+		        gg.iri = that.nodes[n].eqIri;
+		        gg.iso = that.nodes[n].iso;
 		        gg.label = gg.iri.map(function(i) {
-			        return nodes[i].label;
+			        return that.nodes[i].label;
 			    })
 			    .filter(etyBase.helpers.onlyUnique)
 			    .join(",");
-		        gg.lang = nodes[n].lang;
-		        gg.isAncestor = nodes[n].isAncestor;
-		        this.graphNodes[gn] = gg;
+		        gg.lang = that.nodes[n].lang;
+		        gg.isAncestor = that.nodes[n].isAncestor;
+		        that.graphNodes[gn] = gg;
 		    }
 	        }
-                this.nodes = nodes;//!!!!!!!!!!!!!!
 	    }
 	
 	    defineGraphEdges(data) {
-                var nodes = this.nodes, graphNodes = this.graphNodes, graphEdges = this.graphEdges; //!!!!!!!!!!!!!!!!!!!!!!!!!!
+                var that = this;
 	        data.properties.forEach(function(element) {
 		    if (undefined !== element.rel && undefined !== element.s){  
-			if (undefined !== nodes[element.s.value] && undefined !== nodes[element.rel.value]) {
-			    var source = nodes[element.rel.value].graphNode, target = nodes[element.s.value].graphNode;
-			    var color = (graphNodes[source].isAncestor && graphNodes[target].isAncestor) ? "red" : "steelBlue";
+			if (undefined !== that.nodes[element.s.value] && undefined !== that.nodes[element.rel.value]) {
+			    var source = that.nodes[element.rel.value].graphNode, target = that.nodes[element.s.value].graphNode;
+			    var color = (that.graphNodes[source].isAncestor && that.graphNodes[target].isAncestor) ? "red" : "steelBlue";
 			    if (source !== target) {
-				graphEdges.push({
+				that.graphEdges.push({
 					source: source,
 					target: target,
 					style: {label: "",
@@ -438,7 +435,6 @@ var GRAPH = (function(module) {
 			}
 		    }
 		});
-                this.nodes = nodes, this.graphNodes = graphNodes, this.graphEdges = graphEdges;//!!!!!!!!!!!!!!!!!!!!!!!!
 	    }
 
             predefine(data) {
@@ -460,55 +456,54 @@ var GRAPH = (function(module) {
             }
 
             clean() { //remove temporary nodes
-                var nodes = this.nodes;//!!!!!!!!!!!!!!!       
-		for (var n in nodes) {
-		    if (nodes[n].temporary) {
-			var iso = nodes[n].iso;
-			var label = nodes[n].label;
-			for (var m in nodes) {
-			    if (nodes[m].iso === iso && nodes[m].label === label) {
-				if (!nodes[m].temporary) {
-				    nodes[n].temporary = false;
+                var that = this;
+		for (var n in that.nodes) {
+		    if (that.nodes[n].temporary) {
+			var iso = that.nodes[n].iso;
+			var label = that.nodes[n].label;
+			for (var m in that.nodes) {
+			    if (that.nodes[m].iso === iso && that.nodes[m].label === label) {
+				if (!that.nodes[m].temporary) {
+				    that.nodes[n].temporary = false;
 				}
-				if (nodes[m].isAncestor) {
-				    nodes[n].isAncestor = true;
+				if (that.nodes[m].isAncestor) {
+				    that.nodes[n].isAncestor = true;
 				}
 			    }
 			}
 		    }
 		}
                 
-		for (var n in nodes) {
-		    if (nodes[n].temporary) {
-			nodes[n].eqIri.forEach(function(e) {
-				if (!nodes[e].temporary) {
-				    nodes[n].temporary = false;
+		for (var n in that.nodes) {
+		    if (that.nodes[n].temporary) {
+			that.nodes[n].eqIri.forEach(function(e) {
+				if (!that.nodes[e].temporary) {
+				    that.nodes[n].temporary = false;
 				}
-				if (nodes[e].isAncestor) {
-				    nodes[n].isAncestor = true;
+				if (that.nodes[e].isAncestor) {
+				    that.nodes[n].isAncestor = true;
 				}
 			    });
 		    }
 		}
 
-		for (var n in nodes) {
-		    if (!nodes[n].temporary) {
-			nodes[n].eqIri.forEach(function(e) {
-				nodes[e].temporary = false;
+		for (var n in that.nodes) {
+		    if (!that.nodes[n].temporary) {
+			that.nodes[n].eqIri.forEach(function(e) {
+				that.nodes[e].temporary = false;
 			    });
 		    }
 		}
 		
-		for (var n in nodes) {
-		    if (nodes[n].temporary) {
-			delete nodes[n];
+		for (var n in that.nodes) {
+		    if (that.nodes[n].temporary) {
+			delete that.nodes[n];
 		    }
 		}
-	        this.nodes = nodes;//!!!!!!!!!!!!!!!!!!!!!!
             }
  
             merge() {
-		var nodes = this.nodes;//!!!!!!!!!!!!!!!!!!!!!
+                 var that = this;
                 //CONSTRUCTING GRAPHNODES
                 //a graphNode is some kind of super node that merges Nodes that are etymologically equivalent
                 //or that refer to the same word - also called here identical Nodes 
@@ -517,15 +512,15 @@ var GRAPH = (function(module) {
                 //then merge them into one graphNode) 
                 //the final graph will use these super nodes (graphNodes)
                 var counter = 0; //counts how many graphNodes have been created so far
-                for (var n in nodes) {
-                    if (nodes[n].ety === 0) {
-                        var iso = nodes[n].iso;
-                        var label = nodes[n].label;
+                for (var n in that.nodes) {
+                    if (that.nodes[n].ety === 0) {
+                        var iso = that.nodes[n].iso;
+                        var label = that.nodes[n].label;
                         var tmp = [];
-                        for (var m in nodes) {
-                            if (undefined !== nodes[m]) {
-                                if (nodes[m].iso === iso && nodes[m].label === label) {
-                                    if (nodes[m].ety > 0) {
+                        for (var m in that.nodes) {
+                            if (undefined !== that.nodes[m]) {
+                                if (that.nodes[m].iso === iso && that.nodes[m].label === label) {
+                                    if (that.nodes[m].ety > 0) {
                                         tmp.push(m);
                                     }
                                 }
@@ -537,17 +532,17 @@ var GRAPH = (function(module) {
                         //then merge them in one graphNode
                         if (tmp.length === 1) {
                             //define node.graphNode
-                            var eqIri = nodes[n].eqIri.concat(nodes[tmp[0]].eqIri).filter(etyBase.helpers.onlyUnique);
+                            var eqIri = that.nodes[n].eqIri.concat(that.nodes[tmp[0]].eqIri).filter(etyBase.helpers.onlyUnique);
 
                             eqIri = eqIri.reduce(function(eq, element) {
-                                eq = eq.concat(nodes[element].eqIri).filter(etyBase.helpers.onlyUnique);
+                                eq = eq.concat(that.nodes[element].eqIri).filter(etyBase.helpers.onlyUnique);
                                 return eq;
                             }, []);
                             var graphNode = eqIri.reduce(function(gn, element) {
-                                if (undefined === nodes[element].graphNode) {
+                                if (undefined === that.nodes[element].graphNode) {
                                     return gn;
                                 } else {
-                                    gn.push(nodes[element].graphNode);
+                                    gn.push(that.nodes[element].graphNode);
                                     return gn;
                                 }
                             }, []).filter(etyBase.helpers.onlyUnique).sort();
@@ -559,8 +554,8 @@ var GRAPH = (function(module) {
                             }
 
                             eqIri.forEach(function(element) {
-                                nodes[element].eqIri = eqIri;
-                                nodes[element].graphNode = graphNode;
+                                that.nodes[element].eqIri = eqIri;
+                                that.nodes[element].graphNode = graphNode;
                             });
 
                             counter++;
@@ -568,18 +563,18 @@ var GRAPH = (function(module) {
                     }
                 }
 
-                for (var n in nodes) {
-                    if (undefined === nodes[n].graphNode) {
-                        var eqIri = nodes[n].eqIri;
+                for (var n in that.nodes) {
+                    if (undefined === that.nodes[n].graphNode) {
+                        var eqIri = that.nodes[n].eqIri;
                         eqIri = eqIri.reduce(function(eq, element) {
-                            eq = eq.concat(nodes[element].eqIri).filter(etyBase.helpers.onlyUnique);
+                            eq = eq.concat(that.nodes[element].eqIri).filter(etyBase.helpers.onlyUnique);
                             return eq;
                         }, []);
                         var graphNode = eqIri.reduce(function(gn, element) {
-                            if (undefined === nodes[element].graphNode) {
+                            if (undefined === that.nodes[element].graphNode) {
                                 return gn;
                             } else {
-                                gn.push(nodes[element].graphNode);
+                                gn.push(that.nodes[element].graphNode);
                                 return gn;
                             }
                         }, []).filter(etyBase.helpers.onlyUnique).sort();
@@ -591,14 +586,13 @@ var GRAPH = (function(module) {
                         }
 
                         eqIri.forEach(function(element) {
-                            nodes[element].eqIri = eqIri;
-                            nodes[element].graphNode = graphNode;
+                            that.nodes[element].eqIri = eqIri;
+                            that.nodes[element].graphNode = graphNode;
                         });
 
                         counter++;
                     }
                 }
-                this.nodes = nodes;//!!!!!!!!!!!!!!!!!!!!!
 	    }
 
             filterLeaves(n) {
@@ -705,40 +699,47 @@ var GRAPH = (function(module) {
                                             $("#message")
 		                                .css("display", "none");
                                             this.render();
- 			        
-                                            //search the full tree
-                                            //filteredAncestorArray is ancestorArray without words that start or end with dash
-                                            //we will find descendants of filteredAncestorArray, thus excluding descendants of words that start or end with dash
-			                    etyBase.DB.slicedQuery(data.ancestors.filter(etyBase.helpers.lemmaNotStartsOrEndsWithDash), etyBase.DB.descendantQuery, 8)
-			                        .subscribe(descendantResponse => {
-                                                    data.addDescendants(descendantResponse);
-                                                    etyBase.DB.slicedQuery(data.ancestorsAndDescendants, etyBase.DB.propertyQuery, 3) 
-                                                        .subscribe(propertyResponseWithDescendants => {
-					                    //constructing etymologyNodes, graphNodes, graphEdges
-						            //etymologyNodes is the set of input etymology entries
-						            //graphNodes is the set of nodes in the full graph; a graphNode can correspond to multiple etymology entries (i.e. multiple elements in etymologyNodes)
-						            data.setProperties(propertyResponseWithDescendants);
-                                                            var etyGraph = new EtymologyGraph();
-						            etyGraph.defineNodes(data);
-						            etyGraph.define(data);
-                                                            etyGraph.filterLeaves(2);
-                                                
-						            $("#btnExpand").click(function(e) {
-                                                                d3.select("#tooltipPopup")
-                                                                    .attr("display", "none");
-                                                                $("#tree-overlay")
-                                                                    .remove();
+
+                                            var btnExpand = $("#btnExpand");
+                                            Rx.Observable.fromEvent(btnExpand, "click").subscribe(e => {
+                                                d3.select("#tooltipPopup")
+                                                    .attr("display", "none");
+                                                $("#tree-overlay")
+                                                    .remove();
+                                                $("#message")
+                                                    .css("display", "inline")
+                                                    .html(etyBase.MESSAGE.loadingMore);
+
+                                                //search the full tree
+                                                //filteredAncestorArray is ancestorArray without words that start or end with dash
+                                                //we will find descendants of filteredAncestorArray, thus excluding descendants of words that start or end with dash
+			                        etyBase.DB.slicedQuery(data.ancestors.filter(etyBase.helpers.lemmaNotStartsOrEndsWithDash), etyBase.DB.descendantQuery, 8)
+			                            .subscribe(descendantResponse => {
+                                                        data.addDescendants(descendantResponse);
+                                                        etyBase.DB.slicedQuery(data.ancestorsAndDescendants, etyBase.DB.propertyQuery, 3) 
+                                                            .subscribe(propertyResponseWithDescendants => {
+					                        //constructing etymologyNodes, graphNodes, graphEdges
+						                //etymologyNodes is the set of input etymology entries
+						                //graphNodes is the set of nodes in the full graph; a graphNode can correspond to multiple etymology entries (i.e. multiple elements in etymologyNodes)
+						                data.setProperties(propertyResponseWithDescendants);
+                                                                var etyGraph = new EtymologyGraph();
+						                etyGraph.defineNodes(data);
+						                etyGraph.define(data);
+	                                                        
+                                                                etyGraph.filterLeaves(2);
                                                                 $("#message")
 		                                                    .css("display", "none");
+                                                                
                                                                 etyGraph.render();
-                                                            });
+                                                           
 			                                },
                                                         error => etyBase.helpers.serverError(error),
                                                         () => etyBase.helpers.debugLog("done property query"));
                                                 },
                                                 error => etyBase.helpers.serverError(error),
                                                 () => etyBase.helpers.debugLog("done descendant query"));
-                                    }
+                                            });
+                                        }
                             },
                             error => etyBase.helpers.serverError(error),
                             () => etyBase.helpers.debugLog("done property query"));
