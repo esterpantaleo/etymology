@@ -211,12 +211,29 @@ var DB = (function(module) {
 
         var descendantQuery = function(iri) {
             var query =
-                "SELECT DISTINCT ?descendant1 " + // ?descendant2",
+                "SELECT * {{ " + 
+                "SELECT DISTINCT ?descendant1 ?label1 " +
                 "{ " +
-                "   ?descendant1 dbetym:etymologicallyRelatedTo{1,5} <" + iri + "> . " +
-                "   OPTIONAL {?eq dbetym:etymologicallyEquivalentTo ?descendant1 . " +
-                "   ?descendant2 dbetym:etymologicallyRelatedTo* ?eq .} " +
-                "} ";
+                "   ?descendant1 dbetym:etymologicallyRelatedTo* <" + iri + "> . " +
+                "   OPTIONAL { " +
+                "       ?descendant1 rdfs:label ?tmp1 " +
+                "       BIND (STR(?tmp1) AS ?label1) " +
+                "   } " +
+                "}} UNION { " +
+                "SELECT DISTINCT ?descendant1 ?label1 ?ee ?labele" +                                                                                
+                "{ " +                                                                                                                     
+                "   ?descendant1 dbetym:etymologicallyRelatedTo* <" + iri + "> . " +                                                         
+                "   OPTIONAL { " +                                                                                                             
+                "       ?descendant1 rdfs:label ?tmp1 " +                                                                                    
+                "       BIND (STR(?tmp1) AS ?label1) " +                                                                                          
+                "   } " +                                                                                                                          
+                "   ?ee rdf:type dbetym:EtymologyEntry . " +                                                                          
+                "   ?descendant1 dbnary:describes ?ee . " +
+                "   OPTIONAL { " +                                                         
+                "       ?ee rdfs:label ?tmp " +                                                                                                                                                   
+                "       BIND (STR(?tmp) AS ?labele) " +                                                                                                                                                    
+                "   } " +                                                     
+                "}}} ";
             return query;
         };
 

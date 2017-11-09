@@ -41,6 +41,12 @@ html * {
     padding: 0px !important;
 }
 
+.ui-dialog-content {
+   background: grey !important;
+   opacity: .95 !important;
+   filter: Alpha(Opacity=95);
+}
+
 .blueSpan {
     color: DarkCyan;
     font-size: 1em;
@@ -69,6 +75,7 @@ html * {
     border-radius: 0.5em;
     width: auto;
     height: auto;
+    z-index: 200;
 }
 
 input:focus::-webkit-input-placeholder { color:transparent; }
