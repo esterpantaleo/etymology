@@ -3,10 +3,6 @@ html * {
     font-family: Verdana, Geneva, sans-serif !important;
     text-shadow: none !important;
 }
-
-.isoText {
-    font-size: 1em;
-}
   
 .help {
     font-size: 1em;
@@ -14,15 +10,13 @@ html * {
 }
 
 .helpButton {
-    border: 0.3em !important; 
-    font-size: 1.3em !important;
+    border: 0.3em !important;
     background-color: darkCyan !important;
     color: white !important;
 }
 
-.button {
+.searchButton {
     border: 0.3em !important;
-    font-size: 1.3em !important;
     background-color: white !important;
     color: black !important;
 }
@@ -151,6 +145,7 @@ input:focus:-ms-input-placeholder { color:transparent; }
     #title { display: block; }
     text { font-size: 1em; }
     .tooltipDiv { font-size: 0.8em; }
+    .isoText { font-size: 0.8em; }
 }
 
 @media screen and (min-width: 601px) {
@@ -166,15 +161,29 @@ input:focus:-ms-input-placeholder { color:transparent; }
     }
     #title { display: none; }
     text { font-size: 2em; }
+    .isoText { font-size: 1em; } 
+}
+
+.isoRect {
+    fill: red;
+    stroke: none!important;
+    fill-opacity: 0;
+    x: 0.8em;
+    y: 2.2em;
+    height: 1em;
+    border: 0em;
+}
+
+.node rect {
+    fill: white; 
+    stroke: steelblue; 
+    stroke-width: 0.2em;
+    rx: 8;
+    ry: 8;
 }
 
 .edgePath path.path {
-    stroke: grey;
+    stroke: steelblue;
     fill: none;
     stroke-width: 0.2em;
-}
-
-.arrowhead {
-    stroke: grey;
-    fill: grey;
 }

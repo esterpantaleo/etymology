@@ -7,18 +7,8 @@ var GRAPH = (function(module) {
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
 
-        class Dot {
-	    constructor() {
-		this.style = "fill: white; stroke: steelBlue; stroke-width: 0.2em;";
-		this.shape = "rect"; 
-		this.rx = this.ry = 25;
-	    }
-        }
-
-        class Node extends Dot{
-            constructor(iri, label) {
-                super();
-                
+        class Node {
+            constructor(iri, label) {                
                 //set this.iri
                 this.iri = iri;
 
@@ -53,6 +43,9 @@ var GRAPH = (function(module) {
                 
                 //initialize this.isAncestor
                 this.isAncestor = false;
+		
+		//set radius on node
+		this.rx = this.ry = 25;
             }
 
             tooltipQuery() { 
@@ -112,24 +105,30 @@ var GRAPH = (function(module) {
             }
         }
 
-        class GraphNode extends Dot {
-            constructor(i) {
-                super();
+        class GraphNode {
+            constructor(i) {		
                 this.counter = i;
                 this.iri = [];
                 this.isAncestor = false;
+
+		//set radius of node
+		this.rx = this.ry = 25;
             }
         }
 
         class Graph {
             constructor(type) {
+		this.type = type;
                 this.nodes = {};
                 this.graphNodes = {};
                 this.graphEdges = [];
                 this.dagre = new dagreD3.graphlib.Graph().setGraph({ rankdir: type });
             }
              
-	    setGraphNodes() {
+	    //given this.nodes assign this.nodes[i].graphNode to each node i using function 
+	    //this.setGraphNodeProperty()
+	    //and then define this.graphNodes
+	    setGraphNodes() {//used by descemdantsgraph and ancestors graph
                 var that = this;
                 that.setGraphNodeProperty();
                 for (var n in that.nodes) {
@@ -151,6 +150,7 @@ var GRAPH = (function(module) {
                 }
             }
 
+	    //assign this.nodes[i].graphNode for each node i
 	    setGraphNodeProperty() {
                 var that = this;
                 //CONSTRUCTING GRAPHNODES
@@ -246,6 +246,9 @@ var GRAPH = (function(module) {
                 }
             }
 
+	    //given this.graphNodes and this.graphEdges
+	    //define this.dagre nodes and edges
+	    //and assign this.graphEdges[e].style to the edges
             setDagre() {
 		for (var n in this.graphNodes) {
                     this.dagre.setNode(n, this.graphNodes[n]);
@@ -256,14 +259,17 @@ var GRAPH = (function(module) {
                 }
 	    }
 
-            renderDagre(selector, id, zoomed) {
+	    //draw this.dagre in the element selected by selector
+	    //and call the svg element id
+	    //if this.type === "LR" fit dagre to screen 
+            renderDagre(selector, id) {
                 var that = this;
                 
 		var svg = d3.select(selector).append("svg")
                     .attr("id", id)
 		    .attr("width", window.innerWidth)
 		    .attr("height", window.innerHeight - $("#header").height());
-                console.log("1");
+                
                 var inner = svg.append("g");
 
                 // Set up zoom support                      
@@ -272,19 +278,17 @@ var GRAPH = (function(module) {
                         "scale(" + d3.event.scale + ")");
                 });
                 svg.call(zoom);
-                console.log("2");
+                
 
                 // Create the renderer          
                 var render = new dagreD3.render();
-                console.log("3");
-		console.log(inner);
-		console.log(selector);
+                
                 // Run the renderer. This is what draws the final graph.  
                 render(inner, that.dagre);
-                console.log("4");
 
                 // Center the graph     
-		if (zoomed) {
+		console.log(that.type);
+		if (this.type === "LR") {
 		    var width = window.innerWidth;
 		    var graphWidth = that.dagre.graph().width;
 		    var zoomScale = (graphWidth > width) ? (0.95 * Math.max(width / graphWidth, 0.2)) : 0.75;
@@ -297,8 +301,7 @@ var GRAPH = (function(module) {
 		    .scale(0.75)
 		    .event(svg);
 		}
-                console.log("5");
-
+                
 	        // Decorate graph
 	        inner.selectAll("g.node > rect")
 	            .attr("class", "word");
@@ -364,14 +367,15 @@ var GRAPH = (function(module) {
                 //show tooltip on mouseover language tag   
                 inner.selectAll("g.node")
                     .append("rect")
-                    .attr("x", "0.8em")
-                    .attr("y", "2.2em")
+		    .attr("class", "isoRect")
+		//.attr("x", "0.8em")
+		//  .attr("y", "2.2em")
                     .attr("width", function(d) {
                         return that.dagre.node(d).iso.length / 1.7 + "em";
                     })
-                    .attr("height", "1em")
-                    .attr("fill", "red")
-                    .attr("fill-opacity", 0)
+		//  .attr("height", "1em")
+		//  .attr("fill", "red")
+		//  .attr("fill-opacity", 0)
                     .on("mouseover", function(d) {
                         d3.selectAll(".tooltip").remove();
                         d3.select("#tooltipPopup")
@@ -467,7 +471,7 @@ var GRAPH = (function(module) {
 			                    this.setDagre();
                                             $("#message")
 		                                .css("display", "none");
-                                            var innerTree = this.renderDagre("#tree-container", "tree-overlay", true);
+                                            var innerTree = this.renderDagre("#tree-container", "tree-overlay");
 					    console.log(this);
                                             var that = this;
                                             innerTree.selectAll("g.node")
@@ -491,9 +495,8 @@ var GRAPH = (function(module) {
 							etyBase.DB.getXMLHttpRequest(etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.descendantQuery(iri))).subscribe(response => {
 								var descendantsGraph = new DescendantsGraph("TB");
 								descendantsGraph.setNodes(response);
-								descendantsGraph.setGraphNodeProperty();
 								descendantsGraph.setGraphNodes();
-								descendantsGraph.renderDagre("#null", "desc-overlay", false);
+								//descendantsGraph.renderDagre("#null", "desc-overlay");
 
 								//get array of all languages available in descendantsGraph
 								var languages = [];
@@ -501,9 +504,10 @@ var GRAPH = (function(module) {
 								    languages.push(descendantsGraph.graphNodes[i].lang);
 								}
 								languages = languages.filter(etyBase.helpers.onlyUnique);
+								console.log(languages)
 								d3.select("#descendants").append("div").attr("id", "accordion").html(function() {
                                                                         return languages.map(function(l) {
-                                                                                return "<h3>" + l + "</h3><div id=\"div" + l + "\"></div>";
+                                                                                return "<h3>" + l + "</h3><div id=\"div" + l.replace(/ /g, "_").replace(/ *\([^)]*\) */g, "") + "\"></div>";
                                                                             }).join("");
                                                                     });
 								
@@ -531,7 +535,6 @@ var GRAPH = (function(module) {
                      error => etyBase.helpers.serverError(error),
                      () => etyBase.helpers.debugLog("done ancestor query"));
             }
-
 	    
 	    parseAncestors(response) {
                 return response.reduce((all, a) => {
@@ -639,8 +642,7 @@ var GRAPH = (function(module) {
 						target: target,
 						style: {label: "",
 						    lineInterpolate: "basis",
-						    arrowheadStyle: "fill: steelblue",
-						    style: "stroke: steelblue; fill: none; stroke-width: 0.2em;"
+						    arrowheadStyle: "fill: steelblue"
 						    }
 					});
 				}
@@ -739,7 +741,8 @@ var GRAPH = (function(module) {
 			languageGraph.dagre.setNode(gn, this.graphNodes[gn]);
 		    }
 		}
-		var inner = languageGraph.renderDagre("#div" + language, "overlay" + language, false);
+		language = language.replace(/ /g, "_").replace(/ *\([^)]*\) */g, "");
+		var inner = languageGraph.renderDagre("#div" + language, "overlay" + language);
 		var h = Math.min(languageGraph.dagre.graph().height + 30, window.innerHeight - 15);
 		d3.select("#div" + language).attr("style", "height:" + h + "px;");
 		inner.selectAll("g.node")
