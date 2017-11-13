@@ -17,6 +17,7 @@ var EtyTree = {
             dagre: "Arrows go from ancestor to descendant.<ul>" +
                 "<li>Mouse over a node to display lexical information</li>" +
                 "<li>Mouse over the language tag under the node to display the language</li>" +
+                "<li>Click on a node to display its descendants, grouped by language</li>" +
                 "</ul>"
         };
 
