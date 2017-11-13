@@ -24,13 +24,18 @@ var EtyTree = {
             notAvailable: "This word is not available in the database.",
             loading: "Loading, please wait.",
             serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
-            noEtymology: "Sorry, it seems like no etymology is available in the English Wiktionary for this word.",
+            noEtymology: function(htmlLink) { 
+		return "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of " + htmlLink;
+	    },
             loadingMore: "Loading, please wait...",
-            disambiguation: "There are multiple words in the database. <br>Which word are you interested in?"
+            disambiguation: "There are multiple words in the database. <br>Click on the word you are interested in."
         };
 
         //HELPER FUNCTIONS
         etyBase.helpers = {
+	    htmlLink: function(url, label) {
+		return "<a href=\"" + url + "\" target=\"_blank\">" + label + "</a>";
+	    },
             onlyUnique: function(value, index, self) {
                 return self.indexOf(value) === index;
             },

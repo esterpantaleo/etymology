@@ -21,7 +21,7 @@ var GRAPH = (function(module) {
 
                 //set this.label
                 this.label = (undefined === label) ? tmp.replace("__ee_", "") : label;
-                this.label = label.replace(/^_/, '*').replace("__", "'").replace("%C2%B7", "·").replace(/_/g, " ");
+                this.label = this.label.replace(/^_/, '*').replace("__", "'").replace("%C2%B7", "·").replace(/_/g, " ");
                 
                 //set this.ety
                 //this.ety is an integer representing the etymology number encoded in the iri;
@@ -85,24 +85,24 @@ var GRAPH = (function(module) {
             setLinks(dataJson) {
                 var toreturn = "<br><br>Data is under CC BY-SA and has been extracted from: ";
                 toreturn += dataJson[0].links.value.split(",")
-                    .map(function(e) {
-                        var linkName;
-                        if (e.startsWith("https://en.wiktionary.org/wiki/Reconstruction")) {
-                            linkName = e.replace(/https:\/\/en.wiktionary.org\/wiki\/Reconstruction:/g, "")
+                    .map(function(url) {
+                        var label;
+                        if (url.startsWith("https://en.wiktionary.org/wiki/Reconstruction")) {
+                            label = url.replace(/https:\/\/en.wiktionary.org\/wiki\/Reconstruction:/g, "")
                                 .split("/")
                                 .join(" ");
                         } else {
-                            linkName = e.split("/")
+                            label = url.split("/")
                                 .pop()
                                 .split("#")
                                 .reverse()
                                 .join(" ")
                                 .replace(/_/g, " ");
                         }
-                        return "<a href=\"" + e + "\" target=\"_blank\">" + linkName + "</a>";
+                        return etyBase.helpers.htmlLink(url, label);
                     }).join(", ");
                 return toreturn;
-            }
+            }		
         }
 
         class GraphNode {
@@ -117,18 +117,27 @@ var GRAPH = (function(module) {
         }
 
         class Graph {
-            constructor(type) {
-		this.type = type;
+            constructor() {
                 this.nodes = {};
                 this.graphNodes = {};
                 this.graphEdges = [];
-                this.dagre = new dagreD3.graphlib.Graph().setGraph({ rankdir: type });
+                this.dagre = new dagreD3.graphlib.Graph().setGraph({ rankdir: "LR" });
+		this.languages = [];
             }
-             
+
+	    setLanguages() {
+		for (var i in this.graphNodes) {
+		    if (undefined !== this.graphNodes[i].lang) {
+			this.languages.push(this.graphNodes[i].lang);
+		    }
+		}
+		this.languages = this.languages.filter(etyBase.helpers.onlyUnique);
+	    }
+
 	    //given this.nodes assign this.nodes[i].graphNode to each node i using function 
 	    //this.setGraphNodeProperty()
 	    //and then define this.graphNodes
-	    setGraphNodes() {//used by descemdantsgraph and ancestors graph
+	    setGraphNodes() {//used by descendantsgraph and ancestors graph
                 var that = this;
                 that.setGraphNodeProperty();
                 for (var n in that.nodes) {
@@ -249,22 +258,49 @@ var GRAPH = (function(module) {
 	    //given this.graphNodes and this.graphEdges
 	    //define this.dagre nodes and edges
 	    //and assign this.graphEdges[e].style to the edges
-            setDagre() {
+            setGraphEdges() {
+		//group nodes by language and place them in columns of length 150
+		this.setLanguages();
+		var style = {label: "",
+			style: "stroke: none",
+			lineInterpolate: "basis",
+			arrowheadStyle: "fill: none",
+			}
+		var m = null, col = 1;
+		var nCol = Math.max(Math.floor(window.innerWidth/150), 2); 
+		
+		for (var l in this.languages) {
+		    for (var n in this.graphNodes) {
+			if (this.graphNodes[n].lang === this.languages[l]) {
+			    if (m !== null) {
+				this.dagre.setEdge(m, n, style);
+				col += 1;
+			    }
+			    if (col === nCol) {
+				m = null;
+				col = 1;
+			    } else {
+				m = n;
+			    }
+			}
+		    }
+		}
+	    }
+
+	    setDagre() {
+		this.setGraphNodes();
 		for (var n in this.graphNodes) {
-                    this.dagre.setNode(n, this.graphNodes[n]);
-                }
-                for (var e in this.graphEdges) {
-                    var source = this.graphEdges[e].source, target = this.graphEdges[e].target;
-		    this.dagre.setEdge(source, target, this.graphEdges[e].style);
-                }
+		    this.dagre.setNode(n, this.graphNodes[n]);
+		}
+		this.setGraphEdges();
 	    }
 
 	    //draw this.dagre in the element selected by selector
 	    //and call the svg element id
-	    //if this.type === "LR" fit dagre to screen 
+	    //fit dagre to screen 
             renderDagre(selector, id) {
                 var that = this;
-                
+
 		var svg = d3.select(selector).append("svg")
                     .attr("id", id)
 		    .attr("width", window.innerWidth)
@@ -279,28 +315,20 @@ var GRAPH = (function(module) {
                 });
                 svg.call(zoom);
                 
-
                 // Create the renderer          
                 var render = new dagreD3.render();
                 
                 // Run the renderer. This is what draws the final graph.  
                 render(inner, that.dagre);
 
-                // Center the graph     
-		console.log(that.type);
-		if (this.type === "LR") {
-		    var width = window.innerWidth;
-		    var graphWidth = that.dagre.graph().width;
-		    var zoomScale = (graphWidth > width) ? (0.95 * Math.max(width / graphWidth, 0.2)) : 0.75;
+                // Center the graph
+		var width = window.innerWidth;
+		var graphWidth = that.dagre.graph().width;
+		var zoomScale = (graphWidth > width) ? (0.8 * Math.max(width / graphWidth, 0.2)) : 0.75;
 		    
-		    zoom.translate([(window.innerWidth - that.dagre.graph().width * zoomScale) / 2, 20])
-			.scale(zoomScale)
-			.event(svg);
-		} else {
-		    zoom.translate([(window.innerWidth - that.dagre.graph().width * 0.75) / 2, 20])
-		    .scale(0.75)
+		zoom.translate([(window.innerWidth - that.dagre.graph().width * zoomScale) / 2, 20])
+		    .scale(zoomScale)
 		    .event(svg);
-		}
                 
 	        // Decorate graph
 	        inner.selectAll("g.node > rect")
@@ -338,8 +366,7 @@ var GRAPH = (function(module) {
                                 } 
                                 return t;
                             }, { labels: [], text: [] });
-                            Rx.Observable.zip
-			        .apply(this, tooltips.text)
+                            Rx.Observable.zip.apply(this, tooltips.text)
 			        .catch((err) => {
 			            console.log(err); 
 			            return Rx.Observable.empty();
@@ -421,8 +448,8 @@ var GRAPH = (function(module) {
         }
 
         class AncestorsGraph extends Graph {
-            constructor(iri, type) {
-                super(type);
+            constructor(iri) {
+                super();
 
 		this.ancestors = [];
                 this.lastAncestors = [];
@@ -442,6 +469,7 @@ var GRAPH = (function(module) {
                 etyBase.DB.ancestorQuery(iri, 5)
                     .subscribe(ancestorResponse => {
                         this.setAncestors(iri, ancestorResponse);
+			
                         var sources = this.lastAncestors.map(function(element) {
                                 return etyBase.DB.ancestorQuery(element, 5);
                             });
@@ -452,8 +480,10 @@ var GRAPH = (function(module) {
                                 /* Return an empty Observable which gets collapsed in the output */
                                 return Rx.Observable.empty();
                             });
-                        obs.subscribe(moreAncestorsResponse => { 
-                                this.setAdditionalAncestors(moreAncestorsResponse);
+                        obs.subscribe(moreAncestorsResponse => {
+				if (0 !== moreAncestorsResponse) {
+				    this.setAdditionalAncestors(moreAncestorsResponse);
+				}
                                 etyBase.DB.slicedQuery(this.ancestors, etyBase.DB.propertyQuery, 3) 
                                     .subscribe(propertyResponse => {
                                         //constructing etymologyNodes, graphNodes, graphEdges
@@ -461,10 +491,33 @@ var GRAPH = (function(module) {
 		                        //graphNodes is the set of nodes in the full graph; a graphNode can correspond to multiple etymology entries (i.e. multiple elements in etymologyNodes) 
 		                        this.setProperties(propertyResponse);
                                         this.setNodes();
-                                        if (Object.keys(this.nodes).length < 2) {
+					var keys = Object.keys(this.nodes);
+					console.log(keys);
+					if (keys.length === 0) {
+					    var node = new Node(iri);
+					    var link = "https://en.wiktionary.org/wiki/";
+					    if (node.label.startsWith("*")) {
+						link += "Reconstruction:" + node.lang + "/" + node.label.replace("*", "");
+					    } else {
+						link += node.label + "#" + node.lang;
+					    }
+					    link = etyBase.helpers.htmlLink(link, node.lang + " " + node.label);
+					    $("#message")
+                                                .css("display", "inline")
+                                                .html(etyBase.MESSAGE.noEtymology(link));
+					} else if (keys.length === 1) {
+					    var link = "https://en.wiktionary.org/wiki/";
+					    var lang = keys[0].lang;
+					    var label = keys[0].label;
+					    if (!label.startsWith("*")) {
+						link = link + label + "#" + lang;
+						console.log(link);
+					    } else {
+						console.log(label);
+					    }
                                             $("#message")
                                                 .css("display", "inline")
-                                                .html(etyBase.MESSAGE.noEtymology);
+                                                .html(etyBase.MESSAGE.noEtymology(link));
                                         } else {
                                             $("#helpPopup")
 					        .html(etyBase.HELP.dagre);
@@ -472,7 +525,6 @@ var GRAPH = (function(module) {
                                             $("#message")
 		                                .css("display", "none");
                                             var innerTree = this.renderDagre("#tree-container", "tree-overlay");
-					    console.log(this);
                                             var that = this;
                                             innerTree.selectAll("g.node")
 					        .on("click", function(d) {             
@@ -480,11 +532,12 @@ var GRAPH = (function(module) {
                                                         var iri = clickedNode.iri[0];
                                                         
 							//open dialog
+							$("#descendants").remove();
                                                         d3.select("#tree-container").append("div").attr("id", "descendants");
 							$("#descendants").dialog({
                                                                 title: "descendants of " + clickedNode.lang + " " + clickedNode.label,
                                                                 autoOpen: false,
-								close:  function() { $("#descendants").remove(); },
+								    //close:  function() { $("#descendants").remove(); },
 							        width: $(window).width() - 15,
 							        height: $(window).height() - 15,
 								position: "top"
@@ -493,21 +546,13 @@ var GRAPH = (function(module) {
 
 							//draw descendants in dialog
 							etyBase.DB.getXMLHttpRequest(etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.descendantQuery(iri))).subscribe(response => {
-								var descendantsGraph = new DescendantsGraph("TB");
+								var descendantsGraph = new DescendantsGraph();
 								descendantsGraph.setNodes(response);
 								descendantsGraph.setGraphNodes();
-								//descendantsGraph.renderDagre("#null", "desc-overlay");
-
-								//get array of all languages available in descendantsGraph
-								var languages = [];
-								for (var i in descendantsGraph.graphNodes) {
-								    languages.push(descendantsGraph.graphNodes[i].lang);
-								}
-								languages = languages.filter(etyBase.helpers.onlyUnique);
-								console.log(languages)
+								descendantsGraph.setLanguages();
 								d3.select("#descendants").append("div").attr("id", "accordion").html(function() {
-                                                                        return languages.map(function(l) {
-                                                                                return "<h3>" + l + "</h3><div id=\"div" + l.replace(/ /g, "_").replace(/ *\([^)]*\) */g, "") + "\"></div>";
+                                                                        return descendantsGraph.languages.map(l => {
+										return"<h3>" + l + "</h3><div id=\"div" + l.replace(/ /g, "_").replace(/ *\([^)]*\) */g, "") + "\"></div>";
                                                                             }).join("");
                                                                     });
 								
@@ -515,12 +560,9 @@ var GRAPH = (function(module) {
                                                                         collapsible: "true",
 									activate: function(event, ui) {
 									    var language = ui.newHeader.text();
-									    var languageGraph = descendantsGraph.renderDagreByLanguage(language);
+									    descendantsGraph.renderDagreByLanguage(language);
 									},
-									create: function(event, ui) {
-                                                                            var language = $("#ui-id-2").text();
-                                                                            var languageGraph = descendantsGraph.renderDagreByLanguage(language);
-                                                                        } 
+									active: false
                                                                     });
 							    });
 						    });
@@ -562,20 +604,19 @@ var GRAPH = (function(module) {
                 var that = this;
                 var ancestors = that.parseAncestors(response);
                 ancestors.all.push(iri);
-                this.ancestors = this.ancestors.concat(ancestors.all).filter(etyBase.helpers.onlyUnique);
-                this.lastAncestors = this.lastAncestors.concat(ancestors.last).filter(etyBase.helpers.onlyUnique);
+                this.ancestors = ancestors.all.filter(etyBase.helpers.onlyUnique);
+                this.lastAncestors = ancestors.last.filter(etyBase.helpers.onlyUnique);
             }
 
             //look for additional ancestors 
             setAdditionalAncestors(response) {
                 var that = this;
-                if (0 !== response) {
-                    var ancestors = response.reduce(function(val, r) {
-                            return val.concat(that.parseAncestors(r).all);
-                        },
-                        []);
-                    this.ancestors = this.ancestors.concat(ancestors).filter(etyBase.helpers.onlyUnique);
-                }
+                
+		var ancestors = response.reduce(function(val, r) {
+			return val.concat(that.parseAncestors(r).all);
+		    },
+		    []);
+		this.ancestors = this.ancestors.concat(ancestors).filter(etyBase.helpers.onlyUnique);
             }
 
             setProperties(response) {
@@ -731,7 +772,7 @@ var GRAPH = (function(module) {
             }
             
 	    renderDagreByLanguage(language) {
-		var languageGraph = new DescendantsGraph("TB");
+		var languageGraph = new DescendantsGraph();
 		languageGraph.nodes = this.nodes;
 		for (var i in this.graphNodes) {
 		    var iri = this.graphNodes[i].iri[0];
@@ -741,31 +782,29 @@ var GRAPH = (function(module) {
 			languageGraph.dagre.setNode(gn, this.graphNodes[gn]);
 		    }
 		}
+		languageGraph.setGraphEdges();
 		language = language.replace(/ /g, "_").replace(/ *\([^)]*\) */g, "");
+	        
+	        d3.select("#overlay" + language).remove();
+	    
 		var inner = languageGraph.renderDagre("#div" + language, "overlay" + language);
-		var h = Math.min(languageGraph.dagre.graph().height + 30, window.innerHeight - 15);
-		d3.select("#div" + language).attr("style", "height:" + h + "px;");
+	    d3.select("#overlay" + language).attr("transform", "translate(" + (-50) + ")");
+	    var h = Math.min(languageGraph.dagre.graph().height + 30, window.innerHeight - 15);
+	    d3.select("#div" + language).attr("style", "height:" + h + "px;");
 		inner.selectAll("g.node")
 		    .on("click", function(d) {
-			    console.log(d);
-			    $("#descendants").dialog("close");
+			$("#descendants").dialog("close");
 			    
-			var iri = languageGraph.dagre.node(d).iri;
-			new AncestorsGraph(iri, "LR");
+			var iri = languageGraph.dagre.node(d).iri[0];
+			new AncestorsGraph(iri);
 		    });
 		return languageGraph;
 	    }
-
-	    setDagre() {
-                for (var n in this.GraphNodes) {
-                    this.dagre.setNode(n, this.nodes[n]);
-                }
-            }
 	}
 
         class DisambiguationGraph extends Graph {
-            constructor(lemma, type) {
-                super(type);
+            constructor(lemma) {
+                super();
 
 	        if (lemma.length < 2) {
 		    return;
@@ -787,20 +826,20 @@ var GRAPH = (function(module) {
                             .html(etyBase.MESSAGE.notAvailable);
                     } else if (Object.keys(this.nodes).length === 1) {
                         var iri = Object.keys(this.nodes)[0];
-                        new AncestorsGraph(iri, "LR");
+                        new AncestorsGraph(iri);
                     } else {
                         $("#helpPopup")
                             .html(etyBase.HELP.disambiguation);
                         $("#message")
                             .css("display", "inline")
                             .html(etyBase.MESSAGE.disambiguation);
-                        this.setDagre();
+			this.setDagre();
                         var innerDisambiguation = this.renderDagre("#tree-container", "tree-overlay");
                         var that = this;
 			innerDisambiguation.selectAll("g.node")
                             .on("click", function(d) {
-                                var iri = that.dagre.node(d).iri;
-                                new AncestorsGraph(iri, "LR");
+                                var iri = that.dagre.node(d).iri[0];
+                                new AncestorsGraph(iri);
                             });
                     }
                 },
@@ -816,14 +855,8 @@ var GRAPH = (function(module) {
                     if (n.et.value === "" || n.et.value.split(",").length > 1) {
                         that.nodes[n.iri.value] = new Node(n.iri.value, n.lemma.value);
                     }
-                });
+		    });
             }
-
-            setDagre() {
-	        for (var n in this.nodes) {
-		    this.dagre.setNode(n, this.nodes[n]);
-	        }
-	    }
         }
 
         var init = function() {
@@ -851,13 +884,13 @@ var GRAPH = (function(module) {
                 var search = this;
                 if (e.which === 13) {
                     var lemma = $(search).val();
-		    new DisambiguationGraph(lemma, "TB");
+		    new DisambiguationGraph(lemma);
 		}
 	    });
 
 	    $("#btnSearch").click(function(e) {
 		var lemma = $("#search").val();
-		new DisambiguationGraph(lemma, "TB");
+		new DisambiguationGraph(lemma);
             });
 
         };
