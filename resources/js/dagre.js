@@ -332,7 +332,8 @@ var GRAPH = (function(module) {
                 
 	        // Decorate graph
 	        inner.selectAll("g.node > rect")
-	            .attr("class", "word");
+		    .attr("class", "word");
+               
 	        //show tooltip on mouseover nodes 
                 inner.selectAll(".word")
                     .on("mouseover", function(d) {
@@ -342,22 +343,6 @@ var GRAPH = (function(module) {
                             .style("left", (d3.event.pageX + 38) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");
                         var iri = that.dagre.node(d).iri;
-                        if (typeof iri === "string") {
-                            var label = that.dagre.node(d).label;
-                            that.nodes[iri]
-             		        .tooltipQuery()
-			        .subscribe(text => {
-			            d3.select("#tooltipPopup")
-				        .append("p")
-				        .attr("class", "tooltip") 
-				        .html(text);
-			        }, error => {
-				    d3.select("#tooltipPopup")
-                                        .append("p")
-				        .attr("class", "tooltip")
-				        .html("<b>" + label + "</b><br><br><br>-");
-			        });
-                        } else {
                             var tooltips = iri.reduce(function(t, i) {
                                 var label = that.nodes[i].label;
                                 if (t.labels.indexOf(label) === -1) {
@@ -366,6 +351,7 @@ var GRAPH = (function(module) {
                                 } 
                                 return t;
                             }, { labels: [], text: [] });
+                            
                             Rx.Observable.zip.apply(this, tooltips.text)
 			        .catch((err) => {
 			            console.log(err); 
@@ -376,7 +362,7 @@ var GRAPH = (function(module) {
 				        .attr("class", "tooltip") 
 				        .html(response.join("<br><br>"));
 			        });
-                        }
+                        //}
                         d3.event.stopPropagation();
                     });
 
@@ -492,7 +478,6 @@ var GRAPH = (function(module) {
 		                        this.setProperties(propertyResponse);
                                         this.setNodes();
 					var keys = Object.keys(this.nodes);
-					console.log(keys);
 					if (keys.length === 0) {
 					    var node = new Node(iri);
 					    var link = "https://en.wiktionary.org/wiki/";
@@ -511,10 +496,7 @@ var GRAPH = (function(module) {
 					    var label = keys[0].label;
 					    if (!label.startsWith("*")) {
 						link = link + label + "#" + lang;
-						console.log(link);
-					    } else {
-						console.log(label);
-					    }
+					    } 
                                             $("#message")
                                                 .css("display", "inline")
                                                 .html(etyBase.MESSAGE.noEtymology(link));

@@ -159,54 +159,49 @@ var DB = (function(module) {
             return query;
         };
 
-        //(related|equivalent){0,5}
-        //DEFINE QUERIES TO PLOT GRAPH
-        var ancestorSubquery = function(iteration, describes, resource) {
-            var query = "";
-            if (undefined === resource) {
-                resource = "?ancestor" + iteration;
-            }
-            if (describes) {
-                query += resource + " dbnary:describes ?var" + iteration + " . ";
-                resource = "?var" + iteration;
-            }
-            query += resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (iteration + 1) + " . " +
-                " BIND(EXISTS {" + resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (iteration + 1) + " } AS ?der" + (iteration + 1) + ") ";
-                //" BIND(EXISTS {" + resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration + 1) + " } AS ?eq" + (iteration + 1) + ") ";
+        var iterativeAncestorQuery = function(i, depth, iri) {
+            if (i === depth) return [];
 
-            return query;
+            var query, resource, tmp = iterativeAncestorQuery(i + 1, depth).join("");;
+            if (i === 0) {
+                query = "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
+                    "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
+                    "SELECT DISTINCT * ";
+                resource = "<" + iri + ">";    
+            } else {
+                query = "OPTIONAL ";
+                resource = "?ancestor" + i;
+            }
+            //it was [true, false]
+            return [false].map(function(describes) {
+                var _query = query + "{";
+                var _resource = resource; 
+                if (describes) {
+                    _query += _resource + " dbnary:describes ?var" + i + " . ";
+                    _resource = "?var" + i; 
+                }
+                _query += _resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (i + 1) + " . " +
+                    " BIND(EXISTS {" + _resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (i + 1) + " } AS ?der" + (i + 1) + ") ";     
+                    //" BIND(EXISTS {" + _resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (i + 1) + " } AS ?eq" + (i + 1) + ") "; 
+                _query += tmp + "}";
+                return _query;
+            });
         };
 
-        var iterativeQuery = function(i, depth) {
-            var query = "";
-            if (i < depth) {
-                var tmp = iterativeQuery(i + 1, depth);
-                query += "OPTIONAL {" + ancestorSubquery(i, true) + tmp + "} ";
-                query += "OPTIONAL {" + ancestorSubquery(i, false) + tmp + "} ";
-            }
-            return query;
-        };
-
+        //returns an observable
         var ancestorQuery = function(iri, depth) {
-            var sources = [];
-            var queryPart1 =
-                "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
-                "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
-                "SELECT DISTINCT * {";
-            var queryPart3 = iterativeQuery(1, depth) + "}";
-            var query = queryPart1 + ancestorSubquery(0, true, "<" + iri + ">") + queryPart3;
-            sources.push(etyBase.DB.postXMLHttpRequest(query));
-            query = queryPart1 + ancestorSubquery(0, false, "<" + iri + ">") + queryPart3;
-            sources.push(etyBase.DB.postXMLHttpRequest(query));
-
-            const queryObservable = Rx.Observable.zip.apply(this, sources)
+            var sources = iterativeAncestorQuery(0, depth, iri)
+                .map(function(query) {
+                    return etyBase.DB.postXMLHttpRequest(query);  
+                });
+            
+            return Rx.Observable.zip.apply(this, sources)
                 .catch((err) => {
                     d3.select("#message").html(etyBase.MESSAGE.serverError);
 
                     /* Return an empty Observable which gets collapsed in the output */
                     return Rx.Observable.empty();
                 });
-            return queryObservable;
         };
 
         var descendantQuery = function(iri) {
