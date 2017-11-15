@@ -21,48 +21,34 @@ a:-webkit-any-link {
 
 <body>
 <div data-role="page">
-<div data-role="header" style="background-color: #38c;">
-<table style="empty-cells:hide; margin-left:auto; margin-right:auto;">
-<tr>
-<td>
-<a href="./etymology/index.html" target="_blank" data-role="button" data-mini="true">Test etytree</a>
-</td>
-<td>
-<a href="https://www.youtube.com/watch?v=cbUK09E_FDY" target="_blank" data-role="button" data-mini="true">Video presentation @ www2017</a>
-</td>
-<td>
-<a href="http://etytree-virtuoso.wmflabs.org/sparql" target="_blank" data-role="button" data-mini="true">Query the database</a>
-</td>
-<td>
-<a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank" data-role="button" data-mini="true">IEG proposal</a> 
-</td>
-<td>
-<a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Final" target="_blank" data-role="button" data-mini="true">IEG final report</a> 
-</td>
-<td>
-<a href="https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank" data-role="button" data-mini="true">Discuss the project!</a>
-</td>
-</tr>
-</table>
+<div data-role="header" style="background-color: #38c;" data-theme="b">
+  <div class="ui-btn-left" data-role="controlgroup">
+      <a href="./etymology/index.html" target="_blank" data-type="horizontal">Test etytree</a>
+      <a href="http://etytree-virtuoso.wmflabs.org/sparql" target="_blank">Query the database</a>
+  </div>
+  <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+      <a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank">IEG proposal</a>
+      <a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Renewal" target="_blank">Renewal proposal</a>
+      <a href="https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank">Give feedback!</a>
+  </div>
 </div>
-<div data-role="main" class="ui-content" >
-After six months of work supported by an <a href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary">IEG grant</a>, a database of more than 6 million etymology entries in 3365 languages has been generated from the English Wiktionary (SPARQL endpoint <a href="http://etytree-virtuoso.wmflabs.org/sparql"  target="_blank">http://etytree-virtuoso.wmflabs.org</a>) and a first version of the visual etymology dictionary has been released:
-<h1 style="text-align: center;"><a href="./etymology/index.html"  target="_blank">etytree</a>
-<span style="font-size:16px"><br>A graphical and interactive etymology dictionary based on Wiktionary</span></h1>
-
-<img src="./etymology/resources/images/door.png" alt="a screenshot of the visualization of word door" style="width:70%;height:70%;float: right;">
-We are happy to announce that the Wikimedia Foundation has supported us with a second grant! Thanks to all supporters!
-
-There are three main aspects we are tryng to improve right now:
-
-<ul><li>Front end: visual interface (a proof of concept of the tool is available <a href="http://www.epantaleo.com/etytree/index.html"  target="_blank">here</a>);</li>
-<li>Back end: Etymology sections parsing and queries;</li>
-<li>Community dissemination.</li></ul>
-
-For more details about the current version check the <a hre="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Renewal">renewal proposal</a>. 
+<div data-role="main" class="ui-content" style="text-align: center;">
+<br><br><br><h1><a href="./etymology/index.html"  target="_blank">etytree</a>
+<span style="font-size:16px"><br>A graphical and multilingual etymology dictionary based on Wiktionary</span></h1>
+What is etymology? <br>
+<blockquote><p>Etymology is the origin of a word and the historical development of its meaning.</p><footer> - <cite><a href="https://en.oxforddictionaries.com/">The Oxford English Dictionary</a></cite></footer></blockquote>
+<br><br>
+Etytree is the first graphical and multilingual etymology dictionary. <br>
+With etytree you can visualize the steps that led to the formation of a word as we know it, and <br>
+discover words that share one or more ancestors with that word in the same or in a different language. <br><br>
+Data is extracted from Wiktionary<sup><a href="#fn1" id="ref1">1</a></sup> using a free context grammar<sup><a href="#fn2" id="ref2">2</a></sup> 
+<img src="./etymology/resources/images/tear.gif" alt="Use etytree to discover how English <i>tear</i> and Italian <i>lacrima</i> share a common ancestor. What is it?" style="width:70%;height:70%;float: center;">
 
 <br><br>
-<b>If you find the tool interesting and have comments, please write in the <a href="https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank">Discussion page</a> of the grant proposal. </b>
+<b>If you have comments, please add a note on the <a href="https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank">Discussion page</a></b>
 </div>
+<sup id="fn1">1. Data extraction is performed at each new release of a Wiktionary dump.<a href="#ref1" title="Jump back to footnote 1 in the text.">&#8617</a></sup><br>
+<sup id="fn2">2. The code used to extract the database is available at <a href="https://bitbucket.org/esterpantaleo/dbnary_etymology" target="_blank"<a href="#ref1" title="Jump back to footnote 2 in the text.">&#8617</a></sup>
+
 </body>
 </html> 

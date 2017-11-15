@@ -25,7 +25,10 @@ var EtyTree = {
             notAvailable: "This word is not available in the database.",
             loading: "Loading, please wait.",
             serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
-            noEtymology: function(htmlLink) { 
+            noEtymology: function(lang, label) {
+		var url = etyBase.config.urls.WIKT;
+		url += label.startsWith("*") ? ("Reconstruction:" + lang + "/" + label.replace("*", "")) : (label + "#" + lang);
+                var htmlLink = etyBase.helpers.htmlLink(url, lang + " " + label);
 		return "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of " + htmlLink;
 	    },
             loadingMore: "Loading, please wait...",
@@ -34,6 +37,9 @@ var EtyTree = {
 
         //HELPER FUNCTIONS
         etyBase.helpers = {
+            urlFromQuery: function(query) {
+		return etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
+	    },
 	    htmlLink: function(url, label) {
 		return "<a href=\"" + url + "\" target=\"_blank\">" + label + "</a>";
 	    },
@@ -51,7 +57,7 @@ var EtyTree = {
                     .html(etyBase.MESSAGE.serverError);
             },
             lemmaNotStartsOrEndsWithDash: function(iri) {
-                var tmp = iri.replace("http://etytree-virtuoso.wmflabs.org/dbnary/eng/", "")
+                var tmp = iri.replace(etyBase.config.urls.DBNARY_ENG, "")
                     .split("/");
                 var label = (tmp.length > 1) ? tmp[1] : tmp[0]; 
                 label = label.replace(/__ee_[0-9]+_/g, "")
@@ -82,8 +88,13 @@ var EtyTree = {
             modules: ['DB', 'GRAPH', 'LOAD'],
             debug: false,
             urls: {
-                ENDPOINT: "https://etytree-virtuoso.wmflabs.org/sparql"
-            }
+                ENDPOINT: "https://etytree-virtuoso.wmflabs.org/sparql",
+                DBNARY_ENG: "http://etytree-virtuoso.wmflabs.org/dbnary/eng/",
+                WIKT: "https://en.wiktionary.org/wiki/",
+                WIKT_RECONSTRUCTION: "https://en.wiktionary.org/wiki/Reconstruction"
+            },
+	    //depth of etyBase.DB.ancestorQuery
+            depthAncestors: 5
         };
 
         bindModules(etyBase, etyBase.config.modules);

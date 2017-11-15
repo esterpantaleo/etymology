@@ -159,38 +159,38 @@ var DB = (function(module) {
             return query;
         };
 
-        var iterativeAncestorQuery = function(i, depth, iri) {
-            if (i === depth) return [];
+        var iterativeAncestorQuery = function(iteration, iri) {
+            if (iteration === etyBase.config.depthAncestors) return [];
 
-            var query, resource, tmp = iterativeAncestorQuery(i + 1, depth).join("");;
-            if (i === 0) {
+            var query, resource, tmp = iterativeAncestorQuery(iteration + 1).join("");;
+            if (iteration === 0) {
                 query = "PREFIX dbnary: <http://kaiko.getalp.org/dbnary#> " +
                     "PREFIX dbetym: <http://etytree-virtuoso.wmflabs.org/dbnaryetymology#> " +
                     "SELECT DISTINCT * ";
                 resource = "<" + iri + ">";    
             } else {
                 query = "OPTIONAL ";
-                resource = "?ancestor" + i;
+                resource = "?ancestor" + iteration;
             }
             //it was [true, false]
             return [false].map(function(describes) {
                 var _query = query + "{";
                 var _resource = resource; 
                 if (describes) {
-                    _query += _resource + " dbnary:describes ?var" + i + " . ";
-                    _resource = "?var" + i; 
+                    _query += _resource + " dbnary:describes ?var" + iteration + " . ";
+                    _resource = "?var" + iteration; 
                 }
-                _query += _resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (i + 1) + " . " +
-                    " BIND(EXISTS {" + _resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (i + 1) + " } AS ?der" + (i + 1) + ") ";     
-                    //" BIND(EXISTS {" + _resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (i + 1) + " } AS ?eq" + (i + 1) + ") "; 
+                _query += _resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (iteration + 1) + " . " +
+                    " BIND(EXISTS {" + _resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (iteration + 1) + " } AS ?der" + (iteration + 1) + ") ";     
+                    //" BIND(EXISTS {" + _resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration + 1) + " } AS ?eq" + (iteration + 1) + ") "; 
                 _query += tmp + "}";
                 return _query;
             });
         };
 
         //returns an observable
-        var ancestorQuery = function(iri, depth) {
-            var sources = iterativeAncestorQuery(0, depth, iri)
+        var ancestorQuery = function(iri) {
+            var sources = iterativeAncestorQuery(0, iri)
                 .map(function(query) {
                     return etyBase.DB.postXMLHttpRequest(query);  
                 });
@@ -279,7 +279,7 @@ var DB = (function(module) {
         };
 
         this.getXMLHttpRequest = getXMLHttpRequest;
-        this.postXMLHttpRequest = postXMLHttpRequest;
+        this.postXMLHttpRequest = postXMLHttpRequest
         this.slicedQuery = slicedQuery;
         this.disambiguationQuery = disambiguationQuery;
         this.lemmaQuery = lemmaQuery;

@@ -168,9 +168,6 @@ input:focus:-ms-input-placeholder { color:transparent; }
     fill: red;
     stroke: none!important;
     fill-opacity: 0;
-    x: 0.8em;
-    y: 2.2em;
-    height: 1em;
     border: 0em;
 }
 
