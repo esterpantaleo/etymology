@@ -63,10 +63,9 @@ html * {
     position: absolute;
     background: lightblue;
     text-align: left;
-    padding: 0.3em;
+    padding: 0em 1em 0em 1em !important;
     font: 1em sans-serif;
-    border: solid 0.3em red;
-    border-radius: 0.5em;
+    border-radius: 1em;
     width: auto;
     height: auto;
     z-index: 200;

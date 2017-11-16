@@ -8,16 +8,16 @@ var GRAPH = (function(module) {
         var etyBase = base;
 	
         class Node {
-            constructor(iri, label) {                
-                //set this.iri
-                this.iri = iri;
+            constructor(id, label) {                
+                //set this.id
+                this.id = id;
 		
-                var id = iri.replace(etyBase.config.urls.DBNARY_ENG, "")
+                var s = id.replace(etyBase.config.urls.DBNARY_ENG, "")
                     .split("/");
-	        var tmp = (id.length > 1) ? id[1] : id[0];
+	        var tmp = (s.length > 1) ? s[1] : s[0];
 		
                 //set this.iso
-                this.iso = (id.length > 1) ? id[0] : "eng";
+                this.iso = (s.length > 1) ? s[0] : "eng";
 		
                 //set this.label
                 this.label = (undefined === label) ? 
@@ -42,9 +42,9 @@ var GRAPH = (function(module) {
                 //initialize this.graphNode specifying the graphNode corresponding to the node
                 this.graphNode = undefined;
                 
-                //initialize this.eqIri is an array of iri-s of Node-s that are equivalent to the Node 
-                this.eqIri = [];
-                this.eqIri.push(iri);
+                //initialize this.iri is an array of iri-s of Node-s that are equivalent to the Node 
+                this.iri = [];
+                this.iri.push(id);
                 
                 //initialize this.isAncestor
                 this.isAncestor = false;
@@ -59,7 +59,7 @@ var GRAPH = (function(module) {
 		//clean
                 d3.selectAll(".tooltip").remove();
                 
-		return etyBase.DB.getXMLHttpRequest(etyBase.helpers.urlFromQuery(etyBase.DB.lemmaQuery(this.iri)))
+		return etyBase.DB.getXMLHttpRequest(etyBase.helpers.urlFromQuery(etyBase.DB.lemmaQuery(this.id)))
 		    .flatMap(response => that.setTooltip(response));
             }
 
@@ -154,7 +154,7 @@ var GRAPH = (function(module) {
                     if (undefined === that.graphNodes[gn]) {
                         var gg = new GraphNode(gn);
                         gg.id = gn;
-                        gg.iri = that.nodes[n].eqIri;
+                        gg.iri = that.nodes[n].iri;
                         gg.iso = that.nodes[n].iso;
                         gg.label = gg.iri.map(function(i) {
                             return that.nodes[i].label;
@@ -198,15 +198,15 @@ var GRAPH = (function(module) {
                         //then merge them in one graphNode 
                         if (tmp.length === 1) {
                             //define node.graphNode 
-                            var eqIri = that.nodes[n].eqIri
-                                .concat(that.nodes[tmp[0]].eqIri)
+                            var iri = that.nodes[n].iri
+                                .concat(that.nodes[tmp[0]].iri)
                                 .filter(etyBase.helpers.onlyUnique)
                                 .reduce(function(eq, element) {
-                                    eq = eq.concat(that.nodes[element].eqIri).filter(etyBase.helpers.onlyUnique);
+                                    eq = eq.concat(that.nodes[element].iri).filter(etyBase.helpers.onlyUnique);
                                     return eq;
                                 }, []);
 			    
-                            var graphNode = eqIri.reduce(function(gn, element) {
+                            var graphNode = iri.reduce(function(gn, element) {
                                 if (undefined === that.nodes[element].graphNode) {
                                     return gn;
                                 } else {
@@ -221,8 +221,8 @@ var GRAPH = (function(module) {
                                 graphNode = graphNode[0];
                             }
 			    
-                            eqIri.forEach(function(element) {
-                                that.nodes[element].eqIri = eqIri;
+                            iri.forEach(function(element) {
+                                that.nodes[element].iri = iri;
                                 that.nodes[element].graphNode = graphNode;
                             });
 			    
@@ -231,15 +231,15 @@ var GRAPH = (function(module) {
                     }
                 }
 		
-                //MERGE NODES IN eqIri
+                //MERGE NODES IN iri
                 for (var n in that.nodes) {
                     if (undefined === that.nodes[n].graphNode) {
-                        var eqIri = that.nodes[n].eqIri;
-                        eqIri = eqIri.reduce(function(eq, element) {
-			    eq = eq.concat(that.nodes[element].eqIri).filter(etyBase.helpers.onlyUnique);
+                        var iri = that.nodes[n].iri;
+                        iri = iri.reduce(function(eq, element) {
+			    eq = eq.concat(that.nodes[element].iri).filter(etyBase.helpers.onlyUnique);
 			    return eq;
 			}, []);
-                        var graphNode = eqIri.reduce(function(gn, element) {
+                        var graphNode = iri.reduce(function(gn, element) {
 			    if (undefined === that.nodes[element].graphNode) {
 				return gn;
 			    } else {
@@ -254,8 +254,8 @@ var GRAPH = (function(module) {
                             graphNode = graphNode[0];
                         }
 			
-                        eqIri.forEach(function(element) {
-			    that.nodes[element].eqIri = eqIri;
+                        iri.forEach(function(element) {
+			    that.nodes[element].iri = iri;
 			    that.nodes[element].graphNode = graphNode;
 			});
 			
@@ -426,9 +426,9 @@ var GRAPH = (function(module) {
                             .style("top", (d3.event.pageY - 28) + "px")
                             .html("");
                         var iri = that.dagre.node(d).iri;
-                        if (typeof iri === "string") {
-                            that.nodes[iri].tooltipQuery();
-                        } else {
+//                        if (typeof iri === "string") {
+//                            that.nodes[iri].tooltipQuery();
+//                        } else {
                             iri.reduce(function(obj, i) {
 			        var label = that.nodes[i].label;
 			        if (obj.labels.indexOf(label) === -1) {
@@ -442,7 +442,7 @@ var GRAPH = (function(module) {
 				       { labels: [], iris: [] }).iris.forEach(function(i) { 
 					   that.nodes[i].tooltipQuery(); 
 				       });
-                        }
+//                        }
                         d3.event.stopPropagation();
 		    });
 		return inner;
@@ -607,7 +607,7 @@ var GRAPH = (function(module) {
                     that.properties.forEach(function(element) {
 			//save all nodes 
 			//define isAncestor
-			//push to eqIri 
+			//push to iri 
 			if (undefined !== element.s && undefined === that.nodes[element.s.value]) {
 			    var label = (undefined === element.sLabel) ? undefined : element.sLabel.value;
 			    that.nodes[element.s.value] = new Node(element.s.value, label);
@@ -631,11 +631,11 @@ var GRAPH = (function(module) {
 				that.nodes[element.eq.value] = new Node(element.eq.value, label);
 			    }
 			    if (element.rel.value !== element.eq.value) {
-				if (that.nodes[element.rel.value].eqIri.indexOf(element.eq.value) === -1) {
-				    that.nodes[element.rel.value].eqIri.push(element.eq.value);
+				if (that.nodes[element.rel.value].iri.indexOf(element.eq.value) === -1) {
+				    that.nodes[element.rel.value].iri.push(element.eq.value);
 				}
-				if (that.nodes[element.eq.value].eqIri.indexOf(element.rel.value) === -1) {
-				    that.nodes[element.eq.value].eqIri.push(element.rel.value);
+				if (that.nodes[element.eq.value].iri.indexOf(element.rel.value) === -1) {
+				    that.nodes[element.eq.value].iri.push(element.rel.value);
 				}
 			    }
 			}
@@ -685,7 +685,7 @@ var GRAPH = (function(module) {
 		
                 for (var n in that.nodes) {
                     if (that.nodes[n].temporary) {
-                        that.nodes[n].eqIri.forEach(function(e) {
+                        that.nodes[n].iri.forEach(function(e) {
                             if (!that.nodes[e].temporary) {
                                 that.nodes[n].temporary = false;
                             }
@@ -698,7 +698,7 @@ var GRAPH = (function(module) {
 		
                 for (var n in that.nodes) {
                     if (!that.nodes[n].temporary) {
-                        that.nodes[n].eqIri.forEach(function(e) {
+                        that.nodes[n].iri.forEach(function(e) {
                             that.nodes[e].temporary = false;
                         });
                     }
@@ -837,7 +837,7 @@ var GRAPH = (function(module) {
 			if (undefined != j.ee) {
 			    that.nodes[j.ee.value] = new Node(j.ee.value, j.labele.value);
 			    that.nodes[j.descendant1.value]
-				.eqIri
+				.iri
 				.push(j.ee.value);
 			}
 		    }
