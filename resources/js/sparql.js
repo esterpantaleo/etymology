@@ -2,10 +2,10 @@
     Rx, XMLHttpRequest, console, d3, URLSearchParams, FormData, Blob
 */
 var DB = (function(module) {
-
+    
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
-
+	
         var postXMLHttpRequest = function(content) {
             return Rx.Observable.create(observer => {
                 const req = new XMLHttpRequest();
@@ -23,11 +23,11 @@ var DB = (function(module) {
                         observer.error(new Error('An error occured'));
                     }
                 };
-
+		
                 req.send(formData);
             });
         };
-
+	
         var getXMLHttpRequest = function(url) {
             return Rx.Observable.create(observer => {
                 const req = new XMLHttpRequest();
@@ -48,27 +48,27 @@ var DB = (function(module) {
                 req.send();
             });
         };
-
+	
         /* function to slice up a big sparql query (that cannot be processed by virtuoso) */
         /* into a bunch of smaller queries in chunks of "chunk" */
         var slicedQuery = function(myArray, queryFunction, chunk) {
             var i, j, tmpArray, url, sources = [];
             for (i = 0, j = myArray.length; i < j; i += chunk) {
                 tmpArray = myArray.slice(i, i + chunk);
-
-                url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.unionQuery(tmpArray, queryFunction));
+		
+                url = etyBase.helpers.urlFromQuery(etyBase.DB.unionQuery(tmpArray, queryFunction));
                 etyBase.helpers.debugLog(url);
                 sources.push(etyBase.DB.getXMLHttpRequest(url));
             }
             return Rx.Observable.zip.apply(this, sources)
                 .catch((err) => {
                     d3.select("#message").html(etyBase.MESSAGE.serverError);
-
+		    
                     /* Return an empty Observable which gets collapsed in the output */
                     return Rx.Observable.empty();
                 });
         };
-
+	
         //this function takes as input a string 
         //and outputs a query to the etytree SPARQL endpoint;
         //the query returns a table with 3 headers
@@ -101,10 +101,10 @@ var DB = (function(module) {
                 "    } " +
                 "    BIND (STR(?label) AS ?lemma) " +
                 "} ";
-
+	    
             return query;
         };
-
+	
         //DEFINE QUERY TO GET LINKS, POS AND GLOSS           
         var lemmaQuery = function(iri) {
             var query =
@@ -182,12 +182,12 @@ var DB = (function(module) {
                 }
                 _query += _resource + " dbetym:etymologicallyRelatedTo ?ancestor" + (iteration + 1) + " . " +
                     " BIND(EXISTS {" + _resource + " dbetym:etymologicallyDerivesFrom ?ancestor" + (iteration + 1) + " } AS ?der" + (iteration + 1) + ") ";     
-                    //" BIND(EXISTS {" + _resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration + 1) + " } AS ?eq" + (iteration + 1) + ") "; 
+                //" BIND(EXISTS {" + _resource + " dbetym:etymologicallyEquivalentTo ?ancestor" + (iteration + 1) + " } AS ?eq" + (iteration + 1) + ") "; 
                 _query += tmp + "}";
                 return _query;
             });
         };
-
+	
         //returns an observable
         var ancestorQuery = function(iri) {
             var sources = iterativeAncestorQuery(0, iri)
@@ -198,7 +198,7 @@ var DB = (function(module) {
             return Rx.Observable.zip.apply(this, sources)
                 .catch((err) => {
                     d3.select("#message").html(etyBase.MESSAGE.serverError);
-
+		    
                     /* Return an empty Observable which gets collapsed in the output */
                     return Rx.Observable.empty();
                 });

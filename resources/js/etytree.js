@@ -1,10 +1,10 @@
 /*globals
-    jQuery, $, d3, console, window
+  jQuery, $, d3, console, window
 */
 var EtyTree = {
     create: function() {
         var etyBase = Object.create(this);
- 
+	
         etyBase.HELP = {
             intro: "Enter a word in the search bar, then press enter or click.",
             disambiguation: "<b>Disambiguation page</b>" +
@@ -20,21 +20,22 @@ var EtyTree = {
                 "<li>Click on a node to display its descendants, grouped by language</li>" +
                 "</ul>"
         };
-
+	
         etyBase.MESSAGE = {
             notAvailable: "This word is not available in the database.",
             loading: "Loading, please wait.",
             serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
             noEtymology: function(lang, label) {
-		var url = etyBase.config.urls.WIKT;
-		url += label.startsWith("*") ? ("Reconstruction:" + lang + "/" + label.replace("*", "")) : (label + "#" + lang);
+		var url = etyBase.config.urls.WIKT +
+		    label.startsWith("*") ? ("Reconstruction:" + lang + "/" + label.replace("*", "")) : (label + "#" + lang);
                 var htmlLink = etyBase.helpers.htmlLink(url, lang + " " + label);
+
 		return "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of " + htmlLink;
 	    },
             loadingMore: "Loading, please wait...",
             disambiguation: "There are multiple words in the database. <br>Click on the word you are interested in."
         };
-
+	
         //HELPER FUNCTIONS
         etyBase.helpers = {
             urlFromQuery: function(query) {
@@ -62,8 +63,8 @@ var EtyTree = {
                 var label = (tmp.length > 1) ? tmp[1] : tmp[0]; 
                 label = label.replace(/__ee_[0-9]+_/g, "")
                     .replace("__ee_", "");
-
-               return (label.startsWith("-") || (label.endsWith("-") && !label.startsWith("_"))) ? false : true;
+		
+		return (label.startsWith("-") || (label.endsWith("-") && !label.startsWith("_"))) ? false : true;
             },
             debugLog: function(logText) {
                 if (etyBase.config.debug) {
@@ -71,7 +72,7 @@ var EtyTree = {
                 }
             }
         };
-
+	
         /* Binding Modules */
         var bindModules = function(base, modules) {
             for (var i = 0; i < modules.length; i++) {
@@ -82,7 +83,7 @@ var EtyTree = {
                 window[modules[i]].bindModule(base, modules[i]);
             }
         };
-
+	
         /* Setup basic settings */
         etyBase.config = {
             modules: ['DB', 'GRAPH', 'LOAD'],
@@ -96,15 +97,15 @@ var EtyTree = {
 	    //depth of etyBase.DB.ancestorQuery
             depthAncestors: 5
         };
-
+	
         bindModules(etyBase, etyBase.config.modules);
         return etyBase;
     },
     init: function() {
         var etyBase = this;
-
+	
         etyBase.tree = {}; // This will get populated with data, LangMap, inner, g, and some other key items
-
+	
         /* Load init function for every module */
         etyBase.config.modules.forEach((moduleName) => {
             if (etyBase[moduleName] && (typeof etyBase[moduleName].init === 'function')) {
