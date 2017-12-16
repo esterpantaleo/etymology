@@ -174,8 +174,6 @@ input:focus:-ms-input-placeholder { color:transparent; }
     fill: white; 
     stroke: steelblue; 
     stroke-width: 0.2em;
-    rx: 8;
-    ry: 8;
 }
 
 .edgePath path.path {

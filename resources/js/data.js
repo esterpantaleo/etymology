@@ -1,7 +1,7 @@
 /*globals 
     d3, Rx, console, XMLHttpRequest
 */
-var LOAD = (function(module) {
+var DATA = (function(module) {
 
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
@@ -39,4 +39,4 @@ var LOAD = (function(module) {
 
     return module;
 
-})(LOAD || {});
+})(DATA || {});

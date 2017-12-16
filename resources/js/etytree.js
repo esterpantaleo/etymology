@@ -23,26 +23,23 @@ var EtyTree = {
 	
         etyBase.MESSAGE = {
             notAvailable: "This word is not available in the database.",
-            loading: "Loading, please wait.",
+            loading: "Loading, please wait...",
             serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
             noEtymology: function(lang, label) {
-		var url = etyBase.config.urls.WIKT +
-		    label.startsWith("*") ? ("Reconstruction:" + lang + "/" + label.replace("*", "")) : (label + "#" + lang);
+		var url = etyBase.config.urls.WIKT;
+                url += label.startsWith("*") ? ("Reconstruction:" + lang + "/" + label.replace("*", "")) : (label + "#" + lang);
                 var htmlLink = etyBase.helpers.htmlLink(url, lang + " " + label);
 
 		return "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of " + htmlLink;
 	    },
-            loadingMore: "Loading, please wait...",
             disambiguation: "There are multiple words in the database. <br>Click on the word you are interested in."
         };
 	
         //HELPER FUNCTIONS
         etyBase.helpers = {
-            urlFromQuery: function(query) {
-		return etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
-	    },
 	    htmlLink: function(url, label) {
-		return "<a href=\"" + url + "\" target=\"_blank\">" + label + "</a>";
+//		return append("a").attr("href", url).attr("target", "_blank").text(label);
+		return "<a href=\"" + url + "\" target=\"_blank\">" + label + "</a>"; //use this instead $.("<a>").attr({href:url})
 	    },
             onlyUnique: function(value, index, self) {
                 return self.indexOf(value) === index;
@@ -56,16 +53,7 @@ var EtyTree = {
                 $("#message")
                     .css("display", "inline")
                     .html(etyBase.MESSAGE.serverError);
-            },
-            lemmaNotStartsOrEndsWithDash: function(iri) {
-                var tmp = iri.replace(etyBase.config.urls.DBNARY_ENG, "")
-                    .split("/");
-                var label = (tmp.length > 1) ? tmp[1] : tmp[0]; 
-                label = label.replace(/__ee_[0-9]+_/g, "")
-                    .replace("__ee_", "");
-		
-		return (label.startsWith("-") || (label.endsWith("-") && !label.startsWith("_"))) ? false : true;
-            },
+	    },
             debugLog: function(logText) {
                 if (etyBase.config.debug) {
                     console.log(logText);
@@ -86,13 +74,13 @@ var EtyTree = {
 	
         /* Setup basic settings */
         etyBase.config = {
-            modules: ['DB', 'GRAPH', 'LOAD'],
+            modules: ['DB', 'GRAPH', 'DATA', 'DATAMODEL', 'APP'],
             debug: false,
             urls: {
                 ENDPOINT: "https://etytree-virtuoso.wmflabs.org/sparql",
                 DBNARY_ENG: "http://etytree-virtuoso.wmflabs.org/dbnary/eng/",
                 WIKT: "https://en.wiktionary.org/wiki/",
-                WIKT_RECONSTRUCTION: "https://en.wiktionary.org/wiki/Reconstruction"
+                WIKT_RECONSTRUCTION: "https://en.wiktionary.org/wiki/Reconstruction:"
             },
 	    //depth of etyBase.DB.ancestorQuery
             depthAncestors: 5
@@ -121,3 +109,6 @@ jQuery(window).load(function($) {
     ety = EtyTree.create();
     ety.init();
 });
+//window.location.href
+//var url = new URL(url_string
+//var c 0 url.searchParams.get("c"
