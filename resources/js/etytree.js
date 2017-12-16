@@ -32,7 +32,9 @@ var EtyTree = {
 
 		return "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of " + htmlLink;
 	    },
-            disambiguation: "There are multiple words in the database. <br>Click on the word you are interested in."
+            disambiguation: "There are multiple words in the database. <br>Click on the word you are interested in to see its ancestors:",
+	    clickForAncestors: "Click on a word to see its ancestors:",
+	    clickForDescendants: "Click on a word to see its descendants"
         };
 	
         //HELPER FUNCTIONS

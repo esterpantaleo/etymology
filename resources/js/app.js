@@ -98,12 +98,13 @@ var APP = (function(module) {
 		.remove();     
 	    d3.select("#tooltipPopup") 
 		.style("display", "none");
+	    
 	    $("#message")
-	        .css("display", "none");
-
+	        .html(etyBase.MESSAGE.clickForDescendants);
+	    
 	    var g = new etyBase.GRAPH.Graph(etytreeAncestors(etymologyEntries));
 	    g.setLanguages();
-	    console.log(g.languages);
+
 	    g.render("#tree-container", "tree-overlay")
 		.selectAll("g.node")
 	        .on("click", function(d) {             
@@ -126,7 +127,7 @@ var APP = (function(module) {
 		    
 		    etyBase.DATAMODEL.descendantsQuery(iri)
                         .map((response) => {
-                            console.log(response)
+
                             var nodes = {};
                             var id = 0;
                             var keys = Object.keys(response);
@@ -138,16 +139,15 @@ var APP = (function(module) {
                             };
                         })
                         .subscribe((response) => {
-			    console.log(g.languages);
+
 			    var l = Array.apply(null, {length: g.languages.length})
 				.map(Function.call, Number);
 			    var accordion = d3.select("#descendants")
 			        .append("div")
-			        .attr("id", "accordion");
+			    .attr("id", "accordion");
 
 			    g.languages.map((lang, i) => {
-				console.log(lang);
-				console.log(i);
+
 				$("#accordion").append("<h3>" + lang + "</h3>");
 				$("#accordion").append("<div id=\"div" + i + "\"></div>");
 			    });
@@ -157,18 +157,26 @@ var APP = (function(module) {
 			    $("#accordion").accordion({
 				    collapsible: "true",
 				    activate: function(event, ui) {
-					console.log(ui)
+
 					//render descendantsGraph by language when clicking on accordion header 
 					var language = ui.newHeader.text();
 					var index = g.languages.indexOf(language);
-					console.log(g.languages[index])
+
 					var gg = new etyBase.GRAPH.LanguageGraph(g, language);	
-					console.log(gg)
+
 					//clean accordion 
 //					language = language.replace(/ /g, "_").replace(/ *\([^)]*\) * /g, "");
 					
-					d3.select("#overlay" + index).remove();
-					
+					d3.select("#accordionMessage")
+					    .remove();
+					d3.select("#overlay" + index)
+					    .remove();
+					d3.select("#div" + index)
+					    .append("div")
+					    .style("text-align", "center") 
+					    .attr("id", "accordionMessage")
+					    .html(etyBase.MESSAGE.clickForAncestors);
+
 					//render Dagre of language 
 					gg.render("#div" + index, "overlay" + index)
 					    .selectAll("g.node")
