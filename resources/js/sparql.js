@@ -137,7 +137,7 @@ var DB = (function(module) {
         var iterativeAncestorQuery = function(iteration, iri) {
             if (iteration === etyBase.config.depthAncestors) return [];
 
-            var query, resource, tmp = iterativeAncestorQuery(iteration + 1).join("");;
+            var query, resource, tmp = iterativeAncestorQuery(iteration + 1).join("");
             if (iteration === 0) {
                 query = "SELECT DISTINCT * ";
                 resource = "<" + iri + ">";    
@@ -215,7 +215,7 @@ var DB = (function(module) {
         };
 
         this.getXMLHttpRequest = getXMLHttpRequest;
-        this.postXMLHttpRequest = postXMLHttpRequest
+        this.postXMLHttpRequest = postXMLHttpRequest;
         this.disambiguationQuery = disambiguationQuery;
         this.glossQuery = glossQuery;
         this.descendantQuery = descendantQuery;
