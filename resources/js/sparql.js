@@ -2,35 +2,18 @@
     Rx, XMLHttpRequest, console, d3, URLSearchParams, FormData, Blob
 */
 var DB = (function(module) {
-    
+
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
 
-        var postXMLHttpRequest = function(content) {	    
-            return Rx.Observable.create(observer => {
-                const req = new XMLHttpRequest();
-                const params = new URLSearchParams();
-                params.set("format", "application/sparql-results+json");
-                var formData = new FormData();
-                var blob = new Blob([content], { type: "text/xml" });
-                formData.append("query", blob);
-                req.open('POST', etyBase.config.urls.ENDPOINT + "?" + params);
-                req.onload = function(oEvent) {
-                    if (req.status === 200) {
-                        observer.next(req.responseText);
-                        observer.complete();
-                    } else {
-                        observer.error(new Error('An error occured'));
-                    }
-                };
-		
-                req.send(formData);
-            });
-        };
-
+        /**
+         * Gets an XMLHttpRequest using RxJs
+         *
+         * @param {url} 
+         * @return {Observable} 
+         */
         var getXMLHttpRequest = function(url) {
-	    
-	    return Rx.Observable.create(observer => {
+            return Rx.Observable.create(observer => {
                 const req = new XMLHttpRequest();
                 req.open('GET', url);
                 req.overrideMimeType('application/sparql-results+json');
@@ -49,34 +32,90 @@ var DB = (function(module) {
                 req.send();
             });
         };
+
+        /**
+         * Posts an XMLHttpRequest using RxJs
+         *
+         * @param {string} 
+         * @return {Observable} 
+         */
+        var postXMLHttpRequest = function(content) {        
+            return Rx.Observable.create(observer => {
+                const req = new XMLHttpRequest();
+                const params = new URLSearchParams();
+                params.set("format", "application/sparql-results+json");
+                var formData = new FormData();
+                var blob = new Blob([content], { type: "text/xml" });
+                formData.append("query", blob);
+                req.open('POST', etyBase.config.urls.ENDPOINT + "?" + params);
+                req.onload = function(oEvent) {
+                    if (req.status === 200) {
+                        observer.next(req.responseText);
+                        observer.complete();
+                    } else {
+                        observer.error(new Error('An error occured'));
+                    }
+                };
+        
+                req.send(formData);
+            });
+        };
+
+        /**
+         * Posts an array of XMLHttpRequest to the server using RxJs
+         * each requesting ancestors of an iri
+         *
+         * @param {array} of iri-s
+         * @return {Observable}
+         */   
+        var postMoreAncestorsQuery = function(iris) {
+            return Rx.Observable.zip 
+                .apply(this, iris
+                    .map((iri) => {
+                        var content = iterativeAncestorQuery(0, iri);
+                        return postXMLHttpRequest(content);
+                    }));
+        };
 	
-        //this function takes as input a string 
-        //and outputs a query to the etytree SPARQL endpoint;
-        //the query returns a table with 3 headers
-        //"iri": the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
-        //"et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
-        //"lemma": a string containing the rdfs label of the resource "iri"
+        /**
+         * Prints the disambiguation query into a string.
+         * The generated response will consists of a table with three headers:
+         * "iri": the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
+         * "et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
+         * "lemma": a string containing the rdfs label of the resource "iri"
+         *
+         * @param {string} a word e.g. "door"
+         * @return {string} a query string
+         */
         var disambiguationQuery = function(lemma) {
-            var query =
-                "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ?lemma " +
+            return "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ?lemma " +
                 "WHERE { " +
-                "    ?iri rdfs:label ?label . " +
-                "    ?label bif:contains \"\'" + lemma + "\'\" . " +
+                "    ?iri rdfs:label ?lemma . " +
+                "    ?lemma bif:contains \"\'" + lemma + "\'\" . " +
                 // exclude entries that contain the searched word but include other words
                 // (e.g.: search="door" label="doorbell", exclude "doorbell")
-                "    FILTER REGEX(?label, \"^" + lemma + "$\", 'i') . " +
+                "    FILTER REGEX(?lemma, \"^" + lemma + "$\", 'i') . " +
                 "    ?iri rdf:type dbetym:EtymologyEntry . " +
                 "    OPTIONAL { " +
                 "        ?iri dbnary:describes ?ee . " +
                 "        ?ee rdf:type dbetym:EtymologyEntry . " +
                 "    } " +
-                "    BIND (STR(?label) AS ?lemma) " +
                 "} ";
-	    
-            return query;
         };
 	
-        //DEFINE QUERY TO GET LINKS, POS AND GLOSS           
+        /**
+         * Prints the query to get links, pos and gloss of an entry.
+         *
+         * The generated response will consists of a table with three headers:
+         * "iri"
+         * "ee"
+         * "pos": a string containing the rdfs label of the resource "iri"
+         * "gloss": a string containing glossesseparated by ";;;;""
+         * "links": a string containing links separated by ","
+         *
+         * @param {string} iri
+         * @return {string} a query string
+         */           
         var glossQuery = function(iri) {
             var query =
                 "SELECT DISTINCT ?iri ?ee ?pos (group_concat(distinct ?def ; separator=\";;;;\") as ?gloss) (group_concat(distinct ?also ; separator=\",\") as ?links) " +
@@ -128,6 +167,13 @@ var DB = (function(module) {
             return query;
         };
 
+        /**
+         * Prints the query to get ancestors 
+         *
+         * @param {integer}
+         * @param {string} iri
+         * @return {string} a query string
+         */
         var iterativeAncestorQuery = function(iteration, iri) {
             if (iteration === etyBase.config.depthAncestors) return [];
 
@@ -155,17 +201,14 @@ var DB = (function(module) {
             });
         };
 	
-	var moreAncestorsQuery = function(response) {
-	    return Rx.Observable.zip 
-		.apply(this, Object.keys(response)
-		       .map((e) => {
-			   return postXMLHttpRequest(iterativeAncestorQuery(0, e));
-		       }));
-	};
-	
+        /**
+         * Prints the query to get descendants 
+         *
+         * @param {string} iri
+         * @return {string} a query string
+         */
         var descendantQuery = function(iri) {
-            var query =
-                "SELECT DISTINCT ?descendant1 ?label1 ?ee ?labele " +
+            return "SELECT DISTINCT ?descendant1 ?label1 ?ee ?labele " +
                 "{ " +
                 "   ?descendant1 dbetym:etymologicallyRelatedTo* <" + iri + "> . " +
                 "   ?descendant1 rdfs:label ?label1 . " +
@@ -175,12 +218,16 @@ var DB = (function(module) {
                 "       ?ee rdfs:label ?labele . " +
                 "   } " +
                 "}";
-            return query;
         };
 
+        /**
+         * Prints the query to get properties about nodes 
+         *
+         * @param {string} iri
+         * @return {string} a query string
+         */
         var propertyQuery = function(iri) {
-            var query =
-                "SELECT DISTINCT ?s ?rel ?eq ?sLabel ?relLabel ?eqLabel" +
+            return "SELECT DISTINCT ?s ?rel ?eq ?sLabel ?relLabel ?eqLabel" +
                 "{           " +
                 "   VALUES ?rel " +
                 "   {           " +
@@ -196,27 +243,33 @@ var DB = (function(module) {
                 "    } " +
                 "    ?rel rdfs:label ?relLabel . " +
                 "} LIMIT 500";
-            return query;
         };
 
-        var unionQuery = function(iriArray, queryFunction) {
-            var query =
-                "SELECT * WHERE {{ " +
-                iriArray.map(function(iri) { return queryFunction(iri); })
-		    .join("} UNION {") +
+        /**
+         * Prints the union of an array of queries 
+         * one for each of the elements in input array iris 
+         *
+         * @param {array} of strings iris
+         * @return {function} a function that takes as argument a string iri
+         */
+        var unionQuery = function(iris, queryFunction) {
+            return "SELECT * WHERE {{ " +
+                iris.map(function(iri) { return queryFunction(iri); })
+                    .join("} UNION {") +
                 "}}";
-            return query;
         };
 
         this.getXMLHttpRequest = getXMLHttpRequest;
         this.postXMLHttpRequest = postXMLHttpRequest;
+        this.postMoreAncestorsQuery = postMoreAncestorsQuery;
+
         this.disambiguationQuery = disambiguationQuery;
         this.glossQuery = glossQuery;
         this.descendantQuery = descendantQuery;
         this.propertyQuery = propertyQuery;
         this.unionQuery = unionQuery;
-	this.iterativeAncestorQuery = iterativeAncestorQuery;
-	this.moreAncestorsQuery = moreAncestorsQuery;
+	    this.iterativeAncestorQuery = iterativeAncestorQuery;
+      
         etyBase[moduleName] = this;
     };
 

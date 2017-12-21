@@ -26,23 +26,23 @@ var EtyTree = {
             loading: "Loading, please wait...",
             serverError: "Sorry, the server cannot extract etymological relationships correctly for this word.",
             noEtymology: function(lang, label) {
-		var url = etyBase.config.urls.WIKT;
+                var url = etyBase.config.urls.WIKT;
                 url += label.startsWith("*") ? ("Reconstruction:" + lang + "/" + label.replace("*", "")) : (label + "#" + lang);
                 var htmlLink = etyBase.helpers.htmlLink(url, lang + " " + label);
 
-		return "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of " + htmlLink;
-	    },
+                return "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of " + htmlLink;
+            },
             disambiguation: "There are multiple words in the database. <br>Click on the word you are interested in to see its ancestors:",
-	    clickForAncestors: "Click on a word to see its ancestors:",
-	    clickForDescendants: "Click on a word to see its descendants"
+            clickForAncestors: "Click on a word to see its ancestors:",
+            clickForDescendants: "Click on a word to see its descendants"
         };
 	
         //HELPER FUNCTIONS
         etyBase.helpers = {
-	    htmlLink: function(url, label) {
+            htmlLink: function(url, label) {
 //		return append("a").attr("href", url).attr("target", "_blank").text(label);
-		return "<a href=\"" + url + "\" target=\"_blank\">" + label + "</a>"; //use this instead $.("<a>").attr({href:url})
-	    },
+                return "<a href=\"" + url + "\" target=\"_blank\">" + label + "</a>"; //use this instead $.("<a>").attr({href:url})
+            },
             onlyUnique: function(value, index, self) {
                 return self.indexOf(value) === index;
             },
@@ -55,7 +55,7 @@ var EtyTree = {
                 $("#message")
                     .css("display", "inline")
                     .html(etyBase.MESSAGE.serverError);
-	    },
+            },
             debugLog: function(logText) {
                 if (etyBase.config.debug) {
                     console.log(logText);
@@ -84,7 +84,7 @@ var EtyTree = {
                 WIKT: "https://en.wiktionary.org/wiki/",
                 WIKT_RECONSTRUCTION: "https://en.wiktionary.org/wiki/Reconstruction:"
             },
-	    //depth of etyBase.DB.ancestorQuery
+            //depth of etyBase.DB.ancestorQuery
             depthAncestors: 5
         };
 	
