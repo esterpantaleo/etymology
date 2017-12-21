@@ -57,20 +57,14 @@ var DB = (function(module) {
         //"et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
         //"lemma": a string containing the rdfs label of the resource "iri"
         var disambiguationQuery = function(lemma) {
-            var encodedLemma = lemma
-                .replace(/'/g, "\\\\'")
-                .replace("·", "%C2%B7")
-                .replace("*", "_")
-                .replace("'", "__"); //parse reconstructed words 
-            //.replace("/", "!slash!");  
             var query =
                 "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ?lemma " +
                 "WHERE { " +
                 "    ?iri rdfs:label ?label . " +
-                "    ?label bif:contains \"\'" + encodedLemma + "\'\" . " +
+                "    ?label bif:contains \"\'" + lemma + "\'\" . " +
                 // exclude entries that contain the searched word but include other words
                 // (e.g.: search="door" label="doorbell", exclude "doorbell")
-                "    FILTER REGEX(?label, \"^" + encodedLemma + "$\", 'i') . " +
+                "    FILTER REGEX(?label, \"^" + lemma + "$\", 'i') . " +
                 "    ?iri rdf:type dbetym:EtymologyEntry . " +
                 "    OPTIONAL { " +
                 "        ?iri dbnary:describes ?ee . " +

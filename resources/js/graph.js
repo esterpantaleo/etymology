@@ -29,23 +29,25 @@ var GRAPH = (function(module) {
 		    
 		    this.rx = this.ry = 25; //integer   radius of a node 
 		} else {
-		    log.err("Wrong input parameters to Node constructor");
+		    console.error("Wrong input parameters to Node constructor");
 		}
 	    }
 
 //createElement(p), p.addclass
 	    tooltip() {
 		var labels = this.label.split(",");
+		
 		var toreturn = "";
 		for (var i in labels) {
 		    toreturn += "<b>" + 
 			labels[i] + 
 			"</b>" +
-			"<br><br>" + 
+			"<br><br>" +
 			this.posAndGloss[i].map((t) => {
-			    var pos = t.pos;
-			    return t.gloss.map((gloss) => pos + " - " + gloss).join("<br><br>");
-			}) + 
+				var pos = t.pos;
+				return t.gloss.map((gloss) => pos + " - " + gloss).join("<br><br>");
+			    })
+			    .join("<br><br>") +
 			"<br><br><br>" +
 			"Data is under CC BY-SA and has been extracted from: " +
 			this.urlAndLabel[i].map((t) => {
@@ -59,9 +61,9 @@ var GRAPH = (function(module) {
 	}
 		
 	class Dagre {
-	    constructor() {
+	    constructor(type) {
 		//initialize dagre 
-		this.dagre = new dagreD3.graphlib.Graph().setGraph({ rankdir: "TB" }); 
+		this.dagre = new dagreD3.graphlib.Graph().setGraph({ rankdir: type }); 
 	    }
 
 	    //draw this.dagre in the element selected by selector
@@ -108,14 +110,14 @@ var GRAPH = (function(module) {
 	        inner.selectAll("g.node > rect")
 		    .attr("class", "word");
 		
-	        //show tooltip on mouseover graphNode
+	        //show tooltip on mouseover node
                 inner.selectAll(".word")
                     .on("mouseover", function(d) {
 		        d3.select(this).style("cursor", "pointer"); 
                         d3.selectAll(".tooltip").remove();
 			d3.select("#tooltipPopup")
                             .style("display", "inline")
-                            .style("left", (d3.event.pageX + 38) + "px")
+                            .style("left", (Math.min(d3.event.pageX + 38, window.innerWidth - 190)) + "px")
                             .style("top", (d3.event.pageY - 28) + "px")
 			    .append("p") 
 			    .attr("class", "tooltip")
@@ -174,12 +176,12 @@ var GRAPH = (function(module) {
 	}
 
 	class Graph extends Dagre {
-            constructor(graph) {
-                super();
+            constructor(type, graph) {
+                super(type);
 
-                //initialize nodes                                                                                                                                                                    
+                //initialize nodes            
                 if (undefined === graph.nodes) {
-                    console.err("Error: no arguments provided to Graph constructor");
+                    console.error("Error: no arguments provided to Graph constructor");
                 } else {
                     this.nodes = graph.nodes;
                     for (var n in this.nodes) {
@@ -187,7 +189,10 @@ var GRAPH = (function(module) {
                     }
                 }
 
-                //initialize edges                                                                                                                                                                    
+		//initialize languages 
+                this.languages = [];
+
+                //initialize edges
                 if (undefined === graph.edges) {
                     this.setEdges();
                     for (var e in this.edges) {
@@ -205,8 +210,6 @@ var GRAPH = (function(module) {
                         }
                     }
                 }
-                //initialize languages                    
-                this.languages = [];
             }
 
 
@@ -214,9 +217,12 @@ var GRAPH = (function(module) {
             //define this.dagre nodes and edges   
             //and assign this.edges[e].style to the edges  
             setEdges() {
-                //group nodes by language and place them in columns of length 150 
+		this.setLanguages();
+		this.edges = [];
+
+                //group nodes by language and place them in columns of length 230 
                 var m = null, col = 1;
-                var nCol = Math.max(Math.floor(window.innerWidth/150), 2);
+                var nCol = Math.max(Math.floor(window.innerWidth/230), 2);
 
                 for (var l in this.languages) {
                     for (var n in this.nodes) {
@@ -246,30 +252,19 @@ var GRAPH = (function(module) {
             }
 	}
 
-	class LanguageGraph extends Dagre {
-	    constructor(g, language) {
-		super()
-
+	class LanguageGraph extends Graph {
+	    constructor(type, g, language) {
 		//define nodes
 		var counter = 0;
-		this.nodes = {};
+		var nodes = {};
                 for (var i in g.nodes) {
                     if (g.nodes[i].lang === language) {
-			this.nodes[counter] = g.nodes[i];
+			nodes[counter] = g.nodes[i];
 			counter ++;
                     }
                 }
 
-		for (var n in this.nodes) {
-		    this.dagre.setNode(n, this.nodes[n]);
-		}
-
-		//define edges
-		for (var e in this.edges) {
-		    var source = this.edges[e].source, 
-		    target = this.edges[e].target;
-		    this.dagre.setEdge(source, target, this.edges[e].style);
-		}
+		super(type, {nodes: nodes});
             }
 	}
 		

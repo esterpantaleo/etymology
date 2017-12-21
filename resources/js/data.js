@@ -15,7 +15,8 @@ var DATA = (function(module) {
             var ssv = d3.dsv(";", "text/plain");
             ssv("./resources/data/etymology-only_languages.csv", function(data) {
                 data.forEach(function(entry) {
-                    etyBase.tree.langMap.set(entry.code, entry["canonical name"]);
+		    entry.code.split(",")
+                        .map((code) => etyBase.tree.langMap.set(code, entry["canonical name"]));
                 });
             });
             ssv("./resources/data/list_of_languages.csv", function(data) {
