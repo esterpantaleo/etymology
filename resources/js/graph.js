@@ -152,7 +152,7 @@ var GRAPH = (function(module) {
 				//append language tag to nodes            
 				inner.selectAll("g.node")
 					.append("text")
- 					.style("display", "inline")
+					.style("display", "inline")
 					.attr("class", "isoText")
 					.attr("x", "1em")
 					.attr("y", "3em")
@@ -201,8 +201,8 @@ var GRAPH = (function(module) {
 		}
 
 		/**
-		* Creates a Graph.
- 		* @class
+		* Class representing a Graph.
+ 		* @extends Dagre
  		*/
 		class Graph extends Dagre {
 			/**
@@ -288,6 +288,7 @@ var GRAPH = (function(module) {
 
 		/**
 		* Class representing a Language Graph.
+		* @extends Graph
 		*/
 		class LanguageGraph extends Graph {
 			/**

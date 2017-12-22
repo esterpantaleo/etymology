@@ -84,6 +84,7 @@ var EtyTree = {
                 WIKT: "https://en.wiktionary.org/wiki/",
                 WIKT_RECONSTRUCTION: "https://en.wiktionary.org/wiki/Reconstruction:"
             },
+	    notForeign: /^[a-z\u00C0-\u00F6\u00F8-\u017E]+$/i,
             //depth of etyBase.DB.ancestorQuery
             depthAncestors: 5
         };

@@ -18,14 +18,14 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * Returns the label of a node given its iri 
+		 * Returns language + label given its iri 
 		 *
 		 * @param {string} an iri
 		 * @return {string} a label
 		 */
 		var wiktionaryLabelOf = function(iri) {
 			if (iri.startsWith(etyBase.config.urls.WIKT_RECONSTRUCTION)) {
-				return iri.replace(etyBase.config.urls.WIKT_RECONSTRUCTION, "")
+			        return iri.replace(etyBase.config.urls.WIKT_RECONSTRUCTION, "").replace("/", "/*")
 					.split("/")
 					.join(" ");
 			} else {
@@ -84,7 +84,13 @@ var DATAMODEL = (function(module) {
 			return (null === tmp2) ? 0 : tmp2[0].match(/__ee_(.*?)_/)[1];
 		};
 
+		/** Class representing an Etymology Entry. */
 		class EtymologyEntry {
+		        /**
+		         * Create an Etymology Entry.
+		         * @param {string} iri - The iri that identifies the Etymology Entry.
+		         * @param {string} label - The label corresponding to the Etymology Entry.
+		         */
 			constructor(iri, label) {
 				this.id = iri;
 				this.label = (undefined === label) ? dbnaryLabelOf(iri) : parseLabel(label);
@@ -675,7 +681,8 @@ var DATAMODEL = (function(module) {
 		 * @param {function} a callback
 		 * @return {Observable} 
 		 */
-		var descendantsQuery = function(iris, graphDescendants) {
+		var descendantsQuery = function(node, graphDescendants) {
+		        var iris = node.iri;
 			return Rx.Observable.zip
 				.apply(this, iris.map(descendantsQueryScalar))
 				.map((response) => { 
@@ -690,7 +697,8 @@ var DATAMODEL = (function(module) {
 				.subscribe((response) => {
 					var iris = Object.keys(response);
 					return etyBase.DATAMODEL.dataQuery(iris, { values: response })
-						.subscribe(graphDescendants);
+					.subscribe((response) => 
+					    { graphDescendants(node, response); });
 				});
 		};
 
@@ -735,8 +743,8 @@ var DATAMODEL = (function(module) {
 		this.assignNodes = assignNodes;
 
 		this.glossQuery = glossQuery;
+		this.disambiguation = disambiguation;
 		this.disambiguationQuery = disambiguationQuery;
-		this.disambiguationGraphQuery = disambiguationGraphQuery;
 		this.ancestorsQuery = ancestorsQuery;
 		this.descendantsQuery = descendantsQuery;
 		this.dataQuery = dataQuery;

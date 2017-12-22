@@ -79,6 +79,7 @@ var APP = (function(module) {
 						var node = g.dagre.node(d);
 						showDescendants(node);
 					});
+		   
 			}
 		};
 
@@ -107,7 +108,7 @@ var APP = (function(module) {
 		var graphDescendantsInLanguage = function(gg, language) {
 			var index = gg.languages.indexOf(language);
 
-			//clean accordion                                                                                                                                                                                                          
+			//clean accordion                                          
 			d3.select("#accordionMessage")
 				.remove();
 			d3.select("#overlay" + index)
@@ -119,12 +120,12 @@ var APP = (function(module) {
 				.attr("id", "accordionMessage")
 				.html(etyBase.MESSAGE.clickForAncestors);
 
-			//render Dagre of language                                                                                                                                                                                                 
+			//render Dagre of language        
 			var g = new etyBase.GRAPH.LanguageGraph("LR", gg, language);
 			g.render("#div" + index, "overlay" + index)
 				.selectAll("g.node")
 				.on("click", function(d) {
-					//on click on node in language graph, render ancestorsGraph of clicked node                                                                                                                                    
+					//on click on node in language graph, render ancestorsGraph of clicked node    
 					$("#descendants")
 						.dialog("close");
 					var iri = g.dagre.node(d).iri[0];
@@ -132,8 +133,8 @@ var APP = (function(module) {
 					$(search).val(g.dagre.node(d).label);
 				});
 
-			//resize language graph                                                                                                                                                                                                    
-			var h = Math.min(g.dagre.graph().height + 40, window.innerHeight - 15);
+			//resize language graph         
+			var h = Math.min(g.dagre.graph().height + 50, window.innerHeight - 15);
 			d3.select("#div" + index)
 				.attr("style", "height:" + h + "px;");
 		};
@@ -143,10 +144,13 @@ var APP = (function(module) {
 		 * an accordion, where each section of the accordion 
 		 * displays the graph of descendants in a specific language.
 		 * 
-		 * @params {Object} a list of Etymology Entries
+		 * @params {Node} the node whose descendants we are going to show
+		 * @params {Object} a list of Etymology Entries, descendants of Node
 		 */
-		var graphDescendants = function(etymologyEntries) {
-			var accordion = d3.select("#descendants")
+		var graphDescendants = function(node, etymologyEntries) {
+		         $("#descendants")
+		                .dialog({ title: "Descendants of " + node.lang + " " + node.label});
+			 var accordion = d3.select("#descendants")
 				.append("div")
 				.attr("id", "accordion");
 
@@ -162,7 +166,7 @@ var APP = (function(module) {
 			$("#accordion").accordion({
 				collapsible: "true",
 				activate: function(event, ui) {
-					var language = ui.newHeader.text();
+					var language = ui.newHeader.text();		
 					graphDescendantsInLanguage(g, language);
 				},
 				active: false
@@ -184,16 +188,22 @@ var APP = (function(module) {
 				.attr("id", "descendants");
 			$("#descendants")
 				.dialog({
-					title: "descendants of " + node.lang + " " + node.label,
+					title: "Loading descendants...",
 					autoOpen: false,
 					width: $(window).width() - 15,
 					height: $(window).height() - 15,
 					position: "top"
 				});
+			/*$(".ui-dialog .ui-widget").append("div").html("loading...");
+
+			$("#descendants")
+			        .append("div")
+			        .attr("id", "accordionLoadingMessage")
+			        .html("loading");*/
  			$("#descendants")
 				.dialog("open");
 
- 			etyBase.DATAMODEL.descendantsQuery(node.iri, graphDescendants);
+ 			etyBase.DATAMODEL.descendantsQuery(node, graphDescendants);
 		};
 
 		/**
@@ -259,9 +269,11 @@ var APP = (function(module) {
 		 * @params {string} e.g., "door" 
 		 */
 		var show = function(lemma) {
-		 	if (lemma.length < 2) {
+		 	if (lemma.length < 2)
+			    //if lemma has length 1 but it is a foreign character (e.g. Chinese) don't return
+			    if (etyBase.config.notForeign.test(lemma)) 
 				return;
-			}
+			
 
 			etyBase.DATAMODEL.disambiguation(lemma)
 				.subscribe((response) => {
