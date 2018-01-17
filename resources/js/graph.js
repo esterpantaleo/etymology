@@ -254,7 +254,7 @@ var GRAPH = (function(module) {
 				this.setLanguages();
 				this.edges = [];
 
-				//group nodes by language and place them in columns of length 230 
+				//group nodes by language and display them in columns of length 230 
 				var m = null, col = 1;
 				var nCol = Math.max(Math.floor(window.innerWidth/230), 2);
 

@@ -215,7 +215,7 @@ var DATAMODEL = (function(module) {
 							return gn;
 						}
 					}, [])
-						.filter(etyBase.helpers.onlyUnique).sort();
+					.filter(etyBase.helpers.onlyUnique).sort();
 
 
 					if (node.length === 0) {
