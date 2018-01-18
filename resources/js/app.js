@@ -12,10 +12,9 @@ var APP = (function(module) {
 		var etyBase = base;
 
 		/**
-                 * @function
 		 * Given an object consisting of Etymology Entries, 
 		 * this function returns an object consisting of Nodes
-		 *
+		 * @function setNodes
 		 * @param {Object}.<EtymologyEntry> a list of Etymology Entries
 		 * @return {Object}.<Node> a list of Nodes
 		 */
@@ -58,9 +57,8 @@ var APP = (function(module) {
 		};
 	
 		/**
-                 * @function
 		 * Render the Graph of Ancestors
-		 * 
+		 * @function renderAncestors
 		 * @params {Object}.<EtymologyEntry> a list of Etymology Entries
 		 */
 		var renderAncestors = function(etymologyEntries) {
@@ -90,8 +88,8 @@ var APP = (function(module) {
 		};
 
 		/**
-                 * @function
-		 * Render the Disambiguation Graph
+                 * Render the Disambiguation Graph 
+                 * @function renderDisambiguation
 		 * 
 		 * @params {Object}.<EtymologyEntry> a list of Etymology Entries
 		 */
@@ -107,8 +105,8 @@ var APP = (function(module) {
 		};
 
 		/**
-                 * @function
-		 * Render the Graph of Descendants in a specified language
+                 * Render the Graph of Descendants in a specified language
+                 * @function renderDescendantsInLanguage
 		 * 
 		 * @params {Graph} a Graph with all descendants in all languages
 		 * @params {string} a language, e.g., "English"
@@ -151,7 +149,7 @@ var APP = (function(module) {
 		 * Render a dialog box with
 		 * an accordion, where each section of the accordion 
 		 * displays the graph of descendants in a specific language.
-		 * 
+		 * @function renderDescendants 
 		 * @params {Node} the node whose descendants we are going to show
 		 * @params {Object} a list of Etymology Entries, descendants of Node
 		 */
@@ -182,10 +180,9 @@ var APP = (function(module) {
 		};
 
 		/**
-                 * @function
 		 * Render the page that will contain the Graph of Descendants 
 		 * of a specified Node. It queries the database to get pos, gloss and links.
-		 *
+		 * @function showDescendants
 		 * @params {Node} 
 		 */
 		var showDescendants = function(node) {
@@ -210,9 +207,8 @@ var APP = (function(module) {
 		};
 
 		/**
-                 * @function
 		 * Render a "not available" message.
-		 *
+		 * @function showNotAvailable
 		 * @params {Node} 
 		 */
 		var showNotAvailable = function() {
@@ -227,11 +223,10 @@ var APP = (function(module) {
 		};
 
 		/**
-                 * @function
 		 * Render the page that will contain the Graph of Ancestors 
 		 * of an entry corresponding to a specified iri. It sequencially queries 
 		 * the database to get the set of ancestors.
-		 *
+		 * @function showAncestors
 		 * @params {iri} 
 		 */
 		var showAncestors = function(iri) {
@@ -247,10 +242,9 @@ var APP = (function(module) {
 		};
 
 		/**
-                 * @function
 		 * Render the page that will contain the Disambiguation Graph. 
 		 * It queries the database to get disambiguations.
-		 *
+		 * @function showDisambiguation
 		 * @params {string} response of a query
 		 */
 		var showDisambiguation = function(response) {
@@ -269,10 +263,9 @@ var APP = (function(module) {
 		};
 
 		/**
-		 * @function
                  * Render the page that will contain the Etymology Graph 
 		 * of a specified lemma
-		 *
+		 * @function show
 		 * @params {string} e.g., "door" 
 		 */
 		var show = function(lemma) {
@@ -298,8 +291,8 @@ var APP = (function(module) {
 		};
 
 		/**
-                 * @function
-		 * Initializes app
+                 * Initializes app
+                 * @function init
 		 */
 		var init = function() {
 
