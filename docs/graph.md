@@ -2,7 +2,7 @@
 
 <dl>
 <dt><a href="#Node">Node</a></dt>
-<dd><p>Creates a Node.</p>
+<dd><p>Class representing a Node.</p>
 </dd>
 <dt><a href="#Dagre">Dagre</a></dt>
 <dd><p>Creates a Dagre.</p>
@@ -15,17 +15,19 @@
 </dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#Print tooltip">Print tooltip()</a></dt>
+<dd></dd>
+</dl>
+
 <a name="Node"></a>
 
 ## Node
-Creates a Node.
+Class representing a Node.
 
 **Kind**: global class  
-
-* [Node](#Node)
-    * [new Node(counter, etymologyEntry)](#new_Node_new)
-    * [.tooltip()](#Node+tooltip)
-
 <a name="new_Node_new"></a>
 
 ### new Node(counter, etymologyEntry)
@@ -37,12 +39,6 @@ Create a Node with id counter (if counter is not undefined).
 | counter | <code>number</code> | 
 | etymologyEntry | <code>EtymologyEntry</code> | 
 
-<a name="Node+tooltip"></a>
-
-### node.tooltip()
-Print tooltip
-
-**Kind**: instance method of [<code>Node</code>](#Node)  
 <a name="Dagre"></a>
 
 ## Dagre
@@ -53,7 +49,6 @@ Creates a Dagre.
 * [Dagre](#Dagre)
     * [new Dagre(type)](#new_Dagre_new)
     * [.render(selector, id)](#Dagre+render)
-    * [.setLanguages()](#Dagre+setLanguages)
 
 <a name="new_Dagre_new"></a>
 
@@ -68,7 +63,7 @@ Create a dagre.
 <a name="Dagre+render"></a>
 
 ### dagre.render(selector, id)
-Draw a dagre from this.dagre in the element seected by "selector"
+Render dagre from this.dagre in the element seected by "selector"
 and call the the svg element "id". Then fit dagre to screen.
 
 **Kind**: instance method of [<code>Dagre</code>](#Dagre)  
@@ -78,12 +73,6 @@ and call the the svg element "id". Then fit dagre to screen.
 | selector | <code>selector</code> | 
 | id | <code>string</code> | 
 
-<a name="Dagre+setLanguages"></a>
-
-### dagre.setLanguages()
-Set the value of the array this.languages.
-
-**Kind**: instance method of [<code>Dagre</code>](#Dagre)  
 <a name="Graph"></a>
 
 ## Graph ⇐ [<code>Dagre</code>](#Dagre)
@@ -94,9 +83,7 @@ Class representing a Graph.
 
 * [Graph](#Graph) ⇐ [<code>Dagre</code>](#Dagre)
     * [new Graph(type, graph)](#new_Graph_new)
-    * [.setEdges()](#Graph+setEdges)
     * [.render(selector, id)](#Dagre+render)
-    * [.setLanguages()](#Dagre+setLanguages)
 
 <a name="new_Graph_new"></a>
 
@@ -109,16 +96,10 @@ Create a graph.
 | type | <code>string</code> | has value "TB" (top-bottom) or "LR" (left-right) |
 | graph | <code>Object</code> | with elements "nodes" and "edges" |
 
-<a name="Graph+setEdges"></a>
-
-### graph.setEdges()
-Set the value of this.languages and this.edges (if undefined).
-
-**Kind**: instance method of [<code>Graph</code>](#Graph)  
 <a name="Dagre+render"></a>
 
 ### graph.render(selector, id)
-Draw a dagre from this.dagre in the element seected by "selector"
+Render dagre from this.dagre in the element seected by "selector"
 and call the the svg element "id". Then fit dagre to screen.
 
 **Kind**: instance method of [<code>Graph</code>](#Graph)  
@@ -128,12 +109,6 @@ and call the the svg element "id". Then fit dagre to screen.
 | selector | <code>selector</code> | 
 | id | <code>string</code> | 
 
-<a name="Dagre+setLanguages"></a>
-
-### graph.setLanguages()
-Set the value of the array this.languages.
-
-**Kind**: instance method of [<code>Graph</code>](#Graph)  
 <a name="LanguageGraph"></a>
 
 ## LanguageGraph ⇐ [<code>Graph</code>](#Graph)
@@ -144,9 +119,7 @@ Class representing a Language Graph.
 
 * [LanguageGraph](#LanguageGraph) ⇐ [<code>Graph</code>](#Graph)
     * [new LanguageGraph(type, g, language)](#new_LanguageGraph_new)
-    * [.setEdges()](#Graph+setEdges)
     * [.render(selector, id)](#Dagre+render)
-    * [.setLanguages()](#Dagre+setLanguages)
 
 <a name="new_LanguageGraph_new"></a>
 
@@ -160,16 +133,10 @@ Create a language graph.
 | g | [<code>Graph</code>](#Graph) | the full Graph |
 | language | <code>string</code> | the language (e.g., "English") |
 
-<a name="Graph+setEdges"></a>
-
-### languageGraph.setEdges()
-Set the value of this.languages and this.edges (if undefined).
-
-**Kind**: instance method of [<code>LanguageGraph</code>](#LanguageGraph)  
 <a name="Dagre+render"></a>
 
 ### languageGraph.render(selector, id)
-Draw a dagre from this.dagre in the element seected by "selector"
+Render dagre from this.dagre in the element seected by "selector"
 and call the the svg element "id". Then fit dagre to screen.
 
 **Kind**: instance method of [<code>LanguageGraph</code>](#LanguageGraph)  
@@ -179,9 +146,7 @@ and call the the svg element "id". Then fit dagre to screen.
 | selector | <code>selector</code> | 
 | id | <code>string</code> | 
 
-<a name="Dagre+setLanguages"></a>
+<a name="Print tooltip"></a>
 
-### languageGraph.setLanguages()
-Set the value of the array this.languages.
-
-**Kind**: instance method of [<code>LanguageGraph</code>](#LanguageGraph)  
+## Print tooltip()
+**Kind**: global function  

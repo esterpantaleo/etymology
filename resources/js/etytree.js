@@ -1,10 +1,12 @@
 /*globals
   jQuery, $, d3, console, window
 */
+
 var EtyTree = {
     create: function() {
         var etyBase = Object.create(this);
 	
+        
         etyBase.HELP = {
             intro: "Enter a word in the search bar, then press enter or click.",
             disambiguation: "<b>Disambiguation page</b>" +

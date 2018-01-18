@@ -59,7 +59,19 @@ If you want to find ancestors of "door":
          eng:__ee_1_door dbetym:etymologicallyRelatedTo+ ?o .
     }
 
-## FOR DEVELOPERS
+## etymology DOCUMENTATION
+### INSTALL [jsdoc-to-markdown](https://www.npmjs.com/package/jsdoc-to-markdown)
+You would to have sudo privileges
+    
+    npm install -g jsdoc-to-markdown
+
+### GENERATE DOCUMENTATION
+
+    mkdir ./docs
+    cd ./resources/js/
+    jsdoc2md liveTour.js > ./docs/liveTour.md
+
+## dbnary_etymology DOCUMENTATION
 ### EXTRACT THE DATA USING dbnary_etymology
 The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is available at [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
 #### COMPILE THE CODE

@@ -7,7 +7,7 @@ var GRAPH = (function(module) {
 		var etyBase = base; 
 
 		/**
-		* Creates a Node.
+		* Class representing a Node.
  		* @class
  		*/
 		class Node {
@@ -42,8 +42,9 @@ var GRAPH = (function(module) {
 				}
 			}
 
-//createElement(p), p.addclass
+
 			/**
+                         * @function
 			 * Print tooltip
 			 */
 			tooltip() {
@@ -87,7 +88,7 @@ var GRAPH = (function(module) {
 			}
 
 			/**
-			 * Draw a dagre from this.dagre in the element seected by "selector"
+			 * Render dagre from this.dagre in the element seected by "selector"
 			 * and call the the svg element "id". Then fit dagre to screen.
 			 * @param {selector} 
 			 * @param {string} id
@@ -186,8 +187,9 @@ var GRAPH = (function(module) {
 			}
 
 			/**
+                         * @function
 			 * Set the value of the array this.languages.
-			*/
+			 */
 			setLanguages() {
 				for (var gn in this.nodes) {
 					var lang = this.nodes[gn].lang;
@@ -248,8 +250,9 @@ var GRAPH = (function(module) {
 
 
 			/**
+                         * @function
 			 * Set the value of this.languages and this.edges (if undefined).
-			*/ 
+			 */ 
 			setEdges() {
 				this.setLanguages();
 				this.edges = [];

@@ -1,12 +1,16 @@
 /*globals
     Rx, XMLHttpRequest, console, d3, URLSearchParams, FormData, Blob
 */
+/** 
+ * @module DB
+ */
 var DB = (function(module) {
 
     module.bindModule = function(base, moduleName) {
         var etyBase = base;
 
         /**
+	 * @function
          * Gets an XMLHttpRequest using RxJs
          *
          * @param {url} 
@@ -34,6 +38,7 @@ var DB = (function(module) {
         };
 
         /**
+         * @function
          * Posts an XMLHttpRequest using RxJs
          *
          * @param {string} 
@@ -62,6 +67,7 @@ var DB = (function(module) {
         };
 
         /**
+         * @function
          * Posts an array of XMLHttpRequest to the server using RxJs
          * each requesting ancestors of an iri
          *
@@ -78,6 +84,7 @@ var DB = (function(module) {
         };
 	
         /**
+         * @function
          * Prints the disambiguation query into a string.
          * The generated response will consists of a table with three headers:
          * "iri": the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
@@ -104,6 +111,7 @@ var DB = (function(module) {
         };
 	
         /**
+         * @function
          * Prints the query to get links, pos and gloss of an entry.
          *
          * The generated response will consists of a table with three headers:
@@ -168,6 +176,7 @@ var DB = (function(module) {
         };
 
         /**
+         * @function
          * Prints the query to get ancestors 
          *
          * @param {integer}
@@ -202,6 +211,7 @@ var DB = (function(module) {
         };
 	
         /**
+         * @function
          * Prints the query to get descendants 
          *
          * @param {string} iri
@@ -221,6 +231,7 @@ var DB = (function(module) {
         };
 
         /**
+         * @function
          * Prints the query to get properties about nodes 
          *
          * @param {string} iri
@@ -246,6 +257,7 @@ var DB = (function(module) {
         };
 
         /**
+         * @function
          * Prints the union of an array of queries 
          * one for each of the elements in input array iris 
          *

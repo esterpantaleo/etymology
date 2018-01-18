@@ -2,12 +2,17 @@
   $, d3, console, dagreD3, Rx, window, document, URLSearchParams
 */
 /*jshint loopfunc: true, shadow: true, latedef: false */ // Consider removing this and fixing these
+
+/**
+ * @module DATAMODEL
+ */
 var DATAMODEL = (function(module) {
 	
 	module.bindModule = function(base, moduleName) {
 		var etyBase = base;
 
 		/**
+                 * @function 
 		 * Encodes a query into an url 
 		 *
 		 * @param {string} a query
@@ -18,7 +23,8 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * Returns language + label given its iri 
+                 * @function 
+		 * Given an iri, returns language + label
 		 *
 		 * @param {string} an iri
 		 * @return {string} a label
@@ -39,6 +45,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
+                 * @function 
 		 * Returns a label by replacing special characters 
 		 *
 		 * @param {string} an encoded label
@@ -52,7 +59,8 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * Returns an encoded label given a label 
+                 * @function 
+		 * Given a label, returns an encoded label
 		 *
 		 * @param {string} a label
 		 * @return {string} an encoded label
@@ -65,6 +73,10 @@ var DATAMODEL = (function(module) {
 				//.replace("/", "!slash!");  
 		};
 
+	        /**
+                 * @function 
+                 * @param {string} an iri
+                 */
 		var dbnaryLabelOf = function(iri) {
 			var tmp1 = iri.replace(etyBase.config.urls.DBNARY_ENG, "").split("/");
 			var tmp2 = (tmp1.length > 1) ? tmp1[1] : tmp1[0];
@@ -72,11 +84,19 @@ var DATAMODEL = (function(module) {
 				.replace("__ee_", ""));
 		};
 
+		/**
+                 * @function
+                 * @param {string} an iri
+                 */
 		var dbnaryIsoOf = function(iri) {
 			var tmp1 = iri.replace(etyBase.config.urls.DBNARY_ENG, "").split("/");
 			return (tmp1.length > 1) ? tmp1[0] : "eng";
 		};
 	
+		/**
+                 * @function
+                 * @param {string} an iri
+                 */
 		var dbnaryEtyOf = function(iri) {
 			var tmp1 = iri.replace(etyBase.config.urls.DBNARY_ENG, "").split("/");
 			var tmp2 = (tmp1.length > 1) ? tmp1[1] : tmp1[0];
@@ -84,7 +104,10 @@ var DATAMODEL = (function(module) {
 			return (null === tmp2) ? 0 : tmp2[0].match(/__ee_(.*?)_/)[1];
 		};
 
-		/** Class representing an Etymology Entry. */
+		/** 
+                 * Class representing an Etymology Entry. 
+                 * @class
+                 */
 		class EtymologyEntry {
 		        /**
 		         * Create an Etymology Entry.
@@ -126,20 +149,20 @@ var DATAMODEL = (function(module) {
 		}
 	
 		/**
-		 * 
+		 * @function
+                 * Used to merge EtymologyEntries into one Node
+                 * Assigns a node value (integer) to each EtymologyEntries
+                 * Different EtymologyEntries can be assigned the same node value 
+                 * if they are etymologically equivalent or refer to the same word.
+                 * The final graph will merge EtymologyEntries that have the same node value
+                 * into the same node
+                 * (e.g.: if only ee_word and ee_n_word with n an integer belong to
+                 * the set of ancestors and descendants then merge them into one node)
 		 *
-		 * @param {Object} containing a list of Etymology Entries
-		 * @return {Object} containing a list of Etymology Entries
+		 * @param {Object}.<EtymologyEntry> containing a list of Etymology Entries
+		 * @return {Object}.<EtymologyEntry> containing a list of Etymology Entries
 		 */
 		var assignNodes = function(values) {            
- 			//MERGING EtymologyEntries
-			//a node merges EtymologyEntries that are etymologically equivalent 
-			//or that refer to the same word 
-			//MERGE EtymologyEntries THAT HAVE THE SAME iso AND label BUT A DIFFERENT ety 
-			//(e.g.: if only ee_word and ee_n_word with n an integer belong to 
-			//the set of ancestors and descendants 
-			//then merge them into one node)
-			//the final graph will use these nodes 
 
 			var id = 0; //counts how many nodes have been created so far 
 			for (var n in values) {
@@ -238,7 +261,10 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
+                 * Given a string returns an RxJS observable
+                 * containing the parsed response of the server to
+                 * the disambiguationQuery 
 		 *
 		 * @param {string} 
 		 * @return {Observable} 
@@ -252,9 +278,12 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
+                 * Given an iri returns an RxJS observable
+                 * containing the parsed response of the server to
+                 * the glossQuery
 		 *
-		 * @param {string} 
+		 * @param {string} an iri 
 		 * @return {Observable} 
 		 */
 		var glossQuery = function(iri) {
@@ -265,9 +294,9 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
-		 * @param {string} 
+		 * @param {string} an iri
 		 * @return {Observable} 
 		 */
 		var propertyQueryScalar = function(iri) {
@@ -278,9 +307,9 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
-		 * @param {array} of strings
+		 * @param {array}.<string>
 		 * @return {Observable} 
 		 */
 		var propertyQuery = function(iris) {
@@ -289,9 +318,9 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
- 		 * 
+ 		 * @function
 		 *
-		 * @param {array}
+		 * @param {array}.<string>
 		 * @param {Graph}
 		 * @return {Observable} 
 		 */
@@ -309,7 +338,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
 		 * @param {string}
 		 * @return {Object} with elements "posAndGloss" and "urlAndLabel"
@@ -339,7 +368,8 @@ var DATAMODEL = (function(module) {
 		};
 	
 		/**
-		 * 
+                 * @function
+		 * Parse response of {@link disambiguationQuery disambiguation query} to the server
 		 *
 		 * @param {string}
 		 * @return {array} of Etymology Entries
@@ -366,7 +396,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
 		 * @param {string}
 		 * @return {array} of properties
@@ -376,6 +406,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
+                 * @function
 		 * Posts an XMLHttpRequest to get data about disambiguation nodes
 		 *
 		 * @param {string}
@@ -400,6 +431,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
+                 * @function
 		 * Posts an XMLHttpRequest to more ancestors
 		 *
 		 * @param {string}
@@ -421,6 +453,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
+                 * @function
 		 * Posts an XMLHttpRequest to find ancestors
 		 *
 		 * @param {string}
@@ -436,10 +469,10 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
-		 * @param {array}
-		 * @param {array} 
+		 * @param {array}.<string>
+		 * @param {array}.<string>
 		 * @return {array} 
 		 */
 		var mergeAncestors = function(ancestors, moreAncestors) {
@@ -452,11 +485,11 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
 		 * @param {string}
 		 * @param {function} a callback
-		 * @return {array} an array of ancestors
+		 * @return {array}.<string> an array of ancestors
 		 */
 		var ancestorsQuery = function(iri, graphAncestors) {
 	
@@ -492,7 +525,7 @@ var DATAMODEL = (function(module) {
 		};
 	
 		/**
-		 * 
+		 * @function
 		 *
 		 * @param {string} a query response
 		 * @return {Object} with elements "all" and "last"
@@ -545,10 +578,10 @@ var DATAMODEL = (function(module) {
 		};
 	
 		/**
-		 * 
+		 * @function
 		 *
-		 * @param {array} of properties
-		 * @param {array} of ancestors
+		 * @param {array}.<Object> of properties
+		 * @param {array}.<string> of ancestors
 		 * @return {Object} with elements "values" and "edges"
 		 */
 		var setEtymologyEntries = function(properties, ancestors) {
@@ -628,6 +661,12 @@ var DATAMODEL = (function(module) {
 			return { values: ee, edges: edges };
 		};
 
+		/**   
+	          * @function 
+      		  *      
+		  * @param {array} of ancestors 
+                  * @return {Object} with elements "values" and "edges"
+		  */
 		var cleanEtymologyEntries = function(values) { //remove temporary nodes
 			for (var n in values) {
 				if (values[n].temporary) {
@@ -675,9 +714,9 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
-		 * @param {array} of iri-s
+		 * @param {array}.<string> of iri-s
 		 * @param {function} a callback
 		 * @return {Observable} 
 		 */
@@ -703,7 +742,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
 		 * @param {string} an iri
 		 * @return {Observable} 
@@ -716,7 +755,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * 
+		 * @function
 		 *
 		 * @param {string} a query response
 		 * @return {Object} containing a list of Etymology Entries
@@ -741,7 +780,6 @@ var DATAMODEL = (function(module) {
 	
 		this.EtymologyEntry = EtymologyEntry;
 		this.assignNodes = assignNodes;
-
 		this.glossQuery = glossQuery;
 		this.disambiguation = disambiguation;
 		this.disambiguationQuery = disambiguationQuery;

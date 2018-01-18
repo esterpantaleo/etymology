@@ -2,17 +2,22 @@
   $, d3, console, dagreD3, Rx, window, document, URLSearchParams
 */
 /*jshint loopfunc: true, shadow: true, latedef: false */ // Consider removing this and fixing these
+
+/**
+ * @module APP 
+ */
 var APP = (function(module) {
 
 	module.bindModule = function(base, moduleName) {
 		var etyBase = base;
 
 		/**
+                 * @function
 		 * Given an object consisting of Etymology Entries, 
 		 * this function returns an object consisting of Nodes
 		 *
-		 * @param {Object} a list of Etymology Entries
-		 * @return {Object} a list of Nodes
+		 * @param {Object}.<EtymologyEntry> a list of Etymology Entries
+		 * @return {Object}.<Node> a list of Nodes
 		 */
 		var setNodes = function(etymologyEntries) {
 			var nodes = {};
@@ -53,11 +58,12 @@ var APP = (function(module) {
 		};
 	
 		/**
-		 * Graphically displays the Graph of Ancestors
+                 * @function
+		 * Render the Graph of Ancestors
 		 * 
-		 * @params {Object} a list of Etymology Entries
+		 * @params {Object}.<EtymologyEntry> a list of Etymology Entries
 		 */
-		var graphAncestors = function(etymologyEntries) {
+		var renderAncestors = function(etymologyEntries) {
 			if (Object.keys(etymologyEntries.values).length < 2) {
 
 				var node = etymologyEntries.values[Object.keys(etymologyEntries.values)[0]];
@@ -84,11 +90,12 @@ var APP = (function(module) {
 		};
 
 		/**
-		 * Graphically displays the Disambiguation Graph
+                 * @function
+		 * Render the Disambiguation Graph
 		 * 
-		 * @params {Object} a list of Etymology Entries
+		 * @params {Object}.<EtymologyEntry> a list of Etymology Entries
 		 */
-		var graphDisambiguation = function(etymologyEntries) {
+		var renderDisambiguation = function(etymologyEntries) {
 			var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) });
 
 			g.render("#tree-container", "tree-overlay")
@@ -100,12 +107,13 @@ var APP = (function(module) {
 		};
 
 		/**
-		 * Graphically displays the Graph of Descendants in a specified language
+                 * @function
+		 * Render the Graph of Descendants in a specified language
 		 * 
 		 * @params {Graph} a Graph with all descendants in all languages
 		 * @params {string} a language, e.g., "English"
 		 */
-		var graphDescendantsInLanguage = function(gg, language) {
+		var renderDescendantsInLanguage = function(gg, language) {
 			var index = gg.languages.indexOf(language);
 
 			//clean accordion                                          
@@ -140,14 +148,14 @@ var APP = (function(module) {
 		};
 
 		/**
-		 * Graphically displays a dialog box with
+		 * Render a dialog box with
 		 * an accordion, where each section of the accordion 
 		 * displays the graph of descendants in a specific language.
 		 * 
 		 * @params {Node} the node whose descendants we are going to show
 		 * @params {Object} a list of Etymology Entries, descendants of Node
 		 */
-		var graphDescendants = function(node, etymologyEntries) {
+		var renderDescendants = function(node, etymologyEntries) {
 		         $("#descendants")
 		                .dialog({ title: "Descendants of " + node.lang + " " + node.label});
 			 var accordion = d3.select("#descendants")
@@ -167,14 +175,15 @@ var APP = (function(module) {
 				collapsible: "true",
 				activate: function(event, ui) {
 					var language = ui.newHeader.text();		
-					graphDescendantsInLanguage(g, language);
+					renderDescendantsInLanguage(g, language);
 				},
 				active: false
 			});
 		};
 
 		/**
-		 * Graphically displays the page that will contain the Graph of Descendants 
+                 * @function
+		 * Render the page that will contain the Graph of Descendants 
 		 * of a specified Node. It queries the database to get pos, gloss and links.
 		 *
 		 * @params {Node} 
@@ -194,12 +203,6 @@ var APP = (function(module) {
 					height: $(window).height() - 15,
 					position: "top"
 				});
-			/*$(".ui-dialog .ui-widget").append("div").html("loading...");
-
-			$("#descendants")
-			        .append("div")
-			        .attr("id", "accordionLoadingMessage")
-			        .html("loading");*/
  			$("#descendants")
 				.dialog("open");
 
@@ -207,7 +210,8 @@ var APP = (function(module) {
 		};
 
 		/**
-		 * Graphically displays a "not available" message.
+                 * @function
+		 * Render a "not available" message.
 		 *
 		 * @params {Node} 
 		 */
@@ -223,7 +227,8 @@ var APP = (function(module) {
 		};
 
 		/**
-		 * Graphically displays the page that will contain the Graph of Ancestors 
+                 * @function
+		 * Render the page that will contain the Graph of Ancestors 
 		 * of an entry corresponding to a specified iri. It sequencially queries 
 		 * the database to get the set of ancestors.
 		 *
@@ -238,11 +243,12 @@ var APP = (function(module) {
 				.css("display", "inline")
 				.html(etyBase.MESSAGE.loading);
 
-			etyBase.DATAMODEL.ancestorsQuery(iri, graphAncestors);
+			etyBase.DATAMODEL.ancestorsQuery(iri, renderAncestors);
 		};
 
 		/**
-		 * Graphically displays the page that will contain the Disambiguation Graph. 
+                 * @function
+		 * Render the page that will contain the Disambiguation Graph. 
 		 * It queries the database to get disambiguations.
 		 *
 		 * @params {string} response of a query
@@ -258,12 +264,13 @@ var APP = (function(module) {
 				.css("display", "inline")
 				.html(etyBase.MESSAGE.disambiguation);
 
-			etyBase.DATAMODEL.disambiguationQuery(response, graphDisambiguation);
+			etyBase.DATAMODEL.disambiguationQuery(response, renderDisambiguation);
 
 		};
 
 		/**
-		 * Graphically displays the page that will contain the Etymology Graph 
+		 * @function
+                 * Render the page that will contain the Etymology Graph 
 		 * of a specified lemma
 		 *
 		 * @params {string} e.g., "door" 
@@ -291,6 +298,7 @@ var APP = (function(module) {
 		};
 
 		/**
+                 * @function
 		 * Initializes app
 		 */
 		var init = function() {
