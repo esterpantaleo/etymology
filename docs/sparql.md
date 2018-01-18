@@ -3,106 +3,61 @@
 ## DB
 
 * [DB](#module_DB)
-    * [~Gets an XMLHttpRequest using RxJs()](#module_DB..Gets an XMLHttpRequest using RxJs) ⇒ <code>Observable</code>
-    * [~Posts an XMLHttpRequest using RxJs()](#module_DB..Posts an XMLHttpRequest using RxJs) ⇒ <code>Observable</code>
-    * [~Posts an array of XMLHttpRequest to the server using RxJs
-each requesting ancestors of an iri(of)](#module_DB..Posts an array of XMLHttpRequest to the server using RxJs
-each requesting ancestors of an iri) ⇒ <code>Observable</code>
-    * [~Prints the disambiguation query into a string.
-The generated response will consists of a table with three headers:
-iri: the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
-et: a list of iris of resources that are described by the resource in iri (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
-lemma: a string containing the rdfs label of the resource iri(a)](#module_DB..Prints the disambiguation query into a string.
-The generated response will consists of a table with three headers_
-iri_ the iri of a resources with rdfs label the input string (e.g. http_//etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
-et_ a list of iris of resources that are described by the resource in iri (e.g. http_//etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http_//etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http_//etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
-lemma_ a string containing the rdfs label of the resource iri) ⇒ <code>string</code>
-    * [~Prints the query to get links, pos and gloss of an entry.
+    * [~getXMLHttpRequest()](#module_DB..getXMLHttpRequest) ⇒ <code>Observable</code>
+    * [~postXMLHttpRequest()](#module_DB..postXMLHttpRequest) ⇒ <code>Observable</code>
+    * [~postMoreAncestorsQuery(of)](#module_DB..postMoreAncestorsQuery) ⇒ <code>Observable</code>
+    * [~glossQuery(iri)](#module_DB..glossQuery) ⇒ <code>string</code>
+    * [~iterativeAncestorQuery(iri)](#module_DB..iterativeAncestorQuery) ⇒ <code>string</code>
+    * [~descendantQuery(iri)](#module_DB..descendantQuery) ⇒ <code>string</code>
+    * [~propertyQuery(iri)](#module_DB..propertyQuery) ⇒ <code>string</code>
+    * [~unionQuery(of)](#module_DB..unionQuery) ⇒ <code>function</code>
 
-The generated response will consists of a table with three headers:
-iri
-ee
-pos: a string containing the rdfs label of the resource iri
-gloss: a string containing glossesseparated by ;;;;
-links: a string containing links separated by ,(iri)](#module_DB..Prints the query to get links, pos and gloss of an entry.
+<a name="module_DB..getXMLHttpRequest"></a>
 
-The generated response will consists of a table with three headers_
-iri
-ee
-pos_ a string containing the rdfs label of the resource iri
-gloss_ a string containing glossesseparated by ;;;;
-links_ a string containing links separated by ,) ⇒ <code>string</code>
-    * [~Prints the query to get ancestors(iri)](#module_DB..Prints the query to get ancestors) ⇒ <code>string</code>
-    * [~Prints the query to get descendants(iri)](#module_DB..Prints the query to get descendants) ⇒ <code>string</code>
-    * [~Prints the query to get properties about nodes(iri)](#module_DB..Prints the query to get properties about nodes) ⇒ <code>string</code>
-    * [~Prints the union of an array of queries 
-one for each of the elements in input array iris(of)](#module_DB..Prints the union of an array of queries 
-one for each of the elements in input array iris) ⇒ <code>function</code>
+### DB~getXMLHttpRequest() ⇒ <code>Observable</code>
+Gets an XMLHttpRequest using RxJs
 
-<a name="module_DB..Gets an XMLHttpRequest using RxJs"></a>
-
-### DB~Gets an XMLHttpRequest using RxJs() ⇒ <code>Observable</code>
 **Kind**: inner method of [<code>DB</code>](#module_DB)  
 
 | Type |
 | --- |
 | <code>url</code> | 
 
-<a name="module_DB..Posts an XMLHttpRequest using RxJs"></a>
+<a name="module_DB..postXMLHttpRequest"></a>
 
-### DB~Posts an XMLHttpRequest using RxJs() ⇒ <code>Observable</code>
+### DB~postXMLHttpRequest() ⇒ <code>Observable</code>
+Posts an XMLHttpRequest using RxJs
+
 **Kind**: inner method of [<code>DB</code>](#module_DB)  
 
 | Type |
 | --- |
 | <code>string</code> | 
 
-<a name="module_DB..Posts an array of XMLHttpRequest to the server using RxJs
-each requesting ancestors of an iri"></a>
+<a name="module_DB..postMoreAncestorsQuery"></a>
 
-### DB~Posts an array of XMLHttpRequest to the server using RxJs
-each requesting ancestors of an iri(of) ⇒ <code>Observable</code>
+### DB~postMoreAncestorsQuery(of) ⇒ <code>Observable</code>
+Posts an array of XMLHttpRequest to the server using RxJs
+each requesting ancestors of an iri
+
 **Kind**: inner method of [<code>DB</code>](#module_DB)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | of | <code>array</code> | iri-s |
 
-<a name="module_DB..Prints the disambiguation query into a string.
-The generated response will consists of a table with three headers_
-iri_ the iri of a resources with rdfs label the input string (e.g. http_//etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
-et_ a list of iris of resources that are described by the resource in iri (e.g. http_//etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http_//etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http_//etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
-lemma_ a string containing the rdfs label of the resource iri"></a>
+<a name="module_DB..glossQuery"></a>
 
-### DB~Prints the disambiguation query into a string.
-The generated response will consists of a table with three headers:
-iri: the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
-et: a list of iris of resources that are described by the resource in iri (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
-lemma: a string containing the rdfs label of the resource iri(a) ⇒ <code>string</code>
-**Kind**: inner method of [<code>DB</code>](#module_DB)  
-**Returns**: <code>string</code> - a query string  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| a | <code>string</code> | word e.g. "door" |
-
-<a name="module_DB..Prints the query to get links, pos and gloss of an entry.
-
-The generated response will consists of a table with three headers_
-iri
-ee
-pos_ a string containing the rdfs label of the resource iri
-gloss_ a string containing glossesseparated by ;;;;
-links_ a string containing links separated by ,"></a>
-
-### DB~Prints the query to get links, pos and gloss of an entry.
+### DB~glossQuery(iri) ⇒ <code>string</code>
+Prints the query to get links, pos and gloss of an entry.
 
 The generated response will consists of a table with three headers:
-iri
-ee
-pos: a string containing the rdfs label of the resource iri
-gloss: a string containing glossesseparated by ;;;;
-links: a string containing links separated by ,(iri) ⇒ <code>string</code>
+"iri"
+"ee"
+"pos": a string containing the rdfs label of the resource "iri"
+"gloss": a string containing glossesseparated by ";;;;""
+"links": a string containing links separated by ","
+
 **Kind**: inner method of [<code>DB</code>](#module_DB)  
 **Returns**: <code>string</code> - a query string  
 
@@ -110,9 +65,11 @@ links: a string containing links separated by ,(iri) ⇒ <code>string</code>
 | --- | --- |
 | iri | <code>string</code> | 
 
-<a name="module_DB..Prints the query to get ancestors"></a>
+<a name="module_DB..iterativeAncestorQuery"></a>
 
-### DB~Prints the query to get ancestors(iri) ⇒ <code>string</code>
+### DB~iterativeAncestorQuery(iri) ⇒ <code>string</code>
+Prints the query to get ancestors
+
 **Kind**: inner method of [<code>DB</code>](#module_DB)  
 **Returns**: <code>string</code> - a query string  
 
@@ -121,9 +78,11 @@ links: a string containing links separated by ,(iri) ⇒ <code>string</code>
 |  | <code>integer</code> | 
 | iri | <code>string</code> | 
 
-<a name="module_DB..Prints the query to get descendants"></a>
+<a name="module_DB..descendantQuery"></a>
 
-### DB~Prints the query to get descendants(iri) ⇒ <code>string</code>
+### DB~descendantQuery(iri) ⇒ <code>string</code>
+Prints the query to get descendants
+
 **Kind**: inner method of [<code>DB</code>](#module_DB)  
 **Returns**: <code>string</code> - a query string  
 
@@ -131,9 +90,11 @@ links: a string containing links separated by ,(iri) ⇒ <code>string</code>
 | --- | --- |
 | iri | <code>string</code> | 
 
-<a name="module_DB..Prints the query to get properties about nodes"></a>
+<a name="module_DB..propertyQuery"></a>
 
-### DB~Prints the query to get properties about nodes(iri) ⇒ <code>string</code>
+### DB~propertyQuery(iri) ⇒ <code>string</code>
+Prints the query to get properties about nodes
+
 **Kind**: inner method of [<code>DB</code>](#module_DB)  
 **Returns**: <code>string</code> - a query string  
 
@@ -141,11 +102,12 @@ links: a string containing links separated by ,(iri) ⇒ <code>string</code>
 | --- | --- |
 | iri | <code>string</code> | 
 
-<a name="module_DB..Prints the union of an array of queries 
-one for each of the elements in input array iris"></a>
+<a name="module_DB..unionQuery"></a>
 
-### DB~Prints the union of an array of queries 
-one for each of the elements in input array iris(of) ⇒ <code>function</code>
+### DB~unionQuery(of) ⇒ <code>function</code>
+Prints the union of an array of queries 
+one for each of the elements in input array iris
+
 **Kind**: inner method of [<code>DB</code>](#module_DB)  
 **Returns**: <code>function</code> - a function that takes as argument a string iri  
 

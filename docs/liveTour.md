@@ -12,7 +12,7 @@
 <dt><a href="#setCookie">setCookie(key, value)</a></dt>
 <dd><p>Set cookie for the <a href="http://linkedin.github.io/hopscotch/">Hopscotch</a> tour.</p>
 </dd>
-<dt><a href="#getCookie">getCookie(key)</a></dt>
+<dt><a href="#getCookies">getCookies(key)</a></dt>
 <dd><p>Get cookie for the <a href="http://linkedin.github.io/hopscotch/">Hopscotch</a> tour</p>
 </dd>
 </dl>
@@ -63,9 +63,9 @@ Set cookie for the [Hopscotch](http://linkedin.github.io/hopscotch/) tour.
 | key | <code>string</code> | 
 | value | <code>string</code> | 
 
-<a name="getCookie"></a>
+<a name="getCookies"></a>
 
-## getCookie(key)
+## getCookies(key)
 Get cookie for the [Hopscotch](http://linkedin.github.io/hopscotch/) tour
 
 **Kind**: global function  

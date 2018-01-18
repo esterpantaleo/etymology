@@ -44,8 +44,8 @@ var GRAPH = (function(module) {
 
 
 			/**
-                         * @function
-			 * Print tooltip
+                         * Prints tooltip
+                         * @function tooltip
 			 */
 			tooltip() {
 				var labels = this.label.split(",");
@@ -74,7 +74,7 @@ var GRAPH = (function(module) {
 		}
 		
 		/**
-		* Creates a Dagre.
+		* Class representing a Dagre.
  		* @class
  		*/
 		class Dagre {
@@ -90,6 +90,7 @@ var GRAPH = (function(module) {
 			/**
 			 * Render dagre from this.dagre in the element seected by "selector"
 			 * and call the the svg element "id". Then fit dagre to screen.
+                         * @function render 
 			 * @param {selector} 
 			 * @param {string} id
 			 */
@@ -187,8 +188,8 @@ var GRAPH = (function(module) {
 			}
 
 			/**
-                         * @function
-			 * Set the value of the array this.languages.
+                         * Sets the value of the array this.languages. 
+                         * @function setLanguages
 			 */
 			setLanguages() {
 				for (var gn in this.nodes) {
@@ -250,8 +251,8 @@ var GRAPH = (function(module) {
 
 
 			/**
-                         * @function
-			 * Set the value of this.languages and this.edges (if undefined).
+                         * Sets the value of this.languages and this.edges (if undefined).
+                         * @function setEdges
 			 */ 
 			setEdges() {
 				this.setLanguages();

@@ -10,8 +10,8 @@ var DB = (function(module) {
         var etyBase = base;
 
         /**
-	 * @function
-         * Gets an XMLHttpRequest using RxJs
+	 * Gets an XMLHttpRequest using RxJs
+	 * @function getXMLHttpRequest
          *
          * @param {url} 
          * @return {Observable} 
@@ -38,8 +38,8 @@ var DB = (function(module) {
         };
 
         /**
-         * @function
          * Posts an XMLHttpRequest using RxJs
+         * @function postXMLHttpRequest
          *
          * @param {string} 
          * @return {Observable} 
@@ -67,10 +67,9 @@ var DB = (function(module) {
         };
 
         /**
-         * @function
          * Posts an array of XMLHttpRequest to the server using RxJs
          * each requesting ancestors of an iri
-         *
+         * @function postMoreAncestorsQuery
          * @param {array} of iri-s
          * @return {Observable}
          */   
@@ -84,13 +83,12 @@ var DB = (function(module) {
         };
 	
         /**
-         * @function
          * Prints the disambiguation query into a string.
          * The generated response will consists of a table with three headers:
          * "iri": the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
          * "et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
          * "lemma": a string containing the rdfs label of the resource "iri"
-         *
+         * * @function disambiguationQuery
          * @param {string} a word e.g. "door"
          * @return {string} a query string
          */
@@ -111,9 +109,8 @@ var DB = (function(module) {
         };
 	
         /**
-         * @function
          * Prints the query to get links, pos and gloss of an entry.
-         *
+         * 
          * The generated response will consists of a table with three headers:
          * "iri"
          * "ee"
@@ -121,6 +118,7 @@ var DB = (function(module) {
          * "gloss": a string containing glossesseparated by ";;;;""
          * "links": a string containing links separated by ","
          *
+         * @function glossQuery
          * @param {string} iri
          * @return {string} a query string
          */           
@@ -176,8 +174,8 @@ var DB = (function(module) {
         };
 
         /**
-         * @function
-         * Prints the query to get ancestors 
+         * Prints the query to get ancestors
+         * @function iterativeAncestorQuery
          *
          * @param {integer}
          * @param {string} iri
@@ -211,8 +209,8 @@ var DB = (function(module) {
         };
 	
         /**
-         * @function
-         * Prints the query to get descendants 
+         * Prints the query to get descendants
+         * @function descendantQuery
          *
          * @param {string} iri
          * @return {string} a query string
@@ -231,8 +229,8 @@ var DB = (function(module) {
         };
 
         /**
-         * @function
-         * Prints the query to get properties about nodes 
+         * Prints the query to get properties about nodes
+         * @function propertyQuery
          *
          * @param {string} iri
          * @return {string} a query string
@@ -257,10 +255,9 @@ var DB = (function(module) {
         };
 
         /**
-         * @function
          * Prints the union of an array of queries 
          * one for each of the elements in input array iris 
-         *
+         * @function unionQuery
          * @param {array} of strings iris
          * @return {function} a function that takes as argument a string iri
          */

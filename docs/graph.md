@@ -5,7 +5,7 @@
 <dd><p>Class representing a Node.</p>
 </dd>
 <dt><a href="#Dagre">Dagre</a></dt>
-<dd><p>Creates a Dagre.</p>
+<dd><p>Class representing a Dagre.</p>
 </dd>
 <dt><a href="#Graph">Graph</a> ⇐ <code><a href="#Dagre">Dagre</a></code></dt>
 <dd><p>Class representing a Graph.</p>
@@ -18,8 +18,19 @@
 ## Functions
 
 <dl>
-<dt><a href="#Print tooltip">Print tooltip()</a></dt>
-<dd></dd>
+<dt><a href="#tooltip">tooltip()</a></dt>
+<dd><p>Prints tooltip</p>
+</dd>
+<dt><a href="#render">render(id)</a></dt>
+<dd><p>Render dagre from this.dagre in the element seected by &quot;selector&quot;
+and call the the svg element &quot;id&quot;. Then fit dagre to screen.</p>
+</dd>
+<dt><a href="#setLanguages">setLanguages()</a></dt>
+<dd><p>Sets the value of the array this.languages.</p>
+</dd>
+<dt><a href="#setEdges">setEdges()</a></dt>
+<dd><p>Sets the value of this.languages and this.edges (if undefined).</p>
+</dd>
 </dl>
 
 <a name="Node"></a>
@@ -42,14 +53,9 @@ Create a Node with id counter (if counter is not undefined).
 <a name="Dagre"></a>
 
 ## Dagre
-Creates a Dagre.
+Class representing a Dagre.
 
 **Kind**: global class  
-
-* [Dagre](#Dagre)
-    * [new Dagre(type)](#new_Dagre_new)
-    * [.render(selector, id)](#Dagre+render)
-
 <a name="new_Dagre_new"></a>
 
 ### new Dagre(type)
@@ -60,19 +66,6 @@ Create a dagre.
 | --- | --- | --- |
 | type | <code>string</code> | has value "TB" (top-bottom) or "LR" (left-right) |
 
-<a name="Dagre+render"></a>
-
-### dagre.render(selector, id)
-Render dagre from this.dagre in the element seected by "selector"
-and call the the svg element "id". Then fit dagre to screen.
-
-**Kind**: instance method of [<code>Dagre</code>](#Dagre)  
-
-| Param | Type |
-| --- | --- |
-| selector | <code>selector</code> | 
-| id | <code>string</code> | 
-
 <a name="Graph"></a>
 
 ## Graph ⇐ [<code>Dagre</code>](#Dagre)
@@ -80,11 +73,6 @@ Class representing a Graph.
 
 **Kind**: global class  
 **Extends**: [<code>Dagre</code>](#Dagre)  
-
-* [Graph](#Graph) ⇐ [<code>Dagre</code>](#Dagre)
-    * [new Graph(type, graph)](#new_Graph_new)
-    * [.render(selector, id)](#Dagre+render)
-
 <a name="new_Graph_new"></a>
 
 ### new Graph(type, graph)
@@ -96,19 +84,6 @@ Create a graph.
 | type | <code>string</code> | has value "TB" (top-bottom) or "LR" (left-right) |
 | graph | <code>Object</code> | with elements "nodes" and "edges" |
 
-<a name="Dagre+render"></a>
-
-### graph.render(selector, id)
-Render dagre from this.dagre in the element seected by "selector"
-and call the the svg element "id". Then fit dagre to screen.
-
-**Kind**: instance method of [<code>Graph</code>](#Graph)  
-
-| Param | Type |
-| --- | --- |
-| selector | <code>selector</code> | 
-| id | <code>string</code> | 
-
 <a name="LanguageGraph"></a>
 
 ## LanguageGraph ⇐ [<code>Graph</code>](#Graph)
@@ -116,11 +91,6 @@ Class representing a Language Graph.
 
 **Kind**: global class  
 **Extends**: [<code>Graph</code>](#Graph)  
-
-* [LanguageGraph](#LanguageGraph) ⇐ [<code>Graph</code>](#Graph)
-    * [new LanguageGraph(type, g, language)](#new_LanguageGraph_new)
-    * [.render(selector, id)](#Dagre+render)
-
 <a name="new_LanguageGraph_new"></a>
 
 ### new LanguageGraph(type, g, language)
@@ -133,20 +103,34 @@ Create a language graph.
 | g | [<code>Graph</code>](#Graph) | the full Graph |
 | language | <code>string</code> | the language (e.g., "English") |
 
-<a name="Dagre+render"></a>
+<a name="tooltip"></a>
 
-### languageGraph.render(selector, id)
+## tooltip()
+Prints tooltip
+
+**Kind**: global function  
+<a name="render"></a>
+
+## render(id)
 Render dagre from this.dagre in the element seected by "selector"
 and call the the svg element "id". Then fit dagre to screen.
 
-**Kind**: instance method of [<code>LanguageGraph</code>](#LanguageGraph)  
+**Kind**: global function  
 
 | Param | Type |
 | --- | --- |
-| selector | <code>selector</code> | 
+|  | <code>selector</code> | 
 | id | <code>string</code> | 
 
-<a name="Print tooltip"></a>
+<a name="setLanguages"></a>
 
-## Print tooltip()
+## setLanguages()
+Sets the value of the array this.languages.
+
+**Kind**: global function  
+<a name="setEdges"></a>
+
+## setEdges()
+Sets the value of this.languages and this.edges (if undefined).
+
 **Kind**: global function  

@@ -50,6 +50,7 @@ var tour = {
 
 /**
  * Set cookie for the {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour.
+ * @function setCookie
  * @param {string} key 
  * @param {string} value
  */
@@ -61,6 +62,7 @@ function setCookie(key, value) {
 
 /**
  * Get cookie for the {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour
+ * @function getCookies 
  * @param {string} key
 */
 function getCookie(key) {
