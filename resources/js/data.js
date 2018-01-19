@@ -13,7 +13,7 @@ var DATA = (function(module) {
         /**
          * Loads etymology-only_languages.csv, list_of_languages.csv, iso-639-3.tab
          * located in the resources/data/ folder
-         * into etyBase.tree.langMap
+         * into etyBase.tree.langMap .
          * @function init
 	 */
         var init = function() {

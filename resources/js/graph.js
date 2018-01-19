@@ -4,7 +4,6 @@
 
 /**
  * @module GRAPH
- * @requires DATAMODEL
  */
 var GRAPH = (function(module) {
 
@@ -18,9 +17,9 @@ var GRAPH = (function(module) {
  		*/
 		class Node {
 			/**
-			 * Create a Node with id counter (if counter is not undefined).
+			 * Creates a Node with id counter (if counter is not undefined).
 			 * @param {number} counter
-			 * @param {module:DATAMODEL~EtymologyEntry} etymologyEntry
+			 * @param {EtymologyEntry} etymologyEntry
 			 */
 			constructor(counter, etymologyEntry) {
 				if (undefined !== counter) {
@@ -50,7 +49,7 @@ var GRAPH = (function(module) {
 
 
 			/**
-                         * Prints tooltip
+                         * Prints tooltip.
                          * @function tooltip
 			 */
 			tooltip() {
@@ -263,11 +262,11 @@ var GRAPH = (function(module) {
 
 
 			/**
-                         * Set edges in the graph so that nodes are displayed in 
+                         * Sets edges in the graph so that nodes are displayed in 
                          * lines with nCol elements.
                          * Sets the value of this.languages if undefined
                          * @function setEdges
-                         * @param nCol - number of nodes that will be displayed in a line
+                         * @param {number} nCol - number of nodes that will be displayed in a line
 			 */ 
 			setEdges(nCol) {
 				this.setLanguages();

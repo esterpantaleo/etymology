@@ -5,7 +5,6 @@
 
 /**
  * @module DATAMODEL
-
  */
 var DATAMODEL = (function(module) {
 	
@@ -13,7 +12,7 @@ var DATAMODEL = (function(module) {
 		var etyBase = base;
 
 		/**
-		 * Encodes a query into an url 
+		 * Encodes a query into an url. 
 		 * @function urlFromQuery
                  *
 		 * @param {string} query - a query
@@ -24,10 +23,10 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * Given an iri, returns language + label
+		 * Given an iri, returns language + label.
 		 * @function wiktionaryLabelOf
                  *
-		 * @param {string} iri an iri
+		 * @param {string} iri - an iri
 		 * @return {string} a label
 		 */
 		var wiktionaryLabelOf = function(iri) {
@@ -46,7 +45,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * Returns a label by replacing special characters 
+		 * Returns a label by replacing special characters. 
 		 * @function parseLabel
 		 * @param {string} label - an encoded label
 		 * @return {string} a label
@@ -59,7 +58,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-                 * Given a label, returns an encoded label
+                 * Given a label, returns an encoded label.
                  * @function encodeLabel
 		 *
 		 * @param {string} label - a label
@@ -163,8 +162,8 @@ var DATAMODEL = (function(module) {
                  * the set of ancestors and descendants then merge them into one node)
 		 *
                  * @function assignNodes
-		 * @param {Object}.<EtymologyEntry> values - containing a list of Etymology Entries
-		 * @return {Object}.<EtymologyEntry> containing a list of Etymology Entries
+		 * @param {Object} values - containing a list of Etymology Entries
+		 * @return {Object} containing a list of Etymology Entries
 		 */
 		var assignNodes = function(values) {            
 
@@ -267,7 +266,7 @@ var DATAMODEL = (function(module) {
 		/**
                  * Given a string returns an RxJS observable
                  * containing the parsed response of the server to
-                 * the disambiguationQuery 
+                 * the disambiguationQuery. 
 		 * @function disambiguation
                  *
 		 * @param {string} lemma 
@@ -284,7 +283,7 @@ var DATAMODEL = (function(module) {
 		/** 
                  * Given an iri returns an RxJS observable
                  * containing the parsed response of the server to
-                 * the glossQuery
+                 * the glossQuery.
 		 * @function glossQuery
 		 * @param {string} iri - an iri 
 		 * @return {Observable} 
@@ -312,7 +311,7 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function propertyQuery
 		 *
-		 * @param {array}.<string> iris
+		 * @param {Array.<string>} iris
 		 * @return {Observable} 
 		 */
 		var propertyQuery = function(iris) {
@@ -323,7 +322,7 @@ var DATAMODEL = (function(module) {
 		/**
  		 * @function dataQuery
 		 *
-		 * @param {array}.<string> iris
+		 * @param {Array.<string>} iris
 		 * @param {Graph} graph
 		 * @return {Observable} 
 		 */
@@ -371,11 +370,11 @@ var DATAMODEL = (function(module) {
 		};
 	
 		/**
-                 * Parse response of {@link disambiguationQuery disambiguation query} to the server
+                 * Parse response of {@link disambiguationQuery disambiguation query} to the server.
                  * @function parseDisambiguation
 		 *
 		 * @param {string} response
-		 * @return {array}.<EtymologyEntry>
+		 * @return {array.<EtymologyEntry>}
 		 */
 		var parseDisambiguation = function(response) {
 			return JSON.parse(response)
@@ -402,14 +401,14 @@ var DATAMODEL = (function(module) {
 		 * @function parseProperties
 		 *
 		 * @param {string} response
-		 * @return {array} of properties
+		 * @return {Array} of properties
 		 */
 		var parseProperties = function(response) {
 			return JSON.parse(response).results.bindings;
 		};
 
 		/**
-		 * Posts an XMLHttpRequest to get data about disambiguation nodes
+		 * Posts an XMLHttpRequest to get data about disambiguation nodes.
 		 * @function disambiguationQuery 
 		 * @param {string} response
 		 * @param {function} f
@@ -434,7 +433,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-                 * Posts an XMLHttpRequest to more ancestors
+                 * Posts an XMLHttpRequest to more ancestors.
                  * @function findMoreAncestors
 		 *
 		 * @param {string} response
@@ -456,7 +455,7 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-                 * Posts an XMLHttpRequest to find ancestors 
+                 * Posts an XMLHttpRequest to find ancestors.
                  * @function findAncestors
 		 *
 		 * @param {string} iri
@@ -474,9 +473,9 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function mergeAncestors
 		 *
-		 * @param {array}.<string> ancestors
-		 * @param {array}.<string> moreAncestors
-		 * @return {array} 
+		 * @param {array.<string>} ancestors
+		 * @param {array.<string>} moreAncestors
+		 * @return {array.<string>}} 
 		 */
 		var mergeAncestors = function(ancestors, moreAncestors) {
 			if (moreAncestors !== 0) {
@@ -492,7 +491,7 @@ var DATAMODEL = (function(module) {
 		 *
 		 * @param {string} iri
 		 * @param {function} f - a function
-		 * @return {array}.<string> an array of ancestors
+		 * @return {array.<string>} an array of ancestors
 		 */
 		var ancestorsQuery = function(iri, f) {
 	
@@ -583,8 +582,8 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function setEtymologyEntries
 		 *
-		 * @param {array}.<Object> properties 
-		 * @param {array}.<string> ancestors
+		 * @param {array.<Object>} properties 
+		 * @param {array.<string>} ancestors
 		 * @return {Object} with elements "values" and "edges"
 		 */
 		var setEtymologyEntries = function(properties, ancestors) {
@@ -667,7 +666,7 @@ var DATAMODEL = (function(module) {
 		/**   
 	          * @function cleanEtymologyEntries
       		  *      
-		  * @param {array}.<EtymologyEntry> values - an array of EtymologyEntry-s 
+		  * @param {Array.<EtymologyEntry>} values - an array of EtymologyEntry-s 
                   * @return {Object} with elements "values" and "edges"
 		  */
 		var cleanEtymologyEntries = function(values) { //remove temporary nodes
@@ -761,7 +760,7 @@ var DATAMODEL = (function(module) {
 		 * @function parseDescendants
 		 *
 		 * @param {string} response - a query response
-		 * @return {Object} containing a list of Etymology Entries
+		 * @return {Object.<EtymologyEntry>} containing a list of Etymology Entries
 		 */
 		var parseDescendants = function(response) {
 			var values = {};

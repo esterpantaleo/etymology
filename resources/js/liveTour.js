@@ -12,6 +12,7 @@
  * @property {string}  steps.title      - Title of the step 
  * @property {content} steps.content    - Description of the step
  */
+
 var Tour = {
     id: "etytree_tutorial",
     steps: [{
@@ -31,7 +32,7 @@ var Tour = {
         content: "Choose language version (not available yet)."*/
     }],
     /**
-     * Set cookie on end (Tour.onEnd).
+     * Sets cookie on end (Tour.onEnd).
      * @function onEnd
      * @memberof Tour
      */
@@ -41,7 +42,7 @@ var Tour = {
 	document.cookie = 'toured=toured;path=/' + ';expires=' + expires.toUTCString();
     },
     /**
-     * Set cookie on close (Tour.onClose).
+     * Sets cookie on close (Tour.onClose).
      * @function onClose
      * @memberof Tour
      */
@@ -51,7 +52,7 @@ var Tour = {
 	document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
     },
     /**
-     * Get cookie 
+     * Gets cookie. 
      * @function getCookie
      * @memberof Tour 
      */

@@ -18,11 +18,11 @@ var APP = (function(module) {
 		/**
 		 * Given an object consisting of EtymologyEntry-s, 
 		 * this function returns an object consisting of Nodes
-		 * @function setNodes
-		 * @param {Object}.<DATAMODEL.EtymologyEntry> etymologyEntries - a list of EtymologyEntry-s
-		 * @return {Object}.<GRAPH.Node> a list of Nodes
+		 * @function nodesFrom
+		 * @param {Object.<EtymologyEntry>} etymologyEntries 
+		 * @return {Object.<Node>} a list of Nodes
 		 */
-		var setNodes = function(etymologyEntries) {
+		var nodesFrom = function(etymologyEntries) {
 			var nodes = {};
 
 			var counter = 0;
@@ -63,7 +63,7 @@ var APP = (function(module) {
 		/**
 		 * Render the Graph of Ancestors
 		 * @function renderAncestorsGraphPage
-		 * @params {Object}.<DATAMODEL.EtymologyEntry> etymologyEntries - a list of EtymologyEntry-s
+		 * @params {Object.<EtymologyEntry>} etymologyEntries
 		 */
 		var renderAncestorsGraphPage = function(etymologyEntries) {
 			if (Object.keys(etymologyEntries.values).length < 2) {
@@ -79,7 +79,7 @@ var APP = (function(module) {
 				d3.select("#helpPopup")
 					.html(etyBase.HELP.dagre);
 
-				var g = new etyBase.GRAPH.Graph("TB", { nodes: setNodes(etymologyEntries), edges: etymologyEntries.edges }, width);
+				var g = new etyBase.GRAPH.Graph("TB", { nodes: nodesFrom(etymologyEntries), edges: etymologyEntries.edges }, width);
 
 				g.render("#tree-container", "tree-overlay", width, height)
 					.selectAll("g.node")
@@ -95,10 +95,10 @@ var APP = (function(module) {
                  * Render the Disambiguation Graph 
                  * @function renderDisambiguationGraphPage
 		 * 
-		 * @params {Object}.<DATAMODEL.EtymologyEntry> etymologyEntries - a list of EtymologyEntry-s
+		 * @params {Object.<EtymologyEntry>} etymologyEntries
 		 */
 		var renderDisambiguationGraphPage = function(etymologyEntries) {
-		    var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) }, width);
+		    var g = new etyBase.GRAPH.Graph("LR", { nodes: nodesFrom(etymologyEntries) }, width);
 
 			g.render("#tree-container", "tree-overlay", width, height)
 				.selectAll("g.node")
@@ -171,7 +171,7 @@ var APP = (function(module) {
 		 * displays the graph of descendants in a specific language.
 		 * @function renderDescendantsAccordion 
 		 * @params {Node} node - the node whose descendants we are going to show
-		 * @params {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries, descendants of Node
+		 * @params {Object.<DATAMODEL.EtymologyEntry>} etymologyEntries
 		 */
 		var renderDescendantsAccordion = function(node, etymologyEntries) {
 		         $("#descendants")
@@ -180,7 +180,7 @@ var APP = (function(module) {
 				.append("div")
 				.attr("id", "accordion");
 
-			 var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) }, width);
+			 var g = new etyBase.GRAPH.Graph("LR", { nodes: nodesFrom(etymologyEntries) }, width);
 			g.setLanguages();
 			g.languages.map((lang, i) => {
 				$("#accordion").append("<h3>" + lang + "</h3>");
