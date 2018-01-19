@@ -21,6 +21,14 @@
 </dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#create">create()</a></dt>
+<dd><p>Refer to this by <a href="Etytree.create">Etytree.create</a>.</p>
+</dd>
+</dl>
+
 <a name="module_APP"></a>
 
 ## APP
@@ -43,11 +51,11 @@ Given an object consisting of Etymology Entries,
 this function returns an object consisting of Nodes
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Returns**: <code>Object</code> - .<GRAPH~Node> a list of Nodes  
+**Returns**: <code>Object</code> - .<GRAPH.Node> a list of Nodes  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| .<DATAMODEL~EtymologyEntry> | <code>Object</code> | a list of Etymology Entries |
+| .<DATAMODEL.EtymologyEntry> | <code>Object</code> | a list of Etymology Entries |
 
 <a name="module_APP..renderAncestorsGraphPage"></a>
 
@@ -55,14 +63,14 @@ this function returns an object consisting of Nodes
 Render the Graph of Ancestors
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Params**: <code>Object</code>.<DATAMODEL~EtymologyEntry> a list of Etymology Entries  
+**Params**: <code>Object</code>.<DATAMODEL.EtymologyEntry> a list of Etymology Entries  
 <a name="module_APP..renderDisambiguationGraphPage"></a>
 
 ### APP~renderDisambiguationGraphPage()
 Render the Disambiguation Graph
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Params**: <code>Object</code>.<EtymologyEntry> a list of Etymology Entries  
+**Params**: <code>Object</code>.<DATAMODEL.EtymologyEntry> a list of Etymology Entries  
 <a name="module_APP..renderDescendantsGraphInLanguage"></a>
 
 ### APP~renderDescendantsGraphInLanguage()
@@ -80,7 +88,7 @@ displays the graph of descendants in a specific language.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
 **Params**: <code>Node</code> the node whose descendants we are going to show  
-**Params**: <code>Object</code> a list of Etymology Entries, descendants of Node  
+**Params**: <code>Object</code>.<DATAMODEL.EtymologyEntry> a list of Etymology Entries, descendants of Node  
 <a name="module_APP..renderDescendantsDialog"></a>
 
 ### APP~renderDescendantsDialog()
@@ -470,26 +478,28 @@ into etyBase.tree.langMap
 **Requires**: [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
 * [GRAPH](#module_GRAPH)
-    * [~Node](#module_GRAPH..Node)
-        * [new Node(counter, etymologyEntry)](#new_module_GRAPH..Node_new)
-    * [~Dagre](#module_GRAPH..Dagre)
-        * [new Dagre(type)](#new_module_GRAPH..Dagre_new)
-    * [~Graph](#module_GRAPH..Graph) ⇐ <code>Dagre</code>
-        * [new Graph(type, graph)](#new_module_GRAPH..Graph_new)
-    * [~LanguageGraph](#module_GRAPH..LanguageGraph) ⇐ <code>Graph</code>
-        * [new LanguageGraph(type, g, language)](#new_module_GRAPH..LanguageGraph_new)
-    * [~tooltip()](#module_GRAPH..tooltip)
-    * [~render(id)](#module_GRAPH..render)
-    * [~setLanguages()](#module_GRAPH..setLanguages)
-    * [~setEdges(nCol)](#module_GRAPH..setEdges)
+    * _static_
+        * [.Node](#module_GRAPH.Node)
+            * [new Node(counter, etymologyEntry)](#new_module_GRAPH.Node_new)
+    * _inner_
+        * [~Dagre](#module_GRAPH..Dagre)
+            * [new Dagre(type)](#new_module_GRAPH..Dagre_new)
+        * [~Graph](#module_GRAPH..Graph) ⇐ <code>Dagre</code>
+            * [new Graph(type, graph)](#new_module_GRAPH..Graph_new)
+        * [~LanguageGraph](#module_GRAPH..LanguageGraph) ⇐ <code>Graph</code>
+            * [new LanguageGraph(type, g, language)](#new_module_GRAPH..LanguageGraph_new)
+        * [~tooltip()](#module_GRAPH..tooltip)
+        * [~render(id)](#module_GRAPH..render)
+        * [~setLanguages()](#module_GRAPH..setLanguages)
+        * [~setEdges(nCol)](#module_GRAPH..setEdges)
 
-<a name="module_GRAPH..Node"></a>
+<a name="module_GRAPH.Node"></a>
 
-### GRAPH~Node
+### GRAPH.Node
 Class representing a Node.
 
-**Kind**: inner class of [<code>GRAPH</code>](#module_GRAPH)  
-<a name="new_module_GRAPH..Node_new"></a>
+**Kind**: static class of [<code>GRAPH</code>](#module_GRAPH)  
+<a name="new_module_GRAPH.Node_new"></a>
 
 #### new Node(counter, etymologyEntry)
 Create a Node with id counter (if counter is not undefined).
@@ -603,7 +613,6 @@ Sets the value of this.languages if undefined
     * [.etyBase.MESSAGE](#Etytree.etyBase.MESSAGE)
     * [.etyBase.helpers](#Etytree.etyBase.helpers)
     * [.etyBase.config](#Etytree.etyBase.config)
-    * [.create()](#Etytree.create)
     * [.bindModules()](#Etytree.bindModules)
     * [.init()](#Etytree.init)
 
@@ -631,10 +640,6 @@ Helper functions.
 Setup basic settings
 
 **Kind**: static property of [<code>Etytree</code>](#Etytree)  
-<a name="Etytree.create"></a>
-
-### Etytree.create()
-**Kind**: static method of [<code>Etytree</code>](#Etytree)  
 <a name="Etytree.bindModules"></a>
 
 ### Etytree.bindModules()
@@ -666,8 +671,7 @@ A [Hopscotch](http://linkedin.github.io/hopscotch/) tour.
 * [Tour](#Tour) : <code>object</code>
     * [.onEnd()](#Tour.onEnd)
     * [.onClose()](#Tour.onClose)
-    * [.setCookie(key, value)](#Tour.setCookie)
-    * [.getCookies(key)](#Tour.getCookies)
+    * [.getCookie()](#Tour.getCookie)
 
 <a name="Tour.onEnd"></a>
 
@@ -681,26 +685,15 @@ Set cookie on end (Tour.onEnd).
 Set cookie on close (Tour.onClose).
 
 **Kind**: static method of [<code>Tour</code>](#Tour)  
-<a name="Tour.setCookie"></a>
+<a name="Tour.getCookie"></a>
 
-### Tour.setCookie(key, value)
-Set cookie for the [Hopscotch](http://linkedin.github.io/hopscotch/) tour.
-
-**Kind**: static method of [<code>Tour</code>](#Tour)  
-
-| Param | Type |
-| --- | --- |
-| key | <code>string</code> | 
-| value | <code>string</code> | 
-
-<a name="Tour.getCookies"></a>
-
-### Tour.getCookies(key)
-Get cookie for the [Hopscotch](http://linkedin.github.io/hopscotch/) tour
+### Tour.getCookie()
+Get cookie
 
 **Kind**: static method of [<code>Tour</code>](#Tour)  
+<a name="create"></a>
 
-| Param | Type |
-| --- | --- |
-| key | <code>string</code> | 
+## create()
+Refer to this by [Etytree.create](Etytree.create).
 
+**Kind**: global function  
