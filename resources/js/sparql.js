@@ -85,10 +85,10 @@ var DB = (function(module) {
         /**
          * Prints the disambiguation query into a string.
          * The generated response will consists of a table with three headers:
-         * "iri": the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)
-         * "et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)
-         * "lemma": a string containing the rdfs label of the resource "iri"
-         * * @function disambiguationQuery
+         * <ul><li>"iri": the iri of a resources with rdfs label the input string (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_link)</li>
+         * <li>"et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)</li>
+         * <li>"lemma": a string containing the rdfs label of the resource "iri"</li></ul>
+         * @function disambiguationQuery
          * @param {string} a word e.g. "door"
          * @return {string} a query string
          */
@@ -111,13 +111,13 @@ var DB = (function(module) {
         /**
          * Prints the query to get links, pos and gloss of an entry.
          * 
-         * The generated response will consists of a table with three headers:
-         * "iri"
-         * "ee"
-         * "pos": a string containing the rdfs label of the resource "iri"
-         * "gloss": a string containing glossesseparated by ";;;;""
-         * "links": a string containing links separated by ","
-         *
+         * The generated response will consists of a table with five headers:
+         * <ul><li>"iri"</li>
+         * <li>"ee"</li>
+         * <li>"pos"</li>: a string containing the rdfs label of the resource "iri"
+         * <li>"gloss"</li>: a string containing glossesseparated by ";;;;""
+         * <li>"links"</li>: a string containing links separated by ","
+         * </ul>
          * @function glossQuery
          * @param {string} iri
          * @return {string} a query string
@@ -193,7 +193,7 @@ var DB = (function(module) {
                 resource = "?ancestor" + iteration;
             }
             //it was [true, false]
-            return [false].map(function(describes) {
+            return [false].map(describes => {
                 var _query = query + "{";
                 var _resource = resource; 
                 if (describes) {
@@ -263,7 +263,7 @@ var DB = (function(module) {
          */
         var unionQuery = function(iris, queryFunction) {
             return "SELECT * WHERE {{ " +
-                iris.map(function(iri) { return queryFunction(iri); })
+                iris.map(iri => { return queryFunction(iri); })
                     .join("} UNION {") +
                 "}}";
         };
@@ -277,7 +277,7 @@ var DB = (function(module) {
         this.descendantQuery = descendantQuery;
         this.propertyQuery = propertyQuery;
         this.unionQuery = unionQuery;
-	    this.iterativeAncestorQuery = iterativeAncestorQuery;
+	this.iterativeAncestorQuery = iterativeAncestorQuery;
       
         etyBase[moduleName] = this;
     };

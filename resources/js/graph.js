@@ -1,6 +1,11 @@
 /*globals
   $, d3, console, dagreD3, Rx, window, document, URLSearchParams
 */
+
+/**
+ * @module GRAPH
+ * @requires DATAMODEL
+ */
 var GRAPH = (function(module) {
 
 	module.bindModule = function(base, moduleName) {
@@ -9,12 +14,13 @@ var GRAPH = (function(module) {
 		/**
 		* Class representing a Node.
  		* @class
+                * @alias module:GRAPH~Node
  		*/
 		class Node {
 			/**
 			 * Create a Node with id counter (if counter is not undefined).
 			 * @param {number} counter
-			 * @param {EtymologyEntry}
+			 * @param {module:DATAMODEL~EtymologyEntry}
 			 */
 			constructor(counter, etymologyEntry) {
 				if (undefined !== counter) {
@@ -74,7 +80,7 @@ var GRAPH = (function(module) {
 		}
 		
 		/**
-		* Class representing a Dagre.
+		* Class representing a Dagre (Directed acyclic graph).
  		* @class
  		*/
 		class Dagre {
@@ -88,19 +94,21 @@ var GRAPH = (function(module) {
 			}
 
 			/**
-			 * Render dagre from this.dagre in the element seected by "selector"
-			 * and call the the svg element "id". Then fit dagre to screen.
+                         * Create an svg with the Dagre. 
+                         * Assign id to the svg element.
+			 * Render svg inside the element selected by "selector".
+                         * Then fit to screen.
                          * @function render 
 			 * @param {selector} 
 			 * @param {string} id
 			 */
-			render(selector, id) {
+		         render(selector, id, width, height) {
 				var that = this;
 		
 				var svg = d3.select(selector).append("svg")
 					.attr("id", id)
-					.attr("width", window.innerWidth)
-					.attr("height", window.innerHeight - $("#header").height());
+					.attr("width", width)
+					.attr("height", height);
 
 				var inner = svg.append("g");
 		
@@ -123,11 +131,10 @@ var GRAPH = (function(module) {
 				render(inner, that.dagre);
 		
 				// Center the graph
-				var width = window.innerWidth;
 				var graphWidth = that.dagre.graph().width;
 				var zoomScale = (graphWidth > width) ? (0.8 * Math.max(width / graphWidth, 0.2)) : 0.75;
 		
-				zoom.translate([(window.innerWidth - that.dagre.graph().width * zoomScale) / 2, 20])
+				zoom.translate([(width - that.dagre.graph().width * zoomScale) / 2, 20])
 					.scale(zoomScale)
 					.event(svg);
 
@@ -142,7 +149,7 @@ var GRAPH = (function(module) {
 						d3.selectAll(".tooltip").remove();
 						d3.select("#tooltipPopup")
 							.style("display", "inline")
-							.style("left", (Math.min(d3.event.pageX + 38, window.innerWidth - 190)) + "px")
+							.style("left", (Math.min(d3.event.pageX + 38, width - 190)) + "px")
 							.style("top", (d3.event.pageY - 28) + "px")
 							.append("p") 
 							.attr("class", "tooltip")
@@ -231,7 +238,9 @@ var GRAPH = (function(module) {
 
 				//initialize edges
 				if (undefined === graph.edges) {
-					this.setEdges();
+				        //group nodes by language and display them in columns of length 230
+				        var nCol = Math.max(Math.floor(window.innerWidth/230), 2); 
+					this.setEdges(nCol);
 					for (var e in this.edges) {
 						var source = this.edges[e].source,
 						target = this.edges[e].target;
@@ -251,17 +260,17 @@ var GRAPH = (function(module) {
 
 
 			/**
-                         * Sets the value of this.languages and this.edges (if undefined).
+                         * Set edges in the graph so that nodes are displayed in 
+                         * lines with nCol elements.
+                         * Sets the value of this.languages if undefined
                          * @function setEdges
+                         * @param nCol number of nodes that will be displayed in a line
 			 */ 
-			setEdges() {
+			setEdges(nCol) {
 				this.setLanguages();
 				this.edges = [];
 
-				//group nodes by language and display them in columns of length 230 
 				var m = null, col = 1;
-				var nCol = Math.max(Math.floor(window.innerWidth/230), 2);
-
 				for (var l in this.languages) {
 					for (var n in this.nodes) {
 						if (this.nodes[n].lang === this.languages[l]) {
@@ -296,7 +305,7 @@ var GRAPH = (function(module) {
 		*/
 		class LanguageGraph extends Graph {
 			/**
-			 * Create a language graph.
+			 * Creates a language graph.
 			 * @param {string} type - has value "TB" (top-bottom) or "LR" (left-right)
 			 * @param {Graph} g - the full Graph
 			 * @param {string} language - the language (e.g., "English")

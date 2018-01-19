@@ -4,7 +4,7 @@
 
 /**
  * A {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour.
- * @namespace tour
+ * @namespace Tour
  * @property {string}  id               - Id of the tutorial.
  * @property {Array.<Object>} steps     - Array of steps in the tutorial
  * @property {string}  steps.target     - Target of the step
@@ -12,7 +12,7 @@
  * @property {string}  steps.title      - Title of the step 
  * @property {content} steps.content    - Description of the step
  */
-var tour = {
+var Tour = {
     id: "etytree_tutorial",
     steps: [{
         target: "tags",
@@ -31,44 +31,45 @@ var tour = {
         content: "Choose language version (not available yet)."*/
     }],
     /**
-     * Set cookie on end (tour.onEnd).
+     * Set cookie on end (Tour.onEnd).
      * @function onEnd
-     * @memberof tour
+     * @memberof Tour
      */
     onEnd: function() {
         setCookie("toured", "toured");
     },
     /**
-     * Set cookie on close (tour.onClose).
+     * Set cookie on close (Tour.onClose).
      * @function onClose
-     * @memberof tour
+     * @memberof Tour
      */
     onClose: function() {
         setCookie("toured", "toured");
+    },
+    /**
+     * Set cookie for the {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour.
+     * @function setCookie 
+     * @param {string} key 
+     * @param {string} value 
+     * @memberof Tour
+     */
+    setCookie: function(key, value) {
+	var expires = new Date();
+	expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+	document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
+    },
+    /**
+     * Get cookie for the {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour
+     * @function getCookies 
+     * @param {string} key
+     * @memberof Tour 
+     */
+    getCookie: function(key) {
+        var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+	return keyValue ? keyValue[2] : null;
     }
 };
 
-/**
- * Set cookie for the {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour.
- * @function setCookie
- * @param {string} key 
- * @param {string} value
- */
-function setCookie(key, value) {
-    var expires = new Date();
-    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-    document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
-}
-
-/**
- * Get cookie for the {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour
- * @function getCookies 
- * @param {string} key
-*/
-function getCookie(key) {
-    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-    return keyValue ? keyValue[2] : null;
-}
 
 //Run tour only if screen is large enough
 if (screen.width > 800) {

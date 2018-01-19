@@ -5,6 +5,7 @@
 
 /**
  * @module DATAMODEL
+
  */
 var DATAMODEL = (function(module) {
 	
@@ -106,6 +107,7 @@ var DATAMODEL = (function(module) {
 		/** 
                  * Class representing an Etymology Entry. 
                  * @class
+                 * @alias module:DATAMODEL~EtymologyEntry
                  */
 		class EtymologyEntry {
 		        /**
@@ -684,7 +686,7 @@ var DATAMODEL = (function(module) {
 		
 			for (var n in values) {
 				if (values[n].temporary) {
-					values[n].iri.forEach(function(e) {
+					values[n].iri.forEach(e => {
 						if (!values[e].temporary) {
 							values[n].temporary = false;
 						}
@@ -697,7 +699,7 @@ var DATAMODEL = (function(module) {
 	
 			for (var n in values) {
 				if (!values[n].temporary) {
-					values[n].iri.forEach(function(e) {
+					values[n].iri.forEach(e => {
 						values[e].temporary = false;
 					});
 				}
@@ -762,7 +764,7 @@ var DATAMODEL = (function(module) {
 			var values = {};
 			JSON.parse(response).results
 				.bindings
-				.forEach(function(j) {
+				.forEach(j => {
 					if (undefined !== j.descendant1) {
 						values[j.descendant1.value] = new EtymologyEntry(j.descendant1.value, j.label1.value);
 						if (undefined != j.ee) {

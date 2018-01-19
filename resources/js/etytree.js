@@ -2,11 +2,21 @@
   jQuery, $, d3, console, window
 */
 
+/**
+ * @namespace Etytree 
+ */
 var EtyTree = {
+    /**
+     * @function create
+     * @memberof Etytree
+     */
     create: function() {
         var etyBase = Object.create(this);
-	
-        
+	        
+        /**
+         * Messages in the help.
+         * @memberof Etytree
+         */
         etyBase.HELP = {
             intro: "Enter a word in the search bar, then press enter or click.",
             disambiguation: "<b>Disambiguation page</b>" +
@@ -22,7 +32,10 @@ var EtyTree = {
                 "<li>Click on a node to display its descendants, grouped by language</li>" +
                 "</ul>"
         };
-	
+	/** 
+         * Messages.
+         * @memberof Etytree
+         */
         etyBase.MESSAGE = {
             notAvailable: "This word is not available in the database.",
             loading: "Loading, please wait...",
@@ -39,7 +52,10 @@ var EtyTree = {
             clickForDescendants: "Click on a word to see its descendants"
         };
 	
-        //HELPER FUNCTIONS
+        /**              
+         * Helper functions.
+         * @memberof Etytree                 
+         */
         etyBase.helpers = {
             htmlLink: function(url, label) {
 //		return append("a").attr("href", url).attr("target", "_blank").text(label);
@@ -65,7 +81,11 @@ var EtyTree = {
             }
         };
 	
-        /* Binding Modules */
+        /**
+         * Binds modules.
+         * @function
+         * @memberof Etytree
+         */
         var bindModules = function(base, modules) {
             for (var i = 0; i < modules.length; i++) {
                 if (!window[modules[i]]) {
@@ -76,7 +96,10 @@ var EtyTree = {
             }
         };
 	
-        /* Setup basic settings */
+        /**
+         * Setup basic settings
+         * @memberof Etytree  
+         */
         etyBase.config = {
             modules: ['DB', 'GRAPH', 'DATA', 'DATAMODEL', 'APP'],
             debug: false,
@@ -94,6 +117,10 @@ var EtyTree = {
         bindModules(etyBase, etyBase.config.modules);
         return etyBase;
     },
+    /**
+     * @function init
+     * @memberof Etytree 
+     */
     init: function() {
         var etyBase = this;
 	

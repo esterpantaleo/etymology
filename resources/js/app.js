@@ -5,6 +5,8 @@
 
 /**
  * @module APP 
+ * @requires GRAPH
+ * @requires DATAMODEL
  */
 var APP = (function(module) {
 
@@ -15,8 +17,8 @@ var APP = (function(module) {
 		 * Given an object consisting of Etymology Entries, 
 		 * this function returns an object consisting of Nodes
 		 * @function setNodes
-		 * @param {Object}.<EtymologyEntry> a list of Etymology Entries
-		 * @return {Object}.<Node> a list of Nodes
+		 * @param {Object}.<DATAMODEL~EtymologyEntry> a list of Etymology Entries
+		 * @return {Object}.<GRAPH~Node> a list of Nodes
 		 */
 		var setNodes = function(etymologyEntries) {
 			var nodes = {};
@@ -58,30 +60,30 @@ var APP = (function(module) {
 	
 		/**
 		 * Render the Graph of Ancestors
-		 * @function renderAncestors
-		 * @params {Object}.<EtymologyEntry> a list of Etymology Entries
+		 * @function renderAncestorsGraphPage
+		 * @params {Object}.<DATAMODEL~EtymologyEntry> a list of Etymology Entries
 		 */
-		var renderAncestors = function(etymologyEntries) {
+		var renderAncestorsGraphPage = function(etymologyEntries) {
 			if (Object.keys(etymologyEntries.values).length < 2) {
 
 				var node = etymologyEntries.values[Object.keys(etymologyEntries.values)[0]];
-				$("#message")
+				d3.select("#message")
 					.html(etyBase.MESSAGE.noEtymology(node.lang, node.label));
 
 			} else {
 
-				$("#message")
+				d3.select("#message")
 					.html(etyBase.MESSAGE.clickForDescendants);
-				$("#helpPopup")
+				d3.select("#helpPopup")
 					.html(etyBase.HELP.dagre);
 
 				var g = new etyBase.GRAPH.Graph("TB", { nodes: setNodes(etymologyEntries), edges: etymologyEntries.edges });
 
-				g.render("#tree-container", "tree-overlay")
+				g.render("#tree-container", "tree-overlay", window.innerWidth, window.innerHeight - $("#header").height())
 					.selectAll("g.node")
-					.on("click", function(d) {
+					.on("click", d => {
 						var node = g.dagre.node(d);
-						showDescendants(node);
+						renderDescendantsDialog(node);
 					});
 		   
 			}
@@ -89,29 +91,37 @@ var APP = (function(module) {
 
 		/**
                  * Render the Disambiguation Graph 
-                 * @function renderDisambiguation
+                 * @function renderDisambiguationGraphPage
 		 * 
 		 * @params {Object}.<EtymologyEntry> a list of Etymology Entries
 		 */
-		var renderDisambiguation = function(etymologyEntries) {
+		var renderDisambiguationGraphPage = function(etymologyEntries) {
 			var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) });
 
 			g.render("#tree-container", "tree-overlay")
 				.selectAll("g.node")
-				.on("click", function(d) {
+				.on("click", d => {
 					var iri = g.dagre.node(d).iri[0];
-					showAncestors(iri);
+					d3.select("#tree-overlay")
+					    .remove();
+					d3.select("#tooltipPopup")
+					    .style("display", "none");
+					d3.select("#message")
+					    .attr("display", "inline")
+					    .html(etyBase.MESSAGE.loading);
+
+					etyBase.DATAMODEL.ancestorsQuery(iri, renderAncestorsGraphPage);
 				});
 		};
 
 		/**
                  * Render the Graph of Descendants in a specified language
-                 * @function renderDescendantsInLanguage
+                 * @function renderDescendantsGraphInLanguage
 		 * 
 		 * @params {Graph} a Graph with all descendants in all languages
 		 * @params {string} a language, e.g., "English"
 		 */
-		var renderDescendantsInLanguage = function(gg, language) {
+		var renderDescendantsGraphInLanguage = function(gg, language) {
 			var index = gg.languages.indexOf(language);
 
 			//clean accordion                                          
@@ -130,12 +140,20 @@ var APP = (function(module) {
 			var g = new etyBase.GRAPH.LanguageGraph("LR", gg, language);
 			g.render("#div" + index, "overlay" + index)
 				.selectAll("g.node")
-				.on("click", function(d) {
+				.on("click", d => {
 					//on click on node in language graph, render ancestorsGraph of clicked node    
 					$("#descendants")
-						.dialog("close");
+					    .dialog("close");
 					var iri = g.dagre.node(d).iri[0];
-					showAncestors(iri);
+					d3.select("#tree-overlay")
+					    .remove();
+					d3.select("#tooltipPopup")
+					    .style("display", "none");
+					d3.select("#message")
+					    .attr("display", "inline")
+					    .html(etyBase.MESSAGE.loading);
+
+					etyBase.DATAMODEL.ancestorsQuery(iri, renderAncestorsGraphPage);
 					$(search).val(g.dagre.node(d).label);
 				});
 
@@ -149,11 +167,11 @@ var APP = (function(module) {
 		 * Render a dialog box with
 		 * an accordion, where each section of the accordion 
 		 * displays the graph of descendants in a specific language.
-		 * @function renderDescendants 
+		 * @function renderDescendantsAccordion 
 		 * @params {Node} the node whose descendants we are going to show
 		 * @params {Object} a list of Etymology Entries, descendants of Node
 		 */
-		var renderDescendants = function(node, etymologyEntries) {
+		var renderDescendantsAccordion = function(node, etymologyEntries) {
 		         $("#descendants")
 		                .dialog({ title: "Descendants of " + node.lang + " " + node.label});
 			 var accordion = d3.select("#descendants")
@@ -169,11 +187,11 @@ var APP = (function(module) {
 		
 			//collapse all windows in accordion                  
 			//when a window is activated, render language graph         
-			$("#accordion").accordion({
+			 $("#accordion").accordion({
 				collapsible: "true",
 				activate: function(event, ui) {
 					var language = ui.newHeader.text();		
-					renderDescendantsInLanguage(g, language);
+					renderDescendantsGraphInLanguage(g, language);
 				},
 				active: false
 			});
@@ -182,17 +200,17 @@ var APP = (function(module) {
 		/**
 		 * Render the page that will contain the Graph of Descendants 
 		 * of a specified Node. It queries the database to get pos, gloss and links.
-		 * @function showDescendants
+		 * @function renderDescendantsDialog
 		 * @params {Node} 
 		 */
-		var showDescendants = function(node) {
+		var renderDescendantsDialog = function(node) {
 			//open dialog   
-			$("#descendants")
+			d3.select("#descendants")
 				.remove();
  			d3.select("#tree-container")
 				.append("div")
 				.attr("id", "descendants");
-			$("#descendants")
+		        $("#descendants")
 				.dialog({
 					title: "Loading descendants...",
 					autoOpen: false,
@@ -203,89 +221,50 @@ var APP = (function(module) {
  			$("#descendants")
 				.dialog("open");
 
- 			etyBase.DATAMODEL.descendantsQuery(node, graphDescendants);
-		};
-
-		/**
-		 * Render a "not available" message.
-		 * @function showNotAvailable
-		 * @params {Node} 
-		 */
-		var showNotAvailable = function() {
-			//clean screen       
-			$("#tree-overlay")
-				.remove();
-			d3.select("#tooltipPopup")
-				.style("display", "none");
-			$("#message")
-				.css("display", "inline")
-				.html(etyBase.MESSAGE.notAvailable);
-		};
-
-		/**
-		 * Render the page that will contain the Graph of Ancestors 
-		 * of an entry corresponding to a specified iri. It sequencially queries 
-		 * the database to get the set of ancestors.
-		 * @function showAncestors
-		 * @params {iri} 
-		 */
-		var showAncestors = function(iri) {
-			$("#tree-overlay")
-				.remove();
-			d3.select("#tooltipPopup")
-				.style("display", "none");
-			$("#message")
-				.css("display", "inline")
-				.html(etyBase.MESSAGE.loading);
-
-			etyBase.DATAMODEL.ancestorsQuery(iri, renderAncestors);
-		};
-
-		/**
-		 * Render the page that will contain the Disambiguation Graph. 
-		 * It queries the database to get disambiguations.
-		 * @function showDisambiguation
-		 * @params {string} response of a query
-		 */
-		var showDisambiguation = function(response) {
-			$("#tree-overlay")
-				.remove();
-			d3.select("#tooltipPopup")
-				.style("display", "none");
-			$("#helpPopup")
-				.html(etyBase.HELP.disambiguation);
-			$("#message")
-				.css("display", "inline")
-				.html(etyBase.MESSAGE.disambiguation);
-
-			etyBase.DATAMODEL.disambiguationQuery(response, renderDisambiguation);
-
+ 			etyBase.DATAMODEL.descendantsQuery(node, renderDescendantsAccordion);
 		};
 
 		/**
                  * Render the page that will contain the Etymology Graph 
 		 * of a specified lemma
-		 * @function show
+		 * @function renderSearchPage
 		 * @params {string} e.g., "door" 
 		 */
-		var show = function(lemma) {
+		var renderSearchPage = function(lemma) {
 		 	if (lemma.length < 2)
 			    //if lemma has length 1 but it is a foreign character (e.g. Chinese) don't return
 			    if (etyBase.config.notForeign.test(lemma)) 
 				return;
-			
 
 			etyBase.DATAMODEL.disambiguation(lemma)
 				.subscribe((response) => {
+                                        //clean screen
+                                        d3.select("#tree-overlay")
+					    .remove();
+                                        d3.select("#tooltipPopup")
+					    .style("display", "none");
+
 					var N = Object.keys(response).length;
 			
 					if (N === 0) {
-						showNotAvailable();
+					    d3.select("#message")
+						.attr("display", "inline")
+						.html(etyBase.MESSAGE.notAvailable);
 					} else if (N === 1) {
-						var iri = Object.keys(response)[0];
-						showAncestors(iri);
+					    var iri = Object.keys(response)[0];
+					    d3.select("#message")
+						.attr("display", "inline")
+						.html(etyBase.MESSAGE.loading);
+
+					    etyBase.DATAMODEL.ancestorsQuery(iri, renderAncestorsGraphPage);
 					} else {			
-						showDisambiguation(response);
+					    d3.select("#helpPopup")
+					        .html(etyBase.HELP.disambiguation);
+                                            d3.select("#message")
+					        .attr("display", "inline")  
+                                                .html(etyBase.MESSAGE.disambiguation);
+
+                                            etyBase.DATAMODEL.disambiguationQuery(response, renderDisambiguationGraphPage);
 					}
 				});
 		};
@@ -296,7 +275,7 @@ var APP = (function(module) {
 		 */
 		var init = function() {
 
-			$("#helpPopup")
+		        d3.select("#helpPopup")
 				.html(etyBase.HELP.intro);
 
 			d3.select("body").append("div")
@@ -306,26 +285,23 @@ var APP = (function(module) {
 				.style("display", "none")
 				.attr("class", "ui-content tooltipDiv");
 
-			$(window).click(function() {
-				d3.select("#tooltipPopup")
-					.style("display", "none");
-			});
+			d3.select(window)
+                                .on("click", () => d3.select("#tooltipPopup").style("display", "none"));
 
-			$("#tooltipPopup").click(function(e) {
-				e.stopPropagation();
-			});
+			d3.select("#tooltipPopup")
+                                .on("click", e => e.stopPropagation());
 
-			$("#search").on("keypress", function(e) {
-				var search = this;
-				if (e.which === 13) {
+			$("#search").on("keypress", e => {
+				    var search = this;
+				    if (e.which === 13) {
 					var lemma = $(search).val();
-					show(lemma);
-				}
+					renderSearchPage(lemma);
+				    }
 			});
 
-			$("#btnSearch").click(function(e) {
-				var lemma = $("#search").val();
-				show(lemma);
+			d3.select("#btnSearch").on("click", () => {
+                                var lemma = d3.select("#search").property("value");	
+				renderSearchPage(lemma);
 			});
 	
 		};
