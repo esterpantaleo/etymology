@@ -59,16 +59,20 @@ html * {
     font-size: 2em;
 }
 
-.tooltipDiv {
+.tooltip {
     position: absolute;
     background: lightblue;
     text-align: left;
-    padding: 0em 1em 0em 1em !important;
+    padding: 1em 1em 1em 1em !important;
     font: 1em sans-serif;
     border-radius: 1em;
     width: auto;
     height: auto;
     z-index: 200;
+}
+
+tspan {
+    cursor: pointer;
 }
 
 input:focus::-webkit-input-placeholder { color:transparent; }
@@ -143,7 +147,7 @@ input:focus:-ms-input-placeholder { color:transparent; }
     }
     #title { display: block; }
     text { font-size: 1em; }
-    .tooltipDiv { font-size: 0.8em; }
+    .tooltip { font-size: 0.8em; }
     .isoText { font-size: 0.8em; }
 }
 

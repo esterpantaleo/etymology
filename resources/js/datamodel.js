@@ -15,19 +15,32 @@ var DATAMODEL = (function(module) {
 		 * Encodes a query into an url. 
 		 * @function urlFromQuery
                  *
-		 * @param {string} query - a query
-		 * @return {string} a url
+		 * @param {String} query - a query
+		 * @return {String} a url
 		 */
  		var urlFromQuery = function(query) {
 			return etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(query);
+		};
+
+                /**
+                 * Returns Wiktionary link to a lemma with a given label and language 
+		 * @function wikiLink 
+                 * @parameter {String} label 
+                 * @parameter {String} language
+                 */
+                var wikiLink = function(label, language) {
+                    var urlPart = label.startsWith("*") ? 
+		        ("Reconstruction:" + language + "/" + label.replace("*", "")) :
+		    (label + "#" + language);
+                    return etyBase.config.urls.WIKT + urlPart;
 		};
 
 		/**
 		 * Given an iri, returns language + label.
 		 * @function wiktionaryLabelOf
                  *
-		 * @param {string} iri - an iri
-		 * @return {string} a label
+		 * @param {String} iri - an iri
+		 * @return {String} a label
 		 */
 		var wiktionaryLabelOf = function(iri) {
 			if (iri.startsWith(etyBase.config.urls.WIKT_RECONSTRUCTION)) {
@@ -47,8 +60,8 @@ var DATAMODEL = (function(module) {
 		/**
 		 * Returns a label by replacing special characters. 
 		 * @function parseLabel
-		 * @param {string} label - an encoded label
-		 * @return {string} a label
+		 * @param {String} label - an encoded label
+		 * @return {String} a label
  		 */
 		var parseLabel = function(label) {
 			return label.replace(/^_/, '*')
@@ -61,8 +74,8 @@ var DATAMODEL = (function(module) {
                  * Given a label, returns an encoded label.
                  * @function encodeLabel
 		 *
-		 * @param {string} label - a label
-		 * @return {string} an encoded label
+		 * @param {String} label - a label
+		 * @return {String} an encoded label
 		 */
 		var encodeLabel = function(label) {
 			return label.replace(/'/g, "\\\\'")   //"
@@ -74,8 +87,8 @@ var DATAMODEL = (function(module) {
 
 	        /**
                  * @function dbnaryLabelOf
-                 * @param {string} iri - an iri
-                 * @return {string} a label
+                 * @param {String} iri - an iri
+                 * @return {String} a label
                  */
 		var dbnaryLabelOf = function(iri) {
 			var tmp1 = iri.replace(etyBase.config.urls.DBNARY_ENG, "").split("/");
@@ -86,8 +99,8 @@ var DATAMODEL = (function(module) {
 
 		/**
                  * @function dbnaryIsoOf
-                 * @param {string} iri - an iri
-                 * @return {string} an ISO code (e.g: "eng")
+                 * @param {String} iri - an iri
+                 * @return {String} an ISO code (e.g: "eng")
                  */
 		var dbnaryIsoOf = function(iri) {
 			var tmp1 = iri.replace(etyBase.config.urls.DBNARY_ENG, "").split("/");
@@ -96,8 +109,8 @@ var DATAMODEL = (function(module) {
 	
 		/**
                  * @function dbnaryEtyOf
-                 * @param {string} iri - an iri
-                 * @return {number} an ety number (e.g: "1") 
+                 * @param {String} iri - an iri
+                 * @return {Number} an ety number (e.g: "1") 
                  */
 		var dbnaryEtyOf = function(iri) {
 			var tmp1 = iri.replace(etyBase.config.urls.DBNARY_ENG, "").split("/");
@@ -162,8 +175,8 @@ var DATAMODEL = (function(module) {
                  * the set of ancestors and descendants then merge them into one node)
 		 *
                  * @function assignNodes
-		 * @param {Object} values - containing a list of Etymology Entries
-		 * @return {Object} containing a list of Etymology Entries
+		 * @param {Object} etymologyEntries - containing a list of Etymology Entries
+		 * @return {Object.<EtymologyEntry>} 
 		 */
 		var assignNodes = function(values) {            
 
@@ -269,7 +282,7 @@ var DATAMODEL = (function(module) {
                  * the disambiguationQuery. 
 		 * @function disambiguation
                  *
-		 * @param {string} lemma 
+		 * @param {String} lemma 
 		 * @return {Observable} 
 		 */
 		var disambiguation = function(lemma) {
@@ -285,7 +298,7 @@ var DATAMODEL = (function(module) {
                  * containing the parsed response of the server to
                  * the glossQuery.
 		 * @function glossQuery
-		 * @param {string} iri - an iri 
+		 * @param {String} iri - an iri 
 		 * @return {Observable} 
 		 */
 		var glossQuery = function(iri) {
@@ -298,7 +311,7 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function propertyQueryScalar
 		 *
-		 * @param {string} iri - an iri
+		 * @param {String} iri - an iri
 		 * @return {Observable} 
 		 */
 		var propertyQueryScalar = function(iri) {
@@ -342,7 +355,7 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function parseData
 		 *
-		 * @param {string} response
+		 * @param {String} response
 		 * @return {Object} with elements "posAndGloss" and "urlAndLabel"
 		 */
 		var parseData = function(response) {
@@ -373,8 +386,8 @@ var DATAMODEL = (function(module) {
                  * Parse response of {@link disambiguationQuery disambiguation query} to the server.
                  * @function parseDisambiguation
 		 *
-		 * @param {string} response
-		 * @return {array.<EtymologyEntry>}
+		 * @param {String} response
+		 * @return {Array.<EtymologyEntry>}
 		 */
 		var parseDisambiguation = function(response) {
 			return JSON.parse(response)
@@ -400,7 +413,7 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function parseProperties
 		 *
-		 * @param {string} response
+		 * @param {String} response
 		 * @return {Array} of properties
 		 */
 		var parseProperties = function(response) {
@@ -410,8 +423,8 @@ var DATAMODEL = (function(module) {
 		/**
 		 * Posts an XMLHttpRequest to get data about disambiguation nodes.
 		 * @function disambiguationQuery 
-		 * @param {string} response
-		 * @param {function} f
+		 * @param {String} response
+		 * @param {Function} f
 		 * @return {Observable} 
 		 */
 		var disambiguationQuery = function(response, f) {
@@ -436,7 +449,7 @@ var DATAMODEL = (function(module) {
                  * Posts an XMLHttpRequest to more ancestors.
                  * @function findMoreAncestors
 		 *
-		 * @param {string} response
+		 * @param {String} response
 		 * @return {Observable} 
 		 */
 		var findMoreAncestors = function(response) {
@@ -458,7 +471,7 @@ var DATAMODEL = (function(module) {
                  * Posts an XMLHttpRequest to find ancestors.
                  * @function findAncestors
 		 *
-		 * @param {string} iri
+		 * @param {String} iri
 		 * @return {Observable} 
  		 */
 		var findAncestors = function(iri) {
@@ -473,9 +486,9 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function mergeAncestors
 		 *
-		 * @param {array.<string>} ancestors
-		 * @param {array.<string>} moreAncestors
-		 * @return {array.<string>}} 
+		 * @param {Array.<string>} ancestors
+		 * @param {Array.<string>} moreAncestors
+		 * @return {Array.<string>}} 
 		 */
 		var mergeAncestors = function(ancestors, moreAncestors) {
 			if (moreAncestors !== 0) {
@@ -489,9 +502,9 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function ancestorsQuery
 		 *
-		 * @param {string} iri
-		 * @param {function} f - a function
-		 * @return {array.<string>} an array of ancestors
+		 * @param {String} iri
+		 * @param {Function} f - a function
+		 * @return {Array.<string>} an array of ancestors
 		 */
 		var ancestorsQuery = function(iri, f) {
 	
@@ -499,9 +512,7 @@ var DATAMODEL = (function(module) {
 		
 			return ancestors$.subscribe((ancestors) => {
 				var moreAncestors$ = (ancestors.last.length === 0) ? Rx.Observable.timer(1) : findMoreAncestors(ancestors.last)
-					.catch((err) => {
-						d3.select("#message").html(etyBase.MESSAGE.serverError);
-			
+					.catch((err) => {			
 						/* Return an empty Observable which gets collapsed in the output */
 						return Rx.Observable.empty();
 					});
@@ -529,7 +540,7 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function parseAncestors
 		 *
-		 * @param {string} response - a query response
+		 * @param {String} response - a query response
 		 * @return {Object} with elements "all" and "last"
 		 */
 		var parseAncestors = function(response) {
@@ -582,8 +593,8 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function setEtymologyEntries
 		 *
-		 * @param {array.<Object>} properties 
-		 * @param {array.<string>} ancestors
+		 * @param {Array.<Object>} properties 
+		 * @param {Array.<string>} ancestors
 		 * @return {Object} with elements "values" and "edges"
 		 */
 		var setEtymologyEntries = function(properties, ancestors) {
@@ -719,7 +730,7 @@ var DATAMODEL = (function(module) {
 		 * @function descendantsQuery
 		 *
 		 * @param {Node} node 
-		 * @param {function} f - a callback
+		 * @param {Function} f - a callback
 		 * @return {Observable} 
 		 */
 		var descendantsQuery = function(node, f) {
@@ -746,7 +757,7 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function descendantsQueryScalar
 		 *
-		 * @param {string} an iri
+		 * @param {String} an iri
 		 * @return {Observable} 
 		 */
 		var descendantsQueryScalar = function(iri) {
@@ -759,7 +770,7 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function parseDescendants
 		 *
-		 * @param {string} response - a query response
+		 * @param {String} response - a query response
 		 * @return {Object.<EtymologyEntry>} containing a list of Etymology Entries
 		 */
 		var parseDescendants = function(response) {
@@ -781,6 +792,7 @@ var DATAMODEL = (function(module) {
 		};
 	
 		this.EtymologyEntry = EtymologyEntry;
+		this.wikiLink = wikiLink;
 		this.assignNodes = assignNodes;
 		this.glossQuery = glossQuery;
 		this.disambiguation = disambiguation;

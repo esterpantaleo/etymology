@@ -52,29 +52,37 @@ var GRAPH = (function(module) {
                          * Prints tooltip.
                          * @function tooltip
 			 */
-			tooltip() {
-				var labels = this.label.split(",");
-		
-				var toreturn = "";
-				for (var i in labels) {
-					toreturn += "<b>" + 
-					labels[i] + 
-					"</b>" +
-					"<br><br>" +
-					this.posAndGloss[i].map((t) => {
-						var pos = t.pos;
-						return t.gloss.map((gloss) => pos + " - " + gloss).join("<br><br>");
-					})
-					.join("<br><br>") +
-					"<br><br><br>" +
-					"Data is under CC BY-SA and has been extracted from: " +
-					this.urlAndLabel[i].map((t) => {
-						return etyBase.helpers.htmlLink(t.url, t.label);
-					}) + 
-					"<br><br>";
+			tooltip(element) {
+                            var labels = this.label.split(",");
+                            for (var i in labels) {
+				element.append("span")
+				    .html("<b>" + labels[i] + "</b>");
+				element.append("span")
+				    .html("<br><br>");
+                                var ps = this.posAndGloss[i];
+                                for (var j in ps) {
+				    for (var k in ps[j].gloss) {                                    
+				        element.append("span")
+					    .html(ps[j].pos + " - " + ps[j].gloss[k]);
+                                        element.append("span")
+                                            .html("<br><br>");
+                                    }
+                                }
+                                element.append("span")
+				    .html("<br><hr>Data is under CC BY-SA and has been extracted from: ");
+                                var ual = this.urlAndLabel[i];
+				for (var j in ual) {
+                                    element.append("a")
+					.attr("href", ual[j].url)
+                                        .attr("target", "_blank")
+                                        .text(ual[j].label);
+                                    if (j < ual.length - 1) {
+                                        element.append("span").html(",");
+				    }
 				}
-
-				return toreturn;
+                                element.append("span")
+				    .html("<br><br>");
+			    }
 			}
 		}
 		
@@ -147,15 +155,14 @@ var GRAPH = (function(module) {
 				inner.selectAll(".word")
 					.on("mouseover", function(d) {
 						d3.select(this).style("cursor", "pointer"); 
-						d3.selectAll(".tooltip").remove();
-						d3.select("#tooltipPopup")
-							.style("display", "inline")
-							.style("left", (Math.min(d3.event.pageX + 38, width - 190)) + "px")
-							.style("top", (d3.event.pageY - 28) + "px")
-							.append("p") 
-							.attr("class", "tooltip")
-							.html(that.dagre.node(d).tooltip());
-							//.append("p").html() 
+						d3.selectAll(".tooltipText").remove();
+						var tooltipDiv = d3.select("#tooltipPopup")
+						    .style("display", "inline")
+						    .style("left", (Math.min(d3.event.pageX + 38, width - 190)) + "px")
+						    .style("top", (d3.event.pageY - 28) + "px")
+						    .append("div")
+                                                    .attr("class", "tooltipText");
+						that.dagre.node(d).tooltip(tooltipDiv);
 						d3.event.stopPropagation();
 					});
 		
@@ -181,13 +188,13 @@ var GRAPH = (function(module) {
 					})
 					.attr("height", "1em")
 					.on("mouseover", function(d) {
-						d3.selectAll(".tooltip").remove();
+						d3.selectAll(".tooltipText").remove();
 						d3.select("#tooltipPopup")
 							.style("display", "inline")
 							.style("left", (d3.event.pageX) + "px")
 							.style("top", (d3.event.pageY - 28) + "px")
+						        .attr("class", "tooltipText")
 							.append("p")
-							.attr("class", "tooltip")
 							.html(that.dagre.node(d).lang);
 						d3.event.stopPropagation();
 					});
@@ -218,9 +225,9 @@ var GRAPH = (function(module) {
 		class Graph extends Dagre {
 			/**
 			 * Create a graph.
-			 * @param {string} type - has value "TB" (top-bottom) or "LR" (left-right)
+			 * @param {String} type - has value "TB" (top-bottom) or "LR" (left-right)
 			 * @param {Object} graph - with elements "nodes" and "edges"
-                         * @param {number} width
+                         * @param {Number} width
 			 */
 		         constructor(type, graph, width) {
 				super(type);
@@ -266,7 +273,7 @@ var GRAPH = (function(module) {
                          * lines with nCol elements.
                          * Sets the value of this.languages if undefined
                          * @function setEdges
-                         * @param {number} nCol - number of nodes that will be displayed in a line
+                         * @param {Number} nCol - number of nodes that will be displayed in a line
 			 */ 
 			setEdges(nCol) {
 				this.setLanguages();
@@ -312,7 +319,7 @@ var GRAPH = (function(module) {
 			 * @param {Graph} g - the full Graph
 			 * @param {string} language - the language (e.g., "English")
 			 */
-			constructor(type, g, language) {
+		    constructor(type, g, language, width) {
 				//define nodes
 				var counter = 0;
 				var nodes = {};
