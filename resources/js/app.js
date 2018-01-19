@@ -16,10 +16,10 @@ var APP = (function(module) {
 		height = window.innerHeight - $("#header").height();
 
 		/**
-		 * Given an object consisting of Etymology Entries, 
+		 * Given an object consisting of EtymologyEntry-s, 
 		 * this function returns an object consisting of Nodes
 		 * @function setNodes
-		 * @param {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries
+		 * @param {Object}.<DATAMODEL.EtymologyEntry> etymologyEntries - a list of EtymologyEntry-s
 		 * @return {Object}.<GRAPH.Node> a list of Nodes
 		 */
 		var setNodes = function(etymologyEntries) {
@@ -63,7 +63,7 @@ var APP = (function(module) {
 		/**
 		 * Render the Graph of Ancestors
 		 * @function renderAncestorsGraphPage
-		 * @params {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries
+		 * @params {Object}.<DATAMODEL.EtymologyEntry> etymologyEntries - a list of EtymologyEntry-s
 		 */
 		var renderAncestorsGraphPage = function(etymologyEntries) {
 			if (Object.keys(etymologyEntries.values).length < 2) {
@@ -95,7 +95,7 @@ var APP = (function(module) {
                  * Render the Disambiguation Graph 
                  * @function renderDisambiguationGraphPage
 		 * 
-		 * @params {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries
+		 * @params {Object}.<DATAMODEL.EtymologyEntry> etymologyEntries - a list of EtymologyEntry-s
 		 */
 		var renderDisambiguationGraphPage = function(etymologyEntries) {
 		    var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) }, width);
@@ -120,8 +120,8 @@ var APP = (function(module) {
                  * Render the Graph of Descendants in a specified language
                  * @function renderDescendantsGraphInLanguage
 		 * 
-		 * @params {Graph} a Graph with all descendants in all languages
-		 * @params {string} a language, e.g., "English"
+		 * @params {Graph} g - a Graph with all descendants in all languages
+		 * @params {string} language - a language, e.g., "English"
 		 */
 		var renderDescendantsGraphInLanguage = function(gg, language) {
 			var index = gg.languages.indexOf(language);
@@ -170,7 +170,7 @@ var APP = (function(module) {
 		 * an accordion, where each section of the accordion 
 		 * displays the graph of descendants in a specific language.
 		 * @function renderDescendantsAccordion 
-		 * @params {Node} the node whose descendants we are going to show
+		 * @params {Node} node - the node whose descendants we are going to show
 		 * @params {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries, descendants of Node
 		 */
 		var renderDescendantsAccordion = function(node, etymologyEntries) {
@@ -203,7 +203,7 @@ var APP = (function(module) {
 		 * Render the page that will contain the Graph of Descendants 
 		 * of a specified Node. It queries the database to get pos, gloss and links.
 		 * @function renderDescendantsDialog
-		 * @params {Node} 
+		 * @params {Node} node
 		 */
 		var renderDescendantsDialog = function(node) {
 			//open dialog   
@@ -230,7 +230,7 @@ var APP = (function(module) {
                  * Render the page that will contain the Etymology Graph 
 		 * of a specified lemma
 		 * @function renderSearchPage
-		 * @params {string} e.g., "door" 
+		 * @params {string} lemma - e.g., "door" 
 		 */
 		var renderSearchPage = function(lemma) {
 		 	if (lemma.length < 2)

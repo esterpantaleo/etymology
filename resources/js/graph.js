@@ -20,7 +20,7 @@ var GRAPH = (function(module) {
 			/**
 			 * Create a Node with id counter (if counter is not undefined).
 			 * @param {number} counter
-			 * @param {module:DATAMODEL~EtymologyEntry}
+			 * @param {module:DATAMODEL~EtymologyEntry} etymologyEntry
 			 */
 			constructor(counter, etymologyEntry) {
 				if (undefined !== counter) {
@@ -99,8 +99,10 @@ var GRAPH = (function(module) {
 			 * Render svg inside the element selected by "selector".
                          * Then fit to screen.
                          * @function render 
-			 * @param {selector} 
+			 * @param {selector} selector
 			 * @param {string} id
+                         * @param {number} width
+                         * @param {number} height 
 			 */
 		         render(selector, id, width, height) {
 				var that = this;
@@ -219,6 +221,7 @@ var GRAPH = (function(module) {
 			 * Create a graph.
 			 * @param {string} type - has value "TB" (top-bottom) or "LR" (left-right)
 			 * @param {Object} graph - with elements "nodes" and "edges"
+                         * @param {number} width
 			 */
 		         constructor(type, graph, width) {
 				super(type);
@@ -264,7 +267,7 @@ var GRAPH = (function(module) {
                          * lines with nCol elements.
                          * Sets the value of this.languages if undefined
                          * @function setEdges
-                         * @param nCol number of nodes that will be displayed in a line
+                         * @param nCol - number of nodes that will be displayed in a line
 			 */ 
 			setEdges(nCol) {
 				this.setLanguages();

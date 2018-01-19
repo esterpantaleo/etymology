@@ -13,7 +13,7 @@ var DB = (function(module) {
 	 * Gets an XMLHttpRequest using RxJs
 	 * @function getXMLHttpRequest
          *
-         * @param {url} 
+         * @param {url} url
          * @return {Observable} 
          */
         var getXMLHttpRequest = function(url) {
@@ -41,7 +41,7 @@ var DB = (function(module) {
          * Posts an XMLHttpRequest using RxJs
          * @function postXMLHttpRequest
          *
-         * @param {string} 
+         * @param {string} content
          * @return {Observable} 
          */
         var postXMLHttpRequest = function(content) {        
@@ -70,7 +70,7 @@ var DB = (function(module) {
          * Posts an array of XMLHttpRequest to the server using RxJs
          * each requesting ancestors of an iri
          * @function postMoreAncestorsQuery
-         * @param {array} of iri-s
+         * @param {array}.<string> iris - an array of iri-s
          * @return {Observable}
          */   
         var postMoreAncestorsQuery = function(iris) {
@@ -89,7 +89,7 @@ var DB = (function(module) {
          * <li>"et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)</li>
          * <li>"lemma": a string containing the rdfs label of the resource "iri"</li></ul>
          * @function disambiguationQuery
-         * @param {string} a word e.g. "door"
+         * @param {string} lemma - a word e.g. "door"
          * @return {string} a query string
          */
         var disambiguationQuery = function(lemma) {
@@ -258,7 +258,7 @@ var DB = (function(module) {
          * Prints the union of an array of queries 
          * one for each of the elements in input array iris 
          * @function unionQuery
-         * @param {array} of strings iris
+         * @param {array}.<string> iris - an array of strings 
          * @return {function} a function that takes as argument a string iri
          */
         var unionQuery = function(iris, queryFunction) {

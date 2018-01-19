@@ -47,7 +47,7 @@
 <a name="module_APP..setNodes"></a>
 
 ### APP~setNodes() ⇒ <code>Object</code>
-Given an object consisting of Etymology Entries, 
+Given an object consisting of EtymologyEntry-s, 
 this function returns an object consisting of Nodes
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
@@ -55,7 +55,7 @@ this function returns an object consisting of Nodes
 
 | Param | Type | Description |
 | --- | --- | --- |
-| .<DATAMODEL.EtymologyEntry> | <code>Object</code> | a list of Etymology Entries |
+| .<DATAMODEL.EtymologyEntry> | <code>Object</code> | etymologyEntries - a list of EtymologyEntry-s |
 
 <a name="module_APP..renderAncestorsGraphPage"></a>
 
@@ -63,22 +63,22 @@ this function returns an object consisting of Nodes
 Render the Graph of Ancestors
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Params**: <code>Object</code>.<DATAMODEL.EtymologyEntry> a list of Etymology Entries  
+**Params**: <code>Object</code>.<DATAMODEL.EtymologyEntry> etymologyEntries - a list of EtymologyEntry-s  
 <a name="module_APP..renderDisambiguationGraphPage"></a>
 
 ### APP~renderDisambiguationGraphPage()
 Render the Disambiguation Graph
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Params**: <code>Object</code>.<DATAMODEL.EtymologyEntry> a list of Etymology Entries  
+**Params**: <code>Object</code>.<DATAMODEL.EtymologyEntry> etymologyEntries - a list of EtymologyEntry-s  
 <a name="module_APP..renderDescendantsGraphInLanguage"></a>
 
 ### APP~renderDescendantsGraphInLanguage()
 Render the Graph of Descendants in a specified language
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Params**: <code>Graph</code> a Graph with all descendants in all languages  
-**Params**: <code>string</code> a language, e.g., "English"  
+**Params**: <code>Graph</code> g - a Graph with all descendants in all languages  
+**Params**: <code>string</code> language - a language, e.g., "English"  
 <a name="module_APP..renderDescendantsAccordion"></a>
 
 ### APP~renderDescendantsAccordion()
@@ -87,7 +87,7 @@ an accordion, where each section of the accordion
 displays the graph of descendants in a specific language.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Params**: <code>Node</code> the node whose descendants we are going to show  
+**Params**: <code>Node</code> node - the node whose descendants we are going to show  
 **Params**: <code>Object</code>.<DATAMODEL.EtymologyEntry> a list of Etymology Entries, descendants of Node  
 <a name="module_APP..renderDescendantsDialog"></a>
 
@@ -96,7 +96,7 @@ Render the page that will contain the Graph of Descendants
 of a specified Node. It queries the database to get pos, gloss and links.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Params**: <code>Node</code>  
+**Params**: <code>Node</code> node  
 <a name="module_APP..renderSearchPage"></a>
 
 ### APP~renderSearchPage()
@@ -104,7 +104,7 @@ Render the page that will contain the Etymology Graph
 of a specified lemma
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Params**: <code>string</code> e.g., "door"  
+**Params**: <code>string</code> lemma - e.g., "door"  
 <a name="module_APP..init"></a>
 
 ### APP~init()
@@ -118,37 +118,33 @@ Initializes app
 * [DATAMODEL](#module_DATAMODEL)
     * [~EtymologyEntry](#module_DATAMODEL..EtymologyEntry)
         * [new EtymologyEntry(iri, label)](#new_module_DATAMODEL..EtymologyEntry_new)
-    * [~urlFromQuery(a)](#module_DATAMODEL..urlFromQuery) ⇒ <code>string</code>
-    * [~wiktionaryLabelOf(an)](#module_DATAMODEL..wiktionaryLabelOf) ⇒ <code>string</code>
-    * [~parseLabel(an)](#module_DATAMODEL..parseLabel) ⇒ <code>string</code>
-    * [~encodeLabel(a)](#module_DATAMODEL..encodeLabel) ⇒ <code>string</code>
-    * [~dbnaryLabelOf(an)](#module_DATAMODEL..dbnaryLabelOf)
-    * [~dbnaryIsoOf(an)](#module_DATAMODEL..dbnaryIsoOf)
-    * [~dbnaryEtyOf(an)](#module_DATAMODEL..dbnaryEtyOf)
+    * [~urlFromQuery(query)](#module_DATAMODEL..urlFromQuery) ⇒ <code>string</code>
+    * [~wiktionaryLabelOf(iri)](#module_DATAMODEL..wiktionaryLabelOf) ⇒ <code>string</code>
+    * [~parseLabel(label)](#module_DATAMODEL..parseLabel) ⇒ <code>string</code>
+    * [~encodeLabel(label)](#module_DATAMODEL..encodeLabel) ⇒ <code>string</code>
+    * [~dbnaryLabelOf(iri)](#module_DATAMODEL..dbnaryLabelOf) ⇒ <code>string</code>
+    * [~dbnaryIsoOf(iri)](#module_DATAMODEL..dbnaryIsoOf) ⇒ <code>string</code>
+    * [~dbnaryEtyOf(iri)](#module_DATAMODEL..dbnaryEtyOf) ⇒ <code>number</code>
     * [~assignNodes()](#module_DATAMODEL..assignNodes) ⇒ <code>Object</code>
-    * [~disambiguation()](#module_DATAMODEL..disambiguation) ⇒ <code>Observable</code>
-    * [~glossQuery(an)](#module_DATAMODEL..glossQuery) ⇒ <code>Observable</code>
-    * [~propertyQueryScalar(an)](#module_DATAMODEL..propertyQueryScalar) ⇒ <code>Observable</code>
+    * [~disambiguation(lemma)](#module_DATAMODEL..disambiguation) ⇒ <code>Observable</code>
+    * [~glossQuery(iri)](#module_DATAMODEL..glossQuery) ⇒ <code>Observable</code>
+    * [~propertyQueryScalar(iri)](#module_DATAMODEL..propertyQueryScalar) ⇒ <code>Observable</code>
     * [~propertyQuery()](#module_DATAMODEL..propertyQuery) ⇒ <code>Observable</code>
-    * [~dataQuery()](#module_DATAMODEL..dataQuery) ⇒ <code>Observable</code>
-    * [~parseData()](#module_DATAMODEL..parseData) ⇒ <code>Object</code>
-    * [~parseDisambiguation
-Parse response of {@link disambiguationQuery disambiguation query} to the server()](#module_DATAMODEL..parseDisambiguation
-Parse response of {@link disambiguationQuery disambiguation query} to the server) ⇒ <code>array</code>
-    * [~parseProperties()](#module_DATAMODEL..parseProperties) ⇒ <code>array</code>
-    * [~disambiguationQuery
-Posts an XMLHttpRequest to get data about disambiguation nodes()](#module_DATAMODEL..disambiguationQuery
-Posts an XMLHttpRequest to get data about disambiguation nodes) ⇒ <code>Observable</code>
-    * [~findMoreAncestors()](#module_DATAMODEL..findMoreAncestors) ⇒ <code>Observable</code>
-    * [~findAncestors()](#module_DATAMODEL..findAncestors) ⇒ <code>Observable</code>
+    * [~dataQuery(graph)](#module_DATAMODEL..dataQuery) ⇒ <code>Observable</code>
+    * [~parseData(response)](#module_DATAMODEL..parseData) ⇒ <code>Object</code>
+    * [~parseDisambiguation(response)](#module_DATAMODEL..parseDisambiguation) ⇒ <code>array</code>
+    * [~parseProperties(response)](#module_DATAMODEL..parseProperties) ⇒ <code>array</code>
+    * [~disambiguationQuery(response, f)](#module_DATAMODEL..disambiguationQuery) ⇒ <code>Observable</code>
+    * [~findMoreAncestors(response)](#module_DATAMODEL..findMoreAncestors) ⇒ <code>Observable</code>
+    * [~findAncestors(iri)](#module_DATAMODEL..findAncestors) ⇒ <code>Observable</code>
     * [~mergeAncestors()](#module_DATAMODEL..mergeAncestors) ⇒ <code>array</code>
-    * [~ancestorsQuery(a)](#module_DATAMODEL..ancestorsQuery) ⇒ <code>array</code>
-    * [~parseAncestors(a)](#module_DATAMODEL..parseAncestors) ⇒ <code>Object</code>
+    * [~ancestorsQuery(iri, f)](#module_DATAMODEL..ancestorsQuery) ⇒ <code>array</code>
+    * [~parseAncestors(response)](#module_DATAMODEL..parseAncestors) ⇒ <code>Object</code>
     * [~setEtymologyEntries()](#module_DATAMODEL..setEtymologyEntries) ⇒ <code>Object</code>
-    * [~cleanEtymologyEntries(of)](#module_DATAMODEL..cleanEtymologyEntries) ⇒ <code>Object</code>
-    * [~descendantsQuery(a)](#module_DATAMODEL..descendantsQuery) ⇒ <code>Observable</code>
+    * [~cleanEtymologyEntries()](#module_DATAMODEL..cleanEtymologyEntries) ⇒ <code>Object</code>
+    * [~descendantsQuery(node, f)](#module_DATAMODEL..descendantsQuery) ⇒ <code>Observable</code>
     * [~descendantsQueryScalar(an)](#module_DATAMODEL..descendantsQueryScalar) ⇒ <code>Observable</code>
-    * [~parseDescendants(a)](#module_DATAMODEL..parseDescendants) ⇒ <code>Object</code>
+    * [~parseDescendants(response)](#module_DATAMODEL..parseDescendants) ⇒ <code>Object</code>
 
 <a name="module_DATAMODEL..EtymologyEntry"></a>
 
@@ -169,7 +165,7 @@ Create an Etymology Entry.
 
 <a name="module_DATAMODEL..urlFromQuery"></a>
 
-### DATAMODEL~urlFromQuery(a) ⇒ <code>string</code>
+### DATAMODEL~urlFromQuery(query) ⇒ <code>string</code>
 Encodes a query into an url
 
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
@@ -177,11 +173,11 @@ Encodes a query into an url
 
 | Param | Type | Description |
 | --- | --- | --- |
-| a | <code>string</code> | query |
+| query | <code>string</code> | a query |
 
 <a name="module_DATAMODEL..wiktionaryLabelOf"></a>
 
-### DATAMODEL~wiktionaryLabelOf(an) ⇒ <code>string</code>
+### DATAMODEL~wiktionaryLabelOf(iri) ⇒ <code>string</code>
 Given an iri, returns language + label
 
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
@@ -189,11 +185,11 @@ Given an iri, returns language + label
 
 | Param | Type | Description |
 | --- | --- | --- |
-| an | <code>string</code> | iri |
+| iri | <code>string</code> | an iri |
 
 <a name="module_DATAMODEL..parseLabel"></a>
 
-### DATAMODEL~parseLabel(an) ⇒ <code>string</code>
+### DATAMODEL~parseLabel(label) ⇒ <code>string</code>
 Returns a label by replacing special characters
 
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
@@ -201,11 +197,11 @@ Returns a label by replacing special characters
 
 | Param | Type | Description |
 | --- | --- | --- |
-| an | <code>string</code> | encoded label |
+| label | <code>string</code> | an encoded label |
 
 <a name="module_DATAMODEL..encodeLabel"></a>
 
-### DATAMODEL~encodeLabel(a) ⇒ <code>string</code>
+### DATAMODEL~encodeLabel(label) ⇒ <code>string</code>
 Given a label, returns an encoded label
 
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
@@ -213,34 +209,37 @@ Given a label, returns an encoded label
 
 | Param | Type | Description |
 | --- | --- | --- |
-| a | <code>string</code> | label |
+| label | <code>string</code> | a label |
 
 <a name="module_DATAMODEL..dbnaryLabelOf"></a>
 
-### DATAMODEL~dbnaryLabelOf(an)
+### DATAMODEL~dbnaryLabelOf(iri) ⇒ <code>string</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
+**Returns**: <code>string</code> - a label  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| an | <code>string</code> | iri |
+| iri | <code>string</code> | an iri |
 
 <a name="module_DATAMODEL..dbnaryIsoOf"></a>
 
-### DATAMODEL~dbnaryIsoOf(an)
+### DATAMODEL~dbnaryIsoOf(iri) ⇒ <code>string</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
+**Returns**: <code>string</code> - an ISO code (e.g: "eng")  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| an | <code>string</code> | iri |
+| iri | <code>string</code> | an iri |
 
 <a name="module_DATAMODEL..dbnaryEtyOf"></a>
 
-### DATAMODEL~dbnaryEtyOf(an)
+### DATAMODEL~dbnaryEtyOf(iri) ⇒ <code>number</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
+**Returns**: <code>number</code> - an ety number (e.g: "1")  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| an | <code>string</code> | iri |
+| iri | <code>string</code> | an iri |
 
 <a name="module_DATAMODEL..assignNodes"></a>
 
@@ -259,24 +258,24 @@ the set of ancestors and descendants then merge them into one node)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| .<EtymologyEntry> | <code>Object</code> | containing a list of Etymology Entries |
+| .<EtymologyEntry> | <code>Object</code> | values - containing a list of Etymology Entries |
 
 <a name="module_DATAMODEL..disambiguation"></a>
 
-### DATAMODEL~disambiguation() ⇒ <code>Observable</code>
+### DATAMODEL~disambiguation(lemma) ⇒ <code>Observable</code>
 Given a string returns an RxJS observable
 containing the parsed response of the server to
 the disambiguationQuery
 
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
-| Type |
-| --- |
-| <code>string</code> | 
+| Param | Type |
+| --- | --- |
+| lemma | <code>string</code> | 
 
 <a name="module_DATAMODEL..glossQuery"></a>
 
-### DATAMODEL~glossQuery(an) ⇒ <code>Observable</code>
+### DATAMODEL~glossQuery(iri) ⇒ <code>Observable</code>
 Given an iri returns an RxJS observable
 containing the parsed response of the server to
 the glossQuery
@@ -285,131 +284,132 @@ the glossQuery
 
 | Param | Type | Description |
 | --- | --- | --- |
-| an | <code>string</code> | iri |
+| iri | <code>string</code> | an iri |
 
 <a name="module_DATAMODEL..propertyQueryScalar"></a>
 
-### DATAMODEL~propertyQueryScalar(an) ⇒ <code>Observable</code>
+### DATAMODEL~propertyQueryScalar(iri) ⇒ <code>Observable</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| an | <code>string</code> | iri |
+| iri | <code>string</code> | an iri |
 
 <a name="module_DATAMODEL..propertyQuery"></a>
 
 ### DATAMODEL~propertyQuery() ⇒ <code>Observable</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
-| Param | Type |
-| --- | --- |
-| .<string> | <code>array</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| .<string> | <code>array</code> | iris |
 
 <a name="module_DATAMODEL..dataQuery"></a>
 
-### DATAMODEL~dataQuery() ⇒ <code>Observable</code>
+### DATAMODEL~dataQuery(graph) ⇒ <code>Observable</code>
+**Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| .<string> | <code>array</code> | iris |
+| graph | <code>Graph</code> |  |
+
+<a name="module_DATAMODEL..parseData"></a>
+
+### DATAMODEL~parseData(response) ⇒ <code>Object</code>
+**Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
+**Returns**: <code>Object</code> - with elements "posAndGloss" and "urlAndLabel"  
+
+| Param | Type |
+| --- | --- |
+| response | <code>string</code> | 
+
+<a name="module_DATAMODEL..parseDisambiguation"></a>
+
+### DATAMODEL~parseDisambiguation(response) ⇒ <code>array</code>
+Parse response of [disambiguation query](disambiguationQuery) to the server
+
+**Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
+**Returns**: <code>array</code> - .<EtymologyEntry>  
+
+| Param | Type |
+| --- | --- |
+| response | <code>string</code> | 
+
+<a name="module_DATAMODEL..parseProperties"></a>
+
+### DATAMODEL~parseProperties(response) ⇒ <code>array</code>
+**Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
+**Returns**: <code>array</code> - of properties  
+
+| Param | Type |
+| --- | --- |
+| response | <code>string</code> | 
+
+<a name="module_DATAMODEL..disambiguationQuery"></a>
+
+### DATAMODEL~disambiguationQuery(response, f) ⇒ <code>Observable</code>
+Posts an XMLHttpRequest to get data about disambiguation nodes
+
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
 | Param | Type |
 | --- | --- |
-| .<string> | <code>array</code> | 
-|  | <code>Graph</code> | 
-
-<a name="module_DATAMODEL..parseData"></a>
-
-### DATAMODEL~parseData() ⇒ <code>Object</code>
-**Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
-**Returns**: <code>Object</code> - with elements "posAndGloss" and "urlAndLabel"  
-
-| Type |
-| --- |
-| <code>string</code> | 
-
-<a name="module_DATAMODEL..parseDisambiguation
-Parse response of {@link disambiguationQuery disambiguation query} to the server"></a>
-
-### DATAMODEL~parseDisambiguation
-Parse response of {@link disambiguationQuery disambiguation query} to the server() ⇒ <code>array</code>
-**Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
-**Returns**: <code>array</code> - of Etymology Entries  
-
-| Type |
-| --- |
-| <code>string</code> | 
-
-<a name="module_DATAMODEL..parseProperties"></a>
-
-### DATAMODEL~parseProperties() ⇒ <code>array</code>
-**Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
-**Returns**: <code>array</code> - of properties  
-
-| Type |
-| --- |
-| <code>string</code> | 
-
-<a name="module_DATAMODEL..disambiguationQuery
-Posts an XMLHttpRequest to get data about disambiguation nodes"></a>
-
-### DATAMODEL~disambiguationQuery
-Posts an XMLHttpRequest to get data about disambiguation nodes() ⇒ <code>Observable</code>
-**Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
-
-| Type |
-| --- |
-| <code>string</code> | 
+| response | <code>string</code> | 
+| f | <code>function</code> | 
 
 <a name="module_DATAMODEL..findMoreAncestors"></a>
 
-### DATAMODEL~findMoreAncestors() ⇒ <code>Observable</code>
+### DATAMODEL~findMoreAncestors(response) ⇒ <code>Observable</code>
 Posts an XMLHttpRequest to more ancestors
 
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
-| Type |
-| --- |
-| <code>string</code> | 
+| Param | Type |
+| --- | --- |
+| response | <code>string</code> | 
 
 <a name="module_DATAMODEL..findAncestors"></a>
 
-### DATAMODEL~findAncestors() ⇒ <code>Observable</code>
+### DATAMODEL~findAncestors(iri) ⇒ <code>Observable</code>
 Posts an XMLHttpRequest to find ancestors
 
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
-| Type |
-| --- |
-| <code>string</code> | 
+| Param | Type |
+| --- | --- |
+| iri | <code>string</code> | 
 
 <a name="module_DATAMODEL..mergeAncestors"></a>
 
 ### DATAMODEL~mergeAncestors() ⇒ <code>array</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
-| Param | Type |
-| --- | --- |
-| .<string> | <code>array</code> | 
-| .<string> | <code>array</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| .<string> | <code>array</code> | ancestors |
+| .<string> | <code>array</code> | moreAncestors |
 
 <a name="module_DATAMODEL..ancestorsQuery"></a>
 
-### DATAMODEL~ancestorsQuery(a) ⇒ <code>array</code>
+### DATAMODEL~ancestorsQuery(iri, f) ⇒ <code>array</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 **Returns**: <code>array</code> - .<string> an array of ancestors  
 
 | Param | Type | Description |
 | --- | --- | --- |
-|  | <code>string</code> |  |
-| a | <code>function</code> | callback |
+| iri | <code>string</code> |  |
+| f | <code>function</code> | a function |
 
 <a name="module_DATAMODEL..parseAncestors"></a>
 
-### DATAMODEL~parseAncestors(a) ⇒ <code>Object</code>
+### DATAMODEL~parseAncestors(response) ⇒ <code>Object</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 **Returns**: <code>Object</code> - with elements "all" and "last"  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| a | <code>string</code> | query response |
+| response | <code>string</code> | a query response |
 
 <a name="module_DATAMODEL..setEtymologyEntries"></a>
 
@@ -419,28 +419,28 @@ Posts an XMLHttpRequest to find ancestors
 
 | Param | Type | Description |
 | --- | --- | --- |
-| .<Object> | <code>array</code> | of properties |
-| .<string> | <code>array</code> | of ancestors |
+| .<Object> | <code>array</code> | properties |
+| .<string> | <code>array</code> | ancestors |
 
 <a name="module_DATAMODEL..cleanEtymologyEntries"></a>
 
-### DATAMODEL~cleanEtymologyEntries(of) ⇒ <code>Object</code>
+### DATAMODEL~cleanEtymologyEntries() ⇒ <code>Object</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 **Returns**: <code>Object</code> - with elements "values" and "edges"  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| of | <code>array</code> | ancestors |
+| .<EtymologyEntry> | <code>array</code> | values - an array of EtymologyEntry-s |
 
 <a name="module_DATAMODEL..descendantsQuery"></a>
 
-### DATAMODEL~descendantsQuery(a) ⇒ <code>Observable</code>
+### DATAMODEL~descendantsQuery(node, f) ⇒ <code>Observable</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| .<string> | <code>array</code> | of iri-s |
-| a | <code>function</code> | callback |
+| node | <code>Node</code> |  |
+| f | <code>function</code> | a callback |
 
 <a name="module_DATAMODEL..descendantsQueryScalar"></a>
 
@@ -453,13 +453,13 @@ Posts an XMLHttpRequest to find ancestors
 
 <a name="module_DATAMODEL..parseDescendants"></a>
 
-### DATAMODEL~parseDescendants(a) ⇒ <code>Object</code>
+### DATAMODEL~parseDescendants(response) ⇒ <code>Object</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 **Returns**: <code>Object</code> - containing a list of Etymology Entries  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| a | <code>string</code> | query response |
+| response | <code>string</code> | a query response |
 
 <a name="module_DATA"></a>
 
@@ -485,11 +485,11 @@ into etyBase.tree.langMap
         * [~Dagre](#module_GRAPH..Dagre)
             * [new Dagre(type)](#new_module_GRAPH..Dagre_new)
         * [~Graph](#module_GRAPH..Graph) ⇐ <code>Dagre</code>
-            * [new Graph(type, graph)](#new_module_GRAPH..Graph_new)
+            * [new Graph(type, graph, width)](#new_module_GRAPH..Graph_new)
         * [~LanguageGraph](#module_GRAPH..LanguageGraph) ⇐ <code>Graph</code>
             * [new LanguageGraph(type, g, language)](#new_module_GRAPH..LanguageGraph_new)
         * [~tooltip()](#module_GRAPH..tooltip)
-        * [~render(id)](#module_GRAPH..render)
+        * [~render(selector, id, width, height)](#module_GRAPH..render)
         * [~setLanguages()](#module_GRAPH..setLanguages)
         * [~setEdges(nCol)](#module_GRAPH..setEdges)
 
@@ -535,7 +535,7 @@ Class representing a Graph.
 **Extends**: <code>Dagre</code>  
 <a name="new_module_GRAPH..Graph_new"></a>
 
-#### new Graph(type, graph)
+#### new Graph(type, graph, width)
 Create a graph.
 
 
@@ -543,6 +543,7 @@ Create a graph.
 | --- | --- | --- |
 | type | <code>string</code> | has value "TB" (top-bottom) or "LR" (left-right) |
 | graph | <code>Object</code> | with elements "nodes" and "edges" |
+| width | <code>number</code> |  |
 
 <a name="module_GRAPH..LanguageGraph"></a>
 
@@ -571,7 +572,7 @@ Prints tooltip
 **Kind**: inner method of [<code>GRAPH</code>](#module_GRAPH)  
 <a name="module_GRAPH..render"></a>
 
-### GRAPH~render(id)
+### GRAPH~render(selector, id, width, height)
 Create an svg with the Dagre. 
 Assign id to the svg element.
 Render svg inside the element selected by "selector".
@@ -581,8 +582,10 @@ Then fit to screen.
 
 | Param | Type |
 | --- | --- |
-|  | <code>selector</code> | 
+| selector | <code>selector</code> | 
 | id | <code>string</code> | 
+| width | <code>number</code> | 
+| height | <code>number</code> | 
 
 <a name="module_GRAPH..setLanguages"></a>
 
