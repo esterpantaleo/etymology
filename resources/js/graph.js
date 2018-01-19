@@ -14,7 +14,7 @@ var GRAPH = (function(module) {
 		/**
 		* Class representing a Node.
  		* @class
-                * @alias module:GRAPH~Node
+                * @alias module:GRAPH.Node
  		*/
 		class Node {
 			/**
@@ -220,7 +220,7 @@ var GRAPH = (function(module) {
 			 * @param {string} type - has value "TB" (top-bottom) or "LR" (left-right)
 			 * @param {Object} graph - with elements "nodes" and "edges"
 			 */
-			constructor(type, graph) {
+		         constructor(type, graph, width) {
 				super(type);
 
 				//initialize nodes            
@@ -239,7 +239,7 @@ var GRAPH = (function(module) {
 				//initialize edges
 				if (undefined === graph.edges) {
 				        //group nodes by language and display them in columns of length 230
-				        var nCol = Math.max(Math.floor(window.innerWidth/230), 2); 
+				        var nCol = Math.max(Math.floor(width/230), 2); 
 					this.setEdges(nCol);
 					for (var e in this.edges) {
 						var source = this.edges[e].source,
@@ -321,7 +321,7 @@ var GRAPH = (function(module) {
 					}
 				}
 
-				super(type, {nodes: nodes});
+				super(type, {nodes: nodes}, width);
 			}
 		}
 		

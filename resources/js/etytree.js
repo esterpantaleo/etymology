@@ -7,8 +7,8 @@
  */
 var EtyTree = {
     /**
+     * Refer to this by {@link Etytree.create}.
      * @function create
-     * @memberof Etytree
      */
     create: function() {
         var etyBase = Object.create(this);

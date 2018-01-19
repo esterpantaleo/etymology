@@ -36,7 +36,9 @@ var Tour = {
      * @memberof Tour
      */
     onEnd: function() {
-        setCookie("toured", "toured");
+        var expires = new Date();
+        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+	document.cookie = 'toured=toured;path=/' + ';expires=' + expires.toUTCString();
     },
     /**
      * Set cookie on close (Tour.onClose).
@@ -44,24 +46,13 @@ var Tour = {
      * @memberof Tour
      */
     onClose: function() {
-        setCookie("toured", "toured");
-    },
-    /**
-     * Set cookie for the {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour.
-     * @function setCookie 
-     * @param {string} key 
-     * @param {string} value 
-     * @memberof Tour
-     */
-    setCookie: function(key, value) {
-	var expires = new Date();
-	expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+        var expires = new Date();
+        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
 	document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
     },
     /**
-     * Get cookie for the {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour
-     * @function getCookies 
-     * @param {string} key
+     * Get cookie 
+     * @function getCookie
      * @memberof Tour 
      */
     getCookie: function(key) {
@@ -74,7 +65,7 @@ var Tour = {
 //Run tour only if screen is large enough
 if (screen.width > 800) {
     // Initialize tour if it's the user's first time
-    if (!getCookie("toured")) {
-        hopscotch.startTour(tour);
+    if (!Tour.getCookie("toured")) {
+        hopscotch.startTour(Tour);
     }
 }

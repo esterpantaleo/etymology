@@ -11,14 +11,16 @@
 var APP = (function(module) {
 
 	module.bindModule = function(base, moduleName) {
-		var etyBase = base;
+	        var etyBase = base,
+		width = window.innerWidth,
+		height = window.innerHeight - $("#header").height();
 
 		/**
 		 * Given an object consisting of Etymology Entries, 
 		 * this function returns an object consisting of Nodes
 		 * @function setNodes
-		 * @param {Object}.<DATAMODEL~EtymologyEntry> a list of Etymology Entries
-		 * @return {Object}.<GRAPH~Node> a list of Nodes
+		 * @param {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries
+		 * @return {Object}.<GRAPH.Node> a list of Nodes
 		 */
 		var setNodes = function(etymologyEntries) {
 			var nodes = {};
@@ -61,7 +63,7 @@ var APP = (function(module) {
 		/**
 		 * Render the Graph of Ancestors
 		 * @function renderAncestorsGraphPage
-		 * @params {Object}.<DATAMODEL~EtymologyEntry> a list of Etymology Entries
+		 * @params {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries
 		 */
 		var renderAncestorsGraphPage = function(etymologyEntries) {
 			if (Object.keys(etymologyEntries.values).length < 2) {
@@ -77,9 +79,9 @@ var APP = (function(module) {
 				d3.select("#helpPopup")
 					.html(etyBase.HELP.dagre);
 
-				var g = new etyBase.GRAPH.Graph("TB", { nodes: setNodes(etymologyEntries), edges: etymologyEntries.edges });
+				var g = new etyBase.GRAPH.Graph("TB", { nodes: setNodes(etymologyEntries), edges: etymologyEntries.edges }, width);
 
-				g.render("#tree-container", "tree-overlay", window.innerWidth, window.innerHeight - $("#header").height())
+				g.render("#tree-container", "tree-overlay", width, height)
 					.selectAll("g.node")
 					.on("click", d => {
 						var node = g.dagre.node(d);
@@ -93,12 +95,12 @@ var APP = (function(module) {
                  * Render the Disambiguation Graph 
                  * @function renderDisambiguationGraphPage
 		 * 
-		 * @params {Object}.<EtymologyEntry> a list of Etymology Entries
+		 * @params {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries
 		 */
 		var renderDisambiguationGraphPage = function(etymologyEntries) {
-			var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) });
+		    var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) }, width);
 
-			g.render("#tree-container", "tree-overlay")
+			g.render("#tree-container", "tree-overlay", width, height)
 				.selectAll("g.node")
 				.on("click", d => {
 					var iri = g.dagre.node(d).iri[0];
@@ -138,7 +140,7 @@ var APP = (function(module) {
 
 			//render Dagre of language        
 			var g = new etyBase.GRAPH.LanguageGraph("LR", gg, language);
-			g.render("#div" + index, "overlay" + index)
+			g.render("#div" + index, "overlay" + index, width, height)
 				.selectAll("g.node")
 				.on("click", d => {
 					//on click on node in language graph, render ancestorsGraph of clicked node    
@@ -169,7 +171,7 @@ var APP = (function(module) {
 		 * displays the graph of descendants in a specific language.
 		 * @function renderDescendantsAccordion 
 		 * @params {Node} the node whose descendants we are going to show
-		 * @params {Object} a list of Etymology Entries, descendants of Node
+		 * @params {Object}.<DATAMODEL.EtymologyEntry> a list of Etymology Entries, descendants of Node
 		 */
 		var renderDescendantsAccordion = function(node, etymologyEntries) {
 		         $("#descendants")
@@ -178,7 +180,7 @@ var APP = (function(module) {
 				.append("div")
 				.attr("id", "accordion");
 
-			var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) });
+			 var g = new etyBase.GRAPH.Graph("LR", { nodes: setNodes(etymologyEntries) }, width);
 			g.setLanguages();
 			g.languages.map((lang, i) => {
 				$("#accordion").append("<h3>" + lang + "</h3>");
@@ -214,8 +216,8 @@ var APP = (function(module) {
 				.dialog({
 					title: "Loading descendants...",
 					autoOpen: false,
-					width: $(window).width() - 15,
-					height: $(window).height() - 15,
+					width: width - 15,
+					height: height - 15,
 					position: "top"
 				});
  			$("#descendants")
