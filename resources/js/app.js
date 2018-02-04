@@ -191,7 +191,9 @@ var APP = (function(module) {
 
 		    return etyBase.DATAMODEL.queryGloss({ values: languageResponse })
 			.subscribe((etymologyEntries) => {
+			    //todo: sort based on label and not on iri
 			    var g = new etyBase.GRAPH.Graph("LR", { nodes: nodesFrom(etymologyEntries) }, width);         
+console.log(sortedEtymologyEntries)
 			    renderDescendantsGraph(index, g);        
 			});
 		},
@@ -232,7 +234,7 @@ var APP = (function(module) {
 	    
 	    d3.select("#div" + index)
 		.append("div")
-				.style("text-align", "center")
+		.style("text-align", "center")
 		.attr("id", "accordionMessage")
 		.html(MESSAGE.clickForAncestors);
 	    

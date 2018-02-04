@@ -307,36 +307,9 @@ var GRAPH = (function(module) {
 				}
 			}
 		}
-
-		/**
-		* Class representing a Language Graph.
-		* @extends Graph
-		*/
-		class LanguageGraph extends Graph {
-			/**
-			 * Creates a language graph.
-			 * @param {string} type - has value "TB" (top-bottom) or "LR" (left-right)
-			 * @param {Graph} g - the full Graph
-			 * @param {string} language - the language (e.g., "English")
-			 */
-		    constructor(type, g, language, width) {
-				//define nodes
-				var counter = 0;
-				var nodes = {};
-				for (var i in g.nodes) {
-					if (g.nodes[i].lang === language) {
-						nodes[counter] = g.nodes[i];
-						counter ++;
-					}
-				}
-
-				super(type, {nodes: nodes}, width);
-			}
-		}
 		
 		this.Node = Node;
 		this.Graph = Graph;
-		this.LanguageGraph = LanguageGraph;
 
 		etyBase[moduleName] = this;
 	};
