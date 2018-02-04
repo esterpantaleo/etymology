@@ -461,28 +461,26 @@ var DATAMODEL = (function(module) {
 		/**
  		 * @function queryGloss
 		 *
-		 * @param {Array.<String>} iris
 		 * @param {Graph} graph
 		 * @return {Observable} 
 		 */
-		var queryGloss = function(iris, graph) {
-			return Rx.Observable.zip
-			.apply(this, iris.map((iri) => {
-				    var url = urlFromQuery(etyBase.DB.glossQuery(iri));
-				    
-				    return etyBase.DB.getXMLHttpRequest(url)
-				    .map(parseGloss);
-				}))
+		var queryGloss = function(graph) {
+		    return Rx.Observable.zip
+			.apply(this, Object.keys(graph.values).map((iri) => {
+			    var url = urlFromQuery(etyBase.DB.glossQuery(iri));
+			    return etyBase.DB.getXMLHttpRequest(url)
+				.map(parseGloss);
+			}))
 			.map(d => {
-				d.map((a, i) => {
-					var iri = iris[i];
-					graph.values[iri].posAndGloss = a.posAndGloss;
-					graph.values[iri].urlAndLabel = a.urlAndLabel;
-				    });
-				return graph;
+			    d.map((a, i) => {
+				var iri = Object.keys(graph.values)[i];
+				graph.values[iri].posAndGloss = a.posAndGloss;
+				graph.values[iri].urlAndLabel = a.urlAndLabel;
 			    });
+			    return graph;
+			});
 		};
-
+	    
 		/**
 		 * @function parseGloss
 		 *
@@ -546,20 +544,14 @@ var DATAMODEL = (function(module) {
 		 * @return {Observable} 
 		 */
 		var queryDisambiguationGloss = function(response) {
-			//sort iris (and therefore nodes) in alphabetical order by language
-			var iris = Object.keys(response)
-				.map((n) => response[n].id)
-				.sort(function(a, b){
-					if (a < b) return -1;
-					if (a > b) return 1;
-					return 0;
-				});
-		
-			var graph = {}
-			graph.values = {};
-			iris.map((iri) => graph.values[iri] = new EtymologyEntry(iri, response[iri].label));
-		
-			return queryGloss(iris, graph);
+				
+		    var graph = { values: {} };
+		    Object.keys(response).sort()
+			.map((iri) => {
+			    graph.values[iri] = new EtymologyEntry(iri, response[iri].label);
+			});
+		    
+		    return queryGloss(graph);
 		};
 
 		/**
@@ -642,12 +634,8 @@ var DATAMODEL = (function(module) {
 						var properties = [].concat.apply([], properties);
 						var ancestorsGraph = setEtymologyEntries(properties, ancestors);
 
-						//query data (gloss, pos, link url, link label)   
-						var iris = [];
-						for (var e in ancestorsGraph.values) {
-							iris.push(ancestorsGraph.values[e].id);
-						}
-						return queryGloss(iris, ancestorsGraph)
+						//query data (gloss, pos, link url, link label)
+						return queryGloss(ancestorsGraph)
 							.subscribe(f);
 						});
 					});
@@ -711,15 +699,16 @@ var DATAMODEL = (function(module) {
 		 * @function queryDescendants
 		 *
 		 * @param {Node} node 
-		 * @param {Function} f - a callback
 		 * @return {Observable} 
 		 */
-		var queryDescendants = function(node, f) {
+		var queryDescendants = function(node) {
 		        var iris = node.iri;
 			return Rx.Observable.zip
 			.apply(this, iris
 			       .map((iri) => {
-				    var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.descendantQuery(iri));
+				    var url = etyBase.config.urls.ENDPOINT + 
+				       "?query=" + 
+				       encodeURIComponent(etyBase.DB.descendantQuery(iri));
 				    
 				    return etyBase.DB.getXMLHttpRequest(url)
 				    .map(parseDescendants);
@@ -733,12 +722,6 @@ var DATAMODEL = (function(module) {
 				    }, {});
 				return assignNodes(values);
 			    })
-			.subscribe((response) => {
-				var iris = Object.keys(response);
-				return queryGloss(iris, { values: response })
-				.subscribe((response) => 
-				    { f(node, response); });
-			    });
 		};
 
 		/**
@@ -771,6 +754,7 @@ var DATAMODEL = (function(module) {
 		this.queryDisambiguationGloss = queryDisambiguationGloss;
 		this.queryAncestors = queryAncestors;
 		this.queryDescendants = queryDescendants;
+	    this.queryGloss = queryGloss;
 
 		etyBase[moduleName] = this;
 	};
