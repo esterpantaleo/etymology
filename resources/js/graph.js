@@ -18,7 +18,7 @@ var GRAPH = (function(module) {
 		class Node {
 			/**
 			 * Creates a Node with id counter (if counter is not undefined).
-			 * @param {number} counter
+			 * @param {Number} counter
 			 * @param {EtymologyEntry} etymologyEntry
 			 */
 			constructor(counter, etymologyEntry) {
@@ -93,7 +93,7 @@ var GRAPH = (function(module) {
 		class Dagre {
 			/**
 			 * Create a dagre.
-			 * @param {string} type - has value "TB" (top-bottom) or "LR" (left-right)
+			 * @param {String} type - has value "TB" (top-bottom) or "LR" (left-right)
 			 */
 			constructor(type) {
 				//initialize dagre 
@@ -106,10 +106,10 @@ var GRAPH = (function(module) {
 			 * Render svg inside the element selected by "selector".
                          * Then fit to screen.
                          * @function render 
-			 * @param {selector} selector
-			 * @param {string} id
-                         * @param {number} width
-                         * @param {number} height 
+			 * @param {Object} selector
+			 * @param {String} id
+                         * @param {Number} width
+                         * @param {Number} height 
 			 */
 		         render(selector, id, width, height) {
 				var that = this;

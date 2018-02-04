@@ -5,12 +5,12 @@
 /**
  * A {@link http://linkedin.github.io/hopscotch/ Hopscotch} tour.
  * @namespace Tour
- * @property {string}  id               - Id of the tutorial.
- * @property {Array.<Object>} steps     - Array of steps in the tutorial
- * @property {string}  steps.target     - Target of the step
- * @property {string}  steps.placement  - Placement of the step
- * @property {string}  steps.title      - Title of the step 
- * @property {content} steps.content    - Description of the step
+ * @property {String}  id               - Id of the tutorial.
+ * @property {Array.<Object>} steps     - Array of steps in the tutorial.
+ * @property {String}  steps.target     - Target of the step.
+ * @property {String}  steps.placement  - Placement of the step.
+ * @property {String}  steps.title      - Title of the step.
+ * @property {String} steps.content     - Description of the step.
  */
 
 var Tour = {

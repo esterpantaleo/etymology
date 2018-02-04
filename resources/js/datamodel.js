@@ -27,6 +27,7 @@ var DATAMODEL = (function(module) {
 		 * @function wikiLink 
                  * @parameter {String} label 
                  * @parameter {String} language
+                 * @return {String}
                  */
                 var wikiLink = function(label, language) {
                     var urlPart = label.startsWith("*") ? 
@@ -127,8 +128,8 @@ var DATAMODEL = (function(module) {
 		class EtymologyEntry {
 		        /**
 		         * Create an Etymology Entry.
-		         * @param {string} iri - The iri that identifies the Etymology Entry.
-		         * @param {string} label - The label corresponding to the Etymology Entry.
+		         * @param {String} iri - The iri that identifies the Etymology Entry.
+		         * @param {String} label - The label corresponding to the Etymology Entry.
 		         */
 			constructor(iri, label) {
 				this.id = iri;
@@ -277,15 +278,151 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
+		 * @function setEtymologyEntries 
+		 *   
+		 * @param {Array.<Object>} properties 
+		 * @param {Array.<String>} ancestors
+		 * @return {Object} with elements "values" and "edges"
+		 */
+		var setEtymologyEntries = function(properties, ancestors) {
+		    var ee = {};
+		    
+		    //CONSTRUCTING NODES 
+		    properties.forEach(function(element) {
+			    //save all nodes              
+			    //define isAncestor 
+			    //push to iri 
+			    if (undefined !== element.s && undefined === ee[element.s.value]) {
+				var label = (undefined === element.sLabel) ? undefined : element.sLabel.value;
+				ee[element.s.value] = new EtymologyEntry(element.s.value, label);
+				//temporarily add nodes that are not ancestors 
+				if (ancestors.indexOf(element.s.value) === -1) {
+				    ee[element.s.value].temporary = true;
+				}
+			    }
+			    if (undefined !== element.rel) {
+				if (undefined === ee[element.rel.value]) {
+				    var label = (undefined === element.relLabel) ? undefined : element.relLabel.value;
+				    ee[element.rel.value] = new EtymologyEntry(element.rel.value, label);
+				}
+				if (ancestors.indexOf(element.rel.value) > -1) {
+				    ee[element.rel.value].isAncestor = true;
+				}
+			    }
+			    if (undefined !== element.rel && undefined !== element.eq) {
+				if (undefined === ee[element.eq.value]) {
+				    var label = (undefined === element.eqLabel) ? undefined : element.eqLabel.value;
+				    ee[element.eq.value] = new EtymologyEntry(element.eq.value, label);
+				}
+				if (element.rel.value !== element.eq.value) {
+				    if (ee[element.rel.value].iri.indexOf(element.eq.value) === -1) {
+					ee[element.rel.value].iri.push(element.eq.value);
+				    }
+				    if (ee[element.eq.value].iri.indexOf(element.rel.value) === -1) {
+					ee[element.eq.value].iri.push(element.rel.value);
+				    }
+				}
+			    }
+			});
+		    
+		    ee = cleanEtymologyEntries(ee);
+		    ee = assignNodes(ee);
+		    
+		    var edges = properties
+		    .filter((p) => {
+			    return (
+				    undefined !== p.rel &&
+				    undefined !== p.s &&
+				    undefined !== ee[p.s.value] &&
+				    undefined !== ee[p.rel.value]
+				    ) ? true : false;
+			})
+		    .reduce((a, p) => {
+			    var source = ee[p.rel.value].node,
+			    target = ee[p.s.value].node;
+			    if (source !== target) {
+				a.push({
+					source: source,
+					    target: target,
+					    style: {
+					    label: "",
+						lineInterpolate: "basis",
+						arrowheadStyle: "fill: steelblue"
+						}
+				    });
+			    }
+				    return a;
+			}, [])//remove duplicate edges, maybe remove this                                                                                                                                                                                                                                                                                    
+		    .filter((thing, index, self) =>
+				    index === self.findIndex((t) => (
+								     t.source === thing.source && t.target === thing.target
+								     ))
+			    );
+		    return { values: ee, edges: edges };
+		};
+
+		/**   
+		 * @function cleanEtymologyEntries
+		 *
+		 * @param {Array.<EtymologyEntry>} values - an array of EtymologyEntry-s 
+		 * @return {Object} with elements "values" and "edges"                                                                                                                                    
+		 */
+		 var cleanEtymologyEntries = function(values) { //remove temporary nodes 
+		     for (var n in values) {
+			 if (values[n].temporary) {
+			     for (var m in values) {
+				 if (values[m].iso === values[n].iso &&
+				     values[m].label === values[n].iso) {
+				     if (!values[m].temporary) {
+					 values[n].temporary = false;
+				     }
+				     if (values[m].isAncestor) {
+					 values[n].isAncestor = true;
+				     }
+				 }
+			     }
+			 }
+		     }
+		     
+		     for (var n in values) {
+			 if (values[n].temporary) {
+			     values[n].iri.forEach(e => {
+				     if (!values[e].temporary) {
+					 values[n].temporary = false;
+				     }
+				     if (values[e].isAncestor) {
+					 values[n].isAncestor = true;
+				     }
+				 });
+			 }
+		     }
+		     
+		     for (var n in values) {
+			 if (!values[n].temporary) {
+			     values[n].iri.forEach(e => {
+				     values[e].temporary = false;
+				 });
+			 }
+		     }
+		     
+		     for (var n in values) {
+			 if (values[n].temporary) {
+			     delete values[n];
+			 }
+		     }
+		     return values;
+		 };
+
+		/**
                  * Given a string returns an RxJS observable
                  * containing the parsed response of the server to
                  * the disambiguationQuery. 
-		 * @function disambiguation
+		 * @function queryDisambiguation
                  *
 		 * @param {String} lemma 
 		 * @return {Observable} 
 		 */
-		var disambiguation = function(lemma) {
+		var queryDisambiguation = function(lemma) {
 			var encodedLemma = encodeLabel(lemma);
 			var url = urlFromQuery(etyBase.DB.disambiguationQuery(encodedLemma));
 
@@ -293,72 +430,66 @@ var DATAMODEL = (function(module) {
 				.map(parseDisambiguation);
 		};
 
-		/** 
-                 * Given an iri returns an RxJS observable
-                 * containing the parsed response of the server to
-                 * the glossQuery.
-		 * @function glossQuery
-		 * @param {String} iri - an iri 
-		 * @return {Observable} 
-		 */
-		var glossQuery = function(iri) {
-			var url = urlFromQuery(etyBase.DB.glossQuery(iri));
-
-			return etyBase.DB.getXMLHttpRequest(url)
-				.map(parseData);
+		/**
+		 * Parse response of {@link disambiguationQuery disambiguation query} to the server.
+		 * @function parseDisambiguation
+		 * 
+		 * @param {String} response 
+		 * @return {Array.<EtymologyEntry>}
+		*/
+		var parseDisambiguation = function(response) {
+		    return JSON.parse(response)
+		    .results
+		    .bindings
+		    .filter(n => {
+			    return (n.et.value === "" ||
+				    n.et.value.split(",").length > 1) ?
+			    true : false;
+			})
+		    .map(n => {
+			    return {
+				id: n.iri.value,
+				label: n.lemma.value
+				    };
+			})
+		    .reduce((a, n) => {
+			    a[n.id] = new EtymologyEntry(n.id, n.label);
+			    return a;
+			}, {});
 		};
 
 		/**
-		 * @function propertyQueryScalar
+ 		 * @function queryGloss
 		 *
-		 * @param {String} iri - an iri
-		 * @return {Observable} 
-		 */
-		var propertyQueryScalar = function(iri) {
-			var url = urlFromQuery(etyBase.DB.propertyQuery(iri));
-		
-			return etyBase.DB.getXMLHttpRequest(url)
-				.map(parseProperties);
-		};
-
-		/**
-		 * @function propertyQuery
-		 *
-		 * @param {Array.<string>} iris
-		 * @return {Observable} 
-		 */
-		var propertyQuery = function(iris) {
-			return Rx.Observable.zip
-				.apply(this, iris.map(propertyQueryScalar));
-		};
-
-		/**
- 		 * @function dataQuery
-		 *
-		 * @param {Array.<string>} iris
+		 * @param {Array.<String>} iris
 		 * @param {Graph} graph
 		 * @return {Observable} 
 		 */
-		var dataQuery = function(iris, graph) {
+		var queryGloss = function(iris, graph) {
 			return Rx.Observable.zip
-				.apply(this, iris.map(glossQuery))
-				.map(d => {
-					d.map((a, i) => {
-						var iri = iris[i];
-						graph.values[iri].posAndGloss = a.posAndGloss;
-						graph.values[iri].urlAndLabel = a.urlAndLabel;
-					});
-					return graph;
-				});
+			.apply(this, iris.map((iri) => {
+				    var url = urlFromQuery(etyBase.DB.glossQuery(iri));
+				    
+				    return etyBase.DB.getXMLHttpRequest(url)
+				    .map(parseGloss);
+				}))
+			.map(d => {
+				d.map((a, i) => {
+					var iri = iris[i];
+					graph.values[iri].posAndGloss = a.posAndGloss;
+					graph.values[iri].urlAndLabel = a.urlAndLabel;
+				    });
+				return graph;
+			    });
 		};
 
 		/**
-		 * @function parseData
+		 * @function parseGloss
 		 *
 		 * @param {String} response
 		 * @return {Object} with elements "posAndGloss" and "urlAndLabel"
 		 */
-		var parseData = function(response) {
+		var parseGloss = function(response) {
 			var posAndGloss = JSON.parse(response).results.bindings
 				.map(element => {
 					return {
@@ -381,35 +512,23 @@ var DATAMODEL = (function(module) {
 				urlAndLabel: urlAndLabel
 			};
 		};
-	
-		/**
-                 * Parse response of {@link disambiguationQuery disambiguation query} to the server.
-                 * @function parseDisambiguation
-		 *
-		 * @param {String} response
-		 * @return {Array.<EtymologyEntry>}
-		 */
-		var parseDisambiguation = function(response) {
-			return JSON.parse(response)
-				.results
-				.bindings
-				.filter(n => {
-					return (n.et.value === "" ||
-						n.et.value.split(",").length > 1) ?
-						true : false;
-				})
-				.map(n => {
-					return {
-						id: n.iri.value,
-						label: n.lemma.value
-					};
-				})
-				.reduce((a, n) => {
-					a[n.id] = new EtymologyEntry(n.id, n.label);
-					return a;
-				}, {});
-		};
 
+		/**
+		 * @function queryProperty
+		 *
+		 * @param {Array.<string>} iris
+		 * @return {Observable} 
+		 */
+		var queryProperty = function(iris) {
+		    return Rx.Observable.zip
+		    .apply(this, iris.map((iri) => {
+				var url = urlFromQuery(etyBase.DB.propertyQuery(iri));
+				
+				return etyBase.DB.getXMLHttpRequest(url)
+				.map(parseProperties);
+			    }));
+		};
+			
 		/**
 		 * @function parseProperties
 		 *
@@ -422,12 +541,11 @@ var DATAMODEL = (function(module) {
 
 		/**
 		 * Posts an XMLHttpRequest to get data about disambiguation nodes.
-		 * @function disambiguationQuery 
+		 * @function queryDisambiguationGloss 
 		 * @param {String} response
-		 * @param {Function} f
 		 * @return {Observable} 
 		 */
-		var disambiguationQuery = function(response, f) {
+		var queryDisambiguationGloss = function(response) {
 			//sort iris (and therefore nodes) in alphabetical order by language
 			var iris = Object.keys(response)
 				.map((n) => response[n].id)
@@ -441,8 +559,7 @@ var DATAMODEL = (function(module) {
 			graph.values = {};
 			iris.map((iri) => graph.values[iri] = new EtymologyEntry(iri, response[iri].label));
 		
-			return dataQuery(iris, graph)
-				.subscribe(f);
+			return queryGloss(iris, graph);
 		};
 
 		/**
@@ -486,9 +603,9 @@ var DATAMODEL = (function(module) {
 		/**
 		 * @function mergeAncestors
 		 *
-		 * @param {Array.<string>} ancestors
-		 * @param {Array.<string>} moreAncestors
-		 * @return {Array.<string>}} 
+		 * @param {Array.<String>} ancestors
+		 * @param {Array.<String>} moreAncestors
+		 * @return {Array.<String>}} 
 		 */
 		var mergeAncestors = function(ancestors, moreAncestors) {
 			if (moreAncestors !== 0) {
@@ -500,13 +617,13 @@ var DATAMODEL = (function(module) {
 		};
 
 		/**
-		 * @function ancestorsQuery
+		 * @function queryAncestors
 		 *
 		 * @param {String} iri
-		 * @param {Function} f - a function
-		 * @return {Array.<string>} an array of ancestors
+		 * @param {Function} f - a function that renders graphs
+		 * @return {Array.<String>} an array of ancestors
 		 */
-		var ancestorsQuery = function(iri, f) {
+		var queryAncestors = function(iri, f) {
 	
 			var ancestors$ = findAncestors(iri);
 		
@@ -520,7 +637,7 @@ var DATAMODEL = (function(module) {
 			
 					ancestors = mergeAncestors(ancestors, moreAncestors);
 			
-					var properties$ = propertyQuery(ancestors);
+					var properties$ = queryProperty(ancestors);
 					return properties$.subscribe((properties) => {
 						var properties = [].concat.apply([], properties);
 						var ancestorsGraph = setEtymologyEntries(properties, ancestors);
@@ -530,7 +647,7 @@ var DATAMODEL = (function(module) {
 						for (var e in ancestorsGraph.values) {
 							iris.push(ancestorsGraph.values[e].id);
 						}
-						return dataQuery(iris, ancestorsGraph)
+						return queryGloss(iris, ancestorsGraph)
 							.subscribe(f);
 						});
 					});
@@ -591,180 +708,37 @@ var DATAMODEL = (function(module) {
 		};
 	
 		/**
-		 * @function setEtymologyEntries
-		 *
-		 * @param {Array.<Object>} properties 
-		 * @param {Array.<string>} ancestors
-		 * @return {Object} with elements "values" and "edges"
-		 */
-		var setEtymologyEntries = function(properties, ancestors) {
-			var ee = {};
-
-			//CONSTRUCTING NODES
-			properties.forEach(function(element) {
-				//save all nodes 
-				//define isAncestor
-				//push to iri 
-				if (undefined !== element.s && undefined === ee[element.s.value]) {
-					var label = (undefined === element.sLabel) ? undefined : element.sLabel.value;
-					ee[element.s.value] = new EtymologyEntry(element.s.value, label);
-					//temporarily add nodes that are not ancestors
-					if (ancestors.indexOf(element.s.value) === -1) {
-						ee[element.s.value].temporary = true;
-					}
-				}
-				if (undefined !== element.rel) {
-					if (undefined === ee[element.rel.value]) {
-						var label = (undefined === element.relLabel) ? undefined : element.relLabel.value;
-						ee[element.rel.value] = new EtymologyEntry(element.rel.value, label);
-					}
-					if (ancestors.indexOf(element.rel.value) > -1) {
-						ee[element.rel.value].isAncestor = true;
-					}
-				}
-				if (undefined !== element.rel && undefined !== element.eq) {
-					if (undefined === ee[element.eq.value]) {
-						var label = (undefined === element.eqLabel) ? undefined : element.eqLabel.value;
-						ee[element.eq.value] = new EtymologyEntry(element.eq.value, label);
-					}
-					if (element.rel.value !== element.eq.value) {
-						if (ee[element.rel.value].iri.indexOf(element.eq.value) === -1) {
-							ee[element.rel.value].iri.push(element.eq.value);
-						}
-						if (ee[element.eq.value].iri.indexOf(element.rel.value) === -1) {
-							ee[element.eq.value].iri.push(element.rel.value);
-						}
-					}
-				}
-			});
-
-			ee = cleanEtymologyEntries(ee);
-			ee = assignNodes(ee);
-
-			var edges = properties
-				.filter((p) => {
-					return (
-						undefined !== p.rel &&
-						undefined !== p.s &&
-						undefined !== ee[p.s.value] &&
-						undefined !== ee[p.rel.value]
-					) ? true : false;
-				})
-				.reduce((a, p) => {
-					var source = ee[p.rel.value].node,
-					target = ee[p.s.value].node;
-					if (source !== target) {
-						a.push({
-							source: source,
-							target: target,
-							style: {
-								label: "",
-								lineInterpolate: "basis",
-								arrowheadStyle: "fill: steelblue"
-							}
-						});
-					}
-					return a;
-				}, [])//remove duplicate edges, maybe remove this
-				.filter((thing, index, self) =>
-					index === self.findIndex((t) => (
-						t.source === thing.source && t.target === thing.target
-					))
-				);
-			return { values: ee, edges: edges };
-		};
-
-		/**   
-	          * @function cleanEtymologyEntries
-      		  *      
-		  * @param {Array.<EtymologyEntry>} values - an array of EtymologyEntry-s 
-                  * @return {Object} with elements "values" and "edges"
-		  */
-		var cleanEtymologyEntries = function(values) { //remove temporary nodes
-			for (var n in values) {
-				if (values[n].temporary) {
-					for (var m in values) {
-						if (values[m].iso === values[n].iso && 
-							values[m].label === values[n].iso) {
-							if (!values[m].temporary) {
-								values[n].temporary = false;
-							}
-							if (values[m].isAncestor) {
-								values[n].isAncestor = true;
-							}
-						}
-					}
-				}
-			}
-		
-			for (var n in values) {
-				if (values[n].temporary) {
-					values[n].iri.forEach(e => {
-						if (!values[e].temporary) {
-							values[n].temporary = false;
-						}
-						if (values[e].isAncestor) {
-							values[n].isAncestor = true;
-						}
-					});
-				}
-			}
-	
-			for (var n in values) {
-				if (!values[n].temporary) {
-					values[n].iri.forEach(e => {
-						values[e].temporary = false;
-					});
-				}
-			}
-
-			for (var n in values) {
-				if (values[n].temporary) {
-					delete values[n];
-				}
-			}
-			return values;
-		};
-
-		/**
-		 * @function descendantsQuery
+		 * @function queryDescendants
 		 *
 		 * @param {Node} node 
 		 * @param {Function} f - a callback
 		 * @return {Observable} 
 		 */
-		var descendantsQuery = function(node, f) {
+		var queryDescendants = function(node, f) {
 		        var iris = node.iri;
 			return Rx.Observable.zip
-				.apply(this, iris.map(descendantsQueryScalar))
-				.map((response) => { 
-					var values = response.reduce((ee, e) => {
-						for (var i in e) {
-							ee[i] = e[i];
-						}
-						return ee;
-					}, {});
-					return assignNodes(values);
-				})
-				.subscribe((response) => {
-					var iris = Object.keys(response);
-					return etyBase.DATAMODEL.dataQuery(iris, { values: response })
-					.subscribe((response) => 
-					    { f(node, response); });
-				});
-		};
-
-		/**
-		 * @function descendantsQueryScalar
-		 *
-		 * @param {String} an iri
-		 * @return {Observable} 
-		 */
-		var descendantsQueryScalar = function(iri) {
-			var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.descendantQuery(iri));
-		
-			return etyBase.DB.getXMLHttpRequest(url)
-				.map(parseDescendants);
+			.apply(this, iris
+			       .map((iri) => {
+				    var url = etyBase.config.urls.ENDPOINT + "?query=" + encodeURIComponent(etyBase.DB.descendantQuery(iri));
+				    
+				    return etyBase.DB.getXMLHttpRequest(url)
+				    .map(parseDescendants);
+				   }))
+			.map((response) => { 
+				var values = response.reduce((ee, e) => {
+					for (var i in e) {
+					    ee[i] = e[i];
+					}
+					return ee;
+				    }, {});
+				return assignNodes(values);
+			    })
+			.subscribe((response) => {
+				var iris = Object.keys(response);
+				return queryGloss(iris, { values: response })
+				.subscribe((response) => 
+				    { f(node, response); });
+			    });
 		};
 
 		/**
@@ -793,13 +767,10 @@ var DATAMODEL = (function(module) {
 	
 		this.EtymologyEntry = EtymologyEntry;
 		this.wikiLink = wikiLink;
-		this.assignNodes = assignNodes;
-		this.glossQuery = glossQuery;
-		this.disambiguation = disambiguation;
-		this.disambiguationQuery = disambiguationQuery;
-		this.ancestorsQuery = ancestorsQuery;
-		this.descendantsQuery = descendantsQuery;
-		this.dataQuery = dataQuery;
+		this.queryDisambiguation = queryDisambiguation;
+		this.queryDisambiguationGloss = queryDisambiguationGloss;
+		this.queryAncestors = queryAncestors;
+		this.queryDescendants = queryDescendants;
 
 		etyBase[moduleName] = this;
 	};

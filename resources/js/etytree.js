@@ -11,30 +11,10 @@ var EtyTree = {
      * @memberof Etytree   
      */
     create: function() {
-        var etyBase = Object.create(this);
-	        
-        /** 
-	 * @namespace etybase
-         * @property {Object} helpers
-	 * @function helpers.onlyUnique
-         * @return {Boolean}
-	 * @function helpers.debugLog
-         */	
-        etyBase.helpers = {
-            onlyUnique: function(value, index, self) {
-                return self.indexOf(value) === index;
-            },            
-            debugLog: function(logText) {
-                if (etyBase.config.debug) {
-                    console.log(logText);
-                }
-            }
-        };
-	
-        /**
-         * Binds modules.
-         * @function bindModules
-         * @memberof Etytree
+	/**
+         * Binds modules.   
+         * @function bindModules    
+         * @memberof Etytree                           
          */
         var bindModules = function(base, modules) {
             for (var i = 0; i < modules.length; i++) {
@@ -45,11 +25,17 @@ var EtyTree = {
                 window[modules[i]].bindModule(base, modules[i]);
             }
         };
-	
-        /**
-         * Sets up basic settings.
-         * @namespace etyBase 
-         * @memberof Etytree
+
+
+        var etyBase = Object.create(this);
+	        
+        /** 
+	 * @namespace etyBase
+         * @memberof Etytree 
+         * @property {Object} helpers
+	 * @function helpers.onlyUnique
+         * @return {Boolean}
+	 * @function helpers.debugLog
          * @property {Object} config
          * @property {Array.<String>} config.modules
          * @property {Boolean} config.debug
@@ -61,6 +47,18 @@ var EtyTree = {
          * @property {Object} config.notForeign - a regular expression
          * @property {Number} config.depthAncestors - depth of etyBase.DB.ancestorQuery
          */
+
+	etyBase.helpers = {
+            onlyUnique: function(value, index, self) {
+                return self.indexOf(value) === index;
+            },
+            debugLog: function(logText) {
+                if (etyBase.config.debug) {
+                    console.log(logText);
+                }
+            }
+        };
+
         etyBase.config = {
             modules: ['DB', 'GRAPH', 'DATA', 'DATAMODEL', 'APP'],
             debug: false,

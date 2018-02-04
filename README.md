@@ -69,7 +69,7 @@ You would to have sudo privileges
 
     mkdir ./docs
     cd ./resources/js/
-    jsdoc2md liveTour.js > ./docs/liveTour.md
+    jsdoc2md -f app.js datamodel.js data.js etytree.js liveTour.js graph.js > ../../docs/test.md
 
 ## dbnary_etymology DOCUMENTATION
 ### EXTRACT THE DATA USING dbnary_etymology
@@ -147,8 +147,7 @@ For memory reasons I only process a subset of the full data set at a time (from 
     fpage=3600000
     tpage=6000000
     LOG_FILE=${LOG_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl.log
-    OUT_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl
-    ETY_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.etymology.ttl
+    OUT_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl    ETY_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.etymology.ttl
     rm ${LOG_FILE}
     java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
     gzip ${OUT_FILE}
