@@ -193,7 +193,6 @@ var APP = (function(module) {
 			.subscribe((etymologyEntries) => {
 			    //todo: sort based on label and not on iri
 			    var g = new etyBase.GRAPH.Graph("LR", { nodes: nodesFrom(etymologyEntries) }, width);         
-console.log(sortedEtymologyEntries)
 			    renderDescendantsGraph(index, g);        
 			});
 		},
