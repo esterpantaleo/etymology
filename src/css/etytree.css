@@ -331,9 +331,11 @@ Safari
     position: absolute;
     background-color: #fff;
     width: 50%;
+    left: 25%;
     border: 1px #ccc solid;
     border-radius: 6px;
     box-shadow: #333 2px 2px 4px;
     padding: 8px;
     font-family: arial, helvetica, sans-serif;
+    z-index: 5000;
 }

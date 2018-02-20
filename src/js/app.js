@@ -258,7 +258,7 @@ var etymologyGraphPage = (word, lang, ety) => {//to do call this function differ
     d3.select("#tree-overlay")
 	.remove();
 
-    d3.select(".popup").remove();
+    d3.select("#gloss").remove();
     
     d3.select("#message")
 	.attr("display", "inline")
@@ -305,6 +305,7 @@ var descendantsGraph = (index, g) => {
 	    //on click on node in language graph, render ancestorsGraph of clicked node
 	    $("#descendants")
 		.dialog("close");
+	    d3.select("#gloss").remove();
 	    window.location = "search=" + g.dagre.node(d).label + "+lang=" + g.dagre.node(d).iso + "+ety=" + g.dagre.node(d).ety;
 
 	});
@@ -332,10 +333,11 @@ var descendantsDialog = (node) => {
 	.dialog({
 	    title: "Loading descendants...",
 	    autoOpen: false,
-	    width: width - 5,
+	    width: width - 6,
 	    height: height - 5,
 	    position: "top"
 	});
+    d3.select("#gloss").remove();
     $("#descendants")
 	.dialog("open");
     
@@ -372,7 +374,7 @@ var searchPage = (lemma, language) => {
 		//clean screen
 		d3.select("#tree-overlay")
 		    .remove();
-		d3.select(".popup").remove();
+		d3.select("#gloss").remove();
 		
 		d3.select("#helpPopup")
 		    .html(HELP.disambiguation);

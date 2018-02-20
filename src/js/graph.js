@@ -8,7 +8,7 @@
  */
 const d3 = require("d3");
 const dagreD3 = require("dagre-d3");
-const info_icon = require('../img/Info-circle-01.svg');
+
 class Node {
     /**
      * Creates a Node with id counter (if counter is not undefined).
@@ -139,13 +139,13 @@ class Dagre {
 	inner.selectAll("g.node")
 	    .on('taphold mouseover', function (d) {
 		var d3_target = d3.select(d3.event.target);
-		d3.select(".popup").remove();
+		d3.select("#gloss").remove();
 		d3.event.preventDefault();
 		var wordPopup = d3.select("body")
 		    .append("div")
+		    .attr("id", "gloss")
 		    .attr("class", "popup")
-		    .style("left", "25%")
-		    .style("top", "25%");
+		    .style("top", (d3.event.pageY + 35) + "px");
 		that.dagre.node(d).tooltip(wordPopup);
 		d3.select(".popup").on('click', function() {
 		    d3.select(".popup").remove();
@@ -159,7 +159,7 @@ class Dagre {
 	    .attr("x", "1em")
 	    .attr("y", "3em")
 	    .html(function (d) {
-		return that.dagre.node(d).lang;
+		return that.dagre.node(d).lang.split("(")[0];
 	    });
 	return inner;
     }
