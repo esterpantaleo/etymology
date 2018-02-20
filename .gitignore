@@ -4,3 +4,6 @@
 npm-debug.log
 node_modules/
 resources/html/index.html
+.idea
+dist/
+lib/
