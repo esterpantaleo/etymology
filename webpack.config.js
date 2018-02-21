@@ -5,18 +5,13 @@ const paths = {
     data: path.join(__dirname, 'data'),
     img: path.join(__dirname, 'src/img'),
     css: path.join(__dirname, 'src/css'),
+    html: path.join(__dirname, 'src/html'),
     modules: path.join(__dirname, 'node_modules')
 }
 
 var webpack = require('webpack');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-    template: paths.src + '/html/index.html',
-    filename: 'index.html',
-    inject: 'body'
-})
 
 module.exports = {
     context: paths.src,
@@ -27,7 +22,7 @@ module.exports = {
 	publicPath: 'dist'
     },
     plugins: [
-	HtmlWebpackPluginConfig,
+//	HtmlWebpackPluginConfig,
 	new webpack.ProvidePlugin({
 	    $: 'jquery',
 	    jQuery: 'jquery',
@@ -35,6 +30,12 @@ module.exports = {
 	    "window.$": "jquery"
 //	    hopscotch: 'hopscotch'
 	}),
+	new CopyWebpackPlugin([
+	    {
+		from: paths.html,
+		to: paths.dist
+	    }
+	]),
 	new CopyWebpackPlugin([
 	    {
 		from: paths.img,

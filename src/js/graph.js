@@ -4,6 +4,8 @@
 
 /**
  * Class representing a Node.
+ * @requires d3
+ * @requires dagre-d3
  * @class
  */
 const d3 = require("d3");

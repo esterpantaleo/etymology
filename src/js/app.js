@@ -24,14 +24,13 @@ const width = window.innerWidth,
               "<br>Pick the word you are interested in." +
               "<ul>" +
               "<li>Mouse over a node to display lexical information</li>" +
-              "<li>Mouse over the language tag under the node to display the language</li>" +
               "<li>Click on a node to choose a word</li>" +
               "</ul>",
 	  dagre: "Arrows go from ancestor to descendant.<ul>" +
               "<li>Mouse over a node to display lexical information</li>" +
-              "<li>Mouse over the language tag under the node to display the language</li>" +
               "<li>Click on a node to display its descendants, grouped by language</li>" +
-              "</ul>"
+              "</ul>",
+	  noAncestors: "The searched word is not available. Try with a different word."
       },
       MESSAGE = {
 	  notAvailable: "This word is not available in the database.",
@@ -39,7 +38,8 @@ const width = window.innerWidth,
 	  noAncestors: "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of ",
 	  disambiguation: "There are multiple words in the database. <br>Click on the word you are interested in to see its ancestors:",
 	  clickForAncestors: "Click on a word to see its ancestors:",
-	  clickForDescendants: "Click on a word to see its descendants"
+	  clickForDescendants: "Click on a word to see its descendants:",
+	  pageNotFound: "Page not found."
       },
       ETYTREE = {
 	  title: "etytree",
@@ -146,7 +146,10 @@ var noAncestorsPage = (node) => {
     d3.select("#message")
 	.append("div")
 	.html(MESSAGE.noAncestors);
-    d3.select("#message").append("a")
+    d3.select("#helpPopup")
+	.html(HELP.noAncestors);
+    d3.select("#message")
+	.append("a")
 	.attr("href", DATAMODEL.wiktionaryLink(node.label, node.lang))
 	.attr("target", "_blank")
 	.text(node.lang + " " + node.label);
@@ -404,6 +407,7 @@ var searchPage = (lemma, language) => {
  * @function etytreeTitle
  */
 var etytreeTitle = () => {
+    console.log("printing title")
     d3.select("#tree-overlay")
 	.append("div")
 	.attr("id", "lineBreaks")
@@ -425,6 +429,7 @@ var etytreeTitle = () => {
  * @function etytreeDescription
  */
 var etytreeDescription = () => {
+    console.log("printing description");
     d3.select("#tree-overlay")
 	.html("");
     d3.select("#tree-overlay")
@@ -459,6 +464,7 @@ var etytreeHelpPopup = () => {
  */
 var etytreeSearchButton = () => {
     $("#search").on("keypress", (e) => {
+	console.log("pressed key");
 	var search = this;
 	if (e.which === 13) {
 	    var lemma = $(search).val();
@@ -466,6 +472,7 @@ var etytreeSearchButton = () => {
 	}
     });
     d3.select("#btnSearch").on("click", () => {
+	console.log("clicked on search button");
 	var lemma = $("#search").val();
 	window.location = "search=" + lemma;
     });
@@ -511,7 +518,7 @@ var getState = (location) => {
 };
 
 console.log("reading body");
-var state = {                                                                                                                                             
+var state = {                                                        
     search: null,
     lang: null,
     ety: null
@@ -558,7 +565,8 @@ page('/:state', (context) => {
 });
 
 page('*', () => {
-    document.querySelector('#page').textContent = 'not found';
+    d3.select("#message")
+        .html(MESSAGE.pageNotFound);
 });
 
 page();

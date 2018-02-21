@@ -15,7 +15,7 @@ const etymology_only_languages = require('../../data/etymology-only_languages.cs
 const list_of_languages = require('../../data/list_of_languages.csv');
 const iso_639_3 = require('../../data/iso-639-3.tab');
 
-var load = () => {
+var loadLangMap = () => {
     console.log("loading lang");
     var langMap = new Map();
     
@@ -38,6 +38,8 @@ var load = () => {
     return langMap;
 };
 
+var langMap = loadLangMap();
+
 module.exports = {
-    langMap: load()
+    langMap: langMap
 }
