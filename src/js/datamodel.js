@@ -46,10 +46,11 @@ var encodeQuery = (query) => {
  * @return {String}
  */
 var wiktionaryLink = (label, language) => {
-    return WIKT +
-	label.startsWith("*") ?
+    var link = label.startsWith("*") ?
 	("Reconstruction:" + language + "/" + label.replace("*", "")) :
 	(label + "#" + language);
+    console.log(link)
+    return WIKT + link;
 };
 
 /**  
@@ -626,7 +627,7 @@ var findAncestors = (iri) => {
  *
  * @param {Array.<String>} ancestors
  * @param {Array.<String>} moreAncestors
- * @return {Array.<String>}}
+ * @return {Array.<String>}
  */
 var mergeAncestors = (ancestors, moreAncestors) => {
     if (moreAncestors !== 0) {

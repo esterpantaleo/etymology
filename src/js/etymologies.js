@@ -1,5 +1,6 @@
+
 /**
- * @module etymologies
+ * @module ETYMOLOGIES
  */
 
 const Rx = require('rxjs/Rx');
@@ -42,7 +43,7 @@ var getXMLHttpRequest = (url) => {
  * Posts an XMLHttpRequest using RxJs
  * @function postXMLHttpRequest
  *
- * @param {string} content
+ * @param {String} content
  * @return {Observable}
  */
 var postXMLHttpRequest = (content) => {
@@ -71,7 +72,7 @@ var postXMLHttpRequest = (content) => {
  * Posts an array of XMLHttpRequest to the server using RxJs
  * each requesting ancestors of an iri
  * @function postMoreAncestorsQuery
- * @param {array}.<string> iris - an array of iri-s
+ * @param {Array}.<string> iris - an array of iri-s
  * @return {Observable}
  */
 var postMoreAncestorsQuery = (iris) => {
@@ -93,8 +94,8 @@ var postMoreAncestorsQuery = (iris) => {
  * <li>"et": a list of iris of resources that are described by the resource in "iri" (e.g. http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_1_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_2_link,http://etytree-virtuoso.wmflabs.org/dbnary/eng/__ee_3_link)</li>
  * <li>"lemma": a string containing the rdfs label of the resource "iri"</li></ul>
  * @function disambiguationQuery
- * @param {string} lemma - a word e.g. "door"
- * @return {string} a query string
+ * @param {String} lemma - a word e.g. "door"
+ * @return {String} a query string
  */
 var disambiguationQuery = (lemma) => {
     return "SELECT DISTINCT ?iri (group_concat(distinct ?ee ; separator=\",\") as ?et) ?lemma " +
@@ -123,8 +124,8 @@ var disambiguationQuery = (lemma) => {
  * <li>"links"</li>: a string containing links separated by ","
  * </ul>
  * @function glossQuery
- * @param {string} iri
- * @return {string} a query string
+ * @param {String} iri
+ * @return {String} a query string
  */
 var glossQuery = (iri) => {
     var query =
@@ -181,9 +182,9 @@ var glossQuery = (iri) => {
  * Prints the query to get ancestors
  * @function iterativeAncestorQuery
  *
- * @param {integer}
- * @param {string} iri
- * @return {string} a query string
+ * @param {Number}
+ * @param {String} iri
+ * @return {String} a query string
  */
 var iterativeAncestorQuery = (iteration, iri) => {
     if (iteration === ANCESTORS_DEPTH) return [];
@@ -216,8 +217,8 @@ var iterativeAncestorQuery = (iteration, iri) => {
  * Prints the query to get descendants
  * @function descendantQuery
  *
- * @param {string} iri
- * @return {string} a query string
+ * @param {String} iri
+ * @return {String} a query string
  */
 var descendantQuery = (iri) => {
     return "SELECT DISTINCT ?descendant1 ?label1 ?ee ?labele " +
@@ -236,8 +237,8 @@ var descendantQuery = (iri) => {
  * Prints the query to get properties about nodes
  * @function propertyQuery
  *
- * @param {string} iri
- * @return {string} a query string
+ * @param {String} iri
+ * @return {String} a query string
  */
 var propertyQuery = (iri) => {
     return "SELECT DISTINCT ?s ?rel ?eq ?sLabel ?relLabel ?eqLabel" +
@@ -262,8 +263,8 @@ var propertyQuery = (iri) => {
  * Prints the union of an array of queries
  * one for each of the elements in input array iris
  * @function unionQuery
- * @param {array}.<string> iris - an array of strings
- * @return {function} a function that takes as argument a string iri
+ * @param {Array}.<string> iris - an array of strings
+ * @return {Function} a function that takes as argument a string iri
  */
 var unionQuery = (iris, queryFunction) => {
     return "SELECT * WHERE {{ " +

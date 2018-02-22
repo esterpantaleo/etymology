@@ -22,13 +22,12 @@ module.exports = {
 	publicPath: 'dist'
     },
     plugins: [
-//	HtmlWebpackPluginConfig,
 	new webpack.ProvidePlugin({
 	    $: 'jquery',
 	    jQuery: 'jquery',
 	    "window.jQuery": "jquery'",
-	    "window.$": "jquery"
-//	    hopscotch: 'hopscotch'
+	    "window.$": "jquery",
+	    hopscotch: 'hopscotch'
 	}),
 	new CopyWebpackPlugin([
 	    {

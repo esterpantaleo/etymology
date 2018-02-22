@@ -14,13 +14,13 @@ const hopscotch = require('hopscotch');
 var Tour = {
 	id: "etytree_tutorial",
 	steps: [{
-		target: "tags",
+		target: "search",
 		placement: "right",
 		title: "Search bar",
-		content: "<ul><li>Type a word then press enter: Some words will appear.</li><li><b>Mouse over</b> them to choose language and meaning.</li><li><b>Click</b> on the word you are interested in."
+		content: "<ul><li>Type a word then press enter: Some words will appear.</li><li><b>Mouse/Tap over</b> them to visualize lexical information.</li><li><b>Click</b> on the word you are interested in."
 	}, {
 		target: "aHelpPopup",
-		placement: "right",
+		placement: "left",
 		title: "Help",
 		content: "Click on this icon to visualize a help page."
 		/*    }, {

@@ -29,7 +29,7 @@ class Node {
 	    } else {
 		this.iri = [etymologyEntry.iri];
 		this.isAncestor = etymologyEntry.isAncestor;
-						this.id = counter;
+		this.id = counter;
 		this.iso = etymologyEntry.iso;
 		this.lang = etymologyEntry.lang;
 		this.label = etymologyEntry.label;
@@ -77,7 +77,6 @@ class Node {
 	    }
 	    element.append("span")
 		.html("<br><br>");
-	    console.log(labels[i]);
 	}
     }
 }
@@ -98,19 +97,19 @@ class Dagre {
     
     /**
      * Create an svg with the Dagre.
-     * Assign id to the svg element.
-     * Render svg inside the element selected by "selector".
+     * Render svg inside "element" and assign to it an "id".
      * Then fit to screen.
      * @function render
-     * @param {Object} selector
+     * @param {Object} element - e.g., "#tree-overlay"
      * @param {String} id
      * @param {Number} width
      * @param {Number} height
      */
-    render(selector, id, width, height) {
+    render(element, id, width, height) {
 	var that = this;
 	
-	var svg = d3.select(selector).append("svg")
+	var svg = d3.select(element)
+	    .append("svg")
 	    .attr("id", id)
 	    .attr("width", width)
 	    .attr("height", height);
@@ -119,7 +118,7 @@ class Dagre {
 	
 	// Set up zoom support                      
 	var zoom = d3.zoom()
-	    .on("zoom", function () {
+	    .on("zoom", () => {
 		inner.attr("transform", d3.event.transform);
 	    });
 	svg.call(zoom);
@@ -134,35 +133,45 @@ class Dagre {
 	var zoomScale = (graphWidth > width) ? (0.8 * Math.max(width / graphWidth, 0.2)) : 0.75;
 
 	svg.call(zoom.transform, d3.zoomIdentity
-		 .translate((width - that.dagre.graph().width * zoomScale) / 2, 20)
+		 .translate((width - that.dagre.graph().width * zoomScale) / 2, 50)
 		 .scale(zoomScale));
 	
 	// Decorate graph
 	inner.selectAll("g.node")
-	    .on('taphold mouseover', function (d) {
+	    .on('taphold mouseover', (d) => {
 		var d3_target = d3.select(d3.event.target);
-		d3.select("#gloss").remove();
+		d3.select("#glossPopup")
+		    .remove();
 		d3.event.preventDefault();
 		var wordPopup = d3.select("body")
 		    .append("div")
-		    .attr("id", "gloss")
-		    .attr("class", "popup")
+		    .attr("id", "glossPopup")
 		    .style("top", (d3.event.pageY + 35) + "px");
 		that.dagre.node(d).tooltip(wordPopup);
-		d3.select(".popup").on('click', function() {
-		    d3.select(".popup").remove();
-		});
+		d3.select("#glossPopup")
+		    .on('click', () => {
+			d3.select("#glossPopup")
+			    .remove();
+		    });
 	});
-	//append language tag to nodes            
+	// Append language tag to nodes
+        // and remove text after parenthesis
 	inner.selectAll("g.node")
 	    .append("text")
 	    .style("display", "inline")
 	    .attr("class", "isoText")
 	    .attr("x", "1em")
 	    .attr("y", "3em")
-	    .html(function (d) {
+	    .html((d) => {
 		return that.dagre.node(d).lang.split("(")[0];
 	    });
+
+	d3.select(window)
+	    .on("click", () => {
+		d3.select("#glossPopup")
+		    .remove();
+	    });
+	
 	return inner;
     }
     
@@ -272,7 +281,28 @@ class Graph extends Dagre {
     }
 }
 
+var  wrap = (element, text, y, dy, width) => {
+    var words = text.split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        tspan = element.append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+	line.push(word);
+	tspan.text(line.join(" "));
+	if (tspan.node().getComputedTextLength() > width) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [word];
+            tspan = element.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+	}
+    }
+    
+}
+
 module.exports = {
     Node: Node,
-    Graph: Graph
+    Graph: Graph,
+    wrap: wrap
 }

@@ -9,7 +9,6 @@ const d3 = require('d3');
 const $ = require('jquery');
 require('webpack-jquery-ui');
 require('webpack-jquery-ui/css');
-const Rx = require('rxjs/Rx');
 const page = require('page');
 
 const TOUR = require('./livetour');
@@ -19,7 +18,7 @@ const GRAPH = require('./graph');
 const width = window.innerWidth,
       height = window.innerHeight,
       HELP = {
-	  intro: "Enter a word in the search bar, then press enter or click.",
+	  intro: "Enter a word in the search bar, then press enter or click on OK.",
 	  disambiguation: "<b>Disambiguation page</b>" +
               "<br>Pick the word you are interested in." +
               "<ul>" +
@@ -36,7 +35,7 @@ const width = window.innerWidth,
 	  notAvailable: "This word is not available in the database.",
 	  loading: "Loading, please wait...",
 	  noAncestors: "Etytree could not extract the etymology of this word from the English Wiktionary, <br>or there is no etymology in the English Wiktionary for this word. <br><br><br>Add/edit etymology of ",
-	  disambiguation: "There are multiple words in the database. <br>Click on the word you are interested in to see its ancestors:",
+	  disambiguation: "Click on the word you are interested in:",
 	  clickForAncestors: "Click on a word to see its ancestors:",
 	  clickForDescendants: "Click on a word to see its descendants:",
 	  pageNotFound: "Page not found."
@@ -46,7 +45,7 @@ const width = window.innerWidth,
 	  subtitle: "a graphical and multilingual etymology dictionary", 
 	  instructions: "Type a word in the search bar, then press enter.<br>" +
 	      "You will see a list of words.<br>" +
-	      "Explore the different words by mousing/tapping over them and on language tags below them.<br>" +
+	      "Explore the different words by mousing/tapping over them.<br>" +
 	      "Click on the word you are interested in.",
 	  description: "etytree can visualize the etymological tree of a word, i.e., <br>" +
 	      "the etymology - or the origin of a word and the historical development of its meaning - in the form of a tree,<br>" +
@@ -69,19 +68,19 @@ const width = window.innerWidth,
       notForeign = /^[a-z\u00C0-\u00F6\u00F8-\u017E]+$/i;
 
 /**
- * Given an object consisting of EtymologyEntry-s,
- * this function returns an object consisting of Nodes
+ * This function transforms an object consisting of EtymologyEntry-s,
+ * into an object consisting of Nodes
  * @function nodesFrom
  * @param {Object.<EtymologyEntry>} etymologyEntries
- * @param {String} lang - iso code, e.g.: "eng"
+ * @param {String} langIsoCode - language iso code, e.g.: "eng"
  * @return {Object.<Node>} a list of Nodes
  */
-var nodesFrom = (etymologyEntries, lang) => {
+var nodesFrom = (etymologyEntries, langIsoCode) => {
     var nodes = {};
     
     var counter = 0;
     for (var n in etymologyEntries.values) {
-	if (lang === undefined || etymologyEntries.values[n].iso === lang) {
+	if (langIsoCode === null || langIsoCode === undefined || etymologyEntries.values[n].iso === langIsoCode) {
 	    var id = etymologyEntries.values[n].node;
 	    
 	    if (undefined === id) {
@@ -123,16 +122,32 @@ var nodesFrom = (etymologyEntries, lang) => {
  * @param {Graph} g
  */
 var ancestorsGraphPage = (g) => {
-    d3.select("#message")
-	.html(MESSAGE.clickForDescendants);
+    d3.select("#tree-overlay")
+	.remove();
+    d3.select("#glossPopup")
+	.remove();
+    
     d3.select("#helpPopup")
 	.html(HELP.dagre);
-    g.render("#tree-container", "tree-overlay", width, height)
+    d3.select("#tree-container")
+	.append("div")
+	.attr("id", "tree-overlay");
+        
+    g.render("#tree-overlay", "ancestors", width, height)
 	.selectAll("g.node")
-	.on("click", d => {
+	.on("click", (d) => {
 	    var node = g.dagre.node(d);
 	    descendantsDialog(node);
 	});
+
+    d3.select("#ancestors")
+	.append("g")
+	.append("text")
+	.attr("id", "message")
+	.attr("x", 30)
+	.attr("y", 30)
+	.attr("width", width)
+	.html(MESSAGE.clickForDescendants);  
 };
 
 /**
@@ -141,13 +156,17 @@ var ancestorsGraphPage = (g) => {
  * @param {Node} node
  */
 var noAncestorsPage = (node) => {
-    d3.select("#message")
-	.html("");
-    d3.select("#message")
-	.append("div")
-	.html(MESSAGE.noAncestors);
+    d3.select("#tree-overlay")
+	.remove();
+    
     d3.select("#helpPopup")
-	.html(HELP.noAncestors);
+	.html(HELP.noAncestors);  
+    d3.select("#tree-container")
+	.append("div")
+	.attr("id", "tree-overlay")
+	.append("div")
+	.attr("id", "message")
+	.html(MESSAGE.noAncestors);
     d3.select("#message")
 	.append("a")
 	.attr("href", DATAMODEL.wiktionaryLink(node.label, node.lang))
@@ -158,15 +177,36 @@ var noAncestorsPage = (node) => {
 /**
  * Renders the Disambiguation Graph.
  * @function disambiguationGraphPage
- *
  * @param {Graph} g
  */
 var disambiguationGraphPage = (g) => {
-    g.render("#tree-container", "tree-overlay", width, height)
+    d3.select("#tree-overlay")
+	.remove();
+    d3.select("#glossPopup")
+	.remove();
+
+    d3.select("#helpPopup")
+	.html(HELP.disambiguation);
+    d3.select("#tree-container")
+	.append("div")
+	.attr("id", "tree-overlay");
+    
+    g.render("#tree-overlay", "disambiguation", width, height)
 	.selectAll("g.node")
-	.on("click", d => {
-	    window.location = "search=" + g.dagre.node(d).label + "+lang=" + g.dagre.node(d).iso + "+ety=" + g.dagre.node(d).ety; 
+	.on("click", (d) => {
+	    var node = g.dagre.node(d);
+	    $(search).val(node.label);
+	    window.location = "label=" + node.label + "&lang=" + node.iso + "&ety=" + node.ety; 
 	});
+
+    d3.select("#disambiguation")
+	.append("g")
+	.append("text")
+	.attr("id", "message")
+	.attr("x", 30)
+	.attr("y", 30)
+	.attr("width", width)
+	.html(MESSAGE.disambiguation); 
 };
 
 /**
@@ -230,7 +270,6 @@ var descendantsAccordion = (node, response) => {
 /**
  * Renders the loading message when loading the descendants graph.
  * @function loadingDescendantsGraph
- *
  * @param {Number} index
  */
 var loadingDescendantsGraph = (index) => {
@@ -250,22 +289,15 @@ var loadingDescendantsGraph = (index) => {
 	.style("height", "60px");
 };
 
-var etymologyGraphPage = (word, lang, ety) => {//to do call this function differently for the two different cases
-    var iri;
-    if (lang === undefined || ety === undefined) {
-	iri = word;
-    } else {
-	iri = DATAMODEL.etytreeLink(word, lang, ety);
-    }
-    //clean screen
-    d3.select("#tree-overlay")
-	.remove();
-
-    d3.select("#gloss").remove();
-    
-    d3.select("#message")
-	.attr("display", "inline")
-	.html(MESSAGE.loading);
+/**
+ * Renders the graph of ancestors of a specified
+ * word (label) in a specified language (langIsoCode) 
+ * using data from Wiktionary etymology number ety.
+ * @function etymologyGraphPage
+ * @param {String} iri
+ */
+var etymologyGraphPage = (iri) => {
+    etytreeLoading();
 
     DATAMODEL.queryAncestors(iri, (etymologyEntries) => {
 	if (Object.keys(etymologyEntries.values).length < 2) {
@@ -284,7 +316,6 @@ var etymologyGraphPage = (word, lang, ety) => {//to do call this function differ
 /**
  * Renders the Graph of Descendants in the accordion.
  * @function descendantsGraph
- *
  * @param {Number} index - index indicating position in the accordion
  * @param {Graph} g - a Graph with only descendants in one language
  */
@@ -308,8 +339,14 @@ var descendantsGraph = (index, g) => {
 	    //on click on node in language graph, render ancestorsGraph of clicked node
 	    $("#descendants")
 		.dialog("close");
-	    d3.select("#gloss").remove();
-	    window.location = "search=" + g.dagre.node(d).label + "+lang=" + g.dagre.node(d).iso + "+ety=" + g.dagre.node(d).ety;
+	    d3.select("#tree-overlay")
+		.remove();
+	    d3.select("#glossPopup")
+		.remove();
+
+	    var node = g.dagre.node(d);
+	    $(search).val(node.label);
+	    window.location = "label=" + node.label + "&lang=" + node.iso + "&ety=" + node.ety;
 
 	});
     
@@ -340,7 +377,8 @@ var descendantsDialog = (node) => {
 	    height: height - 5,
 	    position: "top"
 	});
-    d3.select("#gloss").remove();
+    d3.select("#glossPopup")
+	.remove();
     $("#descendants")
 	.dialog("open");
     
@@ -351,52 +389,63 @@ var descendantsDialog = (node) => {
 };
 
 /**
- * Renders the page that will contain the Etymology Graph
- * of a specified lemma.
+ * Renders the page corresponding to a search
+ * of a specified word (label) in a specific language 
+ * (if specified) with a specific value of ety (if specified).
  * @function searchPage
- * @param {String} lemma - e.g., "door"
+ * @param {String} label - e.g., "door"
+ * @param {String} langIsoCode - language iso code, e.g., "eng" 
+ * @param {Number} ety 
  */
-var searchPage = (lemma, language) => {
-    if (lemma.length < 2)
-	//if lemma has length 1 but it is a foreign character (e.g. Chinese) don't return
-	if (notForeign.test(lemma))
+var searchPage = (label, langIsoCode, ety) => {
+    if (label.length < 2)
+	//if label has length 1 but it is not foreign character
+	//(e.g. Chinese) return (as we don't want to show the
+	//etymology of single English characters
+	if (notForeign.test(label))
 	    return;
     
-    DATAMODEL.queryDisambiguation(lemma)
-	.subscribe((response) => {	    
+    if (label !== null && langIsoCode !== null && ety !== null) {
+	var iri = DATAMODEL.etytreeLink(label, langIsoCode, ety);
+	etymologyGraphPage(iri);
+	return;
+    }
+    
+    DATAMODEL.queryDisambiguation(label)
+	.subscribe((response) => {
 	    var N = Object.keys(response).length;
-	    
 	    if (N === 0) {
-		d3.select("#message")
-		    .attr("display", "inline")
-		    .html(MESSAGE.notAvailable);
-	    } else if (N === 1) {
-		var iri = Object.keys(response)[0];
-		etymologyGraphPage(iri);
-	    } else {
-		//clean screen
+		
 		d3.select("#tree-overlay")
 		    .remove();
-		d3.select("#gloss").remove();
 		
-		d3.select("#helpPopup")
-		    .html(HELP.disambiguation);
-		d3.select("#message")
+		d3.select("#tree-container")
+		    .append("div")
+		    .attr("id", "tree-overlay")
+		    .append("p")
+		    .attr("id", "message")
 		    .attr("display", "inline")
-		    .html(MESSAGE.disambiguation);
+		    .html(MESSAGE.notAvailable);
 		
+	    } else if (N === 1) {
+		
+		var iri = Object.keys(response)[0];
+		etymologyGraphPage(iri);
+		
+	    } else {		
 		DATAMODEL.queryDisambiguationGloss(response)
 		    .subscribe((etymologyEntries) => {
-			var nodes = nodesFrom(etymologyEntries, language);
+			var nodes = nodesFrom(etymologyEntries, langIsoCode);
 			if (Object.keys(nodes).length > 1) {
 			
 			    var g = new GRAPH.Graph("LR", {nodes: nodes}, width);
-			    console.log("going to run disambiguationGraphPage");
 			    disambiguationGraphPage(g);
+			    
 			} else if (Object.keys(nodes).length === 1) {
 			
 			    var iri = nodes[0].iri[0];//todo: check this
 			    etymologyGraphPage(iri);
+			    
 			}
 		    });
 	    }
@@ -404,14 +453,15 @@ var searchPage = (lemma, language) => {
 };
 
 /**
+ * Renders the title
  * @function etytreeTitle
  */
 var etytreeTitle = () => {
-    console.log("printing title")
     d3.select("#tree-overlay")
-	.append("div")
-	.attr("id", "lineBreaks")
-	.html("<br><br><br><br><br><br>");
+	.remove();
+    d3.select("#tree-container")
+        .append("div")
+        .attr("id", "tree-overlay");
     var title = d3.select("#tree-overlay")
 	.append("div")
 	.attr("id", "title");
@@ -426,32 +476,28 @@ var etytreeTitle = () => {
 }
 
 /**
+ * Renders the description
  * @function etytreeDescription
  */
 var etytreeDescription = () => {
-    console.log("printing description");
-    d3.select("#tree-overlay")
-	.html("");
-    d3.select("#tree-overlay")
-	.append("span")
+    var title = d3.select("#tree-overlay");
+    title.append("span")
 	.attr("class", "blueSpan")
 	.html("<br><br><br><br><br><br>" + ETYTREE.instructions);
-    d3.select("#tree-overlay")
-	.append("div")
+    title.append("div")
 	.html("<br><br><br><br><br>" + ETYTREE.description + "<br><br>")
 	.append("span")
 	.attr("class", "redSpan")
 	.html(ETYTREE.version);
-    d3.select("#tree-overlay")
-	.append("div")
+    title.append("div")
 	.html("<br>")
-    d3.select("#tree-overlay")
-	.append("span")
+    title.append("span")
 	.attr("class", "smallSpan")
 	.html(ETYTREE.info);  
 };
 
 /**
+ * Renders the hep popup of the main page
  * @function etytreeHelpPopup
  */
 var etytreeHelpPopup = () => {
@@ -460,41 +506,44 @@ var etytreeHelpPopup = () => {
 };
 
 /**
+ * Defines interactions with the search bar and the search button
  * @function etytreeSearchButton
  */
 var etytreeSearchButton = () => {
     $("#search").on("keypress", (e) => {
-	console.log("pressed key");
-	var search = this;
-	if (e.which === 13) {
-	    var lemma = $(search).val();
-	    window.location = "search="+ lemma;
+	if (e.which === 13 || e.keyCode === 13) {
+	    var label = $(search).val();
+	    window.location = "label="+ label;
 	}
     });
     d3.select("#btnSearch").on("click", () => {
-	console.log("clicked on search button");
-	var lemma = $("#search").val();
-	window.location = "search=" + lemma;
+	var label = $("#search").val();
+	window.location = "label=" + label;
     });
 };
 
 /** 
-* @function getState 
-*/
+ * Given a window location returns the current state of etytree
+ * @function getState 
+ * @param {String} location - e.g.: "label=door&lang=eng&ety=0"
+ * @return {Object} an object with elements label, lang and ety
+ */
 var getState = (location) => {
     var state = {
-	search: null,
+	label: null,
 	lang: null,
 	ety: null
     };
 
     if (location !== "index.html" && location !== "") {
-        var l = location.split(" ");
+        var l = location.split("&");
 	if (l[0] !== undefined) {
-            var search = l[0].split("=");
-            if (search.length === 2 && search[0] === "search") {
-		state.search = search[1];
-            }
+            var label = l[0].split("=");
+            if (label.length === 2 && label[0] === "label") {
+		state.label = label[1];
+            } else {
+		return state;
+	    }
 	}
 
 	if (l[1] !== undefined) {
@@ -502,6 +551,8 @@ var getState = (location) => {
             if (lang.length === 2 && lang[0] === "lang") {
 		//encode language lang = encode(lang); 
 		state.lang = lang[1];
+            } else {
+                return state;
             }
 	}
 
@@ -517,57 +568,81 @@ var getState = (location) => {
     return state;
 };
 
+var etytreeLoading = () => {
+    d3.select("#tree-overlay")
+        .remove();
+    d3.select("#glossPopup")
+        .remove();
+
+    d3.select("#tree-container")
+        .append("div")
+        .attr("id", "tree-overlay")
+        .append("p")
+        .append("text")
+        .attr("id", "message")
+        .attr("display", "inline")
+        .html(MESSAGE.loading);
+};
+
+var etytreeNotFound = () => {
+    d3.select("#tree-container")
+        .append("div")
+        .attr("id", "tree-overlay")
+        .append("p")
+        .attr("id", "message")
+        .html(MESSAGE.pageNotFound);
+};
+
+var pageNotFoundCallback = () => {
+    state = {
+        label: null,
+        lang: null,
+        ety: null
+    };
+
+    etytreeNotFound();
+};
+
+var pageHomeCallback = () => {
+    state = {
+        label: null,
+        lang: null,
+        ety: null
+    };
+
+    etytreeTitle();
+    etytreeDescription();
+    etytreeHelpPopup();
+};
+
+var pageStateCallback = (context) => {
+    var newState = getState(context.params.state);
+    if (newState.label === null) {
+
+	etytreeNotFound();
+	
+    } else {
+	if (newState.label !== state.label || newState.lang !== state.lang || newState.ety !== state.ety) {
+	 
+            state = newState;
+            $(search).val(state.label);
+
+	    etytreeLoading(); 
+            searchPage(state.label, state.lang, state.ety);
+	}
+    }
+};
+
 console.log("reading body");
-var state = {                                                        
-    search: null,
+var state = {
+    label: null,
     lang: null,
     ety: null
 };
 
-etytreeTitle();
 etytreeSearchButton();
-
-page('/', () => {
-    var state = {
-	search: null,
-	lang: null,
-	ety: null
-    };
-        
-    etytreeDescription();
-    etytreeHelpPopup();
-});
-    
-page('/:state', (context) => {
-    console.log(state)
-    console.log("running page state");
-    var pageState = getState(context.params.state);
-    if (state !== undefined) {
-    if (pageState.search !== state.search || pageState.lang !== state.lang || pageState.ety !== state.ety) {
-	state = pageState;
-	console.log("printing state after pageState")
-	console.log(state)
-	//search=door+lang=eng+ety=0 
-	if (state.search !== null) {
-	    $(search).val(state.search);
-            if (state.lang !== null) {
-		//encode language !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-		if (state.ety !== null) {  
-		    etymologyGraphPage(state.search, state.lang, state.ety);
-		} else {                                                                       
-		    searchPage(state.search, state.lang);  
-		}
-            } else {
-		searchPage(state.search); 
-            }
-	}
-    }}
-});
-
-page('*', () => {
-    d3.select("#message")
-        .html(MESSAGE.pageNotFound);
-});
-
+page('/', pageHomeCallback);    
+page('/:state', pageStateCallback);
+page('*', pageNotFoundCallback);
 page();
 
