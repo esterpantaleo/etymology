@@ -1,7 +1,7 @@
 const path = require('path');
 const paths = {
     src: path.join(__dirname, 'src'),
-    dist: path.join(__dirname, 'dist'),
+    dist: path.join(__dirname, '../../public_html'),
     data: path.join(__dirname, 'data'),
     img: path.join(__dirname, 'src/img'),
     css: path.join(__dirname, 'src/css'),
@@ -19,7 +19,7 @@ module.exports = {
     output: {
 	filename: 'bundle.js',
 	path: paths.dist,
-	publicPath: 'dist'
+	publicPath: 'public_html'
     },
     plugins: [
 	new webpack.ProvidePlugin({

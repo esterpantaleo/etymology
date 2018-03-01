@@ -562,7 +562,7 @@ var etytreeLoading = () => {
 
 /**
  * Renders the not found message
- * @function etytreeLoading 
+ * @function etytreeNotFound 
  */
 var etytreeNotFound = () => {
     d3.select("#tree-container")
