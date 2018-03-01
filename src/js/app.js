@@ -351,7 +351,7 @@ var descendantsGraph = (index, g) => {
 	});
     
     //resize language graph
-    var h = Math.min(g.dagre.graph().height + 50, window.innerHeight - 15);
+    var h = Math.min(g.dagre.graph().height + 80, window.innerHeight - 15);
     d3.select("#div" + index)
 	.attr("style", "height:" + h + "px;");
 };

@@ -71,6 +71,9 @@ You would to have sudo privileges
     cd ./src/js/
     jsdoc2md -f app.js datamodel.js languages.js etymologies.js liveTour.js graph.js > ../../docs/test.md
 
+### GERRIT LINK
+https://gerrit.wikimedia.org/r/#/admin/projects/labs/tools/etytree
+
 ## dbnary_etymology DOCUMENTATION
 ### EXTRACT THE DATA USING dbnary_etymology
 The RDF database of etymological relationships is periodically extracted when a new dump of the English Wiktionary is released. The code used to extract the data is available at [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
@@ -83,31 +86,31 @@ Let's assume you cloned the repository in your home:
     mvn site
     mvn javadoc:jar
 #### PREPROCESS INPUT DATA
-First you need an XML dump of English Wiktionary. Then you need to convert it into UTF-8 format (using [iconv](https://en.wikipedia.org/wiki/Iconv) for example):
+First you need an XML dump of English Wiktionary. Then you need to convert it into UTF-8 format (using [iconv](https://en.wikipedia.org/wiki/Iconv) for example). Assuming that the latest version is VERSION=20170920 and that the path to the dump is /public/dumps/public/enwiktionary/$VERSION/enwiktionary-$VERSION-pages-articles.xml.bz2 (if you have access to the Wikimedia Tool Labs):
 
-    VERSION=20170920
-    DATA_DIR=/srv/datasets/dumps/$VERSION/                                                               #output data folder
-    tmp_dump=/public/dumps/public/enwiktionary/$VERSION/enwiktionary-$VERSION-pages-articles.xml.bz2     #path to the dump
+    VERSION=20180220
+    OUTPUT=/srv/datasets/dumps/$VERSION/                                                               #path to the output data folder
+    INPUT=/public/dumps/public/enwiktionary/$VERSION/enwiktionary-$VERSION-pages-articles.xml.bz2      #path to the dump file
     
-    mkdir ${DATA_DIR}
-    dump=${DATA_DIR}/enwiktionary-$VERSION-pages-articles.utf-16.xml
-    bzcat ${tmp_dump} |iconv -f UTF-8 -t UTF-16 > $dump    #This operation takes approximately 7 minutes.
+    mkdir ${OUTPUT}
+    DUMP=${OUTPUT}/enwiktionary-$VERSION-pages-articles.utf-16.xml
+    bzcat ${INPUT} | iconv -f UTF-8 -t UTF-16 > ${DUMP}    #This operation takes approximately 7 minutes.
 
 #### EXTRACT ENGLISH WORDS
 With the following code you can extract data relative to English words:
 
-    OUT_DIR=/srv/datasets/dbnary/$VERSION/                                                               #output folder
+    OUT_DIR=/srv/datasets/dbnary/${VERSION}/                                                               #output folder
     LOG_DIR=/srv/datasets/dbnary/$VERSION/logs/
     EXECUTABLE=~/dbnary_etymology/dbnary-extractor/target/dbnary-extractor-2.0e-SNAPSHOT-jar-with-dependencies.jar
     mkdir ${OUT_DIR}
     mkdir ${LOG_DIR}
 
     PREFIX=http://etytree-virtuoso.wmflabs.org/dbnary
-    LOG_FILE=${LOG_DIR}/enwkt-$VERSION.ttl.log
-    OUT_FILE=${OUT_DIR}/enwkt-$VERSION.ttl
-    ETY_FILE=${OUT_DIR}/enwkt-$VERSION.etymology.ttl
+    LOG_FILE=${LOG_DIR}/enwkt-${VERSION}.ttl.log
+    OUT_FILE=${OUT_DIR}/enwkt-${VERSION}.ttl
+    ETY_FILE=${OUT_DIR}/enwkt-${VERSION}.etymology.ttl
     rm ${LOG_FILE}
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1   #This operation takes approximately 45 minutes
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXECUTABLE} org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix ${PREFIX} -E ${ETY_FILE} -o ${OUT_FILE} ${DUMP} test 3>&1 1>>${LOG_FILE} 2>&1   #This operation takes approximately 45 minutes
     #compress the output if needed
     gzip ${OUT_FILE}
     gzip ${ETY_FILE}
@@ -120,11 +123,11 @@ For memory reasons I only process a subset of the full data set at a time (from 
 
     fpage=0
     tpage=1800000
-    LOG_FILE=${LOG_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl.log 
-    OUT_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl
-    ETY_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.etymology.ttl
+    LOG_FILE=${LOG_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.ttl.log 
+    OUT_FILE=${OUT_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.ttl
+    ETY_FILE=${OUT_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.etymology.ttl
     rm ${LOG_FILE}
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXECUTABLE} org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix ${PREFIX} -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} ${DUMP} test 3>&1 1>>${LOG_FILE} 2>&1
     gzip ${OUT_FILE}
     gzip ${ETY_FILE}
     #after inspecting the log file, I usually only keep	the last few lines
@@ -133,11 +136,11 @@ For memory reasons I only process a subset of the full data set at a time (from 
 
     fpage=1800000
     tpage=3600000
-    LOG_FILE=${LOG_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl.log
-    OUT_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl
-    ETY_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.etymology.ttl
+    LOG_FILE=${LOG_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.ttl.log
+    OUT_FILE=${OUT_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.ttl
+    ETY_FILE=${OUT_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.etymology.ttl
     rm ${LOG_FILE}
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXECUTABLE} org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix ${PREFIX} -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} ${DUMP} test 3>&1 1>>${LOG_FILE} 2>&1
     gzip ${OUT_FILE}
     gzip ${ETY_FILE}
     #after inspecting the log file, I usually only keep the last few lines
@@ -146,10 +149,10 @@ For memory reasons I only process a subset of the full data set at a time (from 
 
     fpage=3600000
     tpage=6000000
-    LOG_FILE=${LOG_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl.log
-    OUT_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.ttl    ETY_FILE=${OUT_DIR}/enwkt-$VERSION_x_${fpage}_${tpage}.etymology.ttl
+    LOG_FILE=${LOG_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.ttl.log
+    OUT_FILE=${OUT_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.ttl    ETY_FILE=${OUT_DIR}/enwkt-${VERSION}_x_${fpage}_${tpage}.etymology.ttl
     rm ${LOG_FILE}
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp $EXECUTABLE org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix $PREFIX -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} $dump test 3>&1 1>>${LOG_FILE} 2>&1
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary=debug -cp ${EXECUTABLE} org.getalp.dbnary.cli.ExtractWiktionary -l en --prefix ${PREFIX} -x --frompage $fpage --topage $tpage -E ${ETY_FILE} -o ${OUT_FILE} ${DUMP} test 3>&1 1>>${LOG_FILE} 2>&1
     gzip ${OUT_FILE}
     gzip ${ETY_FILE}
     #after inspecting the log file, I usually only keep the last few lines
@@ -158,14 +161,14 @@ For memory reasons I only process a subset of the full data set at a time (from 
 
 #### EXTRACT A SINGLE ENTRY - FOREIGN WORD
     WORD="door"
-    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp $EXECUTABLE org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology testfile $dump $WORD
+    java -Xmx24G -Dorg.slf4j.simpleLogger.log.org.getalp.dbnary.eng=debug -cp ${EXECUTABLE} org.getalp.dbnary.cli.GetExtractedSemnet -x -l en --etymology testfile ${DUMP} ${WORD}
 
 ### UPDATE DATABASE ON VIRTUOSO
 #### Update ontology files 
 For VERSION=20170920:
 
-    cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl  /srv/datasets/dbnary/$VERSION/
-    cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl  /srv/datasets/dbnary/$VERSION/
+    cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl  /srv/datasets/dbnary/${VERSION}/
+    cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl  /srv/datasets/dbnary/${VERSION}/
 
 #### Update database
 From isql execute the following steps (step A):
