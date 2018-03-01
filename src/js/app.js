@@ -525,7 +525,7 @@ var etytreeSearchButton = () => {
 /** 
  * Given a window location returns the current state of etytree
  * @function getState 
- * @param {String} location - e.g.: "label=door&lang=eng&ety=0"
+ * @param {String} location - e.g.: "?label=door&lang=eng&ety=0"
  * @return {Object} an object with elements label, lang and ety
  */
 var getState = (location) => {
@@ -534,7 +534,7 @@ var getState = (location) => {
 	lang: null,
 	ety: null
     };
-
+    
     if (location !== "index.html" && location !== "") {
         var l = location.split("&");
 	if (l[0] !== undefined) {
@@ -618,8 +618,8 @@ var pageHomeCallback = () => {
 var pageStateCallback = (context) => {
     var newState = getState(context.params.state);
     if (newState.label === null) {
-
-	etytreeNotFound();
+	
+	pageHomeCallback();// pageNotFoundCallback()
 	
     } else {
 	if (newState.label !== state.label || newState.lang !== state.lang || newState.ety !== state.ety) {
@@ -640,9 +640,11 @@ var state = {
     ety: null
 };
 
+
+var url = new URL(window.location);
+console.log(url.search)
 etytreeSearchButton();
-page('/', pageHomeCallback);    
-page('/:state', pageStateCallback);
-page('*', pageNotFoundCallback);
+
+page('/etytree/:state', pageStateCallback);
 page();
 
