@@ -86,7 +86,7 @@ Let's assume you cloned the repository in your home:
     mvn site
     mvn javadoc:jar
 #### PREPROCESS INPUT DATA
-First you need an XML dump of English Wiktionary. Then you need to convert it into UTF-8 format (using [iconv](https://en.wikipedia.org/wiki/Iconv) for example). Assuming that the latest version is VERSION=20170920 and that the path to the dump is /public/dumps/public/enwiktionary/$VERSION/enwiktionary-$VERSION-pages-articles.xml.bz2 (if you have access to the Wikimedia Tool Labs):
+First you need an XML dump of English Wiktionary. Then you need to convert it into UTF-8 format (using [iconv](https://en.wikipedia.org/wiki/Iconv) for example). Assuming that the latest version is VERSION=20180220 and that the path to the dump is /public/dumps/public/enwiktionary/$VERSION/enwiktionary-$VERSION-pages-articles.xml.bz2 (if you have access to the Wikimedia Tool Labs):
 
     VERSION=20180220
     OUTPUT=/srv/datasets/dumps/$VERSION/                                                               #path to the output data folder
@@ -94,7 +94,7 @@ First you need an XML dump of English Wiktionary. Then you need to convert it in
     
     mkdir ${OUTPUT}
     DUMP=${OUTPUT}/enwiktionary-$VERSION-pages-articles.utf-16.xml
-    bzcat ${INPUT} | iconv -f UTF-8 -t UTF-16 > ${DUMP}    #This operation takes approximately 7 minutes.
+    bzcat ${INPUT} | iconv -f UTF-8 -t UTF-16 > ${DUMP}                                                #takes approximately 7 minutes.
 
 #### EXTRACT ENGLISH WORDS
 With the following code you can extract data relative to English words:
