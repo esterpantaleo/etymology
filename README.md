@@ -69,7 +69,7 @@ You would to have sudo privileges
 
     mkdir ./docs
     cd ./src/js/
-    jsdoc2md -f app.js datamodel.js languages.js etymologies.js liveTour.js graph.js > ../../docs/test.md
+    jsdoc2md -f app.js datamodel.js languages.js etymologies.js liveTour.js graph.js > ../../docs/etytree.md
 
 ### GERRIT LINK
 https://gerrit.wikimedia.org/r/#/admin/projects/labs/tools/etytree
@@ -86,6 +86,8 @@ Let's assume you cloned the repository in your home:
     mvn site
     mvn javadoc:jar
 #### PREPROCESS INPUT DATA
+Update language files.
+
 First you need an XML dump of English Wiktionary. Then you need to convert it into UTF-8 format (using [iconv](https://en.wikipedia.org/wiki/Iconv) for example). Assuming that the latest version is VERSION=20180220 and that the path to the dump is /public/dumps/public/enwiktionary/$VERSION/enwiktionary-$VERSION-pages-articles.xml.bz2 (if you have access to the Wikimedia Tool Labs):
 
     VERSION=20180220
@@ -165,46 +167,54 @@ For memory reasons I only process a subset of the full data set at a time (from 
 
 ### UPDATE DATABASE ON VIRTUOSO
 #### Update ontology files 
-For VERSION=20170920:
 
+    VERSION=20180220
     cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary_etymology.owl  /srv/datasets/dbnary/${VERSION}/
     cp ~/dbnary_etymology/dbnary-ontology/src/main/resources/org/getalp/dbnary/dbnary.owl  /srv/datasets/dbnary/${VERSION}/
 
 #### Update database
+Override database with /opt/virtuoso/db.copy, remove transaction file /opt/virtuoso/db/virtuoso.trx, edit /opt/virtuoso/db/virtuoso.ini file to change the output database folder and then restart
+
+    DirsAllowed                     = ., /opt/virtuoso-opensource/share/virtuoso/vad, /srv/datasets/dbnary/20180220/
+
+
 From isql execute the following steps (step A):
 
     SPARQL CLEAR GRAPH <http://etytree-virtuoso.wmflabs.org/dbnary>;
     SPARQL CLEAR GRAPH <http://etytree-virtuoso.wmflabs.org/dbnaryetymology>;
-    ld_dir ('/srv/datasets/dbnary/20170920/', '*.ttl.gz','http://etytree-virtuoso.wmflabs.org/dbnary');
-    ld_dir ('/srv/datasets/dbnary/20170920/', '*.owl','http://etytree-virtuoso.wmflabs.org/dbnaryetymology');
+    delete from DB.DBA.LOAD_LIST;
+    ld_dir ('/srv/datasets/dbnary/20180220/', '*.ttl.gz','http://etytree-virtuoso.wmflabs.org/dbnary');
+    ld_dir ('/srv/datasets/dbnary/20180220/', '*.owl','http://etytree-virtuoso.wmflabs.org/dbnaryetymology');
     -- do the following to see which files were registered to be added:
     SELECT * FROM DB.DBA.LOAD_LIST;
     -- if unsatisfied use:
     -- delete from DB.DBA.LOAD_LIST;
     rdf_loader_run();  ----- 1378390 msec. 
-    -- do nothing too heavy while data is loading
+    -- do nothing too heavy while data is loadingg
     checkpoint;   ----- 50851 msec.
     commit WORK;  ----- 1417 msec.
     checkpoint;
     EXIT;
 
-In case an error occurs:
+Sometimes an error can occur, in this case for VERSION 20170920:
 
-    12:00:44 PL LOG:  File /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl.gz error 37000 SP029: TURTLE RDF loader, line 10636983: syntax error processed pending to here.
-    12:06:09 PL LOG:  File /srv/datasets/dbnary/20170920//enwkt-1800000_3600000.etymology.ttl.gz error 37000 SP029: TURTLE RDF loader, line 4772623: syntax error processed pending to here.
+    12:00:44 PL LOG:  File /srv/datasets/dbnary/20170920/enwkt-0_1800000.etymology.ttl.gz error 37000 SP029: TURTLE RDF loader, line 10636983: syntax error processed pending to here.
+    12:06:09 PL LOG:  File /srv/datasets/dbnary/20170920/enwkt-1800000_3600000.etymology.ttl.gz error 37000 SP029: TURTLE RDF loader, line 4772623: syntax error processed pending to here.
     
 edit files manually:
 
-    zcat /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl.gz > /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl
-    emacs -nw /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl.gz      #goto-line 10636983
-    #change line
-    gzip /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl
+    zcat /srv/datasets/dbnary/20170920/enwkt-0_1800000.etymology.ttl.gz > /srv/datasets/dbnary/20170920//enwkt-0_1800000.etymology.ttl
+    emacs -nw /srv/datasets/dbnary/20170920/enwkt-0_1800000.etymology.ttl.gz      #goto-line 10636983
+    #change line and then
+    gzip /srv/datasets/dbnary/20170920/enwkt-0_1800000.etymology.ttl
 
-Go to step A above and repeat. Then run the following command from the terminal
+Go to step A above and repeat.
+
+Then run the following command from the terminal:
 
     isql 1111 dba password /opt/virtuoso/db/bootstrap.sql
 
-After dealing with errors relaunch the server.                              
+Now relaunch the server.                              
 From isql:
 
     sparql SELECT COUNT(*) WHERE { ?s ?p ?o } ;
@@ -216,6 +226,8 @@ From isql:
     urilbl_ac_init_db();
     -- Run the following procedure using the Virtuoso isql program to calculate the IRI ranks. Note this should be run periodically as the data grows to re-rank the IRIs.
     s_rank();
+
+Don't forget to change the db password.
 
 #### CORS setup
 The following link will help you set up CORS for Virtuoso: http://vos.openlinksw.com/owiki/wiki/VOS/VirtTipsAndTricksCORsEnableSPARQLURLs
