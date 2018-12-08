@@ -25,15 +25,6 @@ The code is distributed under [MIT licence](https://opensource.org/licenses/MIT)
 
 The site's html files are contained in [the repo root](https://github.com/esterpantaleo/etymology/tree/master/). The main page is [index.html](https://github.com/esterpantaleo/etymology/tree/master/index.html). To view the site you just need to navigate to the root of the repo.
 
-## Setting up the Dev Tools
-
-[GruntJS](https://gruntjs.com/) is currently being used as the task manager. It runs [JSLint](http://jshint.com/docs/) on the JavaScript files under [resources/js](https://github.com/esterpantaleo/etymology/tree/master/resources/js). In order to use these tools you will need to take the following steps:
-
-1. Install [Node](https://nodejs.org/)
-2. Run `npm install` from your the repo root.
-
-Then you can run a lint of the JS files by running `grunt js` in your command line, from the repo root.
-
 ## Using the SPARQL ENDPOINT 
 This code queries the [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) which I have set up and populated with data (RDF) produced with [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). 
 
