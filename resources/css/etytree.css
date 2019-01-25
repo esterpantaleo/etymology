@@ -32,7 +32,6 @@ html * {
 
 .ui-content {
     margin: 0px !important;
-    padding: 0px !important;
 }
 
 .ui-dialog-content {
@@ -63,7 +62,6 @@ html * {
     position: absolute;
     background: lightblue;
     text-align: left;
-    padding: 1em 1em 1em 1em !important;
     font: 1em sans-serif;
     border-radius: 1em;
     width: auto;

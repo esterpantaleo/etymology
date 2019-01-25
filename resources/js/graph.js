@@ -154,15 +154,18 @@ var GRAPH = (function(module) {
 				//show tooltip on mouseover node
 				inner.selectAll(".word")
 					.on("mouseover", function(d) {
-						d3.select(this).style("cursor", "pointer"); 
+					        d3.select(this).style("cursor", "pointer");
 						d3.selectAll(".tooltipText").remove();
 						var tooltipDiv = d3.select("#tooltipPopup")
-						    .style("display", "inline")
-						    .style("left", (Math.min(d3.event.pageX + 38, width - 190)) + "px")
-						    .style("top", (d3.event.pageY - 28) + "px")
+						    .attr("style", "padding: 1em 1em 1em !important;" +
+							   "display:inline;" +
+							   "left:" + Math.min(d3.event.pageX + 38, width - 190) + "px;" +
+							   "top" + (d3.event.pageY - 28) + "px;")
 						    .append("div")
                                                     .attr("class", "tooltipText");
-						that.dagre.node(d).tooltip(tooltipDiv);
+					     d3.select(".tooltip")
+                                                    .style("padding", "1em 1em 1em 1em !important");
+					    that.dagre.node(d).tooltip(tooltipDiv);
 						d3.event.stopPropagation();
 					});
 		
@@ -187,16 +190,18 @@ var GRAPH = (function(module) {
 						return that.dagre.node(d).iso.length / 1.7 + "em";
 					})
 					.attr("height", "1em")
-					.on("mouseover", function(d) {
+				        .on("mouseover", function(d) {
 						d3.selectAll(".tooltipText").remove();
 						d3.select("#tooltipPopup")
-							.style("display", "inline")
-							.style("left", (d3.event.pageX) + "px")
-							.style("top", (d3.event.pageY - 28) + "px")
-						        .attr("class", "tooltipText")
-							.append("p")
+						        .attr("style", "padding: 0em 0.5em 0em 0.5em !important;" +
+						      "display: inline;" +
+						      "left: " + (d3.event.pageX) + "px;" +
+						      "top:" + (d3.event.pageY - 28) + "px;")
+					                .append("div")
+					                .attr("class", "tooltipText")
+					                .append("p")
 							.html(that.dagre.node(d).lang);
-						d3.event.stopPropagation();
+					        d3.event.stopPropagation();
 					});
 		
 				return inner;

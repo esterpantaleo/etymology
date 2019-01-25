@@ -363,7 +363,6 @@ var APP = (function(module) {
          * @function init
 	 */
 	var init = function() {
-	    
 	    d3.select("#helpPopup")
 		.html(HELP.intro);
 	    
@@ -385,8 +384,8 @@ var APP = (function(module) {
 	    
 	    $("#search").on("keypress", e => {
 		var search = this;
-		if (e.which === 13) {
-		    var lemma = $(search).val();
+		if (e.keyCode === 13) {
+		    var lemma = $("#search").val();
 		    renderSearchPage(lemma);
 		}
 	    });
