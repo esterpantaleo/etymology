@@ -379,7 +379,6 @@ var etytreeUpdate = (newState) => {
 	etytreeNotFound();
 	return;
     }
-    console.log("updsearch");    
     $("#search").val(newState.label);
     
     if (newState.label !== state.label || newState.lang !== state.lang || newState.ety !== state.ety) {
@@ -398,13 +397,11 @@ var etytreeUpdate = (newState) => {
 
 	    var iri = DATAMODEL.etytreeLink(state.label, state.lang, state.ety);
 	    etytreeLoading();
-	    console.log(iri)
 	    DATAMODEL.queryAncestors(iri, (etymologyEntries) => {
 		var g = new GRAPH.Graph("TB", {
 		    nodes: etymologyEntries2Nodes(etymologyEntries),
 		    edges: etymologyEntries.edges
 		}, width);
-		console.log(g);
 		etytreeShowAncestors(g);
 		
 	    });
@@ -413,7 +410,6 @@ var etytreeUpdate = (newState) => {
 	
 	DATAMODEL.queryDisambiguation(state.label)
 	    .subscribe((response) => {
-		console.log(response);
 		history.pushState(newState, "", "label=" + DATAMODEL.encodeLabel(state.label));
 
 		var N = Object.keys(response).length;
