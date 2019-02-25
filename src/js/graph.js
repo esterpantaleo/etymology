@@ -48,13 +48,13 @@ class Node {
      * @function tooltip
      */
     tooltip(element) {
-	var labels = this.label.split(",");
-	for (var i in labels) {
+	var that = this;
+	that.label.split(",").forEach((label, i) => {
 	    element.append("span")
-		.html("<b>" + labels[i] + "</b>");
+		.html("<b>" + label + "</b>");
 	    element.append("span")
 		.html("<br><br>");
-	    var ps = this.posAndGloss[i];
+	    var ps = that.posAndGloss[i];
 	    for (var j in ps) {
 		for (var k in ps[j].gloss) {
 		    element.append("span")
@@ -65,7 +65,7 @@ class Node {
 	    }
 	    element.append("span")
 		.html("<br><hr>Data is under CC BY-SA and has been extracted from: ");
-	    var ual = this.urlAndLabel[i];
+	    var ual = that.urlAndLabel[i];
 	    for (var j in ual) {
 		element.append("a")
 		    .attr("href", ual[j].url)
@@ -77,7 +77,7 @@ class Node {
 	    }
 	    element.append("span")
 		.html("<br><br>");
-	}
+	});
     }
 }
 

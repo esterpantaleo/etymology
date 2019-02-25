@@ -9,45 +9,42 @@
 <dd></dd>
 <dt><a href="#module_ETYMOLOGIES">ETYMOLOGIES</a></dt>
 <dd></dd>
+<dt><a href="#module_TOUR">TOUR</a></dt>
+<dd></dd>
 <dt><a href="#module_GRAPH">GRAPH</a></dt>
 <dd></dd>
-</dl>
-
-## Objects
-
-<dl>
-<dt><a href="#Tour">Tour</a> : <code>object</code></dt>
-<dd><p>A <a href="http://linkedin.github.io/hopscotch/">Hopscotch</a> tour.</p>
-</dd>
 </dl>
 
 <a name="module_APP"></a>
 
 ## APP
-**Requires**: <code>module:TOUR</code>, [<code>DATAMODEL</code>](#module_DATAMODEL), [<code>GRAPH</code>](#module_GRAPH)  
+**Requires**: [<code>TOUR</code>](#module_TOUR), [<code>DATAMODEL</code>](#module_DATAMODEL), [<code>GRAPH</code>](#module_GRAPH)  
 
 * [APP](#module_APP)
-    * [~nodesFrom(etymologyEntries, langIsoCode)](#module_APP..nodesFrom) ⇒ <code>Object.&lt;Node&gt;</code>
-    * [~ancestorsGraphPage(g)](#module_APP..ancestorsGraphPage)
-    * [~noAncestorsPage(node)](#module_APP..noAncestorsPage)
-    * [~disambiguationGraphPage(g)](#module_APP..disambiguationGraphPage)
-    * [~descendantsAccordion(node, response)](#module_APP..descendantsAccordion)
-    * [~loadingDescendantsGraph(index)](#module_APP..loadingDescendantsGraph)
-    * [~etymologyGraphPage(iri)](#module_APP..etymologyGraphPage)
-    * [~descendantsGraph(index, g)](#module_APP..descendantsGraph)
-    * [~descendantsDialog(node)](#module_APP..descendantsDialog)
-    * [~searchPage(label, langIsoCode, ety)](#module_APP..searchPage)
+    * [~etymologyEntries2Nodes(etymologyEntries, langIsoCode)](#module_APP..etymologyEntries2Nodes) ⇒ <code>Object.&lt;Node&gt;</code>
+    * [~etytreeShowAncestors(g)](#module_APP..etytreeShowAncestors)
+    * [~etytreeNoAncestors(node)](#module_APP..etytreeNoAncestors)
+    * [~etytreeShowDisambiguation(g)](#module_APP..etytreeShowDisambiguation)
+    * [~etytreeParseDescendants(response)](#module_APP..etytreeParseDescendants)
+    * [~etytreeLoadingDescendants(index)](#module_APP..etytreeLoadingDescendants)
+    * [~etytreeShowDescendantsAccordion(index, g)](#module_APP..etytreeShowDescendantsAccordion)
+    * [~etytreeDescendantsDialog(node)](#module_APP..etytreeDescendantsDialog)
+    * [~etyreeUpdate(state)](#module_APP..etyreeUpdate)
     * [~etytreeTitle()](#module_APP..etytreeTitle)
     * [~etytreeDescription()](#module_APP..etytreeDescription)
     * [~etytreeHelpPopup()](#module_APP..etytreeHelpPopup)
     * [~etytreeSearchButton()](#module_APP..etytreeSearchButton)
-    * [~getState(location)](#module_APP..getState) ⇒ <code>Object</code>
+    * [~etytreeLoading()](#module_APP..etytreeLoading)
+    * [~etytreeNotFound()](#module_APP..etytreeNotFound)
+    * [~etytreeHomePage()](#module_APP..etytreeHomePage)
 
-<a name="module_APP..nodesFrom"></a>
+<a name="module_APP..etymologyEntries2Nodes"></a>
 
-### APP~nodesFrom(etymologyEntries, langIsoCode) ⇒ <code>Object.&lt;Node&gt;</code>
+### APP~etymologyEntries2Nodes(etymologyEntries, langIsoCode) ⇒ <code>Object.&lt;Node&gt;</code>
 This function transforms an object consisting of EtymologyEntry-s,
-into an object consisting of Nodes
+into an object consisting of Nodes.
+If the second argument is specified, i.e., a language,
+only nodes in the specified language are returned.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
 **Returns**: <code>Object.&lt;Node&gt;</code> - a list of Nodes  
@@ -57,9 +54,9 @@ into an object consisting of Nodes
 | etymologyEntries | <code>Object.&lt;EtymologyEntry&gt;</code> |  |
 | langIsoCode | <code>String</code> | language iso code, e.g.: "eng" |
 
-<a name="module_APP..ancestorsGraphPage"></a>
+<a name="module_APP..etytreeShowAncestors"></a>
 
-### APP~ancestorsGraphPage(g)
+### APP~etytreeShowAncestors(g)
 Renders the Graph of Ancestors.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
@@ -68,10 +65,10 @@ Renders the Graph of Ancestors.
 | --- | --- |
 | g | <code>Graph</code> | 
 
-<a name="module_APP..noAncestorsPage"></a>
+<a name="module_APP..etytreeNoAncestors"></a>
 
-### APP~noAncestorsPage(node)
-Renders a no etymology message for the node
+### APP~etytreeNoAncestors(node)
+Renders a no etymology message for the given node
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
 
@@ -79,10 +76,10 @@ Renders a no etymology message for the node
 | --- | --- |
 | node | <code>Node</code> | 
 
-<a name="module_APP..disambiguationGraphPage"></a>
+<a name="module_APP..etytreeShowDisambiguation"></a>
 
-### APP~disambiguationGraphPage(g)
-Renders the Disambiguation Graph.
+### APP~etytreeShowDisambiguation(g)
+Renders the Disambiguation Page.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
 
@@ -90,21 +87,20 @@ Renders the Disambiguation Graph.
 | --- | --- |
 | g | <code>Graph</code> | 
 
-<a name="module_APP..descendantsAccordion"></a>
+<a name="module_APP..etytreeParseDescendants"></a>
 
-### APP~descendantsAccordion(node, response)
+### APP~etytreeParseDescendants(response)
 Renders the Accordion with descendants of node.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
 
 | Param | Type |
 | --- | --- |
-| node | <code>Node</code> | 
 | response | <code>Object</code> | 
 
-<a name="module_APP..loadingDescendantsGraph"></a>
+<a name="module_APP..etytreeLoadingDescendants"></a>
 
-### APP~loadingDescendantsGraph(index)
+### APP~etytreeLoadingDescendants(index)
 Renders the loading message when loading the descendants graph.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
@@ -113,22 +109,9 @@ Renders the loading message when loading the descendants graph.
 | --- | --- |
 | index | <code>Number</code> | 
 
-<a name="module_APP..etymologyGraphPage"></a>
+<a name="module_APP..etytreeShowDescendantsAccordion"></a>
 
-### APP~etymologyGraphPage(iri)
-Renders the graph of ancestors of a specified
-word (label) in a specified language (langIsoCode) 
-using data from Wiktionary etymology number ety.
-
-**Kind**: inner method of [<code>APP</code>](#module_APP)  
-
-| Param | Type |
-| --- | --- |
-| iri | <code>String</code> | 
-
-<a name="module_APP..descendantsGraph"></a>
-
-### APP~descendantsGraph(index, g)
+### APP~etytreeShowDescendantsAccordion(index, g)
 Renders the Graph of Descendants in the accordion.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
@@ -138,11 +121,11 @@ Renders the Graph of Descendants in the accordion.
 | index | <code>Number</code> | index indicating position in the accordion |
 | g | <code>Graph</code> | a Graph with only descendants in one language |
 
-<a name="module_APP..descendantsDialog"></a>
+<a name="module_APP..etytreeDescendantsDialog"></a>
 
-### APP~descendantsDialog(node)
+### APP~etytreeDescendantsDialog(node)
 Renders the page that will contain the Graph of Descendants
-of a specified Node; queries the database to get pos, gloss and links.
+of a node; queries the database to get pos, gloss and links.
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
 
@@ -150,20 +133,18 @@ of a specified Node; queries the database to get pos, gloss and links.
 | --- | --- |
 | node | <code>Node</code> | 
 
-<a name="module_APP..searchPage"></a>
+<a name="module_APP..etyreeUpdate"></a>
 
-### APP~searchPage(label, langIsoCode, ety)
+### APP~etyreeUpdate(state)
 Renders the page corresponding to a search
-of a specified word (label) in a specific language 
-(if specified) with a specific value of ety (if specified).
+of a specified word (label), in a specific language 
+(if specified), with a specific value of ety (if specified).
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| label | <code>String</code> | e.g., "door" |
-| langIsoCode | <code>String</code> | language iso code, e.g., "eng" |
-| ety | <code>Number</code> |  |
+| state | <code>Object</code> | e.g., { label: "door", lang: "eng", ety: "1" } |
 
 <a name="module_APP..etytreeTitle"></a>
 
@@ -180,7 +161,7 @@ Renders the description
 <a name="module_APP..etytreeHelpPopup"></a>
 
 ### APP~etytreeHelpPopup()
-Renders the hep popup of the main page
+Renders the help popup of the main page
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
 <a name="module_APP..etytreeSearchButton"></a>
@@ -189,18 +170,24 @@ Renders the hep popup of the main page
 Defines interactions with the search bar and the search button
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-<a name="module_APP..getState"></a>
+<a name="module_APP..etytreeLoading"></a>
 
-### APP~getState(location) ⇒ <code>Object</code>
-Given a window location returns the current state of etytree
+### APP~etytreeLoading()
+Renders the loading message
 
 **Kind**: inner method of [<code>APP</code>](#module_APP)  
-**Returns**: <code>Object</code> - an object with elements label, lang and ety  
+<a name="module_APP..etytreeNotFound"></a>
 
-| Param | Type | Description |
-| --- | --- | --- |
-| location | <code>String</code> | e.g.: "label=door&lang=eng&ety=0" |
+### APP~etytreeNotFound()
+Renders a not found page
 
+**Kind**: inner method of [<code>APP</code>](#module_APP)  
+<a name="module_APP..etytreeHomePage"></a>
+
+### APP~etytreeHomePage()
+Renders the home page
+
+**Kind**: inner method of [<code>APP</code>](#module_APP)  
 <a name="module_DATAMODEL"></a>
 
 ## DATAMODEL
@@ -219,11 +206,11 @@ Given a window location returns the current state of etytree
     * [~dbnaryLabel(iri)](#module_DATAMODEL..dbnaryLabel) ⇒ <code>String</code>
     * [~dbnaryIso(iri)](#module_DATAMODEL..dbnaryIso) ⇒ <code>String</code>
     * [~dbnaryEty(iri)](#module_DATAMODEL..dbnaryEty) ⇒ <code>Number</code>
-    * [~etytreeLink()](#module_DATAMODEL..etytreeLink)
+    * [~etytreeLink(label, lang, ety)](#module_DATAMODEL..etytreeLink)
     * [~assignNodes(etymologyEntries)](#module_DATAMODEL..assignNodes) ⇒ <code>Object.&lt;EtymologyEntry&gt;</code>
     * [~setEtymologyEntries(properties, ancestors)](#module_DATAMODEL..setEtymologyEntries) ⇒ <code>Object</code>
     * [~cleanEtymologyEntries(values)](#module_DATAMODEL..cleanEtymologyEntries) ⇒ <code>Object</code>
-    * [~queryDisambiguation(lemma)](#module_DATAMODEL..queryDisambiguation) ⇒ <code>Observable</code>
+    * [~queryDisambiguation(label)](#module_DATAMODEL..queryDisambiguation) ⇒ <code>Observable</code>
     * [~parseDisambiguation(response)](#module_DATAMODEL..parseDisambiguation) ⇒ <code>Array.&lt;EtymologyEntry&gt;</code>
     * [~queryGloss(graph)](#module_DATAMODEL..queryGloss) ⇒ <code>Observable</code>
     * [~parseGloss(response)](#module_DATAMODEL..parseGloss) ⇒ <code>Object</code>
@@ -235,7 +222,7 @@ Given a window location returns the current state of etytree
     * [~mergeAncestors(ancestors, moreAncestors)](#module_DATAMODEL..mergeAncestors) ⇒ <code>Array.&lt;String&gt;</code>
     * [~queryAncestors(iri, f)](#module_DATAMODEL..queryAncestors) ⇒ <code>Array.&lt;String&gt;</code>
     * [~parseAncestors(response)](#module_DATAMODEL..parseAncestors) ⇒ <code>Object</code>
-    * [~queryDescendants(node)](#module_DATAMODEL..queryDescendants) ⇒ <code>Observable</code>
+    * [~queryDescendants(iris)](#module_DATAMODEL..queryDescendants) ⇒ <code>Observable</code>
     * [~parseDescendants(response)](#module_DATAMODEL..parseDescendants) ⇒ <code>Object.&lt;EtymologyEntry&gt;</code>
 
 <a name="module_DATAMODEL..EtymologyEntry"></a>
@@ -359,8 +346,15 @@ Given an iri, returns language + label.
 
 <a name="module_DATAMODEL..etytreeLink"></a>
 
-### DATAMODEL~etytreeLink()
+### DATAMODEL~etytreeLink(label, lang, ety)
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| label | <code>String</code> |  |
+| lang | <code>String</code> | an ISO code (e.g: "eng") |
+| ety | <code>String</code> | a number or a string with integers |
+
 <a name="module_DATAMODEL..assignNodes"></a>
 
 ### DATAMODEL~assignNodes(etymologyEntries) ⇒ <code>Object.&lt;EtymologyEntry&gt;</code>
@@ -402,7 +396,7 @@ the set of ancestors and descendants then merge them into one node)
 
 <a name="module_DATAMODEL..queryDisambiguation"></a>
 
-### DATAMODEL~queryDisambiguation(lemma) ⇒ <code>Observable</code>
+### DATAMODEL~queryDisambiguation(label) ⇒ <code>Observable</code>
 Given a string returns an RxJS observable
 containing the parsed response of the server to
 the disambiguationQuery.
@@ -411,7 +405,7 @@ the disambiguationQuery.
 
 | Param | Type |
 | --- | --- |
-| lemma | <code>String</code> | 
+| label | <code>String</code> | 
 
 <a name="module_DATAMODEL..parseDisambiguation"></a>
 
@@ -528,12 +522,12 @@ Posts an XMLHttpRequest to find ancestors.
 
 <a name="module_DATAMODEL..queryDescendants"></a>
 
-### DATAMODEL~queryDescendants(node) ⇒ <code>Observable</code>
+### DATAMODEL~queryDescendants(iris) ⇒ <code>Observable</code>
 **Kind**: inner method of [<code>DATAMODEL</code>](#module_DATAMODEL)  
 
 | Param | Type |
 | --- | --- |
-| node | <code>Node</code> | 
+| iris | <code>Array.&lt;String&gt;</code> | 
 
 <a name="module_DATAMODEL..parseDescendants"></a>
 
@@ -704,6 +698,26 @@ one for each of the elements in input array iris
 | --- | --- | --- |
 | .<string> | <code>Array</code> | iris - an array of strings |
 
+<a name="module_TOUR"></a>
+
+## TOUR
+<a name="module_TOUR..Tour"></a>
+
+### TOUR~Tour : <code>object</code>
+A [Hopscotch](http://linkedin.github.io/hopscotch/) tour.
+
+**Kind**: inner namespace of [<code>TOUR</code>](#module_TOUR)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| id | <code>String</code> | Id of the tutorial. |
+| steps | <code>Array.&lt;Object&gt;</code> | Array of steps in the tutorial. |
+| steps.target | <code>String</code> | Target of the step. |
+| steps.placement | <code>String</code> | Placement of the step. |
+| steps.title | <code>String</code> | Title of the step. |
+| steps.content | <code>String</code> | Description of the step. |
+
 <a name="module_GRAPH"></a>
 
 ## GRAPH
@@ -807,44 +821,3 @@ Sets the value of this.languages if undefined
 | --- | --- | --- |
 | nCol | <code>Number</code> | number of nodes that will be displayed in a line |
 
-<a name="Tour"></a>
-
-## Tour : <code>object</code>
-A [Hopscotch](http://linkedin.github.io/hopscotch/) tour.
-
-**Kind**: global namespace  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| id | <code>String</code> | Id of the tutorial. |
-| steps | <code>Array.&lt;Object&gt;</code> | Array of steps in the tutorial. |
-| steps.target | <code>String</code> | Target of the step. |
-| steps.placement | <code>String</code> | Placement of the step. |
-| steps.title | <code>String</code> | Title of the step. |
-| steps.content | <code>String</code> | Description of the step. |
-
-
-* [Tour](#Tour) : <code>object</code>
-    * [.onEnd()](#Tour.onEnd)
-    * [.onClose()](#Tour.onClose)
-    * [.getCookie()](#Tour.getCookie)
-
-<a name="Tour.onEnd"></a>
-
-### Tour.onEnd()
-Sets cookie on end (Tour.onEnd).
-
-**Kind**: static method of [<code>Tour</code>](#Tour)  
-<a name="Tour.onClose"></a>
-
-### Tour.onClose()
-Sets cookie on close (Tour.onClose).
-
-**Kind**: static method of [<code>Tour</code>](#Tour)  
-<a name="Tour.getCookie"></a>
-
-### Tour.getCookie()
-Gets cookie.
-
-**Kind**: static method of [<code>Tour</code>](#Tour)  

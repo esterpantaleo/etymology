@@ -1,3 +1,7 @@
+/** 
+ * @module TOUR
+ **/
+
 const hopscotch = require('hopscotch');
 
 /**

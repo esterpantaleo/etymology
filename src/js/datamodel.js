@@ -77,7 +77,8 @@ var encodeLabel = (label) => {
     return label.replace(/'/g, "\\\\'")            
         .replace("·", "%C2%B7")
         .replace("*", "_")
-        .replace("'", "__");
+        .replace("'", "__")
+	.replace(" ", "_");
     //.replace("/", "!slash!");            
 };
 
@@ -139,14 +140,17 @@ var dbnaryEty = (iri) => {
 
 /** 
  * @function etytreeLink
+ * @param {String} label
+ * @param {String} lang - an ISO code (e.g: "eng")  
+ * @param {String} ety - a number or a string with integers
  */
-var etytreeLink = (word, lang, ety) => {
+var etytreeLink = (label, lang, ety) => {
     var prefix = DBNARY_ENG;
     if (lang !== "eng") {
 	prefix = prefix + lang + "/";
     }
-    var iri = (ety === "0") ? "" : (ety + "_");
-    iri = prefix + "__ee_" + iri + word;
+    var iri = (ety === "0" || ety === 0) ? "" : (ety + "_");
+    iri = prefix + "__ee_" + iri + encodeLabel(label);
     return iri;
 };
 
@@ -448,12 +452,11 @@ var cleanEtymologyEntries = (values) => { //remove temporary nodes
  * the disambiguationQuery.
  * @function queryDisambiguation
  *
- * @param {String} lemma
+ * @param {String} label
  * @return {Observable}
  */
-var queryDisambiguation = (lemma) => {
-    var encodedLemma = encodeLabel(lemma);
-    var url = encodeQuery(ETYMOLOGIES.disambiguationQuery(encodedLemma));
+var queryDisambiguation = (label) => {
+    var url = encodeQuery(ETYMOLOGIES.disambiguationQuery(label));
     
     return ETYMOLOGIES.getXMLHttpRequest(url)
 	.map(parseDisambiguation);
@@ -725,11 +728,10 @@ var parseAncestors = (response) => {
 /**
  * @function queryDescendants
  *
- * @param {Node} node
+ * @param {Array.<String>} iris
  * @return {Observable}
  */
-var queryDescendants = (node) => {
-    var iris = node.iri;
+var queryDescendants = (iris) => {
     return Rx.Observable.zip
 	.apply(this, iris
 	       .map((iri) => {
@@ -746,7 +748,7 @@ var queryDescendants = (node) => {
 		    ee[i] = e[i];
 		}
 		return ee;
-					}, {});
+	    }, {});
 	    return assignNodes(values);
 	})
 };
@@ -783,5 +785,6 @@ module.exports = {
     queryDisambiguationGloss: queryDisambiguationGloss,
     queryAncestors: queryAncestors,
     queryDescendants: queryDescendants,
-    queryGloss: queryGloss
+    queryGloss: queryGloss,
+    encodeLabel: encodeLabel
 }
