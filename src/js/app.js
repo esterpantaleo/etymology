@@ -143,6 +143,7 @@ var etytreeShowAncestors = (g) => {
     g.render("#tree-overlay", "ancestors", width, height)
 	.selectAll("g.node")
 	.on("click", (d) => {
+	    console.log("clicked on ancestors");
 	    var node = g.dagre.node(d);
 	    etytreeDescendantsDialog(node);
 	});
@@ -201,6 +202,7 @@ var etytreeShowDisambiguation = (g) => {
     g.render("#tree-overlay", "disambiguation", width, height)
 	.selectAll("g.node")
 	.on("click", (d) => {
+	    console.log("updating at " + node.label + " " + node.iso + " " + node.ety);
 	    var node = g.dagre.node(d);
 	    etytreeUpdate({ label: node.label, lang: node.iso, ety: node.ety });
 	});
@@ -323,6 +325,7 @@ var etytreeShowDescendantsAccordion = (index, g) => {
 		.remove();
 
 	    var node = g.dagre.node(d);
+	    console.log("updating at " + node.label + " " +  node.iso + " " +  node.ety);
 	    etytreeUpdate({ label: node.label, lang: node.iso, ety: node.ety });
 	
 	});
@@ -375,6 +378,7 @@ var etytreeDescendantsDialog = (node) => {
  * @param {Object} state - e.g., { label: "door", lang: "eng", ety: "1" }
  */
 var etytreeUpdate = (newState) => {
+    console.log("running etytreeupdate");
     if (newState.label === null) {
 	etytreeNotFound();
 	return;
@@ -392,6 +396,7 @@ var etytreeUpdate = (newState) => {
 	    //etymology of single English characters
 	    if (notForeign.test(state.label))
 		return;
+	console.log("there is a problem here");
 	if (state.label !== null && state.lang !== null && state.ety !== null) {
 	    history.pushState(newState, "", "label=" + DATAMODEL.encodeLabel(state.label) + "&lang=" + state.lang + "&ety=" + state.ety);
 
@@ -589,6 +594,8 @@ var location = window.location.pathname.split("/").slice(-1)[0];
 if (location === "" || location === "index.html") {
     etytreeHomePage();    
 } else {
+    console.log("location");
+    console.log(location);
     var search = new URLSearchParams(location);
     etytreeUpdate({ label: search.get("label"), lang: search.get("lang"), ety: search.get("ety") });
 }
