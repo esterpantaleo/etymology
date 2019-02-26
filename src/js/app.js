@@ -202,8 +202,8 @@ var etytreeShowDisambiguation = (g) => {
     g.render("#tree-overlay", "disambiguation", width, height)
 	.selectAll("g.node")
 	.on("click", (d) => {
-	    console.log("updating at " + node.label + " " + node.iso + " " + node.ety);
 	    var node = g.dagre.node(d);
+	    console.log("updating at " + node.label + " " + node.iso + " " + node.ety);
 	    etytreeUpdate({ label: node.label, lang: node.iso, ety: node.ety });
 	});
 

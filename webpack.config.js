@@ -54,7 +54,7 @@ module.exports = {
 	    { test: /\.html$/, use: ['html-loader'], exclude: /node_modules/ },
 	    { test: /\.css$/, use: ['style-loader', 'css-loader'], include: /node_modules/ },
 	    { test: /\.js$/, exclude: /node_modules/, use: ['babel-loader'] },
-	    { test: /\.(jpe?g|png|gif)$/i, loader: "file-loader", query: { name: '[name].[ext]', outputPath: 'img/' } },
+	    { test: /\.(jpe?g|png|gif)$/i, loader: "file-loader", options: { name: '[name].[ext]',  publicPath: 'img/' } },
 	    { test: /\.(tab|csv)$/, loader: 'raw-loader' }
 	]
     },
