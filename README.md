@@ -6,6 +6,9 @@ This project has been inspired by my interest in etymology, in  open source coll
 
 If you have comments on the project please write on its [talk page](https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary).
 
+## Branches
+The master branch is for development and for local installs. The webpack-branch is used in production.
+
 ## Description
 Etytree uses data extracted from an XML dump of the English Wiktionary using an algorithm implemented in [dbnary_etymology](https://bitbucket.org/esterpantaleo/dbnary_etymology). The extracted data is kept in sync with Wiktionary each time a new dump is generated (the dump currently used dates back to September 28th, 2017). Data extracted with dbnary_etymology has been loaded into a Virtuoso DBMS which can be accessed at [wmflabs etytree-virtuoso sparql endpoint](http://etytree-virtuoso.wmflabs.org/sparql) and explored with a faceted browser. 
 
