@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" charset="UTF-8">
+
+<style>
+select {
+   width: 120px;
+   display: inline-block;
+}
+
+.ui-selectmenu-text {
+    font-size: 12px;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.overlay {
+    background-color: #EEE;
+}
+
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.node rect {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.node text {
+    font-family: sans-serif;
+}
+
+.link {
+    fill: none;
+    stroke-width: 1.5px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    shape-rendering: crispEdges;
+    stroke-width: 1px;
+}
+
+.templink {
+    fill: none;
+    stroke: red;
+    stroke-width: 3px;
+}
+
+.ghostCircle.show {
+    display: block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle {
+    display: none;
+}
+
+.tooltip {
+    font-size: 12px;
+    position: absolute;
+    text-align: left;
+    padding: 2px;
+    font-family: sans-serif;
+    background: white;
+    border: 2px;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 1000;
+    max-width: 255px;
+    box-shadow: 10px 10px 5px #888888;
+}
+
+.tooltip2 {
+    font-size: 12px;
+    position: absolute;
+    text-align: left;
+    padding: 2px;
+    font-family: sans-serif;
+    background: transparent;
+    border: 2px;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 1000;
+    max-width: 255px;
+    box-shadow: 10px 10px 5px #888888;
+}
+
+.tooltip3 {
+    font-size: 12px;
+    position: absolute;
+    text-align: left;
+    padding: 2px;
+    font-family: sans-serif;
+    background: white;
+    border: 2px;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 1000;
+    max-width: 255px;
+    opacity: 0;
+    box-shadow: 10px 10px 5px #888888;
+}
+
+.tooltip:hover {
+    display: block;
+    opacity: 1;
+}
+
+.ui-menu-item {
+    font-size: 10px;
+}
+
+input:focus::-webkit-input-placeholder { color:transparent; }
+input:focus:-moz-placeholder { color:transparent; } 
+input:focus::-moz-placeholder { color:transparent; }
+input:focus:-ms-input-placeholder { color:transparent; } 
+</style>
+
+
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="hopscotch.min.css">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="hopscotch.min.js"></script>
+<script src="tour.js"></script>
+<script src="etyTree.js"></script>
+
+<body>  
+<div data-role="page">
+    <div data-role="header">
+  <!-- <div class="ui-fieldcontain" id="tree-container">-->
+        <table style="empty-cells:hide; margin-left:auto; margin-right:auto;"> 
+            <tr> 
+                <td>
+                    <a id="go-back" class="ui-shadow ui-btn ui-corner-all ui-icon-arrow-l ui-btn-icon-notext"  data-inline="true" style="border:0" title="go back"></a>
+                </td>
+                <td id="ui-table">
+                    <a id="go-forward" class="ui-shadow ui-btn ui-corner-all ui-icon-arrow-r ui-btn-icon-notext"  data-inline="true" style="border:0" title="go forward"></a>
+                </td>
+                <td>
+                    <input type="text" data-type="search" placeholder="search etymology" id="tags"></input>
+                </td>
+                <td>
+                    <a href="#helpPopup" data-rel="popup" id="aHelpPopup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left" style="border:0" data-inline="true">help</a>
+                    <div data-role="popup" id="helpPopup" class="ui-content" style="box-shadow:10px 10px 5px #888888">
+                        <p style="font-size:12px;border-radius:8px;max-width:255px;" id="p-helpPopup">
+                            Search the etymology of a word: enter a word in the search tab, then press Enter or click on one of the words in the drop-down menu. <br><br>In this demo only a small number of words is available. <br> We are currently working on a version that can use the etymology of any words in wiktionary.
+                        </p>
+                    </div>
+                </td>
+                <td id="checkbox-col"> 
+                    <label id="show-time">
+                        show timeline
+                        <input type="checkbox" id="time-checkbox"></input>
+                    </label>
+                </td>
+                <td id="lan">
+                    <select class="ui-shadow ui-btn ui-corner-all ui-select" style="font-size:10px;border:0;">
+                        <option value="1">en - English</option>
+                        <option value="2">other languages not implemented yet</option>
+                        <option value="3">in principle any language in Wiktionary could be implemented</option>
+                    </select>
+                </td>
+
+
+            </tr>
+        </table>
+    </div>
+    <div data-role="main" class="ui-fieldcontain" id="tree-container">
+        <div id="logo" style="margin-left:15px;">
+            <div style="text-align:center;">
+                <br><br><br><br><br>
+                <span style="font-size:20px;font-family:courier new;">etytree</span> : a visual etymology dictionary using trees
+                <br>
+                <span style="color:red;font-size:10px;">this is a demo (only a few words are searchable)</span>
+                <br><br><br><br><br>
+            </div>
+            <div>
+                <span style="font-family:courier new;">etytree</span> can visualize the etymological tree of a word, i.e., the etymology - or the origin of a word and the historical development of its meaning - in the form of a tree, reconstructing its ancestral form, its cognate words, its derived words, etc.
+                <br>
+                <br>
+                The current version is a demo that implements the interactive layout for a very limited set of words. 
+                <br>
+            </div>
+            <br>
+            <div style="text-align:center;">
+                <span style="font-size:10px;">
+                    This project is open source (<a href="https://github.com/esterpantaleo/etymology">source code</a>) and uses <a href="http://d3js.org/">d3</a> and <a href="https://www.wiktionary.org/">Wiktionary</a>. 
+                    <br>
+                    Anyone can directly contribute or indirectly contribute by improving the etymological entries of words in Wiktionary. 
+                    <br>
+                    If you would like to contribute email esterpantaleo at gmail dot com.
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
