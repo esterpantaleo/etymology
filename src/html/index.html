@@ -40,10 +40,22 @@
 
   @media screen and (min-width: 0px) and (max-width: 600px) {
     #space { display: none; }
+    .responsiveGif {
+      min-width: 300px;
+      min-height: 250px;
+      width:50%;
+      height:50%;
+    }
   }
 
   @media screen and (min-width: 601px) {
     #space { display: block; }
+    .responsiveGif {
+      max-width: 550px;
+      max-height: 500px;
+      width:50%;
+      height:50%;
+    }
   }
 </style>
 </head>
@@ -76,7 +88,7 @@
       <b>Use etytree to discover how English <i>tear</i> and Italian <i>lacrima</i> (which means tear) share a common ancestor. <br>
       Can you find it? </b><br><br>
 
-      <img src="./src/img/tear.gif" alt="animated gif of how to explore the etymology of English tear using etytree" style="width:30%;height:30%;float:center;"> 
+      <img class="responsiveGif" src="./img/tear.gif" alt="animated gif of how to explore the etymology of English tear using etytree" style="float:center;"> 
       <br><br><br><br>
       Data is extracted from Wiktionary<sup><a href="#fn1" id="ref1">1</a></sup> using a free context grammar<sup><a href="#fn2" id="ref2">2</a></sup>.
 
