@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<link rel="shortcut icon" href="img/etytree_logo.png">
+<link rel="stylesheet" href="etytree.css" type="text/css">
+<link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
+<link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/1.10.2/jquery.js"></script>
+<script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+<script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<body> 
+  <div data-role="header" id="header">
+    <table>
+      <td>
+         <img id="logo" src="img/etytree_logo.png" alt="logo" />
+      </td>
+      <td>
+        <table> 
+	  <tr>
+            <div id="tdTitle">
+	      <span class="bigSpan">etytree</span><span class="mediumSpan"> - a graphical and multilingual etymology dictionary</span>
+              <br>
+            </div>  				                
+          </tr>
+          <tr>
+            <td>
+              <input class="mediumSpan" type="text" data-type="search" placeholder="search" id="search"></input>
+            </td>
+	    <td>
+              <a class="ui-btn ui-corner-all searchButton" id="btnSearch" type="button" data-inline="true"><span class="mediumSpan">OK</span></a>
+            </td>
+            <td>
+              <a href="#divHelpPopup" data-rel="popup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true" id="aHelpPopup"><span class="mediumSpan">help</span></a>
+              <div data-role="popup" data-history="false" id="divHelpPopup" class="ui-content help">
+                <p id="helpPopup" class="help" />
+              </div>
+            </td>
+	    <td>
+              <a class="ui-btn ui-corner-all" id="btnIntro" type="button" data-inline="true" href="./src/img/tear.gif"><span class="mediumSpan">INTRO</span></a>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td id="tdEmpty">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </td>
+      <br>
+    </table>
+  </div>
+  <div data-role="content" class="ui-content" id="tree-container" />
+  <script src="bundle.js"></script>
+</body>
+</html>
