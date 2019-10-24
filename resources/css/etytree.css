@@ -165,6 +165,10 @@ input:focus:-ms-input-placeholder { color:transparent; }
     .isoText { font-size: 1em; } 
 }
 
+.isoText {
+    font-style: italic;
+}
+
 .isoRect {
     fill: red;
     stroke: none!important;
@@ -174,12 +178,12 @@ input:focus:-ms-input-placeholder { color:transparent; }
 
 .node rect {
     fill: white; 
-    stroke: steelblue; 
+    stroke: transparent; 
     stroke-width: 0.2em;
 }
 
 .edgePath path.path {
-    stroke: steelblue;
+    stroke: black;
     fill: none;
     stroke-width: 0.2em;
 }

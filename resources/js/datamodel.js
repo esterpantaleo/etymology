@@ -346,14 +346,14 @@ var DATAMODEL = (function(module) {
 					    target: target,
 					    style: {
 					    label: "",
-						lineInterpolate: "basis",
-						arrowheadStyle: "fill: steelblue"
+						lineInterpolate: "bundle",
+						arrowheadStyle: "fill: transparent"
 						}
 				    });
 			    }
 				    return a;
-			}, [])//remove duplicate edges, maybe remove this                                                                                                                                                                                                                                                                                    
-		    .filter((thing, index, self) =>
+		    }, [])//remove duplicate edges, maybe remove this
+			.filter((thing, index, self) =>
 				    index === self.findIndex((t) => (
 								     t.source === thing.source && t.target === thing.target
 								     ))
