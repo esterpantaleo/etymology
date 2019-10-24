@@ -380,7 +380,7 @@ var setEtymologyEntries = (properties, ancestors) => {
 		    style: {
 			label: "",
 			lineInterpolate: "basis",
-			arrowheadStyle: "fill: steelblue"
+			arrowheadStyle: "fill: transparent"
 		    }
 		});
 	    }

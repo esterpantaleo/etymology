@@ -288,6 +288,10 @@ Safari
     }
 }
 
+.isoText {
+    font-style: italic;
+}
+
 .isoRect {
     fill: red;
     stroke: none !important;
@@ -297,7 +301,7 @@ Safari
 
 .node rect {
     fill: white;
-    stroke: steelblue;
+    stroke: transparent;
     stroke-width: 0.2em;
 }
 
