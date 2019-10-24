@@ -32,6 +32,11 @@ var Tour = {
 			placement: "left",
 			title: "Language",
 			content: "Choose language version (not available yet)."*/
+	}, {
+	        target: "btnIntro",
+	        placement:"left",
+	        title: "Intro",
+	        content: "Click this button to read more about etytree and how to use it"
 	}],
 	/**
 	 * Sets cookie on end (Tour.onEnd).

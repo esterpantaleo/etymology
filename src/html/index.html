@@ -1,91 +1,53 @@
-<!DOCTYPE html> 
-
-<head>
+<!DOCTYPE html>
+<meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-
+<link rel="shortcut icon" href="img/etytree_logo.png">
+<link rel="stylesheet" href="etytree.css" type="text/css">
 <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
 <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/1.10.2/jquery.js"></script>
 <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
 <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-
-<style>
-  .ui-overlay-a, .ui-page-theme-a, .ui-page-theme-a .ui-panel-wrapper {
-    background-color: white;
-  }
-
-  a:-webkit-any-link {
-    text-decoration: none;
-  }
-
-  .ui-btn-corner-all {
-    border-radius: 1m;
-  }
-
-  .button {
-    color: steelblue !important;
-  }
-
-  .blockquote {
-    font-size: 1.5em;
-   }
-
-  .cite {
-    font-size: 1.5em;
-  }
-
-  .aButton {
-    font-size: 1em; 
-  }
-
-  @media screen and (min-width: 0px) and (max-width: 600px) {
-    #space { display: none; }
-  }
-
-  @media screen and (min-width: 601px) {
-    #space { display: block; }
-  }
-</style>
-</head>
-
-<body>
-<div data-role="page">
-  <button><a class="aButton" href="http://etytree-virtuoso.wmflabs.org/sparql" target="_blank">Query the database</a></button>
-  <button><a class="aButton" href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank">IEG proposal</a></button>
-  <button><a class="aButton" href="https://meta.wikimedia.org/wiki/Grants:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary/Renewal" target="_blank">Renewal proposal</a></button>
-  <button><a class="aButton" href="https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank">Give feedback!</a></button>
-  <button><a class="aButton" href="./src/html/index.etytree.html" target="_blank">Test etytree</a></button>
-  <div data-role="main" class="ui-content" style="text-align: center;">
-    <div id="space">
-        <br><br><br><br>
-    </div> 
-    <h1>
-      <a href=".src/html/index.etytree.html"  target="_blank" style="font-size:2em">etytree</a>
-      <span style="font-size:1em"><br>A graphical and multilingual etymology dictionary based on Wiktionary</span>
-    </h1>
-    <div style="font-size: 1.2em">
-      What is etymology? <br>
-      <blockquote>
-        <p>Etymology is the origin of a word and the historical development of its meaning.</p>
-        <footer> - <cite><a href="https://en.oxforddictionaries.com/" target="_blank">The Oxford English Dictionary</a></cite></footer>
-      </blockquote>
-      <div id="space"><br><br><br><br></div>
-      Etytree is the first graphical and multilingual etymology dictionary. <br>
-      With etytree you can visualize the steps that led to the formation of a word as we know it, and <br>
-      discover words that share one or more ancestors with that word in the same or in a different language. <br><br><br>
-      <b>Use etytree to discover how English <i>tear</i> and Italian <i>lacrima</i> (which means tear) share a common ancestor. <br>
-      Can you find it? </b><br><br>
-
-      <img src="./src/img/tear.gif" alt="animated gif of how to explore the etymology of English tear using etytree" style="width:30%;height:30%;float:center;"> 
-      <br><br><br><br>
-      Data is extracted from Wiktionary<sup><a href="#fn1" id="ref1">1</a></sup> using a free context grammar<sup><a href="#fn2" id="ref2">2</a></sup>.
-
-      <br><br>
-      If you have comments, please add a note on the <a href="https://meta.wikimedia.org/wiki/Grants_talk:IEG/A_graphical_and_interactive_etymology_dictionary_based_on_Wiktionary" target="_blank">Discussion page</a>
-      </div> 
-    <br>
-    <sup id="fn1">1. Data extraction can be performed at each new release of a Wiktionary dump.<a href="#ref1" title="Jump back to footnote 1 in the text.">&#8617</a></sup><br>
-    <sup id="fn2">2. The java code used to extract the database is available on <a href="https://bitbucket.org/esterpantaleo/dbnary_etymology" target="_blank">bitbucket</a><a href="#ref1" title="Jump back to footnote 2 in the text.">&#8617</a></sup>
+<body> 
+  <div data-role="header" id="header">
+    <table>
+      <td>
+         <img id="logo" src="img/etytree_logo.png" alt="logo" />
+      </td>
+      <td>
+        <table> 
+	  <tr>
+            <div id="tdTitle">
+	      <span class="bigSpan">etytree</span><span class="mediumSpan"> - a graphical and multilingual etymology dictionary</span>
+              <br>
+            </div>  				                
+          </tr>
+          <tr>
+            <td>
+              <input class="mediumSpan" type="text" data-type="search" placeholder="search" id="search"></input>
+            </td>
+	    <td>
+              <a class="ui-btn ui-corner-all searchButton" id="btnSearch" type="button" data-inline="true"><span class="mediumSpan">OK</span></a>
+            </td>
+            <td>
+              <a href="#divHelpPopup" data-rel="popup" class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-left flash-button helpButton" data-inline="true" id="aHelpPopup"><span class="mediumSpan">help</span></a>
+              <div data-role="popup" data-history="false" id="divHelpPopup" class="ui-content help">
+                <p id="helpPopup" class="help" />
+              </div>
+            </td>
+	    <td>
+              <a class="ui-btn ui-corner-all" id="btnIntro" type="button" data-inline="true" href="intro.html"><span class="mediumSpan">INTRO</span></a>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td id="tdEmpty">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </td>
+      <br>
+    </table>
   </div>
+  <div data-role="content" class="ui-content" id="tree-container" />
+  <script src="bundle.js"></script>
 </body>
-</html> 
+</html>

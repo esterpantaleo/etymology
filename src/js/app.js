@@ -49,7 +49,8 @@ const width = window.innerWidth,
 	      "Click on the word you are interested in.",
 	  description: "etytree can visualize the etymological tree of a word, i.e., <br>" +
 	      "the etymology - or the origin of a word and the historical development of its meaning - in the form of a tree,<br>" +
-	      "reconstructing its ancestral form, its cognate words, its derived words, etc.",
+	      "reconstructing its ancestral form, its cognate words, its derived words, etc.<br>br>" +
+	      "etytree can also produce a list of descendants of a word, group by  language.",
 	  version: "This first version uses directed graphs instead of trees and extracts and parses data automatically from a dump of the English Wiktionary.",
           info: "This project is open source (source code " +
 	      "<a href=\"https://github.com/esterpantaleo/etymology\">javascript</a>, "+
@@ -378,9 +379,8 @@ var etytreeDescendantsDialog = (node) => {
  * @param {Object} state - e.g., { label: "door", lang: "eng", ety: "1" }
  */
 var etytreeUpdate = (newState) => {
-    console.log("running etytreeupdate");
     if (newState.label === null) {
-	etytreeNotFound();
+	etytreeDescription();
 	return;
     }
     $("#search").val(newState.label);
